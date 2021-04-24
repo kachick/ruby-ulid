@@ -4,6 +4,7 @@ gemspec
 
 group :development do
   gem 'rake'
+  gem 'irb', '>= 1.3.5'
 end
 
 group :test do
