@@ -23,6 +23,8 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'test-unit', '>= 3.4.1', '< 4'
   gem.add_development_dependency 'yard', '>= 0.9.26', '< 2'
   gem.add_development_dependency 'rake', '>= 13.0.3', '< 20'
+
+  gem.required_ruby_version = '>= 2.5'
   
   # common
 
