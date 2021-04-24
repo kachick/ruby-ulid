@@ -4,19 +4,23 @@
 lib_name = 'ruby-ulid'
 
 require './lib/ulid/version'
+repository_url = "https://github.com/kachick/#{lib_name}"
 
 Gem::Specification.new do |gem|
   gem.authors       = ['Kenichi Kamiya']
   gem.email         = ['kachick1+ruby@gmail.com']
   gem.description   = %q{An object oriented ULID library}
-  gem.summary       = %q{An object oriented ULID library}
-
-  gem.summary       = gem.description.dup
-  gem.homepage      = "https://github.com/kachick/#{lib_name}"
+  gem.summary       = gem.description
+  gem.homepage      = repository_url
   gem.license       = 'MIT'
-  gem.name          = lib_name.dup
-  # dup for https://github.com/rubygems/rubygems/commit/48f1d869510dcd325d6566df7d0147a086905380#-P0
-  gem.version       = ULID::VERSION.dup
+  gem.name          = lib_name
+  gem.version       = ULID::VERSION
+
+  gem.metadata = {
+    'documentation_uri' => "https://rubydoc.info/github/kachick/#{lib_name}/",
+    'homepage_uri'      => repository_url,
+    'source_code_uri'   => repository_url,
+  }
 
   gem.add_runtime_dependency 'integer-base', '>= 0.1.1'
 
