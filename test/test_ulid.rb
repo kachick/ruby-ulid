@@ -64,14 +64,13 @@ class TestULID < Test::Unit::TestCase
   def test_to_s
     ulid = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
     assert_equal('01ARZ3NDEKTSV4RRFFQ69G5FAV', ulid.to_s)
-    assert_instance_of(String, ulid.to_s)
     assert_same(ulid.to_s, ulid.to_s)
     assert_equal(true, ulid.to_s.frozen?)
   end
 
   def test_inspect
     ulid = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
-    assert_instance_of(String, ulid.inspect)
+    assert_equal('ULID(2016-07-30 23:54:10.259 UTC: 01ARZ3NDEKTSV4RRFFQ69G5FAV)', ulid.inspect)
     assert_same(ulid.inspect, ulid.inspect)
     assert_equal(true, ulid.inspect.frozen?)
     assert_not_equal(ulid.to_s, ulid.inspect)

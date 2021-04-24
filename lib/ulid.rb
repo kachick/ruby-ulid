@@ -123,7 +123,7 @@ class ULID
 
   # @return [String]
   def inspect
-    @inspect ||= "ULID(#{to_time}: #{to_s})".freeze
+    @inspect ||= "ULID(#{to_time.inspect}: #{to_s})".freeze
   end
 
   # @return [Boolean]
