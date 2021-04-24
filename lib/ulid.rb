@@ -27,6 +27,11 @@ class ULID
   MAX_MILLISECONDS = 281474976710655
   MAX_RANDOMNESS = 1208925819614629174706175
 
+  # Same as Time#inspect since Ruby 2.7, just to keep backward compatibility
+  # @see https://bugs.ruby-lang.org/issues/15958
+  TIME_FORMAT_IN_INSPECT = '%Y-%m-%d %H:%M:%S.%3N %Z'
+  private_constant :TIME_FORMAT_IN_INSPECT
+
   # @param [Integer, Time] moment
   # @return [ULID]
   def self.generate(moment: current_milliseconds, entropy: reasonable_entropy)
@@ -133,7 +138,7 @@ class ULID
 
   # @return [String]
   def inspect
-    @inspect ||= "ULID(#{to_time.inspect}: #{to_s})".freeze
+    @inspect ||= "ULID(#{to_time.strftime(TIME_FORMAT_IN_INSPECT)}: #{to_s})".freeze
   end
 
   # @return [Boolean]
