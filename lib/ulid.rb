@@ -145,7 +145,6 @@ class ULID
   def eql?(other)
     other.equal?(self) || (other.kind_of?(self.class) && other.to_i == to_i)
   end
-
   alias_method :==, :eql?
 
   # @return [Time]
