@@ -131,7 +131,7 @@ class ULID
   end
   alias_method :hash, :to_i
 
-  # @return [Boolean, nil]
+  # @return [Integer, nil]
   def <=>(other)
     other.kind_of?(self.class) ? (to_i <=> other.to_i) : nil
   end
