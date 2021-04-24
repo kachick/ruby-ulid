@@ -27,6 +27,17 @@ class TestULID < Test::Unit::TestCase
     end
   end
 
+  def test_valid?
+    assert_equal(false, ULID.valid?(nil))
+    assert_equal(false, ULID.valid?(''))
+    assert_equal(false, ULID.valid?("01ARZ3NDEKTSV4RRFFQ69G5FAV\n"))
+    assert_equal(false, ULID.valid?('01ARZ3NDEKTSV4RRFFQ69G5FAU'))
+    assert_equal(true, ULID.valid?('01ARZ3NDEKTSV4RRFFQ69G5FAV'))
+    assert_equal(true, ULID.valid?('01ARZ3NDEKTSV4RRFFQ69G5FAV'.downcase))
+    assert_equal(true, ULID.valid?('7ZZZZZZZZZZZZZZZZZZZZZZZZZ'))
+    assert_equal(false, ULID.valid?('80000000000000000000000000'))
+  end
+
   def test_overflow
     max = ULID.parse('7ZZZZZZZZZZZZZZZZZZZZZZZZZ')
     assert_equal(ULID::MAX_MILLISECONDS, max.milliseconds)
@@ -34,6 +45,10 @@ class TestULID < Test::Unit::TestCase
 
     assert_raises(ULID::OverflowError) do
       max.next
+    end
+
+    assert_raises(ULID::OverflowError) do
+      ULID.parse('80000000000000000000000000')
     end
   end
 

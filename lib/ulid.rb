@@ -76,6 +76,16 @@ class ULID
     new milliseconds: milliseconds, entropy: entropy
   end
 
+  # @param [String] string
+  # @return [Boolean]
+  def self.valid?(string)
+    parse(string)
+  rescue Exception
+    false
+  else
+    true
+  end
+
   def self.octets_from_integer(integer, length:)
     digits = integer.digits(256)
     (length - digits.size).times do
