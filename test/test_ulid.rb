@@ -39,14 +39,6 @@ class TestULID < Test::Unit::TestCase
   end
 
   def test_overflow
-    max = ULID.parse('7ZZZZZZZZZZZZZZZZZZZZZZZZZ')
-    assert_equal(ULID::MAX_MILLISECONDS, max.milliseconds)
-    assert_equal(ULID::MAX_RANDOMNESS, max.entropy)
-
-    assert_raises(ULID::OverflowError) do
-      max.next
-    end
-
     assert_raises(ULID::OverflowError) do
       ULID.parse('80000000000000000000000000')
     end
@@ -155,6 +147,34 @@ class TestULID < Test::Unit::TestCase
     assert_equal(false, ulid.frozen?)
     assert_same(ulid, ulid.freeze)
     assert_equal(true, ulid.frozen?)
+  end
+end
+
+class TestBoundaryULID < Test::Unit::TestCase
+  def setup
+    @min = ULID.parse('00000000000000000000000000')
+    @max = ULID.parse('7ZZZZZZZZZZZZZZZZZZZZZZZZZ')
+    @max_entropy = ULID.parse('01BX5ZZKBKZZZZZZZZZZZZZZZZ')
+  end
+
+  def test_constants
+    assert_equal(ULID::MAX_MILLISECONDS, @max.milliseconds)
+    assert_equal(ULID::MAX_RANDOMNESS, @max.entropy)
+  end
+
+  def test_overflow
+    assert_raises(ULID::OverflowError) do
+      @max.next
+    end
+
+    assert_raises(ULID::OverflowError) do
+      @max_entropy.next
+    end
+  end
+
+  def test_octets
+    assert_equal([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], @min.octets)
+    assert_equal([255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255], @max.octets)
   end
 end
 
