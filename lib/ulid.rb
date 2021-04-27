@@ -121,9 +121,10 @@ class ULID
   end
 
   # @return [String]
-  def to_s
+  def to_str
     @string ||= Integer::Base.string_for(to_i, ENCODING_CHARS).rjust(ENCODED_LENGTH, '0').upcase.freeze
   end
+  alias_method :to_s, :to_str
 
   # @return [Integer]
   def to_i
@@ -138,7 +139,7 @@ class ULID
 
   # @return [String]
   def inspect
-    @inspect ||= "ULID(#{to_time.strftime(TIME_FORMAT_IN_INSPECT)}: #{to_s})".freeze
+    @inspect ||= "ULID(#{to_time.strftime(TIME_FORMAT_IN_INSPECT)}: #{to_str})".freeze
   end
 
   # @return [Boolean]
