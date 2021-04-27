@@ -112,6 +112,8 @@ class TestULID < Test::Unit::TestCase
     }
 
     assert_equal([:ulid1_2, :ulid2], hash.values)
+    assert_equal(:ulid1_2, hash.fetch(ulid1_1))
+    assert_equal(:ulid2, hash.fetch(ulid2))
   end
 
   def test_to_time
