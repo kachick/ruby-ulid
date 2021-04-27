@@ -145,6 +145,11 @@ class TestULID < Test::Unit::TestCase
     assert_equal(ulid.next.to_i, ulid.to_i + 1)
     assert_instance_of(ULID, ulid.next)
     assert_same(ulid.next, ulid.next)
+
+    first = ULID.parse('01BX5ZZKBKACTAV9WEVGEMMVRY')
+    assert_equal(ULID.parse('01BX5ZZKBKACTAV9WEVGEMMVRZ'), first.next)
+    assert_equal(ULID.parse('01BX5ZZKBKACTAV9WEVGEMMVS0'), first.next.next)
+    assert_equal(ULID.parse('01BX5ZZKBKACTAV9WEVGEMMVS1'), first.next.next.next)
   end
 
   def test_freeze
@@ -254,6 +259,8 @@ class TestBigData < Test::Unit::TestCase
     assert_equal(1000, ulids.map(&:to_s).uniq.size)
     assert_equal(true, (5..50).cover?(ulids.group_by(&:to_time).size))
     assert_equal(ulids, ulids.sort_by(&:to_s))
+    assert_equal(ulids, ulids.sort_by(&:to_i))
+    assert_equal(ulids, ulids.sort)
   end
 
   def teardown
