@@ -20,8 +20,8 @@ class ULID
   ENCODING_CHARS = '0123456789ABCDEFGHJKMNPQRSTVWXYZ'.chars.map(&:freeze).freeze
 
   TIME_PART_LENGTH = 10
-  RANDOM_PART_LENGTH = 16
-  ENCODED_LENGTH = TIME_PART_LENGTH + RANDOM_PART_LENGTH
+  RANDOMNESS_PART_LENGTH = 16
+  ENCODED_ID_LENGTH = TIME_PART_LENGTH + RANDOMNESS_PART_LENGTH
   TIME_OCTETS_LENGTH = 6
   RANDOMNESS_OCTETS_LENGTH = 10
   OCTETS_LENGTH = TIME_OCTETS_LENGTH + RANDOMNESS_OCTETS_LENGTH
@@ -62,7 +62,7 @@ class ULID
 
   MONOTONIC_GENERATOR = MonotonicGenerator.instance
 
-  private_constant :TIME_FORMAT_IN_INSPECT, :MonotonicGenerator
+  private_constant :ENCODING_CHARS, :TIME_FORMAT_IN_INSPECT, :MonotonicGenerator
 
   # @param [Integer, Time] moment
   # @return [ULID]
@@ -91,9 +91,9 @@ class ULID
   def self.parse(string)
     begin
       string = string.to_str
-      raise ParserError unless string.size == ENCODED_LENGTH
+      raise ParserError unless string.size == ENCODED_ID_LENGTH
       timestamp = string.slice(0, TIME_PART_LENGTH)
-      randomness = string.slice(TIME_PART_LENGTH, RANDOM_PART_LENGTH)
+      randomness = string.slice(TIME_PART_LENGTH, RANDOMNESS_PART_LENGTH)
       milliseconds = Integer::Base.parse(timestamp, ENCODING_CHARS)
       entropy = Integer::Base.parse(randomness, ENCODING_CHARS)
     rescue => err
@@ -144,7 +144,7 @@ class ULID
 
   # @return [String]
   def to_str
-    @string ||= Integer::Base.string_for(to_i, ENCODING_CHARS).rjust(ENCODED_LENGTH, '0').upcase.freeze
+    @string ||= Integer::Base.string_for(to_i, ENCODING_CHARS).rjust(ENCODED_ID_LENGTH, '0').upcase.freeze
   end
   alias_method :to_s, :to_str
 
