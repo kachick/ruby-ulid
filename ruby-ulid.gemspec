@@ -25,6 +25,7 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency 'integer-base', '>= 0.1.1'
 
   gem.add_development_dependency 'test-unit', '>= 3.4.1', '< 4'
+  gem.add_development_dependency 'benchmark-ips', '>= 2.8.4', '< 3'
   gem.add_development_dependency 'yard', '>= 0.9.26', '< 2'
   gem.add_development_dependency 'rake', '>= 13.0.3', '< 20'
 
