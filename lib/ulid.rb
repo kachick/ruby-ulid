@@ -173,4 +173,14 @@ class ULID
     @next ||= self.class.new(milliseconds: @milliseconds, entropy: @entropy + 1)
   end
   alias_method :succ, :next
+
+  # @return [self]
+  def freeze
+    # Evaluate all caching
+    inspect
+    octets
+    succ
+    to_i
+    super
+  end
 end

@@ -96,6 +96,10 @@ class TestULID < Test::Unit::TestCase
     assert_not_equal(ulid.to_s, ulid.inspect)
   end
 
+  def test_to_i
+    assert_equal(1777027686520646174104517696511196507, ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV').to_i)
+  end
+
   def test_hash_key
     ulid1_1 = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
     ulid1_2 = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
@@ -121,5 +125,44 @@ class TestULID < Test::Unit::TestCase
     assert_equal(ulid.next.to_i, ulid.to_i + 1)
     assert_instance_of(ULID, ulid.next)
     assert_same(ulid.next, ulid.next)
+  end
+
+  def test_freeze
+    ulid = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
+    assert_equal(false, ulid.frozen?)
+    assert_same(ulid, ulid.freeze)
+    assert_equal(true, ulid.frozen?)
+  end
+end
+
+class TestFrozenULID < Test::Unit::TestCase
+  def setup
+    @string = '01ARZ3NDEKTSV4RRFFQ69G5FAV'
+    @ulid = ULID.parse(@string)
+    @ulid.freeze
+  end
+
+  def test_to_str
+    assert_equal(@string, @ulid.to_str)
+  end
+
+  def test_inspect
+    assert_equal('ULID(2016-07-30 23:54:10.259 UTC: 01ARZ3NDEKTSV4RRFFQ69G5FAV)', @ulid.inspect)
+  end
+
+  def test_to_i
+    assert_equal(1777027686520646174104517696511196507, @ulid.to_i)
+  end
+
+  def test_to_time
+    assert_equal(Time.at(0, 1469922850259, :millisecond).utc, @ulid.to_time)
+  end
+
+  def test_octets
+    assert_equal([1, 86, 62, 58, 181, 211, 214, 118, 76, 97, 239, 185, 147, 2, 189, 91], @ulid.octets)
+  end
+
+  def test_next
+    assert_equal(true, @ulid < @ulid.next)
   end
 end
