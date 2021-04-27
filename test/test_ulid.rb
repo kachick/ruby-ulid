@@ -50,7 +50,6 @@ class TestULID < Test::Unit::TestCase
   end
 
   def test_monotonic_generate
-    # @TODO: Add tests for same milliseconds
     assert_instance_of(ULID, ULID.monotonic_generate)
     assert_not_equal(ULID.monotonic_generate, ULID.monotonic_generate)
     first = ULID.monotonic_generate
@@ -207,5 +206,35 @@ class TestFrozenULID < Test::Unit::TestCase
 
   def test_next
     assert_equal(true, @ulid < @ulid.next)
+  end
+end
+
+class TestBigData < Test::Unit::TestCase
+  def test_generate
+    ulids = 1000.times.map do |n|
+      if (n % 100).zero?
+        sleep(0.01)
+      end
+
+      ULID.generate
+    end
+
+    assert_equal(1000, ulids.map(&:to_s).uniq.size)
+    assert_equal(true, (5..50).cover?(ulids.group_by(&:to_time).size))
+    assert_not_equal(ulids, ulids.sort_by(&:to_s))
+  end
+
+  def test_monotonic_generate
+    ulids = 1000.times.map do |n|
+      if (n % 100).zero?
+        sleep(0.01)
+      end
+
+      ULID.monotonic_generate
+    end
+
+    assert_equal(1000, ulids.map(&:to_s).uniq.size)
+    assert_equal(true, (5..50).cover?(ulids.group_by(&:to_time).size))
+    assert_equal(ulids, ulids.sort_by(&:to_s))
   end
 end
