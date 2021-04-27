@@ -120,6 +120,27 @@ class TestULID < Test::Unit::TestCase
     assert_same(ulid.to_time, ulid.to_time)
   end
 
+  def test_octets
+    ulid = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
+    assert_equal([1, 86, 62, 58, 181, 211, 214, 118, 76, 97, 239, 185, 147, 2, 189, 91], ulid.octets)
+    assert_same(ulid.octets, ulid.octets)
+    assert_equal(true, ulid.octets.frozen?)
+  end
+
+  def test_time_octets
+    ulid = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
+    assert_equal([1, 86, 62, 58, 181, 211], ulid.time_octets)
+    assert_same(ulid.time_octets, ulid.time_octets)
+    assert_equal(true, ulid.time_octets.frozen?)
+  end
+
+  def test_randomness_octets
+    ulid = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
+    assert_equal([214, 118, 76, 97, 239, 185, 147, 2, 189, 91], ulid.randomness_octets)
+    assert_same(ulid.randomness_octets, ulid.randomness_octets)
+    assert_equal(true, ulid.randomness_octets.frozen?)
+  end
+
   def test_next
     ulid = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
     assert_equal(ulid.next.to_i, ulid.to_i + 1)
