@@ -38,8 +38,7 @@ class ULID
     attr_accessor :latest_milliseconds, :latest_entropy
 
     def initialize
-      @latest_milliseconds = nil
-      @latest_entropy = nil
+      reset
     end
 
     # @return [ULID]
@@ -57,6 +56,18 @@ class ULID
       end
 
       ULID.new milliseconds: milliseconds, entropy: @latest_entropy
+    end
+
+    # @return [self]
+    def reset
+      @latest_milliseconds = nil
+      @latest_entropy = nil
+      self
+    end
+
+    # @return [void]
+    def freeze
+      raise TypeError, "cannot freeze #{self.class}"
     end
   end
 
