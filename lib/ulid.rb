@@ -3,6 +3,7 @@
 # Copyright (C) 2021 Kenichi Kamiya
 
 require 'securerandom'
+require 'singleton'
 require 'integer/base'
 require_relative 'ulid/version'
 
@@ -30,7 +31,38 @@ class ULID
   # Same as Time#inspect since Ruby 2.7, just to keep backward compatibility
   # @see https://bugs.ruby-lang.org/issues/15958
   TIME_FORMAT_IN_INSPECT = '%Y-%m-%d %H:%M:%S.%3N %Z'
-  private_constant :TIME_FORMAT_IN_INSPECT
+
+  class MonotonicGenerator
+    include Singleton
+
+    attr_accessor :latest_milliseconds, :latest_entropy
+
+    def initialize
+      @latest_milliseconds = nil
+      @latest_entropy = nil
+    end
+
+    # @return [ULID]
+    def generate
+      milliseconds = ULID.current_milliseconds
+      reasonable_entropy = ULID.reasonable_entropy
+
+      @latest_milliseconds ||= milliseconds
+      @latest_entropy ||= reasonable_entropy
+      if @latest_milliseconds != milliseconds
+        @latest_milliseconds = milliseconds
+        @latest_entropy = reasonable_entropy
+      else
+        @latest_entropy += 1
+      end
+
+      ULID.new milliseconds: milliseconds, entropy: @latest_entropy
+    end
+  end
+
+  MONOTONIC_GENERATOR = MonotonicGenerator.instance
+
+  private_constant :TIME_FORMAT_IN_INSPECT, :MonotonicGenerator
 
   # @param [Integer, Time] moment
   # @return [ULID]
@@ -41,17 +73,7 @@ class ULID
 
   # @return [ULID]
   def self.monotonic_generate
-    milliseconds = current_milliseconds
-    @monotonic_base_entropy ||= reasonable_entropy
-    @monotonic_base_milliseconds ||= milliseconds
-    if @monotonic_base_milliseconds != milliseconds
-      @monotonic_base_milliseconds = milliseconds
-      @monotonic_base_entropy = reasonable_entropy
-    else
-      @monotonic_base_entropy += 1
-    end
-
-    new milliseconds: milliseconds, entropy: @monotonic_base_entropy
+    MONOTONIC_GENERATOR.generate
   end
 
   # @return [Integer]
