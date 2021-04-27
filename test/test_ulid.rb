@@ -25,6 +25,12 @@ class TestULID < Test::Unit::TestCase
     assert_raises(ULID::ParserError) do
       ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAU')
     end
+
+    err = assert_raises(ULID::ParserError) do
+      ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FA')
+    end
+
+    assert_match(/parsing failure as.+parsable string must be 26 characters, but actually given 25 characters.+01ARZ3NDEKTSV4RRFFQ69G5FA/, err.message)
   end
 
   def test_valid?

@@ -97,18 +97,20 @@ class ULID
     SecureRandom.random_number(MAX_RANDOMNESS)
   end
 
-  # @param [String] string
+  # @param [String, #to_str] string
   # @return [ULID]
   def self.parse(string)
     begin
       string = string.to_str
-      raise ParserError unless string.size == ENCODED_ID_LENGTH
+      unless string.size == ENCODED_ID_LENGTH
+        raise "parsable string must be #{ENCODED_ID_LENGTH} characters, but actually given #{string.size} characters"
+      end
       timestamp = string.slice(0, TIME_PART_LENGTH)
       randomness = string.slice(TIME_PART_LENGTH, RANDOMNESS_PART_LENGTH)
       milliseconds = Integer::Base.parse(timestamp, ENCODING_CHARS)
       entropy = Integer::Base.parse(randomness, ENCODING_CHARS)
     rescue => err
-      raise ParserError, "parsing failure from #{err.inspect}"
+      raise ParserError, "parsing failure as #{err.inspect} for given #{string.inspect}"
     end
   
     new milliseconds: milliseconds, entropy: entropy
