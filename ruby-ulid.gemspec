@@ -9,7 +9,7 @@ repository_url = "https://github.com/kachick/#{lib_name}"
 Gem::Specification.new do |gem|
   gem.authors       = ['Kenichi Kamiya']
   gem.email         = ['kachick1+ruby@gmail.com']
-  gem.description   = %q{An object oriented ULID library}
+  gem.description   = %q{A handy ULID library}
   gem.summary       = gem.description
   gem.homepage      = repository_url
   gem.license       = 'MIT'

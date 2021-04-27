@@ -73,10 +73,11 @@ If you try to improve any performance issue, please check the result of benchmar
 ```console
 $ bundle exec ruby benchmark/*
 ```
+
 ## Link
 
 * [API documentation](https://rubydoc.info/github/kachick/ruby-ulid/)
 
 ## Author
 
-Kenichi Kamiya (@kachick)
+Kenichi Kamiya - [@kachick](https://github.com/kachick)
