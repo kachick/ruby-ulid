@@ -173,7 +173,7 @@ class TestBoundaryULID < Test::Unit::TestCase
 
   def test_constants
     assert_equal(ULID::MAX_MILLISECONDS, @max.milliseconds)
-    assert_equal(ULID::MAX_RANDOMNESS, @max.entropy)
+    assert_equal(ULID::MAX_ENTROPY, @max.entropy)
   end
 
   def test_overflow

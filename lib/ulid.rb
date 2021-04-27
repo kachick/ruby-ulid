@@ -26,7 +26,7 @@ class ULID
   RANDOMNESS_OCTETS_LENGTH = 10
   OCTETS_LENGTH = TIME_OCTETS_LENGTH + RANDOMNESS_OCTETS_LENGTH
   MAX_MILLISECONDS = 281474976710655
-  MAX_RANDOMNESS = 1208925819614629174706175
+  MAX_ENTROPY = 1208925819614629174706175
 
   # Same as Time#inspect since Ruby 2.7, just to keep backward compatibility
   # @see https://bugs.ruby-lang.org/issues/15958
@@ -94,7 +94,7 @@ class ULID
 
   # @return [Integer]
   def self.reasonable_entropy
-    SecureRandom.random_number(MAX_RANDOMNESS)
+    SecureRandom.random_number(MAX_ENTROPY)
   end
 
   # @param [String, #to_str] string
@@ -148,7 +148,7 @@ class ULID
 
   def initialize(milliseconds:, entropy:)
     raise OverflowError, "timestamp over flow: given #{milliseconds}, max: #{MAX_MILLISECONDS}" unless milliseconds <= MAX_MILLISECONDS
-    raise OverflowError, "entropy over flow: given #{entropy}, max: #{MAX_RANDOMNESS}" unless entropy <= MAX_RANDOMNESS
+    raise OverflowError, "entropy over flow: given #{entropy}, max: #{MAX_ENTROPY}" unless entropy <= MAX_ENTROPY
     raise ArgumentError if milliseconds.negative? || entropy.negative?
 
     @milliseconds = milliseconds
