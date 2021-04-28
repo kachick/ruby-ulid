@@ -132,24 +132,6 @@ class ULID
     true
   end
 
-  def self.octets_from_integer(integer, length:)
-    digits = integer.digits(256)
-    (length - digits.size).times do
-      digits.push 0
-    end
-    digits.reverse!
-  end
-
-  # @see The logics taken from https://bugs.ruby-lang.org/issues/14401, thanks!
-  def self.inverse_of_digits(reversed_digits)
-    base = 256
-    num = 0
-    reversed_digits.each do |digit|
-      num = (num * base) + digit
-    end
-    num
-  end
-
   attr_reader :milliseconds, :entropy
 
   def initialize(milliseconds:, entropy:)
@@ -169,7 +151,7 @@ class ULID
 
   # @return [Integer]
   def to_i
-    @integer ||= self.class.inverse_of_digits(octets)
+    @integer ||= inverse_of_digits(octets)
   end
   alias_method :hash, :to_i
 
@@ -201,12 +183,12 @@ class ULID
 
   # @return [Array<Integer>]
   def time_octets
-    @time_octets ||= self.class.octets_from_integer(@milliseconds, length: TIME_OCTETS_LENGTH).freeze
+    @time_octets ||= octets_from_integer(@milliseconds, length: TIME_OCTETS_LENGTH).freeze
   end
 
   # @return [Array<Integer>]
   def randomness_octets
-    @randomness_octets ||= self.class.octets_from_integer(@entropy, length: RANDOMNESS_OCTETS_LENGTH).freeze
+    @randomness_octets ||= octets_from_integer(@entropy, length: RANDOMNESS_OCTETS_LENGTH).freeze
   end
 
   # @return [ULID]
@@ -223,5 +205,30 @@ class ULID
     succ
     to_i
     super
+  end
+
+  private
+
+  # @param [Integer] integer
+  # @param [Integer] length
+  # @return [Array<Integer>]
+  def octets_from_integer(integer, length:)
+    digits = integer.digits(256)
+    (length - digits.size).times do
+      digits.push 0
+    end
+    digits.reverse!
+  end
+
+  # @see The logics taken from https://bugs.ruby-lang.org/issues/14401, thanks!
+  # @param [Array<Integer>] reversed_digits
+  # @return [Integer]
+  def inverse_of_digits(reversed_digits)
+    base = 256
+    num = 0
+    reversed_digits.each do |digit|
+      num = (num * base) + digit
+    end
+    num
   end
 end
