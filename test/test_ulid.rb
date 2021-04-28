@@ -58,6 +58,9 @@ class TestULID < Test::Unit::TestCase
     assert_equal(time.floor(3), ULID.generate(moment: time).to_time)
     milliseconds = 42
     assert_equal(Time.at(0, milliseconds, :millisecond), ULID.generate(moment: milliseconds).to_time)
+
+    entropy = 42
+    assert_equal(entropy, ULID.generate(entropy: entropy).entropy)
   end
 
   def test_monotonic_generate
