@@ -53,6 +53,11 @@ class TestULID < Test::Unit::TestCase
   def test_generate
     assert_instance_of(ULID, ULID.generate)
     assert_not_equal(ULID.generate, ULID.generate)
+
+    time = Time.now
+    assert_equal(time.floor(3), ULID.generate(moment: time).to_time)
+    milliseconds = 42
+    assert_equal(Time.at(0, milliseconds, :millisecond), ULID.generate(moment: milliseconds).to_time)
   end
 
   def test_monotonic_generate
