@@ -13,3 +13,7 @@ end
 group :development do
   gem 'irb', '>= 1.3.5'
 end
+
+group :test do
+  gem 'warning', '>= 1.2.0'
+end
