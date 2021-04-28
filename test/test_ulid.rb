@@ -55,7 +55,7 @@ class TestULID < Test::Unit::TestCase
     assert_not_equal(ULID.generate, ULID.generate)
 
     time = Time.now
-    assert_equal(time.floor(3), ULID.generate(moment: time).to_time)
+    assert_equal(Time.at(0, ULID.time_to_milliseconds(time), :millisecond), ULID.generate(moment: time).to_time)
     milliseconds = 42
     assert_equal(Time.at(0, milliseconds, :millisecond), ULID.generate(moment: milliseconds).to_time)
 

@@ -89,7 +89,13 @@ class ULID
 
   # @return [Integer]
   def self.current_milliseconds
-    (Time.now.to_r * 1000).to_i
+    time_to_milliseconds(Time.now)
+  end
+
+  # @param [Time]
+  # @return [Integer]
+  def self.time_to_milliseconds(time)
+    (time.to_r * 1000).to_i
   end
 
   # @return [Integer]
