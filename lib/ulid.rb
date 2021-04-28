@@ -147,8 +147,8 @@ class ULID
   attr_reader :milliseconds, :entropy
 
   def initialize(milliseconds:, entropy:)
-    raise OverflowError, "timestamp over flow: given #{milliseconds}, max: #{MAX_MILLISECONDS}" unless milliseconds <= MAX_MILLISECONDS
-    raise OverflowError, "entropy over flow: given #{entropy}, max: #{MAX_ENTROPY}" unless entropy <= MAX_ENTROPY
+    raise OverflowError, "timestamp overflow: given #{milliseconds}, max: #{MAX_MILLISECONDS}" unless milliseconds <= MAX_MILLISECONDS
+    raise OverflowError, "entropy overflow: given #{entropy}, max: #{MAX_ENTROPY}" unless entropy <= MAX_ENTROPY
     raise ArgumentError if milliseconds.negative? || entropy.negative?
 
     @milliseconds = milliseconds
