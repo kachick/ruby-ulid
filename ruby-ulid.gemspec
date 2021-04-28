@@ -13,7 +13,8 @@ Gem::Specification.new do |gem|
   gem.description   = <<-EOF
     ULID(Universally Unique Lexicographically Sortable Identifier) is defined on https://github.com/ulid/spec.
     It has useful specs for actual applications.
-    This gem aims to provide the generator, monotonic generator and handy manipulation methods for the ID.
+    This gem aims to provide the generator, monotonic generator, parser and handy manipulation methods for the ID.
+    Also having rbs signature files.
   EOF
   gem.homepage      = repository_url
   gem.license       = 'MIT'
@@ -31,7 +32,6 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'test-unit', '>= 3.4.1', '< 4'
   gem.add_development_dependency 'benchmark-ips', '>= 2.8.4', '< 3'
   gem.add_development_dependency 'yard', '>= 0.9.26', '< 2'
-  gem.add_development_dependency 'rake', '>= 13.0.3', '< 20'
 
   gem.required_ruby_version = '>= 2.5'
   

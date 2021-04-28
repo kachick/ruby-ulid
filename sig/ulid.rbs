@@ -1,0 +1,74 @@
+# Classes
+class ULID
+  VERSION: String
+  ENCODING_CHARS: Array[String]
+  TIME_PART_LENGTH: Integer
+  RANDOMNESS_PART_LENGTH: Integer
+  ENCODED_ID_LENGTH: Integer
+  TIME_OCTETS_LENGTH: Integer
+  RANDOMNESS_OCTETS_LENGTH: Integer
+  OCTETS_LENGTH: Integer
+  MAX_MILLISECONDS: Integer
+  MAX_ENTROPY: Integer
+  TIME_FORMAT_IN_INSPECT: String
+  MONOTONIC_GENERATOR: MonotonicGenerator
+  include Comparable
+  @string: String
+  @integer: Integer
+  @octets: Array[Integer]
+  @time_octets: Array[Integer]
+  @randomness_octets: Array[Integer]
+  @inspect: String
+  @time: Time
+  @next: ULID
+
+  def self.generate: (?moment: Time | Integer, ?entropy: Integer) -> ULID
+  def self.monotonic_generate: -> ULID
+  def self.current_milliseconds: -> Integer
+  def self.time_to_milliseconds: (Time time) -> Integer
+  def self.reasonable_entropy: -> Integer
+  def self.parse: (String string) -> ULID
+  def self.valid?: (untyped string) -> bool
+  attr_reader milliseconds: Integer
+  attr_reader entropy: Integer
+  def initialize: (milliseconds: Integer, entropy: Integer) -> void
+  def to_str: -> String
+  def to_s: -> String
+  def to_i: -> Integer
+  def hash: -> Integer
+  def <=>: (untyped other) -> Integer?
+  def inspect: -> String
+  def eql?: (untyped other) -> bool
+  def ==: (untyped other) -> bool
+  def to_time: -> Time
+  def octets: -> Array[Integer]
+  def time_octets: -> Array[Integer]
+  def randomness_octets: -> Array[Integer]
+  def next: -> ULID
+  def succ: -> ULID
+  def freeze: -> self
+
+  private
+  def octets_from_integer: (Integer integer, length: Integer) -> Array[Integer]
+  def inverse_of_digits: (Array[Integer] reversed_digits) -> Integer
+
+  class Error < StandardError
+  end
+
+  class OverflowError < Error
+  end
+
+  class ParserError < Error
+  end
+
+  class MonotonicGenerator
+    include Singleton
+
+    attr_accessor latest_milliseconds: Integer?
+    attr_accessor latest_entropy: Integer?
+    def initialize: -> void
+    def generate: -> ULID
+    def reset: -> void
+    def freeze: -> void
+  end
+end
