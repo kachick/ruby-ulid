@@ -61,6 +61,14 @@ class TestULID < Test::Unit::TestCase
 
     entropy = 42
     assert_equal(entropy, ULID.generate(entropy: entropy).entropy)
+
+    assert_raises(ArgumentError) do
+      ULID.generate(moment: -1)
+    end
+
+    assert_raises(ArgumentError) do
+      ULID.generate(entropy: -1)
+    end
   end
 
   def test_monotonic_generate

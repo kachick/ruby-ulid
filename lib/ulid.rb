@@ -155,7 +155,7 @@ class ULID
   def initialize(milliseconds:, entropy:)
     raise OverflowError, "timestamp overflow: given #{milliseconds}, max: #{MAX_MILLISECONDS}" unless milliseconds <= MAX_MILLISECONDS
     raise OverflowError, "entropy overflow: given #{entropy}, max: #{MAX_ENTROPY}" unless entropy <= MAX_ENTROPY
-    raise ArgumentError if milliseconds.negative? || entropy.negative?
+    raise ArgumentError, "timestamp and entropy should be `0+` Integer, milliseconds: #{milliseconds}, entropy: #{entropy}" if milliseconds.negative? || entropy.negative?
 
     @milliseconds = milliseconds
     @entropy = entropy
