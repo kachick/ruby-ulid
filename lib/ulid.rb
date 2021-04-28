@@ -76,6 +76,7 @@ class ULID
   private_constant :ENCODING_CHARS, :TIME_FORMAT_IN_INSPECT, :MonotonicGenerator
 
   # @param [Integer, Time] moment
+  # @param [Integer] entropy
   # @return [ULID]
   def self.generate(moment: current_milliseconds, entropy: reasonable_entropy)
     milliseconds = moment.kind_of?(Time) ? (moment.to_r * 1000).to_i : moment.to_int
@@ -92,7 +93,7 @@ class ULID
     time_to_milliseconds(Time.now)
   end
 
-  # @param [Time]
+  # @param [Time] time
   # @return [Integer]
   def self.time_to_milliseconds(time)
     (time.to_r * 1000).to_i
