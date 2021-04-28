@@ -9,8 +9,12 @@ repository_url = "https://github.com/kachick/#{lib_name}"
 Gem::Specification.new do |gem|
   gem.authors       = ['Kenichi Kamiya']
   gem.email         = ['kachick1+ruby@gmail.com']
-  gem.description   = %q{A handy ULID library}
-  gem.summary       = gem.description
+  gem.summary       = %q{A handy ULID library}
+  gem.description   = <<-EOF
+    ULID(Universally Unique Lexicographically Sortable Identifier) is defined on https://github.com/ulid/spec.
+    It has useful specs for actual applications.
+    This gem aims to provide the generator, monotonic generator and handy manipulation methods for the ID.
+  EOF
   gem.homepage      = repository_url
   gem.license       = 'MIT'
   gem.name          = lib_name
