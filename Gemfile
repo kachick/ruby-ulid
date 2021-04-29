@@ -15,5 +15,6 @@ group :development do
 end
 
 group :test do
+  gem 'test-unit', '>= 3.4.1', '< 4'
   gem 'warning', '>= 1.2.0'
 end

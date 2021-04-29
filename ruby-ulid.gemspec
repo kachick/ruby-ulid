@@ -27,9 +27,8 @@ Gem::Specification.new do |gem|
     'source_code_uri'   => repository_url,
   }
 
-  gem.add_runtime_dependency 'integer-base', '>= 0.1.2'
+  gem.add_runtime_dependency 'integer-base', '>= 0.1.2', '< 0.2.0'
 
-  gem.add_development_dependency 'test-unit', '>= 3.4.1', '< 4'
   gem.add_development_dependency 'benchmark-ips', '>= 2.8.4', '< 3'
   gem.add_development_dependency 'yard', '>= 0.9.26', '< 2'
 
