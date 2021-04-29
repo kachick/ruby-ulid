@@ -33,6 +33,28 @@ class TestULID < Test::Unit::TestCase
     assert_match(/parsing failure as.+parsable string must be 26 characters, but actually given 25 characters.+01ARZ3NDEKTSV4RRFFQ69G5FA/, err.message)
   end
 
+  def test_new
+    assert_equal(ULID.parse('00000000000000000000000000'), ULID.new(milliseconds: 0, entropy: 0))
+
+    err = assert_raises(ArgumentError) do
+      ULID.new(milliseconds: -1, entropy: 0)
+    end
+    assert_match('milliseconds and entropy should not be negative', err.message)
+
+    err = assert_raises(ArgumentError) do
+      ULID.new(milliseconds: 0, entropy: -1)
+    end
+    assert_match('milliseconds and entropy should not be negative', err.message)
+
+    assert_raises do
+      ULID.new(milliseconds: nil, entropy: 0)
+    end
+
+    assert_raises do
+      ULID.new(milliseconds: 0, entropy: nil)
+    end
+  end
+
   def test_valid?
     assert_equal(false, ULID.valid?(nil))
     assert_equal(false, ULID.valid?(''))

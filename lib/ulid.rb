@@ -136,9 +136,11 @@ class ULID
   attr_reader :milliseconds, :entropy
 
   def initialize(milliseconds:, entropy:)
+    milliseconds = milliseconds.to_int
+    entropy = entropy.to_int
     raise OverflowError, "timestamp overflow: given #{milliseconds}, max: #{MAX_MILLISECONDS}" unless milliseconds <= MAX_MILLISECONDS
     raise OverflowError, "entropy overflow: given #{entropy}, max: #{MAX_ENTROPY}" unless entropy <= MAX_ENTROPY
-    raise ArgumentError if milliseconds.negative? || entropy.negative?
+    raise ArgumentError, 'milliseconds and entropy should not be negative' if milliseconds.negative? || entropy.negative?
 
     @milliseconds = milliseconds
     @entropy = entropy
