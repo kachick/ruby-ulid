@@ -123,7 +123,6 @@ class ULID
     new milliseconds: milliseconds, entropy: entropy
   end
 
-  # @param [String] string
   # @return [Boolean]
   def self.valid?(string)
     parse(string)
@@ -160,7 +159,7 @@ class ULID
 
   # @return [Integer, nil]
   def <=>(other)
-    other.kind_of?(self.class) ? (to_i <=> other.to_i) : nil
+    other.kind_of?(ULID) ? (to_i <=> other.to_i) : nil
   end
 
   # @return [String]
@@ -170,7 +169,7 @@ class ULID
 
   # @return [Boolean]
   def eql?(other)
-    other.equal?(self) || (other.kind_of?(self.class) && other.to_i == to_i)
+    other.equal?(self) || (other.kind_of?(ULID) && other.to_i == to_i)
   end
   alias_method :==, :eql?
 
