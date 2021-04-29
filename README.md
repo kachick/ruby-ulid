@@ -1,14 +1,3 @@
-<h1 align="center">
-	<br>
-	<br>
-	<img width="360" src="https://raw.githubusercontent.com/kachick/ruby-ulid/main/logo.png" alt="ulid">
-	<br>
-	<br>
-	<br>
-</h1>
-
-![Build Status](https://github.com/kachick/ruby-ulid/actions/workflows/test.yml/badge.svg?branch=main)
-[![Gem Version](https://badge.fury.io/rb/ruby-ulid.png)](http://badge.fury.io/rb/ruby-ulid)
 # ruby-ulid
 
 A handy `ULID` library
@@ -18,6 +7,13 @@ Formal name is `Universally Unique Lexicographically Sortable Identifier`.
 It has useful specs for actual applications.
 This gem aims to provide the generator, monotonic generator, parser and handy manipulation methods for the ID.
 Also having rbs signature files.
+
+---
+
+![ULIDlogo](https://raw.githubusercontent.com/kachick/ruby-ulid/main/logo.png)
+
+![Build Status](https://github.com/kachick/ruby-ulid/actions/workflows/test.yml/badge.svg?branch=main)
+[![Gem Version](https://badge.fury.io/rb/ruby-ulid.png)](http://badge.fury.io/rb/ruby-ulid)
 
 ## Universally Unique Lexicographically Sortable Identifier
 
@@ -42,7 +38,7 @@ Instead, herein is proposed ULID:
 ## Install
 
 ```console
-$ gem install ruby-ulid
+gem install ruby-ulid
 ```
 
 ## Usage
@@ -84,9 +80,9 @@ monotonic_ulids.sort == monotonic_ulids #=> true
 At first, you should install development dependencies
 
 ```console
-$ git clone git@github.com:kachick/ruby-ulid.git
-$ cd ./ruby-ulid
-$ bundle install
+git clone git@github.com:kachick/ruby-ulid.git
+cd ./ruby-ulid
+bundle install
 ```
 
 Play with the behaviors in REPL.
@@ -99,13 +95,13 @@ ulid = ULID.generate #=> ULID(2021-04-27 17:27:22.826 UTC: 01F4A5Y1YAQCYAYCTC7GR
 If you try to add/change/fix features, please update tests and ensure they are not broken.
 
 ```console
-$ bundle exec rake test
+bundle exec rake test
 ```
 
 If you try to improve any performance issue, please add benchmarking and check the result of before and after.
 
 ```console
-$ bundle exec ruby benchmark/*
+bundle exec ruby benchmark/*
 ```
 
 ## Documents
