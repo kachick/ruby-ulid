@@ -18,9 +18,10 @@ class ULID
   class OverflowError < Error; end
   class ParserError < Error; end
 
+  encoding_string = '0123456789ABCDEFGHJKMNPQRSTVWXYZ'
   # Crockford's Base32. Excluded I, L, O, U.
   # @see https://www.crockford.com/base32.html
-  ENCODING_CHARS = '0123456789ABCDEFGHJKMNPQRSTVWXYZ'.chars.map(&:freeze).freeze
+  ENCODING_CHARS = encoding_string.chars.map(&:freeze).freeze
 
   TIME_PART_LENGTH = 10
   RANDOMNESS_PART_LENGTH = 16
@@ -30,6 +31,8 @@ class ULID
   OCTETS_LENGTH = TIME_OCTETS_LENGTH + RANDOMNESS_OCTETS_LENGTH
   MAX_MILLISECONDS = 281474976710655
   MAX_ENTROPY = 1208925819614629174706175
+  PATTERN = /(?<timestamp>[0-7][#{encoding_string}]{#{TIME_PART_LENGTH - 1}})(?<randomness>[#{encoding_string}]{#{RANDOMNESS_PART_LENGTH}})/i.freeze
+  STRICT_PATTERN = /\A#{PATTERN.source}\z/i.freeze
 
   # Same as Time#inspect since Ruby 2.7, just to keep backward compatibility
   # @see https://bugs.ruby-lang.org/issues/15958
