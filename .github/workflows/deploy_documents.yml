@@ -1,7 +1,7 @@
 name: Deploy documents
 on:
   push:
-    branches: [ main ]
+    branches: [ main, exclude-yard-product-from-main-again ]
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -19,7 +19,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          DATE=`"%Y%m%d-%H%M-UTC"`
+          DATE=`date +"%Y%m%d-%H%M-UTC"`
           BRANCH_NAME="documents-$DATE"
           git checkout -b "$BRANCH_NAME"
           bundle exec yard --output-dir docs
