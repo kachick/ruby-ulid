@@ -53,30 +53,46 @@ monotonic_ulids.sort == monotonic_ulids #=> true
 At first, you should install development dependencies
 
 ```console
+$ git clone git@github.com:kachick/ruby-ulid.git
+$ cd ./ruby-ulid
 $ bundle install
 ```
 
-Easy to play with the behaviors in REPL.
+Play with the behaviors in REPL.
 
 ```console
-$ bin/console
+$ ./bin/console
+ulid = ULID.generate #=> ULID(2021-04-27 17:27:22.826 UTC: 01F4A5Y1YAQCYAYCTC7GRMJ9AA)
 ```
 
-If you try to add features, please ensure exist test cases are not broken
+If you try to add/change/fix features, please update tests and ensure they are not broken.
 
 ```console
 $ bundle exec rake test
 ```
 
-If you try to improve any performance issue, please check the result of benchmarking before and after.
+If you try to improve any performance issue, please add benchmarking and check the result of before and after.
 
 ```console
 $ bundle exec ruby benchmark/*
 ```
 
-## Link
+## API Documentation
 
-* [API documentation](https://rubydoc.info/github/kachick/ruby-ulid/)
+[Hosted on rubydoc](https://rubydoc.info/github/kachick/ruby-ulid/), but it is not synched to latest one.
+Recommend to generate from source for now.
+
+```console
+$ bundle exec yard
+Files:           2
+Modules:         0 (    0 undocumented)
+Classes:         4 (    3 undocumented)
+Constants:      10 (   10 undocumented)
+Attributes:      4 (    0 undocumented)
+Methods:        23 (    0 undocumented)
+ 68.29% documented
+$ open ./doc/index.html
+```
 
 ## Author
 
