@@ -1,7 +1,7 @@
 name: Deploy documents
 on:
   push:
-    branches: [ main, exclude-yard-product-from-main-again ]
+    branches: [ main ]
 jobs:
   build:
     runs-on: ubuntu-latest
