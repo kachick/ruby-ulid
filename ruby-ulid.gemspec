@@ -22,7 +22,7 @@ Gem::Specification.new do |gem|
   gem.version       = ULID::VERSION
 
   gem.metadata = {
-    'documentation_uri' => "https://rubydoc.info/github/kachick/#{lib_name}/",
+    'documentation_uri' => 'https://kachick.github.io/ruby-ulid/',
     'homepage_uri'      => repository_url,
     'source_code_uri'   => repository_url,
   }
