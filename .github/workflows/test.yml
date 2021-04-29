@@ -1,4 +1,4 @@
-name: Testing workflow
+name: Unit tests
 on: [push, pull_request]
 jobs:
   test:
