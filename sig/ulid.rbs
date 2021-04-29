@@ -2,22 +2,36 @@
 class ULID
   VERSION: String
   ENCODING_CHARS: Array[String]
-  TIME_PART_LENGTH: Integer
-  RANDOMNESS_PART_LENGTH: Integer
-  ENCODED_ID_LENGTH: Integer
-  TIME_OCTETS_LENGTH: Integer
-  RANDOMNESS_OCTETS_LENGTH: Integer
-  OCTETS_LENGTH: Integer
-  MAX_MILLISECONDS: Integer
-  MAX_ENTROPY: Integer
-  TIME_FORMAT_IN_INSPECT: String
+  TIME_PART_LENGTH: 10
+  RANDOMNESS_PART_LENGTH: 16
+  ENCODED_ID_LENGTH: 26
+  TIME_OCTETS_LENGTH: 6
+  RANDOMNESS_OCTETS_LENGTH: 10
+  OCTETS_LENGTH: 16
+  MAX_MILLISECONDS: 281474976710655
+  MAX_ENTROPY: 1208925819614629174706175
+  TIME_FORMAT_IN_INSPECT: '%Y-%m-%d %H:%M:%S.%3N %Z'
   MONOTONIC_GENERATOR: MonotonicGenerator
   include Comparable
+
+  class Error < StandardError
+  end
+
+  class OverflowError < Error
+  end
+
+  class ParserError < Error
+  end
+
+  type octets = [Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer]
+  type time_octets = [Integer, Integer, Integer, Integer, Integer, Integer]
+  type randomness_octets = [Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer]
+
   @string: String
   @integer: Integer
-  @octets: Array[Integer]
-  @time_octets: Array[Integer]
-  @randomness_octets: Array[Integer]
+  @octets: octets
+  @time_octets: time_octets
+  @randomness_octets: randomness_octets
   @inspect: String
   @time: Time
   @next: ULID
@@ -33,38 +47,31 @@ class ULID
   attr_reader entropy: Integer
   def initialize: (milliseconds: Integer, entropy: Integer) -> void
   def to_str: -> String
-  def to_s: -> String
+  alias to_s to_str
   def to_i: -> Integer
-  def hash: -> Integer
-  def <=>: (untyped other) -> Integer?
+  alias hash to_i
+  def <=>: (ULID other) -> Integer
+         | (untyped other) -> Integer?
   def inspect: -> String
   def eql?: (untyped other) -> bool
-  def ==: (untyped other) -> bool
+  alias == eql?
   def ===: (untyped other) -> bool
   def to_time: -> Time
-  def octets: -> Array[Integer]
-  def time_octets: -> Array[Integer]
-  def randomness_octets: -> Array[Integer]
+  def octets: -> octets
+  def time_octets: -> time_octets
+  def randomness_octets: -> randomness_octets
   def next: -> ULID
-  def succ: -> ULID
+  alias succ next
   def freeze: -> self
 
   private
   def octets_from_integer: (Integer integer, length: Integer) -> Array[Integer]
   def inverse_of_digits: (Array[Integer] reversed_digits) -> Integer
 
-  class Error < StandardError
-  end
-
-  class OverflowError < Error
-  end
-
-  class ParserError < Error
-  end
-
   class MonotonicGenerator
     include Singleton
 
+    def self.instance: -> MonotonicGenerator
     attr_accessor latest_milliseconds: Integer?
     attr_accessor latest_entropy: Integer?
     def initialize: -> void

@@ -17,7 +17,7 @@ end
 
 namespace :signature do
   task :validate do
-    sh 'bundle exec rbs -rsingleton -I sig validate'
+    sh 'bundle exec rbs -rsecurerandom -rsingleton -I sig validate'
   end
 end
 

@@ -8,6 +8,10 @@ require 'integer/base'
 require_relative 'ulid/version'
 
 # @see https://github.com/ulid/spec
+# @!attribute [r] milliseconds
+#   @return [Integer]
+# @!attribute [r] entropy
+#   @return [Integer]
 class ULID
   include Comparable
 
@@ -41,6 +45,7 @@ class ULID
       reset
     end
 
+    # @raise [OverflowError] if the entropy part is larger than the ULID limit in same milliseconds
     # @return [ULID]
     def generate
       milliseconds = ULID.current_milliseconds
@@ -65,6 +70,7 @@ class ULID
       self
     end
 
+    # @raise [TypeError] always raises exception and does not freeze self
     # @return [void]
     def freeze
       raise TypeError, "cannot freeze #{self.class}"
@@ -83,6 +89,7 @@ class ULID
     new milliseconds: milliseconds, entropy: entropy
   end
 
+  # @raise [OverflowError] if the entropy part is larger than the ULID limit in same milliseconds
   # @return [ULID]
   def self.monotonic_generate
     MONOTONIC_GENERATOR.generate
@@ -106,6 +113,8 @@ class ULID
 
   # @param [String, #to_str] string
   # @return [ULID]
+  # @raise [ParserError] if the given format is not correct for ULID specs
+  # @raise [OverflowError] if the given value is larger than the ULID limit
   def self.parse(string)
     begin
       string = string.to_str
@@ -134,6 +143,11 @@ class ULID
 
   attr_reader :milliseconds, :entropy
 
+  # @param [Integer] milliseconds
+  # @param [Integer] entropy
+  # @return [void]
+  # @raise [OverflowError] if the given value is larger than the ULID limit
+  # @raise [ArgumentError] if the given milliseconds and/or entropy is negative number
   def initialize(milliseconds:, entropy:)
     milliseconds = milliseconds.to_int
     entropy = entropy.to_int
@@ -194,21 +208,22 @@ class ULID
     @time ||= Time.at(0, @milliseconds, :millisecond).utc
   end
 
-  # @return [Array<Integer>]
+  # @return [Array(Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer)]
   def octets
     @octets ||= (time_octets + randomness_octets).freeze
   end
 
-  # @return [Array<Integer>]
+  # @return [Array(Integer, Integer, Integer, Integer, Integer, Integer)]
   def time_octets
     @time_octets ||= octets_from_integer(@milliseconds, length: TIME_OCTETS_LENGTH).freeze
   end
 
-  # @return [Array<Integer>]
+  # @return [Array(Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer)]
   def randomness_octets
     @randomness_octets ||= octets_from_integer(@entropy, length: RANDOMNESS_OCTETS_LENGTH).freeze
   end
 
+  # @raise [OverflowError] if the next entropy part is larger than the ULID limit
   # @return [ULID]
   def next
     @next ||= self.class.new(milliseconds: @milliseconds, entropy: @entropy + 1)
