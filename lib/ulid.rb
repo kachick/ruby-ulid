@@ -79,7 +79,7 @@ class ULID
   # @param [Integer] entropy
   # @return [ULID]
   def self.generate(moment: current_milliseconds, entropy: reasonable_entropy)
-    milliseconds = moment.kind_of?(Time) ? (moment.to_r * 1000).to_i : moment.to_int
+    milliseconds = moment.kind_of?(Time) ? time_to_milliseconds(moment) : moment
     new milliseconds: milliseconds, entropy: entropy
   end
 
