@@ -15,6 +15,9 @@ A handy `ULID` library
 
 The `ULID` spec is defined on [ulid/spec](https://github.com/ulid/spec).
 Formal name is `Universally Unique Lexicographically Sortable Identifier`.
+It has useful specs for actual applications.
+This gem aims to provide the generator, monotonic generator, parser and handy manipulation methods for the ID.
+Also having rbs signature files.
 
 ## Universally Unique Lexicographically Sortable Identifier
 
