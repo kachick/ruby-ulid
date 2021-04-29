@@ -69,8 +69,9 @@ ulids = 10000.times.map do
 end
 ulids.sort == ulids #=> false
 
+monotonic_generator = ULID::MonotonicGenerator.new
 monotonic_ulids = 10000.times.map do
-  ULID.monotonic_generate
+  monotonic_generator.generate
 end
 monotonic_ulids.sort == monotonic_ulids #=> true
 ```
