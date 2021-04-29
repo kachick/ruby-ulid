@@ -39,6 +39,6 @@ Gem::Specification.new do |gem|
 
   gem.authors       = ['Kenichi Kamiya']
   gem.email         = ['kachick1+ruby@gmail.com']
-  gem.files         = `git ls-files`.split($\)
+  gem.files         = `git ls-files`.lines.map(&:chomp).grep(%r!\A(?:lib|sig)/!)
   gem.require_paths = ['lib']
 end
