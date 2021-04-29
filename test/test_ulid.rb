@@ -1,9 +1,13 @@
-# coding: us-ascii
+# coding: utf-8
 # frozen_string_literal: true
 
 require_relative 'helper'
 
 class TestULID < Test::Unit::TestCase
+  def setup
+    assert_equal(Encoding::UTF_8, ''.encoding)
+  end
+
   def test_parse
     parsed = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
     assert_instance_of(ULID, parsed)
@@ -142,6 +146,7 @@ class TestULID < Test::Unit::TestCase
   def test_to_str
     ulid = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
     assert_equal('01ARZ3NDEKTSV4RRFFQ69G5FAV', ulid.to_str)
+    assert_equal(Encoding::US_ASCII, ulid.to_str.encoding)
   end
 
   def test_inspect
@@ -150,6 +155,7 @@ class TestULID < Test::Unit::TestCase
     assert_same(ulid.inspect, ulid.inspect)
     assert_equal(true, ulid.inspect.frozen?)
     assert_not_equal(ulid.to_s, ulid.inspect)
+    assert_equal(Encoding::US_ASCII, ulid.inspect.encoding)
   end
 
   def test_to_i
