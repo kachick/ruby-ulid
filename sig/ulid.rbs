@@ -23,6 +23,15 @@ class ULID
   class ParserError < Error
   end
 
+  class MonotonicGenerator
+    attr_accessor latest_milliseconds: Integer?
+    attr_accessor latest_entropy: Integer?
+    def initialize: -> void
+    def generate: -> ULID
+    def reset: -> void
+    def freeze: -> void
+  end
+
   type octets = [Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer]
   type time_octets = [Integer, Integer, Integer, Integer, Integer, Integer]
   type randomness_octets = [Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer]
@@ -67,16 +76,4 @@ class ULID
   private
   def octets_from_integer: (Integer integer, length: Integer) -> Array[Integer]
   def inverse_of_digits: (Array[Integer] reversed_digits) -> Integer
-
-  class MonotonicGenerator
-    include Singleton
-
-    def self.instance: -> MonotonicGenerator
-    attr_accessor latest_milliseconds: Integer?
-    attr_accessor latest_entropy: Integer?
-    def initialize: -> void
-    def generate: -> ULID
-    def reset: -> void
-    def freeze: -> void
-  end
 end

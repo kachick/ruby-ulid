@@ -89,14 +89,6 @@ class TestULID < Test::Unit::TestCase
     assert_equal(entropy, ULID.generate(entropy: entropy).entropy)
   end
 
-  def test_monotonic_generate
-    assert_instance_of(ULID, ULID.monotonic_generate)
-    assert_not_equal(ULID.monotonic_generate, ULID.monotonic_generate)
-    first = ULID.monotonic_generate
-    second = ULID.monotonic_generate
-    assert_equal(true, second > first)
-  end
-
   def test_eq
     assert_equal(ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV'), ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV'))
     assert_not_equal(ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV').to_s, ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV'))
@@ -223,10 +215,6 @@ class TestULID < Test::Unit::TestCase
     assert_same(ulid, ulid.freeze)
     assert_equal(true, ulid.frozen?)
   end
-
-  def teardown
-    ULID::MONOTONIC_GENERATOR.reset
-  end
 end
 
 class TestBoundaryULID < Test::Unit::TestCase
@@ -254,10 +242,6 @@ class TestBoundaryULID < Test::Unit::TestCase
   def test_octets
     assert_equal([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], @min.octets)
     assert_equal([255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255], @max.octets)
-  end
-
-  def teardown
-    ULID::MONOTONIC_GENERATOR.reset
   end
 end
 
@@ -291,10 +275,6 @@ class TestFrozenULID < Test::Unit::TestCase
   def test_next
     assert_equal(true, @ulid < @ulid.next)
   end
-
-  def teardown
-    ULID::MONOTONIC_GENERATOR.reset
-  end
 end
 
 class TestBigData < Test::Unit::TestCase
@@ -310,51 +290,5 @@ class TestBigData < Test::Unit::TestCase
     assert_equal(1000, ulids.map(&:to_s).uniq.size)
     assert_equal(true, (5..50).cover?(ulids.group_by(&:to_time).size))
     assert_not_equal(ulids, ulids.sort_by(&:to_s))
-  end
-
-  def test_monotonic_generate
-    ulids = 1000.times.map do |n|
-      if (n % 100).zero?
-        sleep(0.01)
-      end
-
-      ULID.monotonic_generate
-    end
-
-    assert_equal(1000, ulids.map(&:to_s).uniq.size)
-    assert_equal(true, (5..50).cover?(ulids.group_by(&:to_time).size))
-    assert_equal(ulids, ulids.sort_by(&:to_s))
-    assert_equal(ulids, ulids.sort_by(&:to_i))
-    assert_equal(ulids, ulids.sort)
-  end
-
-  def teardown
-    ULID::MONOTONIC_GENERATOR.reset
-  end
-end
-
-class TestMonotonicGenerator < Test::Unit::TestCase
-  def test_freeze
-    assert_raises(TypeError) do
-      ULID::MONOTONIC_GENERATOR.freeze
-    end
-
-    assert_equal(false, ULID::MONOTONIC_GENERATOR.frozen?)
-  end
-
-  def test_attributes
-    id = BasicObject.new
-    assert_nil(ULID::MONOTONIC_GENERATOR.latest_milliseconds)
-    assert_nil(ULID::MONOTONIC_GENERATOR.latest_entropy)
-
-    ULID::MONOTONIC_GENERATOR.latest_milliseconds = id
-    ULID::MONOTONIC_GENERATOR.latest_entropy = id
-
-    assert_same(id, ULID::MONOTONIC_GENERATOR.latest_milliseconds)
-    assert_same(id, ULID::MONOTONIC_GENERATOR.latest_entropy)
-  end
-
-  def teardown
-    ULID::MONOTONIC_GENERATOR.reset
   end
 end

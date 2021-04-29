@@ -3,7 +3,6 @@
 # Copyright (C) 2021 Kenichi Kamiya
 
 require 'securerandom'
-require 'singleton'
 require 'integer/base'
 require_relative 'ulid/version'
 
@@ -37,8 +36,6 @@ class ULID
   TIME_FORMAT_IN_INSPECT = '%Y-%m-%d %H:%M:%S.%3N %Z'
 
   class MonotonicGenerator
-    include Singleton
-
     attr_accessor :latest_milliseconds, :latest_entropy
 
     def initialize
@@ -77,9 +74,9 @@ class ULID
     end
   end
 
-  MONOTONIC_GENERATOR = MonotonicGenerator.instance
+  MONOTONIC_GENERATOR = MonotonicGenerator.new
 
-  private_constant :ENCODING_CHARS, :TIME_FORMAT_IN_INSPECT, :MonotonicGenerator
+  private_constant :ENCODING_CHARS, :TIME_FORMAT_IN_INSPECT
 
   # @param [Integer, Time] moment
   # @param [Integer] entropy
@@ -89,9 +86,17 @@ class ULID
     new milliseconds: milliseconds, entropy: entropy
   end
 
+  # @deprecated This method actually changes class state. Use {ULID::MonotonicGenerator} instead.
   # @raise [OverflowError] if the entropy part is larger than the ULID limit in same milliseconds
   # @return [ULID]
   def self.monotonic_generate
+    warning = "`ULID.monotonic_generate` actually changes class state. Use `ULID::MonotonicGenerator` instead."
+    if RUBY_VERSION >= '3.0'
+      Warning.warn(warning, category: :deprecated)
+    else
+      Warning.warn(warning)
+    end
+
     MONOTONIC_GENERATOR.generate
   end
 
