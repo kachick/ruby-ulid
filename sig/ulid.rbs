@@ -5,7 +5,7 @@ class ULID
   TIME_PART_LENGTH: 10
   RANDOMNESS_PART_LENGTH: 16
   ENCODED_ID_LENGTH: 26
-  TIME_OCTETS_LENGTH: 6
+  TIMESTAMP_OCTETS_LENGTH: 6
   RANDOMNESS_OCTETS_LENGTH: 10
   OCTETS_LENGTH: 16
   MAX_MILLISECONDS: 281474976710655
@@ -35,17 +35,24 @@ class ULID
   end
 
   type octets = [Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer]
-  type time_octets = [Integer, Integer, Integer, Integer, Integer, Integer]
+  type timestamp_octets = [Integer, Integer, Integer, Integer, Integer, Integer]
   type randomness_octets = [Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer]
 
-  @string: String
-  @integer: Integer
-  @octets: octets
-  @time_octets: time_octets
-  @randomness_octets: randomness_octets
-  @inspect: String
-  @time: Time
-  @next: ULID
+  @milliseconds: Integer
+  @entropy: Integer
+  @string: String?
+  @integer: Integer?
+  @octets: octets?
+  @timestamp_octets: timestamp_octets?
+  @randomness_octets: randomness_octets?
+  @timestamp: String?
+  @randomness: String?
+  @inspect: String?
+  @time: Time?
+  @next: ULID?
+  @pattern: Regexp?
+  @strict_pattern: Regexp?
+  @matchdata: MatchData?
 
   def self.generate: (?moment: Time | Integer, ?entropy: Integer) -> ULID
   def self.monotonic_generate: -> ULID
@@ -68,8 +75,12 @@ class ULID
   alias == eql?
   def ===: (untyped other) -> bool
   def to_time: -> Time
+  def timestamp: -> String
+  def randomness: -> String
+  def pattern: -> Regexp
+  def strict_pattern: -> Regexp
   def octets: -> octets
-  def time_octets: -> time_octets
+  def timestamp_octets: -> timestamp_octets
   def randomness_octets: -> randomness_octets
   def next: -> ULID
   alias succ next
@@ -78,4 +89,5 @@ class ULID
   private
   def octets_from_integer: (Integer integer, length: Integer) -> Array[Integer]
   def inverse_of_digits: (Array[Integer] reversed_digits) -> Integer
+  def matchdata: -> MatchData
 end

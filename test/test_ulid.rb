@@ -95,6 +95,52 @@ class TestULID < Test::Unit::TestCase
     assert_equal({'timestamp' => '01ARZ3NDEK', 'randomness' => 'TSV4RRFFQ69G5FAV'}, ULID::STRICT_PATTERN.match('01ARZ3NDEKTSV4RRFFQ69G5FAV').named_captures)
   end
 
+  def test_timestamp
+    ulid = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
+    assert_equal('01ARZ3NDEK', ulid.timestamp)
+    assert_instance_of(String, ulid.timestamp)
+    assert_same(ulid.timestamp, ulid.timestamp)
+    assert_equal(true, ulid.timestamp.frozen?)
+    assert_equal(Encoding::US_ASCII, ulid.timestamp.encoding)
+  end
+
+  def test_randomness
+    ulid = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
+    assert_equal('TSV4RRFFQ69G5FAV', ulid.randomness)
+    assert_instance_of(String, ulid.randomness)
+    assert_same(ulid.randomness, ulid.randomness)
+    assert_equal(true, ulid.randomness.frozen?)
+    assert_equal(Encoding::US_ASCII, ulid.randomness.encoding)
+  end
+
+  def test_pattern
+    ulid = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
+    assert_instance_of(Regexp, ulid.pattern)
+    assert_same(ulid.pattern, ulid.pattern)
+    assert_equal(true, ulid.pattern.frozen?)
+    assert_equal(Encoding::US_ASCII, ulid.pattern.encoding)
+    assert_equal(true, ulid.pattern.casefold?)
+    assert_equal(true, ulid.pattern.match?(ulid.to_s))
+    assert_equal(true, ulid.pattern.match?(ulid.to_s + "\n"))
+    assert_equal(true, ulid.pattern.match?(ulid.to_s.downcase))
+    assert_equal(false, ulid.pattern.match?(ulid.next.to_s))
+    assert_equal({'timestamp' => '01ARZ3NDEK', 'randomness' => 'TSV4RRFFQ69G5FAV'}, ulid.pattern.match(ulid.to_s + "\n").named_captures)
+  end
+
+  def test_strict_pattern
+    ulid = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
+    assert_instance_of(Regexp, ulid.strict_pattern)
+    assert_same(ulid.strict_pattern, ulid.strict_pattern)
+    assert_equal(true, ulid.strict_pattern.frozen?)
+    assert_equal(Encoding::US_ASCII, ulid.strict_pattern.encoding)
+    assert_equal(true, ulid.strict_pattern.casefold?)
+    assert_equal(true, ulid.strict_pattern.match?(ulid.to_s))
+    assert_equal(false, ulid.strict_pattern.match?(ulid.to_s + "\n"))
+    assert_equal(true, ulid.strict_pattern.match?(ulid.to_s.downcase))
+    assert_equal(false, ulid.strict_pattern.match?(ulid.next.to_s))
+    assert_equal({'timestamp' => '01ARZ3NDEK', 'randomness' => 'TSV4RRFFQ69G5FAV'}, ulid.strict_pattern.match(ulid.to_s).named_captures)
+  end
+
   def test_overflow
     assert_raises(ULID::OverflowError) do
       ULID.parse('80000000000000000000000000')
@@ -208,11 +254,11 @@ class TestULID < Test::Unit::TestCase
     assert_equal(true, ulid.octets.frozen?)
   end
 
-  def test_time_octets
+  def test_timestamp_octets
     ulid = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
-    assert_equal([1, 86, 62, 58, 181, 211], ulid.time_octets)
-    assert_same(ulid.time_octets, ulid.time_octets)
-    assert_equal(true, ulid.time_octets.frozen?)
+    assert_equal([1, 86, 62, 58, 181, 211], ulid.timestamp_octets)
+    assert_same(ulid.timestamp_octets, ulid.timestamp_octets)
+    assert_equal(true, ulid.timestamp_octets.frozen?)
   end
 
   def test_randomness_octets
