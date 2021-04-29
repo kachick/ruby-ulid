@@ -174,6 +174,22 @@ class ULID
   end
   alias_method :==, :eql?
 
+  # @return [Boolean]
+  def ===(other)
+    case other
+    when ULID
+      self == other
+    when String
+      begin
+        self == self.class.parse(other)
+      rescue Exception
+        false
+      end
+    else
+      false
+    end
+  end
+
   # @return [Time]
   def to_time
     @time ||= Time.at(0, @milliseconds, :millisecond).utc

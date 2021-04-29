@@ -95,8 +95,37 @@ class TestULID < Test::Unit::TestCase
 
   def test_eq
     assert_equal(ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV'), ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV'))
+    assert_not_equal(ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV').to_s, ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV'))
     assert_not_same(ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV'), ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV'))
     assert_not_equal(ULID.parse('01BX5ZZKBKACTAV9WEVGEMMVRZ'), ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV'))
+  end
+
+  def test_eqq
+    assert_equal(true, ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV') === ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV'))
+    assert_equal(false, ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV') === ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV').next)
+    assert_equal(true, ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV') === '01ARZ3NDEKTSV4RRFFQ69G5FAV')
+    assert_equal(true, ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV') === '01ARZ3NDEKTSV4RRFFQ69G5FAV'.downcase)
+    assert_equal(false, ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV') === ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV').next.to_s)
+    assert_equal(false, ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV') === '')
+    assert_equal(false, ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV') === nil)
+    assert_equal(false, ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV') === BasicObject.new)
+
+    grepped = [
+      typical_string = '01ARZ3NDEKTSV4RRFFQ69G5FAV',
+      downcased_string = typical_string.downcase,
+      typical_object = ULID.parse(typical_string),
+      ULID.parse(typical_string).next,
+      '',
+      nil
+    ].grep(ULID.parse(typical_string))
+    assert_equal(
+      [
+        typical_string,
+        downcased_string,
+        typical_object
+      ],
+      grepped
+    )
   end
 
   def test_sortable
