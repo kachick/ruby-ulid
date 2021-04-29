@@ -77,6 +77,13 @@ end
 monotonic_ulids.sort == monotonic_ulids #=> true
 ```
 
+Providing converter for UUIDv4. (Of course the timestamp will be useless one.)
+
+```ruby
+ULID.from_uuidv4('0983d0a2-ff15-4d83-8f37-7dd945b5aa39')
+#=> ULID(2301-07-10 00:28:28.821 UTC: 09GF8A5ZRN9P1RYDVXV52VBAHS)
+```
+
 ## Development
 
 At first, you should install development dependencies

@@ -203,6 +203,51 @@ class TestULID < Test::Unit::TestCase
     assert_equal(ulids, ulids.sort)
   end
 
+  def test_from_uuidv4
+    # The example value was taken from https://github.com/ahawker/ulid/tree/96bdb1daad7ce96f6db8c91ac0410b66d2e1c4c1#usage
+    assert_equal(ULID.parse('09GF8A5ZRN9P1RYDVXV52VBAHS'), ULID.from_uuidv4('0983d0a2-ff15-4d83-8f37-7dd945b5aa39'))
+    assert_equal(ULID.parse('09GF8A5ZRN9P1RYDVXV52VBAHS'), ULID.from_uuidv4('urn:uuid:0983d0a2-ff15-4d83-8f37-7dd945b5aa39'))
+
+    # Rough tests
+    ulids = 1000.times.map do
+      ULID.from_uuidv4(SecureRandom.uuid)
+    end
+    assert_equal(true, ulids.uniq == ulids)
+
+    # Ensure some invalid patterns (I'd like to add more examples)
+    [
+      '0983d0a2-ff15-4d83-8f37-7dd945b5aa3', # Shortage
+      '0983d0a2-ff15-4d83-8f37-7dd945b5aa390', # Excess
+      "0983d0a2-ff15-4d83-8f37-7dd945b5aa39\n", # Line end
+      '0983d0a2-ff15-4d83-8f37--7dd945b5aa39' # `-` excess
+    ].each do |invalid_uuidv4|
+      assert_raises(ULID::ParserError) do
+        ULID.from_uuidv4(invalid_uuidv4)
+      end
+    end
+  end
+
+  def test_from_integer
+    min = ULID.parse('00000000000000000000000000')
+    max = ULID.parse('7ZZZZZZZZZZZZZZZZZZZZZZZZZ')
+
+    assert_equal(ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV'), ULID.from_integer(ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV').to_i))
+    assert_equal(min, ULID.from_integer(min.to_i))
+    assert_equal(max, ULID.from_integer(max.to_i))
+
+    assert_raises(ArgumentError) do
+      ULID.from_integer(-1)
+    end
+
+    assert_raises(ULID::OverflowError) do
+      ULID.from_integer(max.to_i.succ)
+    end
+
+    assert_raises do
+      ULID.from_integer(nil)
+    end
+  end
+
   def test_eq
     assert_equal(ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV'), ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV'))
     assert_not_equal(ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV').to_s, ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV'))
@@ -348,6 +393,7 @@ class TestBoundaryULID < Test::Unit::TestCase
   def test_constants
     assert_equal(ULID::MAX_MILLISECONDS, @max.milliseconds)
     assert_equal(ULID::MAX_ENTROPY, @max.entropy)
+    assert_equal(ULID::MAX_INTEGER, @max.to_i)
   end
 
   def test_overflow
