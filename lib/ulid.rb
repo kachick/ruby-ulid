@@ -111,7 +111,7 @@ class ULID
     string = string.to_str
     return to_enum(__callee__, string) unless block_given?
     string.scan(PATTERN) do |pair|
-      yield ULID.parse(pair.join)
+      yield parse(pair.join)
     end
     self
   end
