@@ -178,8 +178,13 @@ class TestULID < Test::Unit::TestCase
     assert_instance_of(ULID, ULID.generate)
     assert_not_equal(ULID.generate, ULID.generate)
 
-    time = Time.now
-    assert_equal(Time.at(0, ULID.time_to_milliseconds(time), :millisecond), ULID.generate(moment: time).to_time)
+    time = Time.at(946684800, Rational('123456.789')).utc
+    ulid = ULID.generate(moment: time)
+    assert_not_equal(time, ulid.to_time)
+    assert_equal(true, ulid.to_time < time)
+    if RUBY_VERSION >= '2.7'
+      assert_equal(time.floor(3), ulid.to_time)
+    end
     milliseconds = 42
     assert_equal(Time.at(0, milliseconds, :millisecond), ULID.generate(moment: milliseconds).to_time)
 
