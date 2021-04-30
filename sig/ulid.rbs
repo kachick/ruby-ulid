@@ -10,9 +10,11 @@ class ULID
   OCTETS_LENGTH: 16
   MAX_MILLISECONDS: 281474976710655
   MAX_ENTROPY: 1208925819614629174706175
+  MAX_INTEGER: 340282366920938463463374607431768211455
   TIME_FORMAT_IN_INSPECT: '%Y-%m-%d %H:%M:%S.%3N %Z'
   PATTERN: Regexp
   STRICT_PATTERN: Regexp
+  UUIDV4_PATTERN: Regexp
   MONOTONIC_GENERATOR: MonotonicGenerator
   include Comparable
 
@@ -60,9 +62,13 @@ class ULID
   def self.time_to_milliseconds: (Time time) -> Integer
   def self.reasonable_entropy: -> Integer
   def self.parse: (String string) -> ULID
+  def self.from_uuidv4: (String uuid) -> ULID
+  def self.from_integer: (Integer integer) -> ULID
   def self.valid?: (untyped string) -> bool
   def self.scan:  (String string) -> Enumerator[ULID, singleton(ULID)]
                 | (String string) { (ULID ulid) -> void } -> singleton(ULID)
+  def self.octets_from_integer: (Integer integer, length: Integer) -> Array[Integer]
+  def self.inverse_of_digits: (Array[Integer] reversed_digits) -> Integer
   attr_reader milliseconds: Integer
   attr_reader entropy: Integer
   def initialize: (milliseconds: Integer, entropy: Integer) -> void
@@ -89,7 +95,5 @@ class ULID
   def freeze: -> self
 
   private
-  def octets_from_integer: (Integer integer, length: Integer) -> Array[Integer]
-  def inverse_of_digits: (Array[Integer] reversed_digits) -> Integer
   def matchdata: -> MatchData
 end

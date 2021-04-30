@@ -31,8 +31,12 @@ class ULID
   OCTETS_LENGTH = TIMESTAMP_OCTETS_LENGTH + RANDOMNESS_OCTETS_LENGTH
   MAX_MILLISECONDS = 281474976710655
   MAX_ENTROPY = 1208925819614629174706175
+  MAX_INTEGER = 340282366920938463463374607431768211455
   PATTERN = /(?<timestamp>[0-7][#{encoding_string}]{#{TIME_PART_LENGTH - 1}})(?<randomness>[#{encoding_string}]{#{RANDOMNESS_PART_LENGTH}})/i.freeze
   STRICT_PATTERN = /\A#{PATTERN.source}\z/i.freeze
+
+  # Imported from https://stackoverflow.com/a/38191104/1212807, thank you!
+  UUIDV4_PATTERN = /\A[0-9A-F]{8}-[0-9A-F]{4}-[4][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}\z/i
 
   # Same as Time#inspect since Ruby 2.7, just to keep backward compatibility
   # @see https://bugs.ruby-lang.org/issues/15958
@@ -79,7 +83,7 @@ class ULID
 
   MONOTONIC_GENERATOR = MonotonicGenerator.new
 
-  private_constant :ENCODING_CHARS, :TIME_FORMAT_IN_INSPECT
+  private_constant :ENCODING_CHARS, :TIME_FORMAT_IN_INSPECT, :UUIDV4_PATTERN
 
   # @param [Integer, Time] moment
   # @param [Integer] entropy
@@ -114,6 +118,39 @@ class ULID
       yield parse(pair.join)
     end
     self
+  end
+
+  # @param [String, #to_str] uuid
+  # @return [ULID]
+  # @raise [ParserError] if the given format is not correct for UUIDv4 specs
+  def self.from_uuidv4(uuid)
+    begin
+      uuid = uuid.to_str
+      prefix_trimmed = uuid.sub(/\Aurn:uuid:/, '')
+      raise "given string is not matched to pattern #{UUIDV4_PATTERN.inspect}" unless UUIDV4_PATTERN.match?(prefix_trimmed)
+      normalized = prefix_trimmed.gsub(/[^0-9A-Fa-f]/, '')
+      from_integer(normalized.to_i(16))
+    rescue => err
+      raise ParserError, "parsing failure as #{err.inspect} for given #{uuid}"
+    end
+  end
+
+  # @param [Integer, #to_int] integer
+  # @return [ULID]
+  # @raise [OverflowError] if the given integer is larger than the ULID limit
+  # @raise [ArgumentError] if the given integer is negative number
+  def self.from_integer(integer)
+    integer = integer.to_int
+    raise OverflowError, "integer overflow: given #{integer}, max: #{MAX_INTEGER}" unless integer <= MAX_INTEGER
+    raise ArgumentError, "integer should not be negative: given: #{integer}" if integer.negative?
+
+    octets = octets_from_integer(integer, length: OCTETS_LENGTH).freeze
+    time_octets = octets.slice(0, TIMESTAMP_OCTETS_LENGTH).freeze
+    randomness_octets = octets.slice(TIMESTAMP_OCTETS_LENGTH, RANDOMNESS_OCTETS_LENGTH).freeze
+    milliseconds = inverse_of_digits(time_octets)
+    entropy = inverse_of_digits(randomness_octets)
+
+    new milliseconds: milliseconds, entropy: entropy
   end
 
   # @return [Integer]
@@ -162,6 +199,29 @@ class ULID
     true
   end
 
+  # @param [Integer] integer
+  # @param [Integer] length
+  # @return [Array<Integer>]
+  def self.octets_from_integer(integer, length:)
+    digits = integer.digits(256)
+    (length - digits.size).times do
+      digits.push 0
+    end
+    digits.reverse!
+  end
+
+  # @see The logics taken from https://bugs.ruby-lang.org/issues/14401, thanks!
+  # @param [Array<Integer>] reversed_digits
+  # @return [Integer]
+  def self.inverse_of_digits(reversed_digits)
+    base = 256
+    num = 0
+    reversed_digits.each do |digit|
+      num = (num * base) + digit
+    end
+    num
+  end
+
   attr_reader :milliseconds, :entropy
 
   # @param [Integer] milliseconds
@@ -188,7 +248,7 @@ class ULID
 
   # @return [Integer]
   def to_i
-    @integer ||= inverse_of_digits(octets)
+    @integer ||= self.class.inverse_of_digits(octets)
   end
   alias_method :hash, :to_i
 
@@ -236,12 +296,12 @@ class ULID
 
   # @return [Array(Integer, Integer, Integer, Integer, Integer, Integer)]
   def timestamp_octets
-    @timestamp_octets ||= octets_from_integer(@milliseconds, length: TIMESTAMP_OCTETS_LENGTH).freeze
+    @timestamp_octets ||= self.class.octets_from_integer(@milliseconds, length: TIMESTAMP_OCTETS_LENGTH).freeze
   end
 
   # @return [Array(Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer)]
   def randomness_octets
-    @randomness_octets ||= octets_from_integer(@entropy, length: RANDOMNESS_OCTETS_LENGTH).freeze
+    @randomness_octets ||= self.class.octets_from_integer(@entropy, length: RANDOMNESS_OCTETS_LENGTH).freeze
   end
 
   # @return [String]
@@ -287,28 +347,5 @@ class ULID
   # @return [MatchData]
   def matchdata
     @matchdata ||= STRICT_PATTERN.match(to_str).freeze
-  end
-
-  # @param [Integer] integer
-  # @param [Integer] length
-  # @return [Array<Integer>]
-  def octets_from_integer(integer, length:)
-    digits = integer.digits(256)
-    (length - digits.size).times do
-      digits.push 0
-    end
-    digits.reverse!
-  end
-
-  # @see The logics taken from https://bugs.ruby-lang.org/issues/14401, thanks!
-  # @param [Array<Integer>] reversed_digits
-  # @return [Integer]
-  def inverse_of_digits(reversed_digits)
-    base = 256
-    num = 0
-    reversed_digits.each do |digit|
-      num = (num * base) + digit
-    end
-    num
   end
 end
