@@ -94,7 +94,7 @@ class TestULID < Test::Unit::TestCase
       ULID.parse('01F4GND4RYYSKNAADHQ9BNXAWJ'),
     ]
     assert_equal(expectation, yielded)
-    assert_equal(2, expectation.tally.fetch(ULID.parse('01F4GNBXW1AM2KWW52PVT3ZY9X')))
+    assert_equal(2, expectation.count(ULID.parse('01F4GNBXW1AM2KWW52PVT3ZY9X')))
   end
 
   def test_constant_regexp
