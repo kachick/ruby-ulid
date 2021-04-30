@@ -3,17 +3,19 @@ require 'bundler/gem_tasks'
 
 require 'rake/testtask'
 
-default_tasks = [:test, :test_yard]
-if Gem::Version.create(RUBY_VERSION) >= Gem::Version.create('2.6.0')
-  default_tasks << :'signature:validate'
-end
-task default: default_tasks
+task default: [:test]
 
 Rake::TestTask.new do |tt|
   tt.pattern = 'test/**/test_*.rb'
   tt.verbose = true
   tt.warning = true
 end
+
+sub_tests = [:test_yard]
+if Gem::Version.create(RUBY_VERSION) >= Gem::Version.create('2.6.0')
+  sub_tests << :'signature:validate'
+end
+task sub_test: sub_tests
 
 namespace :signature do
   task :validate do
