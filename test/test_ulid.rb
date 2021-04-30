@@ -270,8 +270,15 @@ class TestULID < Test::Unit::TestCase
 
   def test_to_time
     ulid = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
-    assert_equal(Time.at(0, 1469922850259, :millisecond).utc, ulid.to_time)
-    assert_same(ulid.to_time, ulid.to_time)
+    time = ulid.to_time
+    assert_equal(Time.at(0, 1469922850259, :millisecond).utc, time)
+    assert_equal(true, time.utc?)
+    assert_same(ulid.to_time, time)
+    assert_equal(true, time.frozen?)
+
+    assert_raises(FrozenError) do
+      time.localtime(time.utc_offset.succ)
+    end
   end
 
   def test_octets
