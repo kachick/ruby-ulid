@@ -61,6 +61,8 @@ class ULID
   def self.reasonable_entropy: -> Integer
   def self.parse: (String string) -> ULID
   def self.valid?: (untyped string) -> bool
+  def self.scan:  (String string) -> Enumerator[ULID, singleton(ULID)]
+                | (String string) { (ULID ulid) -> void } -> singleton(ULID)
   attr_reader milliseconds: Integer
   attr_reader entropy: Integer
   def initialize: (milliseconds: Integer, entropy: Integer) -> void

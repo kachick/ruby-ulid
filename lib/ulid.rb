@@ -103,6 +103,19 @@ class ULID
     MONOTONIC_GENERATOR.generate
   end
 
+  # @param [String, #to_str] string
+  # @return [Enumerator]
+  # @yieldparam [ULID] ulid
+  # @yieldreturn [self]
+  def self.scan(string)
+    string = string.to_str
+    return to_enum(__callee__, string) unless block_given?
+    string.scan(PATTERN) do |pair|
+      yield ULID.parse(pair.join)
+    end
+    self
+  end
+
   # @return [Integer]
   def self.current_milliseconds
     time_to_milliseconds(Time.now)
