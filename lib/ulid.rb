@@ -18,18 +18,21 @@ class ULID
   class OverflowError < Error; end
   class ParserError < Error; end
 
+  encoding_string = '0123456789ABCDEFGHJKMNPQRSTVWXYZ'
   # Crockford's Base32. Excluded I, L, O, U.
   # @see https://www.crockford.com/base32.html
-  ENCODING_CHARS = '0123456789ABCDEFGHJKMNPQRSTVWXYZ'.chars.map(&:freeze).freeze
+  ENCODING_CHARS = encoding_string.chars.map(&:freeze).freeze
 
   TIME_PART_LENGTH = 10
   RANDOMNESS_PART_LENGTH = 16
   ENCODED_ID_LENGTH = TIME_PART_LENGTH + RANDOMNESS_PART_LENGTH
-  TIME_OCTETS_LENGTH = 6
+  TIMESTAMP_OCTETS_LENGTH = 6
   RANDOMNESS_OCTETS_LENGTH = 10
-  OCTETS_LENGTH = TIME_OCTETS_LENGTH + RANDOMNESS_OCTETS_LENGTH
+  OCTETS_LENGTH = TIMESTAMP_OCTETS_LENGTH + RANDOMNESS_OCTETS_LENGTH
   MAX_MILLISECONDS = 281474976710655
   MAX_ENTROPY = 1208925819614629174706175
+  PATTERN = /(?<timestamp>[0-7][#{encoding_string}]{#{TIME_PART_LENGTH - 1}})(?<randomness>[#{encoding_string}]{#{RANDOMNESS_PART_LENGTH}})/i.freeze
+  STRICT_PATTERN = /\A#{PATTERN.source}\z/i.freeze
 
   # Same as Time#inspect since Ruby 2.7, just to keep backward compatibility
   # @see https://bugs.ruby-lang.org/issues/15958
@@ -215,17 +218,37 @@ class ULID
 
   # @return [Array(Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer)]
   def octets
-    @octets ||= (time_octets + randomness_octets).freeze
+    @octets ||= (timestamp_octets + randomness_octets).freeze
   end
 
   # @return [Array(Integer, Integer, Integer, Integer, Integer, Integer)]
-  def time_octets
-    @time_octets ||= octets_from_integer(@milliseconds, length: TIME_OCTETS_LENGTH).freeze
+  def timestamp_octets
+    @timestamp_octets ||= octets_from_integer(@milliseconds, length: TIMESTAMP_OCTETS_LENGTH).freeze
   end
 
   # @return [Array(Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer)]
   def randomness_octets
     @randomness_octets ||= octets_from_integer(@entropy, length: RANDOMNESS_OCTETS_LENGTH).freeze
+  end
+
+  # @return [String]
+  def timestamp
+    @timestamp ||= matchdata[:timestamp].freeze
+  end
+
+  # @return [String]
+  def randomness
+    @randomness ||= matchdata[:randomness].freeze
+  end
+
+  # @return [Regexp]
+  def pattern
+    @pattern ||= /(?<timestamp>#{timestamp})(?<randomness>#{randomness})/i.freeze
+  end
+
+  # @return [Regexp]
+  def strict_pattern
+    @strict_pattern ||= /\A#{pattern.source}\z/i.freeze
   end
 
   # @raise [OverflowError] if the next entropy part is larger than the ULID limit
@@ -242,10 +265,16 @@ class ULID
     octets
     succ
     to_i
+    strict_pattern
     super
   end
 
   private
+
+  # @return [MatchData]
+  def matchdata
+    @matchdata ||= STRICT_PATTERN.match(to_str).freeze
+  end
 
   # @param [Integer] integer
   # @param [Integer] length
