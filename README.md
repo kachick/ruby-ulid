@@ -66,12 +66,12 @@ ulid = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV') #=> ULID(2016-07-30 23:54:10.259
 ULID is sortable when they are generated different timestamp in milliseconds precision
 
 ```ruby
-ulids = 100.times.map do
-  sleep(0.01)
+ulids = 1000.times.map do
+  sleep(0.001)
   ULID.generate
 end
 ulids.sort == ulids #=> true
-ulids.map(&:to_time).uniq.size #=> true
+ulids.uniq(&:to_time).size #=> 1000
 ```
 
 Providing monotonic generator for same milliseconds use-cases. It is called as [Monotonicity](https://github.com/ulid/spec/tree/d0c7170df4517939e70129b4d6462cc162f2d5bf#monotonicity) on the spec.
@@ -80,12 +80,15 @@ Providing monotonic generator for same milliseconds use-cases. It is called as [
 ulids = 10000.times.map do
   ULID.generate
 end
+ulids.uniq(&:to_time).size #=> 35 (the number will be changed by every creation)
 ulids.sort == ulids #=> false
+
 
 monotonic_generator = ULID::MonotonicGenerator.new
 monotonic_ulids = 10000.times.map do
   monotonic_generator.generate
 end
+monotonic_ulids.uniq(&:to_time).size #=> 34 (the number will be changed by every creation)
 monotonic_ulids.sort == monotonic_ulids #=> true
 ```
 
@@ -99,7 +102,7 @@ ULID.from_uuidv4('0983d0a2-ff15-4d83-8f37-7dd945b5aa39')
 For rough operations, `ULID.scan` might be useful.
 
 ```ruby
-json =<<EOD
+json =<<'EOD'
 {
   "id": "01F4GNAV5ZR6FJQ5SFQC7WDSY3",
   "author": {
