@@ -38,4 +38,5 @@ end
 task :benchmark do
   sh 'bundle exec ruby benchmark/generate.rb'
   sh 'bundle exec ruby benchmark/to_s.rb'
+  sh 'bundle exec ruby benchmark/sort.rb'
 end
