@@ -4,7 +4,7 @@
 require_relative 'helper'
 
 class TestULID < Test::Unit::TestCase
-  def setup
+  def test_ensure_test_environment
     assert_equal(Encoding::UTF_8, ''.encoding)
   end
 
@@ -68,6 +68,33 @@ class TestULID < Test::Unit::TestCase
     assert_equal(true, ULID.valid?('01ARZ3NDEKTSV4RRFFQ69G5FAV'.downcase))
     assert_equal(true, ULID.valid?('7ZZZZZZZZZZZZZZZZZZZZZZZZZ'))
     assert_equal(false, ULID.valid?('80000000000000000000000000'))
+  end
+
+  def test_scan
+    json_string = "{\n  \"id\": \"01F4GNAV5ZR6FJQ5SFQC7WDSY3\",\n  \"author\": {\n    \"id\": \"01F4GNBXW1AM2KWW52PVT3ZY9X\",\n    \"name\": \"kachick\"\n  },\n  \"title\": \"My awesome blog post\",\n  \"comments\": [\n    {\n      \"id\": \"01F4GNCNC3CH0BCRZBPPDEKBKS\",\n      \"commenter\": {\n        \"id\": \"01F4GNBXW1AM2KWW52PVT3ZY9X\",\n        \"name\": \"kachick\"\n      }\n    },\n    {\n      \"id\": \"01F4GNCXAMXQ1SGBH5XCR6ZH0M\",\n      \"commenter\": {\n        \"id\": \"01F4GND4RYYSKNAADHQ9BNXAWJ\",\n        \"name\": \"pankona\"\n      }\n    }\n  ]\n}\n"
+
+    enum = ULID.scan(json_string)
+    assert_instance_of(Enumerator, enum)
+    assert_nil(enum.size)
+
+    yielded = []
+    assert_same(ULID, ULID.scan(json_string) do |ulid|
+      yielded << ulid
+    end)
+
+    assert_equal(true, yielded.all? { |ulid| ulid.instance_of?(ULID) })
+    assert_equal(enum.to_a, yielded)
+
+    expectation = [
+      ULID.parse('01F4GNAV5ZR6FJQ5SFQC7WDSY3'),
+      ULID.parse('01F4GNBXW1AM2KWW52PVT3ZY9X'),
+      ULID.parse('01F4GNCNC3CH0BCRZBPPDEKBKS'),
+      ULID.parse('01F4GNBXW1AM2KWW52PVT3ZY9X'),
+      ULID.parse('01F4GNCXAMXQ1SGBH5XCR6ZH0M'),
+      ULID.parse('01F4GND4RYYSKNAADHQ9BNXAWJ'),
+    ]
+    assert_equal(expectation, yielded)
+    assert_equal(2, expectation.tally.fetch(ULID.parse('01F4GNBXW1AM2KWW52PVT3ZY9X')))
   end
 
   def test_constant_regexp
