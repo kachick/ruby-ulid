@@ -3,11 +3,7 @@ require 'bundler/gem_tasks'
 
 require 'rake/testtask'
 
-default_tasks = [:test, :test_yard]
-if Gem::Version.create(RUBY_VERSION) >= Gem::Version.create('2.6.0')
-  default_tasks << :'signature:validate'
-end
-task default: default_tasks
+task default: [:test]
 
 Rake::TestTask.new do |tt|
   tt.pattern = 'test/**/test_*.rb'
@@ -15,9 +11,19 @@ Rake::TestTask.new do |tt|
   tt.warning = true
 end
 
+sub_tests = [:test_yard]
+if Gem::Version.create(RUBY_VERSION) >= Gem::Version.create('2.6.0')
+  sub_tests << :'signature:validate'
+end
+task sub_test: sub_tests
+
 namespace :signature do
   task :validate do
     sh 'bundle exec rbs -rsecurerandom -I sig validate'
+  end
+
+  task :check_false_positive do
+    sh 'bundle exec steep check --log-level=fatal'
   end
 end
 
@@ -28,4 +34,3 @@ end
 task :yard do
   sh 'bundle exec yard --fail-on-warning'
 end
-
