@@ -19,6 +19,10 @@ namespace :signature do
   task :validate do
     sh 'bundle exec rbs -rsecurerandom -I sig validate'
   end
+
+  task :check_false_positive do
+    sh 'bundle exec steep check --log-level=fatal'
+  end
 end
 
 task :test_yard do
@@ -28,4 +32,3 @@ end
 task :yard do
   sh 'bundle exec yard --fail-on-warning'
 end
-
