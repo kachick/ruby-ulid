@@ -226,7 +226,7 @@ class ULID
 
   # @return [Time]
   def to_time
-    @time ||= Time.at(0, @milliseconds, :millisecond).utc
+    @time ||= Time.at(0, @milliseconds, :millisecond).utc.freeze
   end
 
   # @return [Array(Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer)]
