@@ -107,6 +107,7 @@ class ULID
   # @return [ULID]
   # @raise [OverflowError] if the given integer is larger than the ULID limit
   # @raise [ArgumentError] if the given integer is negative number
+  # @todo Need optimized for performance
   def self.from_integer(integer)
     integer = integer.to_int
     raise OverflowError, "integer overflow: given #{integer}, max: #{MAX_INTEGER}" unless integer <= MAX_INTEGER
@@ -292,20 +293,29 @@ class ULID
     @strict_pattern ||= /\A#{pattern.source}\z/i.freeze
   end
 
-  # @raise [OverflowError] if the next entropy part is larger than the ULID limit
-  # @return [ULID]
+  # @return [ULID, nil] when called on ULID as `7ZZZZZZZZZZZZZZZZZZZZZZZZZ`, returns `nil` instead of ULID
   def next
-    @next ||= self.class.new(milliseconds: @milliseconds, entropy: @entropy + 1)
+    next_int = to_i.next
+    return nil if next_int > MAX_INTEGER
+    @next ||= self.class.from_integer(next_int)
   end
   alias_method :succ, :next
+
+  # @return [ULID, nil] when called on ULID as `00000000000000000000000000`, returns `nil` instead of ULID
+  def pred
+    pre_int = to_i.pred
+    return nil if pre_int.negative?
+    @pred ||= self.class.from_integer(pre_int)
+  end
 
   # @return [self]
   def freeze
     # Evaluate all caching
     inspect
     octets
-    succ
     to_i
+    succ
+    pred
     strict_pattern
     super
   end
