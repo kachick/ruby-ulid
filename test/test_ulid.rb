@@ -248,6 +248,26 @@ class TestULID < Test::Unit::TestCase
     end
   end
 
+  def test_min
+    assert_equal(ULID.parse('00000000000000000000000000'), ULID.min)
+    time = Time.at(946684800, Rational('123456.789')).utc
+    ulid = ULID.generate(moment: time)
+    assert_equal(ulid.timestamp + '0000000000000000', ULID.min(moment: time).to_s)
+    milliseconds = 42
+    ulid = ULID.generate(moment: milliseconds)
+    assert_equal(ulid.timestamp + '0000000000000000', ULID.min(moment: milliseconds).to_s)
+  end
+
+  def test_max
+    assert_equal(ULID.parse('7ZZZZZZZZZZZZZZZZZZZZZZZZZ'), ULID.max)
+    time = Time.at(946684800, Rational('123456.789')).utc
+    ulid = ULID.generate(moment: time)
+    assert_equal(ulid.timestamp + 'ZZZZZZZZZZZZZZZZ', ULID.max(moment: time).to_s)
+    milliseconds = 42
+    ulid = ULID.generate(moment: milliseconds)
+    assert_equal(ulid.timestamp + 'ZZZZZZZZZZZZZZZZ', ULID.max(moment: milliseconds).to_s)
+  end
+
   def test_eq
     assert_equal(ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV'), ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV'))
     assert_not_equal(ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV').to_s, ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV'))
