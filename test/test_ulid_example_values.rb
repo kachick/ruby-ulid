@@ -32,4 +32,18 @@ class TestULIDWithExampleValues < Test::Unit::TestCase
     # https://github.com/oklog/ulid/blob/e7ac4de44d238ff4707cc84b9c98ae471f31e2d1/ulid_test.go#L690-L712
     assert_instance_of(ULID, ULID.parse('0000XSNJG0MQJHBF4QX1EFD6Y3'))
   end
+
+  def test_rafaelsales_examples
+    # https://github.com/rafaelsales/ulid/blob/0eafbe3394539d12ad471f01e935b949f85c7093/spec/lib/ulid_spec.rb#L39-L40
+    time = Time.at(1_469_918_176, 385, :millisecond)
+    assert_equal('01ARYZ6S41', ULID.generate(moment: time).timestamp)
+
+    # https://github.com/rafaelsales/ulid/pull/23
+    ulids = 1000.times.map do |milliseconds|
+      time = Time.new(2020, 1, 2, 3, 4, Rational(milliseconds, 10 ** 3))
+
+      ULID.generate(moment: time)
+    end
+    assert_equal(ulids, ulids.sort)
+  end
 end

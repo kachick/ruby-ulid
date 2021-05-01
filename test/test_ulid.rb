@@ -192,17 +192,6 @@ class TestULID < Test::Unit::TestCase
     assert_equal(entropy, ULID.generate(entropy: entropy).entropy)
   end
 
-  def test_milliseconds_precision_order
-    # The test cases taken from https://github.com/rafaelsales/ulid/pull/23
-    ulids = 1000.times.map do |milliseconds|
-      time = Time.new(2020, 1, 2, 3, 4, Rational(milliseconds, 10 ** 3))
-
-      ULID.generate(moment: time)
-    end
-
-    assert_equal(ulids, ulids.sort)
-  end
-
   def test_from_uuidv4
     # The example value was taken from https://github.com/ahawker/ulid/tree/96bdb1daad7ce96f6db8c91ac0410b66d2e1c4c1#usage
     assert_equal(ULID.parse('09GF8A5ZRN9P1RYDVXV52VBAHS'), ULID.from_uuidv4('0983d0a2-ff15-4d83-8f37-7dd945b5aa39'))
