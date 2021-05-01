@@ -52,15 +52,13 @@ class ULID
   # @param [Integer, Time] moment
   # @return [ULID]
   def self.min(moment: 0)
-    milliseconds = moment.kind_of?(Time) ? time_to_milliseconds(moment) : moment
-    new milliseconds: milliseconds, entropy: 0
+    generate(moment: moment, entropy: 0)
   end
 
   # @param [Integer, Time] moment
   # @return [ULID]
   def self.max(moment: MAX_MILLISECONDS)
-    milliseconds = moment.kind_of?(Time) ? time_to_milliseconds(moment) : moment
-    new milliseconds: milliseconds, entropy: MAX_ENTROPY
+    generate(moment: moment, entropy: MAX_ENTROPY)
   end
 
   # @deprecated This method actually changes class state. Use {ULID::MonotonicGenerator} instead.
