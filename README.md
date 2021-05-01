@@ -73,7 +73,9 @@ end
 ulids.sort == ulids #=> true
 ```
 
-You can parse from exists IDs<sup>[1](#parser_spec)</sup>
+You can parse from exists IDs
+
+FYI: Current parser/validator/matcher implementation aims `strict`, It might be changed in [ulid/spec#57](https://github.com/ulid/spec/pull/57) and [ruby-ulid#57](https://github.com/kachick/ruby-ulid/issues/57).
 
 ```ruby
 ulid = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV') #=> ULID(2016-07-30 23:54:10.259 UTC: 01ARZ3NDEKTSV4RRFFQ69G5FAV)
@@ -91,29 +93,40 @@ ulids.sort == ulids #=> true
 ulids.uniq(&:to_time).size #=> 1000
 ```
 
-Providing monotonic generator for same milliseconds use-cases. It is called as [Monotonicity](https://github.com/ulid/spec/tree/d0c7170df4517939e70129b4d6462cc162f2d5bf#monotonicity) on the spec.
+The basic generator prefers `randomness`, it does not guarantee `sortable` for same milliseconds ULIDs.
 
 ```ruby
 ulids = 10000.times.map do
   ULID.generate
 end
-ulids.uniq(&:to_time).size #=> 35 (the number will be changed by every creation)
+ulids.uniq(&:to_time).size #=> 35 (the size is not fixed, might be changed in environment)
 ulids.sort == ulids #=> false
+```
 
+If you want to prefer `sortable` rather than the `strict randomness`, Use `MonotonicGenerator` instead. It is called as [Monotonicity](https://github.com/ulid/spec/tree/d0c7170df4517939e70129b4d6462cc162f2d5bf#monotonicity) on the spec.
+(Though it starts with new random value when changed the timestamp)
 
+```ruby
 monotonic_generator = ULID::MonotonicGenerator.new
 monotonic_ulids = 10000.times.map do
   monotonic_generator.generate
 end
-monotonic_ulids.uniq(&:to_time).size #=> 34 (the number will be changed by every creation)
+sample_ulids_by_the_time = monotonic_ulids.uniq(&:to_time)
+sample_ulids_by_the_time.size #=> 34 (the size is not fixed, might be changed in environment)
+sample_ulids_by_the_time.take(10).map(&:randomness)
+#=>
+["JZW56CTA8704D5AQ",
+ "JGEBH2A2B2EA97MW",
+ "0XPE4NS3MZH0NAJ4",
+ "E0S3ZAVADFBPW57Y",
+ "E5CX1T6281443THQ",
+ "3SK8WHSH03CVF7J2",
+ "DDS35BT0R20P3V49",
+ "60KG2W9FVEN1ZX8C",
+ "X59YJVXXVH7AXJJE",
+ "1ZBQ7SNGFKXGH1Y4"]
+
 monotonic_ulids.sort == monotonic_ulids #=> true
-```
-
-Providing converter for UUIDv4. (Of course the timestamp will be useless one.)
-
-```ruby
-ULID.from_uuidv4('0983d0a2-ff15-4d83-8f37-7dd945b5aa39')
-#=> ULID(2301-07-10 00:28:28.821 UTC: 09GF8A5ZRN9P1RYDVXV52VBAHS)
 ```
 
 For rough operations, `ULID.scan` might be useful.
@@ -167,12 +180,15 @@ ULID.min(moment: time) #=> ULID(2000-01-01 00:00:00.123 UTC: 00VHNCZB3V000000000
 ULID.max(moment: time) #=> ULID(2000-01-01 00:00:00.123 UTC: 00VHNCZB3VZZZZZZZZZZZZZZZZ)
 ```
 
+Providing UUIDv4 converter for migration use-cases. (Of course the timestamp will be useless one. Sortable benefit is lost.)
+
+```ruby
+ULID.from_uuidv4('0983d0a2-ff15-4d83-8f37-7dd945b5aa39')
+#=> ULID(2301-07-10 00:28:28.821 UTC: 09GF8A5ZRN9P1RYDVXV52VBAHS)
+```
+
 ## References
 
 - [API documents](https://kachick.github.io/ruby-ulid/)
 - [ulid/spec](https://github.com/ulid/spec)
 - [Another choices are UUIDv6, UUIDv7, UUIDv8. But they are still in draft state](https://www.ietf.org/archive/id/draft-peabody-dispatch-new-uuid-format-01.html)
-
----
-
-<small id="parser_spec">Current parser/validator/matcher implementation aims `strict`, It might be changed in [ulid/spec#57](https://github.com/ulid/spec/pull/57) and [ruby-ulid#57](https://github.com/kachick/ruby-ulid/issues/57).</small>
