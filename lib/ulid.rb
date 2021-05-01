@@ -4,7 +4,6 @@
 
 require 'securerandom'
 require 'integer/base'
-require_relative 'ulid/version'
 
 # @see https://github.com/ulid/spec
 # @!attribute [r] milliseconds
@@ -23,16 +22,16 @@ class ULID
   # @see https://www.crockford.com/base32.html
   ENCODING_CHARS = encoding_string.chars.map(&:freeze).freeze
 
-  TIME_PART_LENGTH = 10
+  TIMESTAMP_PART_LENGTH = 10
   RANDOMNESS_PART_LENGTH = 16
-  ENCODED_ID_LENGTH = TIME_PART_LENGTH + RANDOMNESS_PART_LENGTH
+  ENCODED_ID_LENGTH = TIMESTAMP_PART_LENGTH + RANDOMNESS_PART_LENGTH
   TIMESTAMP_OCTETS_LENGTH = 6
   RANDOMNESS_OCTETS_LENGTH = 10
   OCTETS_LENGTH = TIMESTAMP_OCTETS_LENGTH + RANDOMNESS_OCTETS_LENGTH
   MAX_MILLISECONDS = 281474976710655
   MAX_ENTROPY = 1208925819614629174706175
   MAX_INTEGER = 340282366920938463463374607431768211455
-  PATTERN = /(?<timestamp>[0-7][#{encoding_string}]{#{TIME_PART_LENGTH - 1}})(?<randomness>[#{encoding_string}]{#{RANDOMNESS_PART_LENGTH}})/i.freeze
+  PATTERN = /(?<timestamp>[0-7][#{encoding_string}]{#{TIMESTAMP_PART_LENGTH - 1}})(?<randomness>[#{encoding_string}]{#{RANDOMNESS_PART_LENGTH}})/i.freeze
   STRICT_PATTERN = /\A#{PATTERN.source}\z/i.freeze
 
   # Imported from https://stackoverflow.com/a/38191104/1212807, thank you!
@@ -41,49 +40,6 @@ class ULID
   # Same as Time#inspect since Ruby 2.7, just to keep backward compatibility
   # @see https://bugs.ruby-lang.org/issues/15958
   TIME_FORMAT_IN_INSPECT = '%Y-%m-%d %H:%M:%S.%3N %Z'
-
-  class MonotonicGenerator
-    attr_accessor :latest_milliseconds, :latest_entropy
-
-    def initialize
-      reset
-    end
-
-    # @raise [OverflowError] if the entropy part is larger than the ULID limit in same milliseconds
-    # @return [ULID]
-    def generate
-      milliseconds = ULID.current_milliseconds
-      reasonable_entropy = ULID.reasonable_entropy
-
-      @latest_milliseconds ||= milliseconds
-      @latest_entropy ||= reasonable_entropy
-      if @latest_milliseconds != milliseconds
-        @latest_milliseconds = milliseconds
-        @latest_entropy = reasonable_entropy
-      else
-        @latest_entropy += 1
-      end
-
-      ULID.new milliseconds: milliseconds, entropy: @latest_entropy
-    end
-
-    # @return [self]
-    def reset
-      @latest_milliseconds = nil
-      @latest_entropy = nil
-      self
-    end
-
-    # @raise [TypeError] always raises exception and does not freeze self
-    # @return [void]
-    def freeze
-      raise TypeError, "cannot freeze #{self.class}"
-    end
-  end
-
-  MONOTONIC_GENERATOR = MonotonicGenerator.new
-
-  private_constant :ENCODING_CHARS, :TIME_FORMAT_IN_INSPECT, :UUIDV4_PATTERN
 
   # @param [Integer, Time] moment
   # @param [Integer] entropy
@@ -193,8 +149,8 @@ class ULID
       unless string.size == ENCODED_ID_LENGTH
         raise "parsable string must be #{ENCODED_ID_LENGTH} characters, but actually given #{string.size} characters"
       end
-      timestamp = string.slice(0, TIME_PART_LENGTH)
-      randomness = string.slice(TIME_PART_LENGTH, RANDOMNESS_PART_LENGTH)
+      timestamp = string.slice(0, TIMESTAMP_PART_LENGTH)
+      randomness = string.slice(TIMESTAMP_PART_LENGTH, RANDOMNESS_PART_LENGTH)
       milliseconds = Integer::Base.parse(timestamp, ENCODING_CHARS)
       entropy = Integer::Base.parse(randomness, ENCODING_CHARS)
     rescue => err
@@ -362,4 +318,13 @@ class ULID
   def matchdata
     @matchdata ||= STRICT_PATTERN.match(to_str).freeze
   end
+end
+
+require_relative 'ulid/version'
+require_relative 'ulid/monotonic_generator'
+
+class ULID
+  MONOTONIC_GENERATOR = MonotonicGenerator.new
+
+  private_constant :ENCODING_CHARS, :TIME_FORMAT_IN_INSPECT, :UUIDV4_PATTERN
 end
