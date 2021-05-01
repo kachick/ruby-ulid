@@ -3,10 +3,8 @@
 A handy `ULID` library
 
 The `ULID` spec is defined on [ulid/spec](https://github.com/ulid/spec).
-Formal name is `Universally Unique Lexicographically Sortable Identifier`.
-It has useful specs for actual applications.
-This gem aims to provide the generator, monotonic generator, parser and handy manipulation methods for the ID.
-Also having rbs signature files.
+This gem aims to provide the generator, monotonic generator, parser and handy manipulation features around the ULID.
+Also providing rbs signature files.
 
 ---
 
@@ -57,13 +55,32 @@ ulid.octets #=> [1, 121, 20, 95, 7, 202, 187, 60, 175, 51, 76, 60, 49, 73, 37, 7
 ulid.pattern #=> /(?<timestamp>01F4A5Y1YA)(?<randomness>QCYAYCTC7GRMJ9AA)/i
 ```
 
-You can parse from exists IDs
+Generator can take `Time` instance
+
+```ruby
+time = Time.at(946684800, in: 'UTC') #=> 2000-01-01 00:00:00 UTC
+ULID.generate(moment: time) #=> ULID(2000-01-01 00:00:00.000 UTC: 00VHNCZB00N018DCPJA4H9379P)
+ULID.generate(moment: time) #=> ULID(2000-01-01 00:00:00.000 UTC: 00VHNCZB006WQT3JTMN0T14EBP)
+
+ulids = 1000.times.map do
+  ULID.generate(moment: time)
+end
+ulids.sort == ulids #=> false
+
+ulids = 1000.times.map do |n|
+  ULID.generate(moment: time + n)
+end
+ulids.sort == ulids #=> true
+```
+
+You can parse from exists IDs<sup>[1](#parser_spec)</sup>
 
 ```ruby
 ulid = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV') #=> ULID(2016-07-30 23:54:10.259 UTC: 01ARZ3NDEKTSV4RRFFQ69G5FAV)
+ulid.to_time #=> 2016-07-30 23:54:10.259 UTC
 ```
 
-ULID is sortable when they are generated different timestamp in milliseconds precision
+ULIDs are sortable when they are generated in different timestamp with milliseconds precision
 
 ```ruby
 ulids = 1000.times.map do
@@ -155,3 +172,7 @@ ULID.max(moment: time) #=> ULID(2000-01-01 00:00:00.123 UTC: 00VHNCZB3VZZZZZZZZZ
 - [API documents](https://kachick.github.io/ruby-ulid/)
 - [ulid/spec](https://github.com/ulid/spec)
 - [Another choices are UUIDv6, UUIDv7, UUIDv8. But they are still in draft state](https://www.ietf.org/archive/id/draft-peabody-dispatch-new-uuid-format-01.html)
+
+---
+
+<small id="parser_spec">Current parser/validator/matcher implementation aims `strict`, It might be changed in [ulid/spec#57](https://github.com/ulid/spec/pull/57) and [ruby-ulid#57](https://github.com/kachick/ruby-ulid/issues/57).</small>
