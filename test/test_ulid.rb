@@ -296,6 +296,13 @@ class TestULID < Test::Unit::TestCase
     assert_equal(true, ULID.parse('01BX5ZZKBKACTAV9WEVGEMMVRZ') > ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV'))
   end
 
+  def test_lexicographically_sortable
+    ulids = 10000.times.map do
+      ULID.generate
+    end
+    assert_equal(ulids.map(&:to_s).sort, ulids.sort.map(&:to_s))
+  end
+
   def test_to_s
     ulid = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
     assert_equal('01ARZ3NDEKTSV4RRFFQ69G5FAV', ulid.to_s)
