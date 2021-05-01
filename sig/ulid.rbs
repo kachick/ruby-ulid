@@ -93,8 +93,9 @@ class ULID
   def octets: -> octets
   def timestamp_octets: -> timestamp_octets
   def randomness_octets: -> randomness_octets
-  def next: -> ULID
+  def next: -> ULID?
   alias succ next
+  def pred: -> ULID?
   def freeze: -> self
 
   private

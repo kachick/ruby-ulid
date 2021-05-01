@@ -391,6 +391,18 @@ class TestULID < Test::Unit::TestCase
     assert_equal(ULID.parse('01BX5ZZKBKACTAV9WEVGEMMVS1'), first.next.next.next)
   end
 
+  def test_pred
+    ulid = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
+    assert_equal(ulid.pred.to_i, ulid.to_i - 1)
+    assert_instance_of(ULID, ulid.pred)
+    assert_same(ulid.pred, ulid.pred)
+
+    first = ULID.parse('01BX5ZZKBKACTAV9WEVGEMMVR2')
+    assert_equal(ULID.parse('01BX5ZZKBKACTAV9WEVGEMMVR1'), first.pred)
+    assert_equal(ULID.parse('01BX5ZZKBKACTAV9WEVGEMMVR0'), first.pred.pred)
+    assert_equal(ULID.parse('01BX5ZZKBKACTAV9WEVGEMMVQZ'), first.pred.pred.pred)
+  end
+
   def test_freeze
     ulid = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
     assert_equal(false, ulid.frozen?)
@@ -403,6 +415,7 @@ class TestBoundaryULID < Test::Unit::TestCase
   def setup
     @min = ULID.parse('00000000000000000000000000')
     @max = ULID.parse('7ZZZZZZZZZZZZZZZZZZZZZZZZZ')
+    @min_entropy = ULID.parse('01BX5ZZKBK0000000000000000')
     @max_entropy = ULID.parse('01BX5ZZKBKZZZZZZZZZZZZZZZZ')
   end
 
@@ -412,14 +425,14 @@ class TestBoundaryULID < Test::Unit::TestCase
     assert_equal(ULID::MAX_INTEGER, @max.to_i)
   end
 
-  def test_overflow
-    assert_raises(ULID::OverflowError) do
-      @max.next
-    end
+  def test_next
+    assert_nil(@max.next)
+    assert_equal(ULID.parse('01BX5ZZKBM0000000000000000'), @max_entropy.next)
+  end
 
-    assert_raises(ULID::OverflowError) do
-      @max_entropy.next
-    end
+  def test_pred
+    assert_nil(@min.pred)
+    assert_equal(ULID.parse('01BX5ZZKBJZZZZZZZZZZZZZZZZ'), @min_entropy.pred)
   end
 
   def test_octets
@@ -433,6 +446,8 @@ class TestFrozenULID < Test::Unit::TestCase
     @string = '01ARZ3NDEKTSV4RRFFQ69G5FAV'
     @ulid = ULID.parse(@string)
     @ulid.freeze
+    @min = ULID.min.freeze
+    @max = ULID.max.freeze
   end
 
   def test_to_str
@@ -457,6 +472,12 @@ class TestFrozenULID < Test::Unit::TestCase
 
   def test_next
     assert_equal(true, @ulid < @ulid.next)
+    assert_nil(@max.next)
+  end
+
+  def test_pred
+    assert_equal(true, @ulid > @ulid.pred)
+    assert_nil(@min.pred)
   end
 end
 

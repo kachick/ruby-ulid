@@ -180,7 +180,23 @@ ULID.min(moment: time) #=> ULID(2000-01-01 00:00:00.123 UTC: 00VHNCZB3V000000000
 ULID.max(moment: time) #=> ULID(2000-01-01 00:00:00.123 UTC: 00VHNCZB3VZZZZZZZZZZZZZZZZ)
 ```
 
-Providing UUIDv4 converter for migration use-cases. (Of course the timestamp will be useless one. Sortable benefit is lost.)
+`ULID#next` and `ULID#succ` returns next(successor) ULID
+
+```ruby
+ULID.parse('01BX5ZZKBKZZZZZZZZZZZZZZZY').next.to_s #=> "01BX5ZZKBKZZZZZZZZZZZZZZZZ"
+ULID.parse('01BX5ZZKBKZZZZZZZZZZZZZZZZ').next.to_s #=> "01BX5ZZKBM0000000000000000"
+ULID.parse('7ZZZZZZZZZZZZZZZZZZZZZZZZZ').next #=> nil
+```
+
+`ULID#pred` returns predecessor ULID
+
+```ruby
+ULID.parse('01BX5ZZKBK0000000000000001').pred.to_s #=> "01BX5ZZKBK0000000000000000"
+ULID.parse('01BX5ZZKBK0000000000000000').pred.to_s #=> "01BX5ZZKBJZZZZZZZZZZZZZZZZ"
+ULID.parse('00000000000000000000000000').pred #=> nil
+```
+
+UUIDv4 converter for migration use-cases. (Of course the timestamp will be useless one. Sortable benefit is lost.)
 
 ```ruby
 ULID.from_uuidv4('0983d0a2-ff15-4d83-8f37-7dd945b5aa39')
