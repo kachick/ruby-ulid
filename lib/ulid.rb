@@ -210,6 +210,7 @@ class ULID
 
   attr_reader :milliseconds, :entropy
 
+  # @api private
   # @param [Integer] milliseconds
   # @param [Integer] entropy
   # @return [void]
