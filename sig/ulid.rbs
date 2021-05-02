@@ -18,6 +18,8 @@ class ULID
   MONOTONIC_GENERATOR: MonotonicGenerator
   include Comparable
 
+  type moment = Time | Integer
+
   class Error < StandardError
   end
 
@@ -31,12 +33,11 @@ class ULID
     attr_accessor latest_milliseconds: Integer?
     attr_accessor latest_entropy: Integer?
     def initialize: -> void
-    def generate: -> ULID
+    def generate: (?moment: moment) -> ULID
     def reset: -> void
     def freeze: -> void
   end
 
-  type moment = Time | Integer
   type octets = [Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer]
   type timestamp_octets = [Integer, Integer, Integer, Integer, Integer, Integer]
   type randomness_octets = [Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer]
@@ -60,7 +61,8 @@ class ULID
   def self.generate: (?moment: moment, ?entropy: Integer) -> ULID
   def self.monotonic_generate: -> ULID
   def self.current_milliseconds: -> Integer
-  def self.time_to_milliseconds: (Time time) -> Integer
+  def self.milliseconds_from_time: (Time time) -> Integer
+  def self.milliseconds_from_moment: (moment moment) -> Integer
   def self.reasonable_entropy: -> Integer
   def self.parse: (String string) -> ULID
   def self.from_uuidv4: (String uuid) -> ULID

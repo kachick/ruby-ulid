@@ -27,6 +27,36 @@ class TestULIDMonotonicGenerator < Test::Unit::TestCase
     assert_equal(ulids, ulids.sort_by(&:to_i))
     assert_equal(ulids, ulids.sort)
   end
+
+  def test_generate_optionally_take_moment_as_time
+    pred = nil
+    1.upto(100) do |sec|
+      ulid = @generator.generate(moment: Time.at(sec))
+      assert_equal(sec, ulid.to_time.to_r)
+      if pred
+        assert_equal(true, 4200 < (pred.entropy - ulid.entropy).abs) # It is possible to fail Rough test.
+      end
+      pred = ulid
+    end
+  end
+
+  def test_generate_optionally_take_moment_as_milliseconds
+    pred = nil
+    1.upto(100) do |milliseconds|
+      ulid = @generator.generate(moment: milliseconds)
+      assert_equal(milliseconds, ulid.to_time.to_r * 1000)
+      if pred
+        assert_equal(true, 4200 < (pred.entropy - ulid.entropy).abs) # It is possible to fail. Rough test.
+      end
+      pred = ulid
+    end
+  end
+
+  def test_generate_just_bump_1_when_same_moment
+    first = @generator.generate(moment: 42)
+    second = @generator.generate(moment: 42)
+    assert_equal(second.entropy, first.entropy.next)
+  end
 end
 
 class TestULIDMonotonicGeneratorOfClassState < Test::Unit::TestCase

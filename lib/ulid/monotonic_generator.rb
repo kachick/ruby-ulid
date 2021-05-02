@@ -12,8 +12,8 @@ class ULID
 
     # @raise [OverflowError] if the entropy part is larger than the ULID limit in same milliseconds
     # @return [ULID]
-    def generate
-      milliseconds = ULID.current_milliseconds
+    def generate(moment: ULID.current_milliseconds)
+      milliseconds = ULID.milliseconds_from_moment(moment)
       reasonable_entropy = ULID.reasonable_entropy
 
       @latest_milliseconds ||= milliseconds
