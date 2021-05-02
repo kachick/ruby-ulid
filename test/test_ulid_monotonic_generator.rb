@@ -33,6 +33,12 @@ class TestULIDMonotonicGenerator < Test::Unit::TestCase
     assert_equal(true, (ULID.floor(running_at)..(running_at + 3)).cover?(@generator.generate.to_time))
   end
 
+  def test_generate_with_negative_moment
+    assert_raises(ArgumentError) do
+      @generator.generate(moment: -1)
+    end
+  end
+
   def test_generate_optionally_take_moment_as_time
     pred = nil
     1.upto(100) do |sec|

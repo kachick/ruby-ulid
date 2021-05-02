@@ -14,8 +14,10 @@ class ULID
     # @param [Time, Integer] moment
     # @return [ULID]
     # @raise [OverflowError] if the entropy part is larger than the ULID limit in same milliseconds
+    # @raise [ArgumentError] if the given moment(milliseconds) is negative number
     def generate(moment: ULID.current_milliseconds)
       milliseconds = ULID.milliseconds_from_moment(moment)
+      raise ArgumentError, "milliseconds should not be negative: given: #{milliseconds}" if milliseconds.negative?
 
       if @latest_milliseconds < milliseconds
         @latest_milliseconds = milliseconds
