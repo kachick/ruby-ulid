@@ -44,7 +44,7 @@ class TestULIDMonotonicGenerator < Test::Unit::TestCase
     pred = nil
     1.upto(100) do |milliseconds|
       ulid = @generator.generate(moment: milliseconds)
-      assert_equal(milliseconds, ulid.to_time.to_r * 1000)
+      assert_equal(milliseconds, ulid.milliseconds)
       if pred
         assert_equal(true, 4200 < (pred.entropy - ulid.entropy).abs) # It is possible to fail. Rough test.
       end
