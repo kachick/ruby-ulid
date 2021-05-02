@@ -4,6 +4,11 @@
 require_relative 'helper'
 
 class TestULID < Test::Unit::TestCase
+  def setup
+    @actual_timezone = ENV['TZ']
+    ENV['TZ'] = 'EST' # Just chosen from not UTC and JST
+  end
+
   def test_ensure_test_environment
     assert_equal(Encoding::UTF_8, ''.encoding)
   end
@@ -68,6 +73,18 @@ class TestULID < Test::Unit::TestCase
     assert_equal(true, ULID.valid?('01ARZ3NDEKTSV4RRFFQ69G5FAV'.downcase))
     assert_equal(true, ULID.valid?('7ZZZZZZZZZZZZZZZZZZZZZZZZZ'))
     assert_equal(false, ULID.valid?('80000000000000000000000000'))
+  end
+
+  def test_floor
+    time_has_more_value_than_milliseconds = Time.at(946684800, Rational('123456.789'))
+    assert_equal('EST', time_has_more_value_than_milliseconds.zone)
+    ulid = ULID.generate(moment: time_has_more_value_than_milliseconds)
+    assert_equal(123456789, time_has_more_value_than_milliseconds.nsec)
+    floored = ULID.floor(time_has_more_value_than_milliseconds)
+    assert_instance_of(Time, floored)
+    assert_equal(123000000, floored.nsec)
+    assert_equal(ulid.to_time, floored)
+    assert_equal('EST', floored.zone)
   end
 
   def test_scan
@@ -408,6 +425,10 @@ class TestULID < Test::Unit::TestCase
     assert_equal(false, ulid.frozen?)
     assert_same(ulid, ulid.freeze)
     assert_equal(true, ulid.frozen?)
+  end
+
+  def teardown
+    ENV['TZ'] = @actual_timezone
   end
 end
 

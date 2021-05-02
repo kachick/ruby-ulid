@@ -28,6 +28,11 @@ class TestULIDMonotonicGenerator < Test::Unit::TestCase
     assert_equal(ulids, ulids.sort)
   end
 
+  def test_generate_with_no_moment_uses_current_time
+    running_at = Time.now
+    assert_equal(true, (ULID.floor(running_at)..(running_at + 3)).cover?(@generator.generate.to_time))
+  end
+
   def test_generate_optionally_take_moment_as_time
     pred = nil
     1.upto(100) do |sec|
@@ -119,9 +124,9 @@ class TestULIDMonotonicGeneratorOfClassState < Test::Unit::TestCase
   end
 
   def test_attributes
-    id = BasicObject.new
-    assert_nil(ULID::MONOTONIC_GENERATOR.latest_milliseconds)
-    assert_nil(ULID::MONOTONIC_GENERATOR.latest_entropy)
+    id = BasicObject.new # Invalid value for the actual use-case, just for test
+    assert_equal(0, ULID::MONOTONIC_GENERATOR.latest_milliseconds)
+    assert_equal(false, [nil, 0, 1, ULID::MAX_ENTROPY].include?(ULID::MONOTONIC_GENERATOR.latest_entropy))
 
     ULID::MONOTONIC_GENERATOR.latest_milliseconds = id
     ULID::MONOTONIC_GENERATOR.latest_entropy = id

@@ -30,8 +30,8 @@ class ULID
   end
 
   class MonotonicGenerator
-    attr_accessor latest_milliseconds: Integer?
-    attr_accessor latest_entropy: Integer?
+    attr_accessor latest_milliseconds: Integer
+    attr_accessor latest_entropy: Integer
     def initialize: -> void
     def generate: (?moment: moment) -> ULID
     def reset: -> void
@@ -63,6 +63,7 @@ class ULID
   def self.current_milliseconds: -> Integer
   def self.milliseconds_from_time: (Time time) -> Integer
   def self.milliseconds_from_moment: (moment moment) -> Integer
+  def self.floor: (Time time) -> Time
   def self.reasonable_entropy: -> Integer
   def self.parse: (String string) -> ULID
   def self.from_uuidv4: (String uuid) -> ULID
