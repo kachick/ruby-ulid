@@ -57,6 +57,24 @@ class TestULIDMonotonicGenerator < Test::Unit::TestCase
     second = @generator.generate(moment: 42)
     assert_equal(second.entropy, first.entropy.next)
   end
+
+  def test_generate_raises_overflow_when_called_on_max_entropy
+    max_ulid_in_a_milliseconds = ULID.max(moment: 42)
+
+    @generator.latest_milliseconds = max_ulid_in_a_milliseconds.milliseconds
+    @generator.latest_entropy = ULID::MAX_ENTROPY.pred
+
+    assert_equal(max_ulid_in_a_milliseconds, @generator.generate(moment: max_ulid_in_a_milliseconds.milliseconds))
+
+    @generator.reset
+
+    @generator.latest_milliseconds = max_ulid_in_a_milliseconds.milliseconds
+    @generator.latest_entropy = ULID::MAX_ENTROPY
+
+    assert_raises(ULID::OverflowError) do
+      @generator.generate(moment: max_ulid_in_a_milliseconds.milliseconds)
+    end
+  end
 end
 
 class TestULIDMonotonicGeneratorOfClassState < Test::Unit::TestCase
