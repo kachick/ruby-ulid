@@ -121,6 +121,16 @@ class ULID
     new milliseconds: milliseconds, entropy: entropy
   end
 
+  # @param [Time] time
+  # @return [Time]
+  def self.floor(time)
+    if RUBY_VERSION >= '2.7'
+      time.floor(3)
+    else
+      Time.at(0, milliseconds_from_time(time), :millisecond)
+    end
+  end
+
   # @return [Integer]
   def self.current_milliseconds
     milliseconds_from_time(Time.now)
@@ -173,6 +183,7 @@ class ULID
     true
   end
 
+  # @api private
   # @param [Integer] integer
   # @param [Integer] length
   # @return [Array<Integer>]
@@ -184,6 +195,7 @@ class ULID
     digits.reverse!
   end
 
+  # @api private
   # @see The logics taken from https://bugs.ruby-lang.org/issues/14401, thanks!
   # @param [Array<Integer>] reversed_digits
   # @return [Integer]
@@ -260,7 +272,13 @@ class ULID
 
   # @return [Time]
   def to_time
-    @time ||= Time.at(0, @milliseconds, :millisecond).utc.freeze
+    @time ||= begin
+      if RUBY_VERSION >= '2.7'
+        Time.at(0, @milliseconds, :millisecond, in: 'UTC').freeze
+      else
+        Time.at(0, @milliseconds, :millisecond).utc.freeze
+      end
+    end
   end
 
   # @return [Array(Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer)]
