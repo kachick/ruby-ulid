@@ -273,7 +273,7 @@ class ULID
   # @return [Time]
   def to_time
     @time ||= begin
-      if RUBY_VERSION >= '2.6'
+      if RUBY_VERSION >= '2.7'
         Time.at(0, @milliseconds, :millisecond, in: 'UTC').freeze
       else
         Time.at(0, @milliseconds, :millisecond).utc.freeze
