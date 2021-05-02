@@ -56,6 +56,7 @@ class ULID
   @next: ULID?
   @pattern: Regexp?
   @strict_pattern: Regexp?
+  @uidv4: String?
   @matchdata: MatchData?
 
   def self.generate: (?moment: moment, ?entropy: Integer) -> ULID
@@ -96,6 +97,7 @@ class ULID
   def octets: -> octets
   def timestamp_octets: -> timestamp_octets
   def randomness_octets: -> randomness_octets
+  def to_uuidv4: -> String
   def next: -> ULID?
   alias succ next
   def pred: -> ULID?

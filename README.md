@@ -195,11 +195,14 @@ ULID.parse('01BX5ZZKBK0000000000000000').pred.to_s #=> "01BX5ZZKBJZZZZZZZZZZZZZZ
 ULID.parse('00000000000000000000000000').pred #=> nil
 ```
 
-UUIDv4 converter for migration use-cases. (Of course the timestamp will be useless one. Sortable benefit is lost.)
+UUIDv4 converter for migration use-cases
+(Of course ULIDs sortable benefit will lost)
 
 ```ruby
-ULID.from_uuidv4('0983d0a2-ff15-4d83-8f37-7dd945b5aa39')
-#=> ULID(2301-07-10 00:28:28.821 UTC: 09GF8A5ZRN9P1RYDVXV52VBAHS)
+ulid = ULID.from_uuidv4('0983d0a2-ff15-4d83-8f37-7dd945b5aa39') #=> ULID(2301-07-10 00:28:28.821 UTC: 09GF8A5ZRN9P1RYDVXV52VBAHS)
+ulid.to_uuidv4 #=> "0983d0a2-ff15-4d83-8f37-7dd945b5aa39"
+ULID.min.to_uuidv4 #=> "00000000-0000-4000-8000-000000000000"
+ULID.max.to_uuidv4 #=> "ffffffff-ffff-4fff-bfff-ffffffffffff"
 ```
 
 ## References

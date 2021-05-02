@@ -332,15 +332,27 @@ class ULID
     @pred ||= self.class.from_integer(pre_int)
   end
 
+  # @return [String]
+  def to_uuidv4
+    @uidv4 ||= begin
+      # This code referenced https://github.com/ruby/ruby/blob/121fa24a3451b45c41ac0a661b64e9fc8600e589/lib/securerandom.rb#L221-L241
+      array = octets.pack('C*').unpack('NnnnnN')
+      array[2] = (array[2] & 0x0fff) | 0x4000
+      array[3] = (array[3] & 0x3fff) | 0x8000
+      ('%08x-%04x-%04x-%04x-%04x%08x' % array).freeze
+    end
+  end
+
   # @return [self]
   def freeze
-    # Evaluate all caching
+    # Need to evaluate all lazy calucations. If not, raises FrozenError when called the method after frozen
     inspect
     octets
     to_i
     succ
     pred
     strict_pattern
+    to_uuidv4
     super
   end
 

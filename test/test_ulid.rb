@@ -233,6 +233,35 @@ class TestULID < Test::Unit::TestCase
     end
   end
 
+  def test_to_uuidv4_for_typical_example
+    # The example value was taken from https://github.com/ahawker/ulid/tree/96bdb1daad7ce96f6db8c91ac0410b66d2e1c4c1#usage
+    ulid = ULID.parse('09GF8A5ZRN9P1RYDVXV52VBAHS')
+    assert_equal('0983d0a2-ff15-4d83-8f37-7dd945b5aa39', ulid.to_uuidv4)
+    assert_same(ulid.to_uuidv4, ulid.to_uuidv4)
+    assert_equal(true, ulid.to_uuidv4.frozen?)
+    assert_equal(Encoding::US_ASCII, ulid.to_uuidv4.encoding)
+  end
+
+  def test_to_uuidv4_for_boundary_example
+    assert_equal('00000000-0000-4000-8000-000000000000', ULID.min.to_uuidv4)
+    assert_equal('ffffffff-ffff-4fff-bfff-ffffffffffff', ULID.max.to_uuidv4)
+  end
+
+  def test_uuidv4_compatibility_with_many_random_data
+    # Rough tests
+    uuids = 1000.times.map do
+      SecureRandom.uuid
+    end
+
+    assert_equal(true, uuids.uniq.size == 1000)
+
+    ulids = uuids.map do |uuid|
+      ULID.from_uuidv4(uuid)
+    end
+
+    assert_equal(uuids, ulids.map(&:to_uuidv4))
+  end
+
   def test_from_integer
     min = ULID.parse('00000000000000000000000000')
     max = ULID.parse('7ZZZZZZZZZZZZZZZZZZZZZZZZZ')
@@ -499,6 +528,10 @@ class TestFrozenULID < Test::Unit::TestCase
   def test_pred
     assert_equal(true, @ulid > @ulid.pred)
     assert_nil(@min.pred)
+  end
+
+  def test_to_uuidv4
+    assert_equal('01563e3a-b5d3-4676-8c61-efb99302bd5b', @ulid.to_uuidv4)
   end
 end
 
