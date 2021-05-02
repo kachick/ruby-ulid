@@ -55,6 +55,14 @@ class TestULIDMonotonicGenerator < Test::Unit::TestCase
   def test_generate_just_bump_1_when_same_moment
     first = @generator.generate(moment: 42)
     second = @generator.generate(moment: 42)
+    assert_equal(second.to_time, first.to_time)
+    assert_equal(second.entropy, first.entropy.next)
+  end
+
+  def test_generate_ignores_lower_moment_than_latest_is_given
+    first = @generator.generate(moment: 42)
+    second = @generator.generate(moment: 41)
+    assert_equal(second.to_time, first.to_time)
     assert_equal(second.entropy, first.entropy.next)
   end
 
