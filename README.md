@@ -55,25 +55,7 @@ ulid.octets #=> [1, 121, 20, 95, 7, 202, 187, 60, 175, 51, 76, 60, 49, 73, 37, 7
 ulid.pattern #=> /(?<timestamp>01F4A5Y1YA)(?<randomness>QCYAYCTC7GRMJ9AA)/i
 ```
 
-Generator can take `Time` instance
-
-```ruby
-time = Time.at(946684800, in: 'UTC') #=> 2000-01-01 00:00:00 UTC
-ULID.generate(moment: time) #=> ULID(2000-01-01 00:00:00.000 UTC: 00VHNCZB00N018DCPJA4H9379P)
-ULID.generate(moment: time) #=> ULID(2000-01-01 00:00:00.000 UTC: 00VHNCZB006WQT3JTMN0T14EBP)
-
-ulids = 1000.times.map do
-  ULID.generate(moment: time)
-end
-ulids.sort == ulids #=> false
-
-ulids = 1000.times.map do |n|
-  ULID.generate(moment: time + n)
-end
-ulids.sort == ulids #=> true
-```
-
-You can parse from exists IDs
+You can get the objects from exists encoded ULIDs
 
 FYI: Current parser/validator/matcher implementation aims `strict`, It might be changed in [ulid/spec#57](https://github.com/ulid/spec/pull/57) and [ruby-ulid#57](https://github.com/kachick/ruby-ulid/issues/57).
 
@@ -91,6 +73,19 @@ ulids = 1000.times.map do
 end
 ulids.sort == ulids #=> true
 ulids.uniq(&:to_time).size #=> 1000
+```
+
+`ULID.generate` can take fixed `Time` instance
+
+```ruby
+time = Time.at(946684800, in: 'UTC') #=> 2000-01-01 00:00:00 UTC
+ULID.generate(moment: time) #=> ULID(2000-01-01 00:00:00.000 UTC: 00VHNCZB00N018DCPJA4H9379P)
+ULID.generate(moment: time) #=> ULID(2000-01-01 00:00:00.000 UTC: 00VHNCZB006WQT3JTMN0T14EBP)
+
+ulids = 1000.times.map do |n|
+  ULID.generate(moment: time + n)
+end
+ulids.sort == ulids #=> true
 ```
 
 The basic generator prefers `randomness`, it does not guarantee `sortable` for same milliseconds ULIDs.
