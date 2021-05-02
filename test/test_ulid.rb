@@ -233,6 +233,12 @@ class TestULID < Test::Unit::TestCase
     end
   end
 
+  def test_from_uuidv4_for_boundary_example
+    # @TODO This fails, I don't know why...
+    assert_equal(ULID.min, ULID.from_uuidv4('00000000-0000-4000-8000-000000000000'))
+    assert_equal(ULID.max, ULID.from_uuidv4('ffffffff-ffff-4fff-bfff-ffffffffffff'))
+  end
+
   def test_to_uuidv4_for_typical_example
     # The example value was taken from https://github.com/ahawker/ulid/tree/96bdb1daad7ce96f6db8c91ac0410b66d2e1c4c1#usage
     ulid = ULID.parse('09GF8A5ZRN9P1RYDVXV52VBAHS')
