@@ -103,7 +103,7 @@ ulids.uniq(&:to_time).size #=> 35 (the size is not fixed, might be changed in en
 ulids.sort == ulids #=> false
 ```
 
-If you want to prefer `sortable` rather than the `strict randomness`, Use `MonotonicGenerator` instead. It is called as [Monotonicity](https://github.com/ulid/spec/tree/d0c7170df4517939e70129b4d6462cc162f2d5bf#monotonicity) on the spec.
+If you want to prefer `sortable` rather than the `randomness`, Use `MonotonicGenerator` instead. It is called as [Monotonicity](https://github.com/ulid/spec/tree/d0c7170df4517939e70129b4d6462cc162f2d5bf#monotonicity) on the spec.
 (Though it starts with new random value when changed the timestamp)
 
 ```ruby
@@ -112,19 +112,23 @@ monotonic_ulids = 10000.times.map do
   monotonic_generator.generate
 end
 sample_ulids_by_the_time = monotonic_ulids.uniq(&:to_time)
-sample_ulids_by_the_time.size #=> 34 (the size is not fixed, might be changed in environment)
-sample_ulids_by_the_time.take(10).map(&:randomness)
-#=>
-["JZW56CTA8704D5AQ",
- "JGEBH2A2B2EA97MW",
- "0XPE4NS3MZH0NAJ4",
- "E0S3ZAVADFBPW57Y",
- "E5CX1T6281443THQ",
- "3SK8WHSH03CVF7J2",
- "DDS35BT0R20P3V49",
- "60KG2W9FVEN1ZX8C",
- "X59YJVXXVH7AXJJE",
- "1ZBQ7SNGFKXGH1Y4"]
+sample_ulids_by_the_time.size #=> 32 (the size is not fixed, might be changed in environment)
+
+# In same milliseconds creation, it just increments the end of randomness part
+monotonic_ulids.take(5) #=>
+# [ULID(2021-05-02 15:23:48.917 UTC: 01F4PTVCSN9ZPFKYTY2DDJVRK4),
+#  ULID(2021-05-02 15:23:48.917 UTC: 01F4PTVCSN9ZPFKYTY2DDJVRK5),
+#  ULID(2021-05-02 15:23:48.917 UTC: 01F4PTVCSN9ZPFKYTY2DDJVRK6),
+#  ULID(2021-05-02 15:23:48.917 UTC: 01F4PTVCSN9ZPFKYTY2DDJVRK7),
+#  ULID(2021-05-02 15:23:48.917 UTC: 01F4PTVCSN9ZPFKYTY2DDJVRK8)]
+
+# When the milliseconds is updated, it starts with new randomness
+sample_ulids_by_the_time.take(5) #=>
+# [ULID(2021-05-02 15:23:48.917 UTC: 01F4PTVCSN9ZPFKYTY2DDJVRK4),
+#  ULID(2021-05-02 15:23:48.918 UTC: 01F4PTVCSPF2KXG4ABT7CK3204),
+#  ULID(2021-05-02 15:23:48.919 UTC: 01F4PTVCSQF1GERBPCQV6TCX2K),
+#  ULID(2021-05-02 15:23:48.920 UTC: 01F4PTVCSRBXN2H4P1EYWZ27AK),
+#  ULID(2021-05-02 15:23:48.921 UTC: 01F4PTVCSSK0ASBBZARV7013F8)]
 
 monotonic_ulids.sort == monotonic_ulids #=> true
 ```
