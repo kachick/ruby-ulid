@@ -18,14 +18,14 @@ class ULID
 
       @latest_milliseconds ||= milliseconds
       @latest_entropy ||= reasonable_entropy
-      if @latest_milliseconds != milliseconds
+      if @latest_milliseconds < milliseconds
         @latest_milliseconds = milliseconds
         @latest_entropy = reasonable_entropy
       else
         @latest_entropy += 1
       end
 
-      ULID.new milliseconds: milliseconds, entropy: @latest_entropy
+      ULID.new milliseconds: @latest_milliseconds, entropy: @latest_entropy
     end
 
     # @return [self]
