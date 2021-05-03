@@ -28,10 +28,11 @@ Gem::Specification.new do |gem|
 
   gem.add_runtime_dependency 'integer-base', '>= 0.1.2', '< 0.2.0'
 
+  gem.add_development_dependency 'rbs', '>= 1.2.0'
   gem.add_development_dependency 'benchmark-ips', '>= 2.8.4', '< 3'
   gem.add_development_dependency 'yard', '>= 0.9.26', '< 2'
 
-  gem.required_ruby_version = '>= 2.5'
+  gem.required_ruby_version = '>= 2.6.0'
   
   # common
 

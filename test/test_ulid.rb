@@ -75,6 +75,61 @@ class TestULID < Test::Unit::TestCase
     assert_equal(false, ULID.valid?('80000000000000000000000000'))
   end
 
+  def test_range
+    time_has_more_value_than_milliseconds1 = Time.at(946684800, Rational('123456.789')) # 2000-01-01 00:00:00.123456789 UTC
+    time_has_more_value_than_milliseconds2 = Time.at(1620045632, Rational('123456.789')) # 2021-05-03 12:40:32.123456789 UTC
+    include_end = time_has_more_value_than_milliseconds1..time_has_more_value_than_milliseconds2
+    exclude_end = time_has_more_value_than_milliseconds1...time_has_more_value_than_milliseconds2
+
+    assert_equal(
+      ULID.min(moment: ULID.floor(time_has_more_value_than_milliseconds1))..ULID.max(moment: ULID.floor(time_has_more_value_than_milliseconds2)),
+      ULID.range(include_end)
+    )
+
+    assert_equal(
+      ULID.min(moment: ULID.floor(time_has_more_value_than_milliseconds1))...ULID.min(moment: ULID.floor(time_has_more_value_than_milliseconds2)),
+      ULID.range(exclude_end)
+    )
+
+    include_end_and_nil_end = time_has_more_value_than_milliseconds1..nil
+    exclude_end_and_nil_end = time_has_more_value_than_milliseconds1...nil
+
+    assert_equal(
+      ULID.min(moment: ULID.floor(time_has_more_value_than_milliseconds1))..ULID.max,
+      ULID.range(include_end_and_nil_end)
+    )
+
+    # The end should be max and include end, because nil end means to cover endless ULIDs until the limit
+    assert_equal(
+      ULID.min(moment: ULID.floor(time_has_more_value_than_milliseconds1))..ULID.max,
+      ULID.range(exclude_end_and_nil_end)
+    )
+
+    if RUBY_VERSION >= '2.7'
+      include_end_and_nil_begin = nil..time_has_more_value_than_milliseconds2
+      exclude_end_and_nil_begin = nil...time_has_more_value_than_milliseconds2
+
+      assert_equal(
+        ULID.min..ULID.max(moment: ULID.floor(time_has_more_value_than_milliseconds2)),
+        ULID.range(include_end_and_nil_begin)
+      )
+      assert_equal(
+        ULID.min...ULID.min(moment: ULID.floor(time_has_more_value_than_milliseconds2)),
+        ULID.range(exclude_end_and_nil_begin)
+      )
+    end
+
+    assert_raises(ArgumentError) do
+      ULID.range(nil)
+    end
+    assert_raises(ArgumentError) do
+      ULID.range(0..42)
+    end
+    assert_raises(ArgumentError) do
+      ULID.range('01ARZ3NDEKTSV4RRFFQ69G5FAV'..'7ZZZZZZZZZZZZZZZZZZZZZZZZZ')
+    end
+  end
+
   def test_floor
     time_has_more_value_than_milliseconds = Time.at(946684800, Rational('123456.789'))
     assert_equal('EST', time_has_more_value_than_milliseconds.zone)
