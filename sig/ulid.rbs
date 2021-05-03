@@ -79,8 +79,7 @@ class ULID
   attr_reader milliseconds: Integer
   attr_reader entropy: Integer
   def initialize: (milliseconds: Integer, entropy: Integer) -> void
-  def to_str: -> String
-  alias to_s to_str
+  def to_s: -> String
   def to_i: -> Integer
   alias hash to_i
   def <=>: (ULID other) -> Integer

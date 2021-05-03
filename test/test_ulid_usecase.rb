@@ -4,6 +4,28 @@
 require_relative 'helper'
 
 class TestULIDUseCase < Test::Unit::TestCase
+  def test_range_elements
+    begin_ulid = ULID.generate
+    ulid2 = begin_ulid.next
+    ulid3 = ulid2.next
+    ulid4 = ulid3.next
+    ulid5 = ulid4.next
+    end_ulid = ulid5.next
+
+    include_end = begin_ulid..end_ulid
+    exclude_end = begin_ulid...end_ulid
+
+    assert_equal([begin_ulid, ulid2, ulid3, ulid4, ulid5, end_ulid], include_end.each.to_a)
+    assert_equal([begin_ulid, ulid2, ulid3, ulid4, ulid5], exclude_end.each.to_a)
+
+    assert_equal([begin_ulid, ulid3, ulid5], include_end.step(2).to_a)
+    assert_equal([begin_ulid, ulid4], include_end.step(3).to_a)
+    assert_equal([begin_ulid, end_ulid], include_end.step(5).to_a)
+    assert_equal([begin_ulid, ulid3, ulid5], exclude_end.step(2).to_a)
+    assert_equal([begin_ulid, ulid4], exclude_end.step(3).to_a)
+    assert_equal([begin_ulid], exclude_end.step(5).to_a)
+  end
+
   # https://github.com/kachick/ruby-ulid/issues/47
   def test_filter_ulids_by_time
     time1_1 = Time.at(1, Rational('122999.999'))

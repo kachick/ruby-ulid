@@ -261,10 +261,9 @@ class ULID
   end
 
   # @return [String]
-  def to_str
+  def to_s
     @string ||= Integer::Base.string_for(to_i, ENCODING_CHARS).rjust(ENCODED_ID_LENGTH, '0').upcase.freeze
   end
-  alias_method :to_s, :to_str
 
   # @return [Integer]
   def to_i
@@ -279,7 +278,7 @@ class ULID
 
   # @return [String]
   def inspect
-    @inspect ||= "ULID(#{to_time.strftime(TIME_FORMAT_IN_INSPECT)}: #{to_str})".freeze
+    @inspect ||= "ULID(#{to_time.strftime(TIME_FORMAT_IN_INSPECT)}: #{to_s})".freeze
   end
 
   # @return [Boolean]
@@ -381,7 +380,7 @@ class ULID
 
   # @return [MatchData]
   def matchdata
-    @matchdata ||= STRICT_PATTERN.match(to_str).freeze
+    @matchdata ||= STRICT_PATTERN.match(to_s).freeze
   end
 end
 
