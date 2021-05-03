@@ -91,34 +91,32 @@ class TestULID < Test::Unit::TestCase
       ULID.range(exclude_end)
     )
 
-    if RUBY_VERSION >= '2.6'
-      include_end_and_nil_end = time_has_more_value_than_milliseconds1..nil
-      exclude_end_and_nil_end = time_has_more_value_than_milliseconds1...nil
+    include_end_and_nil_end = time_has_more_value_than_milliseconds1..nil
+    exclude_end_and_nil_end = time_has_more_value_than_milliseconds1...nil
+
+    assert_equal(
+      ULID.min(moment: ULID.floor(time_has_more_value_than_milliseconds1))..ULID.max,
+      ULID.range(include_end_and_nil_end)
+    )
+
+    # The end should be max and include end, because nil end means to cover endless ULIDs until the limit
+    assert_equal(
+      ULID.min(moment: ULID.floor(time_has_more_value_than_milliseconds1))..ULID.max,
+      ULID.range(exclude_end_and_nil_end)
+    )
+
+    if RUBY_VERSION >= '2.7'
+      include_end_and_nil_begin = nil..time_has_more_value_than_milliseconds2
+      exclude_end_and_nil_begin = nil...time_has_more_value_than_milliseconds2
 
       assert_equal(
-        ULID.min(moment: ULID.floor(time_has_more_value_than_milliseconds1))..ULID.max,
-        ULID.range(include_end_and_nil_end)
+        ULID.min..ULID.max(moment: ULID.floor(time_has_more_value_than_milliseconds2)),
+        ULID.range(include_end_and_nil_begin)
       )
-
-      # The end should be max and include end, because nil end means to cover endless ULIDs until the limit
       assert_equal(
-        ULID.min(moment: ULID.floor(time_has_more_value_than_milliseconds1))..ULID.max,
-        ULID.range(exclude_end_and_nil_end)
+        ULID.min...ULID.min(moment: ULID.floor(time_has_more_value_than_milliseconds2)),
+        ULID.range(exclude_end_and_nil_begin)
       )
-
-      if RUBY_VERSION >= '2.7'
-        include_end_and_nil_begin = nil..time_has_more_value_than_milliseconds2
-        exclude_end_and_nil_begin = nil...time_has_more_value_than_milliseconds2
-
-        assert_equal(
-          ULID.min..ULID.max(moment: ULID.floor(time_has_more_value_than_milliseconds2)),
-          ULID.range(include_end_and_nil_begin)
-        )
-        assert_equal(
-          ULID.min...ULID.min(moment: ULID.floor(time_has_more_value_than_milliseconds2)),
-          ULID.range(exclude_end_and_nil_begin)
-        )
-      end
     end
 
     assert_raises(ArgumentError) do
