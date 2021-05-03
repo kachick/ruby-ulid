@@ -382,12 +382,6 @@ class TestULID < Test::Unit::TestCase
     assert_equal(true, ulid.to_s.frozen?)
   end
 
-  def test_to_str
-    ulid = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
-    assert_equal('01ARZ3NDEKTSV4RRFFQ69G5FAV', ulid.to_str)
-    assert_equal(Encoding::US_ASCII, ulid.to_str.encoding)
-  end
-
   def test_inspect
     ulid = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
     assert_equal('ULID(2016-07-30 23:54:10.259 UTC: 01ARZ3NDEKTSV4RRFFQ69G5FAV)', ulid.inspect)
@@ -524,10 +518,6 @@ class TestFrozenULID < Test::Unit::TestCase
     @ulid.freeze
     @min = ULID.min.freeze
     @max = ULID.max.freeze
-  end
-
-  def test_to_str
-    assert_equal(@string, @ulid.to_str)
   end
 
   def test_inspect
