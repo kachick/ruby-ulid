@@ -128,6 +128,20 @@ sample_ulids_by_the_time.take(5) #=>
 monotonic_ulids.sort == monotonic_ulids #=> true
 ```
 
+When filtering ULIDs by `Time`, we should consider to handle the precision.
+So this gem provides `ULID.range` to generate `Range[ULID]` from given `Range[Time]`
+
+```ruby
+# Both of below, The begin of `Range[ULID]` will be the minimum in the floored milliseconds of the time1
+include_end = ULID.range(time1..time2) #=> The end of `Range[ULID]` will be the maximum in the floored milliseconds of the time2
+exclude_end = ULID.range(time1...time2) #=> The end of `Range[ULID]` will be the minimum in the floored milliseconds of the time2
+
+# So you can use the generated range objects as below
+ulids.grep(include_end)
+ulids.grep(exclude_end)
+#=> I hope the results should be actually you want!
+```
+
 For rough operations, `ULID.scan` might be useful.
 
 ```ruby

@@ -121,6 +121,39 @@ class ULID
     new milliseconds: milliseconds, entropy: entropy
   end
 
+  # @param [Range<Time>] time_range
+  # @return [Range<ULID>]
+  def self.range(time_range)
+    raise ArgumentError, 'ULID.range takes only Range[Time]' unless time_range.kind_of?(Range)
+    begin_time, end_time, exclude_end = time_range.begin, time_range.end, time_range.exclude_end?
+
+    case begin_time
+    when Time
+      begin_ulid = min(moment: begin_time)
+    when nil
+      begin_ulid = min
+    else
+      raise ArgumentError, 'ULID.range takes only Range[Time]'
+    end
+
+    case end_time
+    when Time
+      if exclude_end
+        end_ulid = min(moment: end_time)
+      else
+        end_ulid = max(moment: end_time)
+      end
+    when nil
+      # The end should be max and include end, because nil end means to cover endless ULIDs until the limit
+      end_ulid = max
+      exclude_end = false
+    else
+      raise ArgumentError, 'ULID.range takes only Range[Time]'
+    end
+
+    Range.new(begin_ulid, end_ulid, exclude_end)
+  end
+
   # @param [Time] time
   # @return [Time]
   def self.floor(time)
