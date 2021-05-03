@@ -14,6 +14,12 @@ Formal name is `Universally Unique Lexicographically Sortable Identifier`.
 $ gem install ruby-ulid
 ```
 
+## Uninstall
+
+```console
+$ gem uninstall ruby-ulid
+```
+
 ## Usage
 
 The generated `ULID` is an object rather than just a string.
