@@ -111,16 +111,13 @@ class TestULID < Test::Unit::TestCase
     )
 
     if RUBY_VERSION >= '2.7'
-      include_end_and_nil_begin = nil..time_has_more_value_than_milliseconds2
-      exclude_end_and_nil_begin = nil...time_has_more_value_than_milliseconds2
-
       assert_equal(
         ULID.min..ULID.max(moment: ULID.floor(time_has_more_value_than_milliseconds2)),
-        ULID.range(include_end_and_nil_begin)
+        ULID.range(nil..time_has_more_value_than_milliseconds2)
       )
       assert_equal(
         ULID.min...ULID.min(moment: ULID.floor(time_has_more_value_than_milliseconds2)),
-        ULID.range(exclude_end_and_nil_begin)
+        ULID.range(nil...time_has_more_value_than_milliseconds2)
       )
     end
 
