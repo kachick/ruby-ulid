@@ -96,6 +96,10 @@ class TestULID < Test::Unit::TestCase
       ULID.range(exclude_end)
     )
 
+    # For optimization
+    assert_equal(true, ULID.range(include_end).begin.frozen?)
+    assert_equal(true, ULID.range(include_end).end.frozen?)
+
     include_end_and_nil_end = time_has_more_value_than_milliseconds1..nil
     exclude_end_and_nil_end = time_has_more_value_than_milliseconds1...nil
 
