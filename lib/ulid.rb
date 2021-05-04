@@ -51,13 +51,13 @@ class ULID
   # @param [Integer, Time] moment
   # @return [ULID]
   def self.min(moment: 0)
-    generate(moment: moment, entropy: 0)
+    0.equal?(moment) ? MIN : generate(moment: moment, entropy: 0)
   end
 
   # @param [Integer, Time] moment
   # @return [ULID]
   def self.max(moment: MAX_MILLISECONDS)
-    generate(moment: moment, entropy: MAX_ENTROPY)
+    MAX_MILLISECONDS.equal?(moment) ? MAX : generate(moment: moment, entropy: MAX_ENTROPY)
   end
 
   # @deprecated This method actually changes class state. Use {ULID::MonotonicGenerator} instead.
@@ -119,6 +119,44 @@ class ULID
     entropy = inverse_of_digits(randomness_octets)
 
     new milliseconds: milliseconds, entropy: entropy
+  end
+
+  # @param [Range<Time>, Range<nil>] time_range
+  # @return [Range<ULID>]
+  # @raise [ArgumentError] if the given time_range is not a `Range[Time]` or `Range[nil]`
+  def self.range(time_range)
+    raise argument_error_for_range_building(time_range) unless time_range.kind_of?(Range)
+    begin_time, end_time, exclude_end = time_range.begin, time_range.end, time_range.exclude_end?
+
+    case begin_time
+    when Time
+      begin_ulid = min(moment: begin_time)
+    when nil
+      begin_ulid = min
+    else
+      raise argument_error_for_range_building(time_range)
+    end
+
+    case end_time
+    when Time
+      if exclude_end
+        end_ulid = min(moment: end_time)
+      else
+        end_ulid = max(moment: end_time)
+      end
+    when nil
+      # The end should be max and include end, because nil end means to cover endless ULIDs until the limit
+      end_ulid = max
+      exclude_end = false
+    else
+      raise argument_error_for_range_building(time_range)
+    end
+
+    unless begin_ulid.to_time < end_ulid.to_time
+      raise NotImplementedError, "Given same milliseconds timestamps or inverted timestamps in the `Range[Time]`, it is considering in https://github.com/kachick/ruby-ulid/issues/74: #{time_range.inspect}"
+    end
+
+    Range.new(begin_ulid, end_ulid, exclude_end)
   end
 
   # @param [Time] time
@@ -208,6 +246,11 @@ class ULID
     num
   end
 
+  # @return [ArgumentError]
+  private_class_method def self.argument_error_for_range_building(argument)
+    ArgumentError.new "ULID.range takes only `Range[Time]` or `Range[nil]`, given: #{argument.inspect}"
+  end
+
   attr_reader :milliseconds, :entropy
 
   # @api private
@@ -228,10 +271,9 @@ class ULID
   end
 
   # @return [String]
-  def to_str
+  def to_s
     @string ||= Integer::Base.string_for(to_i, ENCODING_CHARS).rjust(ENCODED_ID_LENGTH, '0').upcase.freeze
   end
-  alias_method :to_s, :to_str
 
   # @return [Integer]
   def to_i
@@ -246,7 +288,7 @@ class ULID
 
   # @return [String]
   def inspect
-    @inspect ||= "ULID(#{to_time.strftime(TIME_FORMAT_IN_INSPECT)}: #{to_str})".freeze
+    @inspect ||= "ULID(#{to_time.strftime(TIME_FORMAT_IN_INSPECT)}: #{to_s})".freeze
   end
 
   # @return [Boolean]
@@ -334,7 +376,7 @@ class ULID
 
   # @return [String]
   def to_uuidv4
-    @uidv4 ||= begin
+    @uuidv4 ||= begin
       # This code referenced https://github.com/ruby/ruby/blob/121fa24a3451b45c41ac0a661b64e9fc8600e589/lib/securerandom.rb#L221-L241
       array = octets.pack('C*').unpack('NnnnnN')
       array[2] = (array[2] & 0x0fff) | 0x4000
@@ -345,14 +387,8 @@ class ULID
 
   # @return [self]
   def freeze
-    # Need to evaluate all lazy calucations. If not, raises FrozenError when called the method after frozen
-    inspect
-    octets
-    to_i
-    succ
-    pred
-    strict_pattern
-    to_uuidv4
+    # Need to cache before freezing, because frozen objects can't assign instance variables
+    cache_all_instance_variables
     super
   end
 
@@ -360,7 +396,18 @@ class ULID
 
   # @return [MatchData]
   def matchdata
-    @matchdata ||= STRICT_PATTERN.match(to_str).freeze
+    @matchdata ||= STRICT_PATTERN.match(to_s).freeze
+  end
+
+  # @return [void]
+  def cache_all_instance_variables
+    inspect
+    octets
+    to_i
+    succ
+    pred
+    strict_pattern
+    to_uuidv4
   end
 end
 
@@ -368,7 +415,9 @@ require_relative 'ulid/version'
 require_relative 'ulid/monotonic_generator'
 
 class ULID
+  MIN = parse('00000000000000000000000000').freeze
+  MAX = parse('7ZZZZZZZZZZZZZZZZZZZZZZZZZ').freeze
   MONOTONIC_GENERATOR = MonotonicGenerator.new
 
-  private_constant :ENCODING_CHARS, :TIME_FORMAT_IN_INSPECT, :UUIDV4_PATTERN
+  private_constant :ENCODING_CHARS, :TIME_FORMAT_IN_INSPECT, :UUIDV4_PATTERN, :MIN, :MAX
 end

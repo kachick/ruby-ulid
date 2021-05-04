@@ -9,8 +9,13 @@ class TestULID < Test::Unit::TestCase
     ENV['TZ'] = 'EST' # Just chosen from not UTC and JST
   end
 
-  def test_ensure_test_environment
+  def test_ensure_testing_environment
     assert_equal(Encoding::UTF_8, ''.encoding)
+    assert_equal('EST', Time.now.zone)
+  end
+
+  def test_constants
+    assert_equal(true, ULID::VERSION.frozen?)
   end
 
   def test_parse
@@ -73,6 +78,78 @@ class TestULID < Test::Unit::TestCase
     assert_equal(true, ULID.valid?('01ARZ3NDEKTSV4RRFFQ69G5FAV'.downcase))
     assert_equal(true, ULID.valid?('7ZZZZZZZZZZZZZZZZZZZZZZZZZ'))
     assert_equal(false, ULID.valid?('80000000000000000000000000'))
+  end
+
+  def test_range
+    time_has_more_value_than_milliseconds1 = Time.at(946684800, Rational('123456.789')) # 2000-01-01 00:00:00.123456789 UTC
+    time_has_more_value_than_milliseconds2 = Time.at(1620045632, Rational('123456.789')) # 2021-05-03 12:40:32.123456789 UTC
+    include_end = time_has_more_value_than_milliseconds1..time_has_more_value_than_milliseconds2
+    exclude_end = time_has_more_value_than_milliseconds1...time_has_more_value_than_milliseconds2
+
+    assert_equal(
+      ULID.min(moment: ULID.floor(time_has_more_value_than_milliseconds1))..ULID.max(moment: ULID.floor(time_has_more_value_than_milliseconds2)),
+      ULID.range(include_end)
+    )
+
+    assert_equal(
+      ULID.min(moment: ULID.floor(time_has_more_value_than_milliseconds1))...ULID.min(moment: ULID.floor(time_has_more_value_than_milliseconds2)),
+      ULID.range(exclude_end)
+    )
+
+    include_end_and_nil_end = time_has_more_value_than_milliseconds1..nil
+    exclude_end_and_nil_end = time_has_more_value_than_milliseconds1...nil
+
+    assert_equal(
+      ULID.min(moment: ULID.floor(time_has_more_value_than_milliseconds1))..ULID.max,
+      ULID.range(include_end_and_nil_end)
+    )
+
+    # The end should be max and include end, because nil end means to cover endless ULIDs until the limit
+    assert_equal(
+      ULID.min(moment: ULID.floor(time_has_more_value_than_milliseconds1))..ULID.max,
+      ULID.range(exclude_end_and_nil_end)
+    )
+
+    if RUBY_VERSION >= '2.7'
+      assert_equal(
+        ULID.min..ULID.max(moment: ULID.floor(time_has_more_value_than_milliseconds2)),
+        ULID.range(nil..time_has_more_value_than_milliseconds2)
+      )
+      assert_equal(
+        ULID.min...ULID.min(moment: ULID.floor(time_has_more_value_than_milliseconds2)),
+        ULID.range(nil...time_has_more_value_than_milliseconds2)
+      )
+      assert_equal(
+        ULID.min..ULID.max,
+        ULID.range(nil..nil)
+      )
+      assert_equal(
+        ULID.min..ULID.max, # Intentional to return `include_end` for `exclude_end` Range.
+        ULID.range(nil...nil)
+      )
+    end
+
+    assert_raises(ArgumentError) do
+      ULID.range(nil)
+    end
+    err = assert_raises(ArgumentError) do
+      ULID.range(0..42)
+    end
+    assert_match(/ULID\.range takes only `Range\[Time\]`.+`Range\[nil\]`/, err.message)
+    assert_raises(ArgumentError) do
+      ULID.range('01ARZ3NDEKTSV4RRFFQ69G5FAV'..'7ZZZZZZZZZZZZZZZZZZZZZZZZZ')
+    end
+
+    # Currently I do not determine which behaviors will be best for below pattern, so temporary preventing accidents
+    # ref: https://github.com/kachick/ruby-ulid/issues/74
+    err = assert_raises(NotImplementedError) do
+      ULID.range(time_has_more_value_than_milliseconds1..time_has_more_value_than_milliseconds1)
+    end
+    assert_equal(true, err.message.include?('https://github.com/kachick/ruby-ulid/issues/74'))
+    err = assert_raises(NotImplementedError) do
+      ULID.range(time_has_more_value_than_milliseconds2..time_has_more_value_than_milliseconds1)
+    end
+    assert_equal(true, err.message.include?('https://github.com/kachick/ruby-ulid/issues/74'))
   end
 
   def test_floor
@@ -297,6 +374,14 @@ class TestULID < Test::Unit::TestCase
     milliseconds = 42
     ulid = ULID.generate(moment: milliseconds)
     assert_equal(ulid.timestamp + '0000000000000000', ULID.min(moment: milliseconds).to_s)
+
+    assert_equal(ULID.min(moment: milliseconds), ULID.min(moment: milliseconds))
+    assert_not_same(ULID.min(moment: milliseconds), ULID.min(moment: milliseconds))
+    assert_equal(false, ULID.min(moment: milliseconds).frozen?)
+
+    # For optimization
+    assert_same(ULID.min, ULID.min)
+    assert_equal(true, ULID.min.frozen?)
   end
 
   def test_max
@@ -307,6 +392,14 @@ class TestULID < Test::Unit::TestCase
     milliseconds = 42
     ulid = ULID.generate(moment: milliseconds)
     assert_equal(ulid.timestamp + 'ZZZZZZZZZZZZZZZZ', ULID.max(moment: milliseconds).to_s)
+
+    assert_equal(ULID.max(moment: milliseconds), ULID.max(moment: milliseconds))
+    assert_not_same(ULID.max(moment: milliseconds), ULID.max(moment: milliseconds))
+    assert_equal(false, ULID.max(moment: milliseconds).frozen?)
+
+    # For optimization
+    assert_same(ULID.max, ULID.max)
+    assert_equal(true, ULID.max.frozen?)
   end
 
   def test_eq
@@ -360,12 +453,6 @@ class TestULID < Test::Unit::TestCase
     assert_equal('01ARZ3NDEKTSV4RRFFQ69G5FAV', ulid.to_s)
     assert_same(ulid.to_s, ulid.to_s)
     assert_equal(true, ulid.to_s.frozen?)
-  end
-
-  def test_to_str
-    ulid = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
-    assert_equal('01ARZ3NDEKTSV4RRFFQ69G5FAV', ulid.to_str)
-    assert_equal(Encoding::US_ASCII, ulid.to_str.encoding)
   end
 
   def test_inspect
@@ -469,8 +556,8 @@ end
 
 class TestBoundaryULID < Test::Unit::TestCase
   def setup
-    @min = ULID.parse('00000000000000000000000000')
-    @max = ULID.parse('7ZZZZZZZZZZZZZZZZZZZZZZZZZ')
+    @min = ULID.min
+    @max = ULID.max
     @min_entropy = ULID.parse('01BX5ZZKBK0000000000000000')
     @max_entropy = ULID.parse('01BX5ZZKBKZZZZZZZZZZZZZZZZ')
   end
@@ -506,8 +593,17 @@ class TestFrozenULID < Test::Unit::TestCase
     @max = ULID.max.freeze
   end
 
-  def test_to_str
-    assert_equal(@string, @ulid.to_str)
+  def test_instance_variables
+    @ulid.instance_variables.each do |name|
+      ivar = @ulid.instance_variable_get(name)
+      assert_equal(true, !!ivar, "#{name} is still falsy: #{ivar.inspect}")
+      case name
+      when :@next, :@pred
+        assert_equal(false, ivar.frozen?, "#{name} is unexpected frozen")
+      else
+        assert_equal(true, ivar.frozen?, "#{name} is not frozen")
+      end
+    end
   end
 
   def test_inspect

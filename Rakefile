@@ -11,11 +11,7 @@ Rake::TestTask.new do |tt|
   tt.warning = true
 end
 
-sub_tests = [:test_yard]
-if Gem::Version.create(RUBY_VERSION) >= Gem::Version.create('2.6.0')
-  sub_tests << :'signature:validate'
-end
-task sub_test: sub_tests
+task sub_test: [:test_yard, :'signature:validate']
 
 namespace :signature do
   task :validate do

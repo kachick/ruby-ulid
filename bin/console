@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 
+require 'bundler/setup'
 require 'irb'
 require 'irb/completion' # easy tab completion ref: https://docs.ruby-lang.org/ja/latest/library/irb=2fcompletion.html
 

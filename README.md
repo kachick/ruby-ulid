@@ -35,6 +35,8 @@ Instead, herein is proposed ULID:
 
 ## Install
 
+Require Ruby 2.6 or later
+
 ```console
 $ gem install ruby-ulid
 #=> Installed
@@ -56,8 +58,6 @@ ulid.pattern #=> /(?<timestamp>01F4A5Y1YA)(?<randomness>QCYAYCTC7GRMJ9AA)/i
 ```
 
 You can get the objects from exists encoded ULIDs
-
-FYI: Current parser/validator/matcher implementation aims `strict`, It might be changed in [ulid/spec#57](https://github.com/ulid/spec/pull/57) and [ruby-ulid#57](https://github.com/kachick/ruby-ulid/issues/57).
 
 ```ruby
 ulid = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV') #=> ULID(2016-07-30 23:54:10.259 UTC: 01ARZ3NDEKTSV4RRFFQ69G5FAV)
@@ -98,19 +98,19 @@ ulids.uniq(&:to_time).size #=> 35 (the size is not fixed, might be changed in en
 ulids.sort == ulids #=> false
 ```
 
-If you want to prefer `sortable` rather than the `randomness`, Use `MonotonicGenerator` instead. It is called as [Monotonicity](https://github.com/ulid/spec/tree/d0c7170df4517939e70129b4d6462cc162f2d5bf#monotonicity) on the spec.
+If you want to ensure `sortable`, Use `MonotonicGenerator` instead. It is called as [Monotonicity](https://github.com/ulid/spec/tree/d0c7170df4517939e70129b4d6462cc162f2d5bf#monotonicity) on the spec.
 (Though it starts with new random value when changed the timestamp)
 
 ```ruby
 monotonic_generator = ULID::MonotonicGenerator.new
-monotonic_ulids = 10000.times.map do
+ulids = 10000.times.map do
   monotonic_generator.generate
 end
-sample_ulids_by_the_time = monotonic_ulids.uniq(&:to_time)
+sample_ulids_by_the_time = ulids.uniq(&:to_time)
 sample_ulids_by_the_time.size #=> 32 (the size is not fixed, might be changed in environment)
 
 # In same milliseconds creation, it just increments the end of randomness part
-monotonic_ulids.take(5) #=>
+ulids.take(5) #=>
 # [ULID(2021-05-02 15:23:48.917 UTC: 01F4PTVCSN9ZPFKYTY2DDJVRK4),
 #  ULID(2021-05-02 15:23:48.917 UTC: 01F4PTVCSN9ZPFKYTY2DDJVRK5),
 #  ULID(2021-05-02 15:23:48.917 UTC: 01F4PTVCSN9ZPFKYTY2DDJVRK6),
@@ -125,7 +125,21 @@ sample_ulids_by_the_time.take(5) #=>
 #  ULID(2021-05-02 15:23:48.920 UTC: 01F4PTVCSRBXN2H4P1EYWZ27AK),
 #  ULID(2021-05-02 15:23:48.921 UTC: 01F4PTVCSSK0ASBBZARV7013F8)]
 
-monotonic_ulids.sort == monotonic_ulids #=> true
+ulids.sort == ulids #=> true
+```
+
+When filtering ULIDs by `Time`, we should consider to handle the precision.
+So this gem provides `ULID.range` to generate `Range[ULID]` from given `Range[Time]`
+
+```ruby
+# Both of below, The begin of `Range[ULID]` will be the minimum in the floored milliseconds of the time1
+include_end = ULID.range(time1..time2) #=> The end of `Range[ULID]` will be the maximum in the floored milliseconds of the time2
+exclude_end = ULID.range(time1...time2) #=> The end of `Range[ULID]` will be the minimum in the floored milliseconds of the time2
+
+# So you can use the generated range objects as below
+ulids.grep(include_end)
+ulids.grep(exclude_end)
+#=> I hope the results should be actually you want!
 ```
 
 For rough operations, `ULID.scan` might be useful.
@@ -207,6 +221,8 @@ ULID.max.to_uuidv4 #=> "ffffffff-ffff-4fff-bfff-ffffffffffff"
 
 ## References
 
+- [Repository](https://github.com/kachick/ruby-ulid)
 - [API documents](https://kachick.github.io/ruby-ulid/)
 - [ulid/spec](https://github.com/ulid/spec)
-- [Another choices are UUIDv6, UUIDv7, UUIDv8. But they are still in draft state](https://www.ietf.org/archive/id/draft-peabody-dispatch-new-uuid-format-01.html)
+- [Another choices are UUIDv6, UUIDv7, UUIDv8. But they are still in draft state](https://www.ietf.org/archive/id/draft-peabody-dispatch-new-uuid-format-01.html), I will track them in [ruby-ulid#37](https://github.com/kachick/ruby-ulid/issues/37)
+- Current parser/validator/matcher implementation aims `strict`, It might be changed in [ulid/spec#57](https://github.com/ulid/spec/pull/57) and [ruby-ulid#57](https://github.com/kachick/ruby-ulid/issues/57).
