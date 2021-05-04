@@ -41,7 +41,7 @@ Gem::Specification.new do |gem|
   git_ls_filepaths = `git ls-files`.lines.map(&:chomp)
   minimum_filepaths = git_ls_filepaths.grep(%r!\A(?:lib|sig)/!)
   raise "obvious mistaken in packaging files: #{minimum_filepaths.inspect}" if minimum_filepaths.size < 2
-  extra_filepaths = %w[README.md LICENSE Steepfile]
+  extra_filepaths = %w[README.md LICENSE]
   raise 'git ignores extra filename' unless (extra_filepaths - git_ls_filepaths).empty?
   gem.files         = minimum_filepaths | extra_filepaths
   gem.require_paths = ['lib']
