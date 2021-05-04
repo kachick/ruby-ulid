@@ -338,6 +338,14 @@ class TestULID < Test::Unit::TestCase
     milliseconds = 42
     ulid = ULID.generate(moment: milliseconds)
     assert_equal(ulid.timestamp + '0000000000000000', ULID.min(moment: milliseconds).to_s)
+
+    assert_equal(ULID.min(moment: milliseconds), ULID.min(moment: milliseconds))
+    assert_not_same(ULID.min(moment: milliseconds), ULID.min(moment: milliseconds))
+    assert_equal(false, ULID.min(moment: milliseconds).frozen?)
+
+    # For optimization
+    assert_same(ULID.min, ULID.min)
+    assert_equal(true, ULID.min.frozen?)
   end
 
   def test_max
@@ -348,6 +356,14 @@ class TestULID < Test::Unit::TestCase
     milliseconds = 42
     ulid = ULID.generate(moment: milliseconds)
     assert_equal(ulid.timestamp + 'ZZZZZZZZZZZZZZZZ', ULID.max(moment: milliseconds).to_s)
+
+    assert_equal(ULID.max(moment: milliseconds), ULID.max(moment: milliseconds))
+    assert_not_same(ULID.max(moment: milliseconds), ULID.max(moment: milliseconds))
+    assert_equal(false, ULID.max(moment: milliseconds).frozen?)
+
+    # For optimization
+    assert_same(ULID.max, ULID.max)
+    assert_equal(true, ULID.max.frozen?)
   end
 
   def test_eq
@@ -504,8 +520,8 @@ end
 
 class TestBoundaryULID < Test::Unit::TestCase
   def setup
-    @min = ULID.parse('00000000000000000000000000')
-    @max = ULID.parse('7ZZZZZZZZZZZZZZZZZZZZZZZZZ')
+    @min = ULID.min
+    @max = ULID.max
     @min_entropy = ULID.parse('01BX5ZZKBK0000000000000000')
     @max_entropy = ULID.parse('01BX5ZZKBKZZZZZZZZZZZZZZZZ')
   end

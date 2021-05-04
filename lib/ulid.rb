@@ -51,13 +51,13 @@ class ULID
   # @param [Integer, Time] moment
   # @return [ULID]
   def self.min(moment: 0)
-    generate(moment: moment, entropy: 0)
+    0.equal?(moment) ? MIN : generate(moment: moment, entropy: 0)
   end
 
   # @param [Integer, Time] moment
   # @return [ULID]
   def self.max(moment: MAX_MILLISECONDS)
-    generate(moment: moment, entropy: MAX_ENTROPY)
+    MAX_MILLISECONDS.equal?(moment) ? MAX : generate(moment: moment, entropy: MAX_ENTROPY)
   end
 
   # @deprecated This method actually changes class state. Use {ULID::MonotonicGenerator} instead.
@@ -392,7 +392,9 @@ require_relative 'ulid/version'
 require_relative 'ulid/monotonic_generator'
 
 class ULID
+  MIN = parse('00000000000000000000000000').freeze
+  MAX = parse('7ZZZZZZZZZZZZZZZZZZZZZZZZZ').freeze
   MONOTONIC_GENERATOR = MonotonicGenerator.new
 
-  private_constant :ENCODING_CHARS, :TIME_FORMAT_IN_INSPECT, :UUIDV4_PATTERN
+  private_constant :ENCODING_CHARS, :TIME_FORMAT_IN_INSPECT, :UUIDV4_PATTERN, :MIN, :MAX
 end

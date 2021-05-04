@@ -16,8 +16,11 @@ class ULID
   STRICT_PATTERN: Regexp
   UUIDV4_PATTERN: Regexp
   MONOTONIC_GENERATOR: MonotonicGenerator
+  MIN: ULID
+  MAX: ULID
   include Comparable
 
+  # The `moment` is a `Time` or `Intger of the milliseconds`
   type moment = Time | Integer
 
   class Error < StandardError
