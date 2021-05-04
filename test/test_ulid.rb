@@ -9,8 +9,13 @@ class TestULID < Test::Unit::TestCase
     ENV['TZ'] = 'EST' # Just chosen from not UTC and JST
   end
 
-  def test_ensure_test_environment
+  def test_ensure_testing_environment
     assert_equal(Encoding::UTF_8, ''.encoding)
+    assert_equal('EST', Time.now.zone)
+  end
+
+  def test_constants
+    assert_equal(true, ULID::VERSION.frozen?)
   end
 
   def test_parse
