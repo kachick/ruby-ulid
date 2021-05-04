@@ -59,7 +59,7 @@ class ULID
   @next: ULID?
   @pattern: Regexp?
   @strict_pattern: Regexp?
-  @uidv4: String?
+  @uuidv4: String?
   @matchdata: MatchData?
 
   def self.generate: (?moment: moment, ?entropy: Integer) -> ULID
