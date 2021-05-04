@@ -209,8 +209,10 @@ ULID.parse('01BX5ZZKBK0000000000000000').pred.to_s #=> "01BX5ZZKBJZZZZZZZZZZZZZZ
 ULID.parse('00000000000000000000000000').pred #=> nil
 ```
 
-UUIDv4 converter for migration use-cases.
-(The imported timestamp is meaningless. So ULID's benefit will lost.)
+### UUIDv4 converter for migration use-cases
+
+`ULID.from_uuidv4` and `ULID#to_uuidv4` is the converter.
+The imported timestamp is meaningless. So ULID's benefit will lost
 
 ```ruby
 # Basically reversible 
