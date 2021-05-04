@@ -98,19 +98,19 @@ ulids.uniq(&:to_time).size #=> 35 (the size is not fixed, might be changed in en
 ulids.sort == ulids #=> false
 ```
 
-If you want to prefer `sortable` rather than the `randomness`, Use `MonotonicGenerator` instead. It is called as [Monotonicity](https://github.com/ulid/spec/tree/d0c7170df4517939e70129b4d6462cc162f2d5bf#monotonicity) on the spec.
+If you want to ensure `sortable`, Use `MonotonicGenerator` instead. It is called as [Monotonicity](https://github.com/ulid/spec/tree/d0c7170df4517939e70129b4d6462cc162f2d5bf#monotonicity) on the spec.
 (Though it starts with new random value when changed the timestamp)
 
 ```ruby
 monotonic_generator = ULID::MonotonicGenerator.new
-monotonic_ulids = 10000.times.map do
+ulids = 10000.times.map do
   monotonic_generator.generate
 end
-sample_ulids_by_the_time = monotonic_ulids.uniq(&:to_time)
+sample_ulids_by_the_time = ulids.uniq(&:to_time)
 sample_ulids_by_the_time.size #=> 32 (the size is not fixed, might be changed in environment)
 
 # In same milliseconds creation, it just increments the end of randomness part
-monotonic_ulids.take(5) #=>
+ulids.take(5) #=>
 # [ULID(2021-05-02 15:23:48.917 UTC: 01F4PTVCSN9ZPFKYTY2DDJVRK4),
 #  ULID(2021-05-02 15:23:48.917 UTC: 01F4PTVCSN9ZPFKYTY2DDJVRK5),
 #  ULID(2021-05-02 15:23:48.917 UTC: 01F4PTVCSN9ZPFKYTY2DDJVRK6),
@@ -125,7 +125,7 @@ sample_ulids_by_the_time.take(5) #=>
 #  ULID(2021-05-02 15:23:48.920 UTC: 01F4PTVCSRBXN2H4P1EYWZ27AK),
 #  ULID(2021-05-02 15:23:48.921 UTC: 01F4PTVCSSK0ASBBZARV7013F8)]
 
-monotonic_ulids.sort == monotonic_ulids #=> true
+ulids.sort == ulids #=> true
 ```
 
 When filtering ULIDs by `Time`, we should consider to handle the precision.
