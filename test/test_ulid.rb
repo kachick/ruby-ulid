@@ -128,6 +128,17 @@ class TestULID < Test::Unit::TestCase
     assert_raises(ArgumentError) do
       ULID.range('01ARZ3NDEKTSV4RRFFQ69G5FAV'..'7ZZZZZZZZZZZZZZZZZZZZZZZZZ')
     end
+
+    # Currently I do not determine which behaviors will be best for below pattern, so temporary preventing accidents
+    # ref: https://github.com/kachick/ruby-ulid/issues/74
+    err = assert_raises(NotImplementedError) do
+      ULID.range(time_has_more_value_than_milliseconds1..time_has_more_value_than_milliseconds1)
+    end
+    assert_equal(true, err.message.include?('https://github.com/kachick/ruby-ulid/issues/74'))
+    err = assert_raises(NotImplementedError) do
+      ULID.range(time_has_more_value_than_milliseconds2..time_has_more_value_than_milliseconds1)
+    end
+    assert_equal(true, err.message.include?('https://github.com/kachick/ruby-ulid/issues/74'))
   end
 
   def test_floor

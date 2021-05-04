@@ -151,6 +151,10 @@ class ULID
       raise ArgumentError, 'ULID.range takes only Range[Time]'
     end
 
+    unless begin_ulid.to_time < end_ulid.to_time
+      raise NotImplementedError, "Given same milliseconds timestamps or inverted timestamps in the `Range[Time]`, it is considering in https://github.com/kachick/ruby-ulid/issues/74: #{time_range.inspect}"
+    end
+
     Range.new(begin_ulid, end_ulid, exclude_end)
   end
 
