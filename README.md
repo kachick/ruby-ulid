@@ -2,9 +2,9 @@
 
 A handy `ULID` library
 
-The `ULID` spec is defined on [ulid/spec](https://github.com/ulid/spec).
+The `ULID` spec is defined on [ulid/spec](https://github.com/ulid/spec). It has useful specs for applications (e.g. `Database key`), especially possess all `uniqueness`, `randomness`, `extractable timestamps` and `sortable` features.
 This gem aims to provide the generator, monotonic generator, parser and handy manipulation features around the ULID.
-Also providing rbs signature files.
+Also providing [ruby/rbs](https://github.com/ruby/rbs) signature files.
 
 ---
 
@@ -28,7 +28,7 @@ Instead, herein is proposed ULID:
 - 1.21e+24 unique ULIDs per millisecond
 - Lexicographically sortable!
 - Canonically encoded as a 26 character string, as opposed to the 36 character UUID
-- Uses Crockford's base32 for better efficiency and readability (5 bits per character)
+- Uses [Crockford's base32](https://www.crockford.com/base32.html) for better efficiency and readability (5 bits per character) # See also exists issues in [Note](#note)
 - Case insensitive
 - No special characters (URL safe)
 - Monotonic sort order (correctly detects and handles the same millisecond)
@@ -221,5 +221,8 @@ ULID.from_uuidv4('0983d0a2-ff15-4d83-8f37-7dd945b5aa39')
 - [Repository](https://github.com/kachick/ruby-ulid)
 - [API documents](https://kachick.github.io/ruby-ulid/)
 - [ulid/spec](https://github.com/ulid/spec)
-- [Another choices are UUIDv6, UUIDv7, UUIDv8. But they are still in draft state](https://www.ietf.org/archive/id/draft-peabody-dispatch-new-uuid-format-01.html), I will track them in [ruby-ulid#37](https://github.com/kachick/ruby-ulid/issues/37)
-- Current parser/validator/matcher implementation aims `strict`, It might be changed in [ulid/spec#57](https://github.com/ulid/spec/pull/57) and [ruby-ulid#57](https://github.com/kachick/ruby-ulid/issues/57).
+
+## Note
+
+- Another choices for sortable and randomness IDs, [UUIDv6, UUIDv7, UUIDv8 might be the one. (But they are still in draft state)](https://www.ietf.org/archive/id/draft-peabody-dispatch-new-uuid-format-01.html), I will track them in [ruby-ulid#37](https://github.com/kachick/ruby-ulid/issues/37)
+- Current parser/validator/matcher aims to cover `subset of Crockford's base32`. Suggesting it in [ulid/spec#57](https://github.com/ulid/spec/pull/57). Be that as it may, I might provide special handler or converter for the exception in [ruby-ulid#57](https://github.com/kachick/ruby-ulid/issues/57) and/or [ruby-ulid#78](https://github.com/kachick/ruby-ulid/issues/78)
