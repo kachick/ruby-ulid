@@ -1,6 +1,6 @@
 # ruby-ulid
 
-A handy `ULID` library
+## Overview
 
 The `ULID` spec is defined on [ulid/spec](https://github.com/ulid/spec). It has useful specs for applications (e.g. `Database key`), especially possess all `uniqueness`, `randomness`, `extractable timestamps` and `sortable` features.
 This gem aims to provide the generator, monotonic generator, parser and handy manipulation features around the ULID.
@@ -33,16 +33,26 @@ Instead, herein is proposed ULID:
 - No special characters (URL safe)
 - Monotonic sort order (correctly detects and handles the same millisecond)
 
-## Install
+## Usage
+
+### Install
 
 Require Ruby 2.6 or later
 
+This command will install the latest version into your environment
+
 ```console
 $ gem install ruby-ulid
-#=> Installed
+Should be installed!
 ```
 
-## Usage
+Add this line to your application/library's `Gemfile` is needed in basic use-case
+
+```ruby
+gem 'ruby-ulid', '0.0.15'
+```
+
+### Generator and Parser
 
 The generated `ULID` is an object not just a string.
 It means easily get the timestamps and binary formats.
@@ -63,6 +73,8 @@ You can get the objects from exists encoded ULIDs
 ulid = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV') #=> ULID(2016-07-30 23:54:10.259 UTC: 01ARZ3NDEKTSV4RRFFQ69G5FAV)
 ulid.to_time #=> 2016-07-30 23:54:10.259 UTC
 ```
+
+### Sortable with the timestamp
 
 ULIDs are sortable when they are generated in different timestamp with milliseconds precision
 
@@ -98,7 +110,9 @@ ulids.uniq(&:to_time).size #=> 35 (the size is not fixed, might be changed in en
 ulids.sort == ulids #=> false
 ```
 
-If you want to ensure `sortable`, Use `MonotonicGenerator` instead. It is called as [Monotonicity](https://github.com/ulid/spec/tree/d0c7170df4517939e70129b4d6462cc162f2d5bf#monotonicity) on the spec.
+### How to keep `Sortable` even if in same timestamp
+
+If you want to prefer `sortable`, Use `MonotonicGenerator` instead. It is called as [Monotonicity](https://github.com/ulid/spec/tree/d0c7170df4517939e70129b4d6462cc162f2d5bf#monotonicity) on the spec.
 (Though it starts with new random value when changed the timestamp)
 
 ```ruby
@@ -128,8 +142,10 @@ sample_ulids_by_the_time.take(5) #=>
 ulids.sort == ulids #=> true
 ```
 
-When filtering ULIDs by `Time`, we should consider to handle the precision.
-So this gem provides `ULID.range` to generate `Range[ULID]` from given `Range[Time]`
+### Filtering IDs with `Time`
+
+When filtering ULIDs with `Time`, we should consider to handle the precision.
+So this gem provides `ULID.range` to generate reasonable `Range[ULID]` from `Range[Time]`
 
 ```ruby
 # Both of below, The begin of `Range[ULID]` will be the minimum in the floored milliseconds of the time1
@@ -141,6 +157,8 @@ ulids.grep(include_end)
 ulids.grep(exclude_end)
 #=> I hope the results should be actually you want!
 ```
+
+### Scanner for string (e.g. `JSON`)
 
 For rough operations, `ULID.scan` might be useful.
 
@@ -182,6 +200,8 @@ ULID.scan(json).to_a
  ULID(2021-04-30 05:53:12.478 UTC: 01F4GND4RYYSKNAADHQ9BNXAWJ)]
 ```
 
+### Some methods to help manipulations
+
 `ULID.min` and `ULID.max` return termination values for ULID spec.
 
 ```ruby
@@ -193,7 +213,10 @@ ULID.min(moment: time) #=> ULID(2000-01-01 00:00:00.123 UTC: 00VHNCZB3V000000000
 ULID.max(moment: time) #=> ULID(2000-01-01 00:00:00.123 UTC: 00VHNCZB3VZZZZZZZZZZZZZZZZ)
 ```
 
-`ULID#next` and `ULID#succ` returns next(successor) ULID
+`ULID#next` and `ULID#succ` returns next(successor) ULID.
+Especially `ULID#succ` makes it possible `Range[ULID]#each`.
+
+NOTE: But basically `Range[ULID]#each` should not be used, incrementing 128 bits IDs are not reasonable operation in most case
 
 ```ruby
 ULID.parse('01BX5ZZKBKZZZZZZZZZZZZZZZY').next.to_s #=> "01BX5ZZKBKZZZZZZZZZZZZZZZZ"

@@ -11,9 +11,9 @@ Gem::Specification.new do |gem|
   gem.email         = ['kachick1+ruby@gmail.com']
   gem.summary       = %q{A handy ULID library}
   gem.description   = <<-EOF
-    ULID(Universally Unique Lexicographically Sortable Identifier) has useful specs for applications (e.g. `Database key`). 
+    The ULID(Universally Unique Lexicographically Sortable Identifier) has useful specs for applications (e.g. `Database key`), especially possess all `uniqueness`, `randomness`, `extractable timestamps` and `sortable` features.
     This gem aims to provide the generator, monotonic generator, parser and handy manipulation features around the ULID.
-    Also providing `rbs` signature files.
+    Also providing `ruby/rbs` signature files.
   EOF
   gem.homepage      = repository_url
   gem.license       = 'MIT'
