@@ -2,5 +2,5 @@
 # frozen_string_literal: true
 
 class ULID
-  VERSION = '0.0.14'
+  VERSION = '0.0.15'
 end
