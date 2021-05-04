@@ -119,6 +119,14 @@ class TestULID < Test::Unit::TestCase
         ULID.min...ULID.min(moment: ULID.floor(time_has_more_value_than_milliseconds2)),
         ULID.range(nil...time_has_more_value_than_milliseconds2)
       )
+      assert_equal(
+        ULID.min..ULID.max,
+        ULID.range(nil..nil)
+      )
+      assert_equal(
+        ULID.min..ULID.max, # Intentional to return `include_end` for `exclude_end` Range.
+        ULID.range(nil...nil)
+      )
     end
 
     assert_raises(ArgumentError) do
