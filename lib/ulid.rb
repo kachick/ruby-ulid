@@ -282,7 +282,7 @@ class ULID
 
   # @return [Integer, nil]
   def <=>(other)
-    other.kind_of?(ULID) ? (to_i <=> other.to_i) : nil
+    other.kind_of?(ULID) ? (to_s <=> other.to_s) : nil
   end
 
   # @return [String]
