@@ -209,14 +209,32 @@ ULID.parse('01BX5ZZKBK0000000000000000').pred.to_s #=> "01BX5ZZKBJZZZZZZZZZZZZZZ
 ULID.parse('00000000000000000000000000').pred #=> nil
 ```
 
-UUIDv4 converter for migration use-cases
-(Of course ULIDs sortable benefit will lost)
+UUIDv4 converter for migration use-cases.
+(The imported timestamp is meaningless. So ULID's benefit will lost.)
 
 ```ruby
+# Basically reversible 
 ulid = ULID.from_uuidv4('0983d0a2-ff15-4d83-8f37-7dd945b5aa39') #=> ULID(2301-07-10 00:28:28.821 UTC: 09GF8A5ZRN9P1RYDVXV52VBAHS)
 ulid.to_uuidv4 #=> "0983d0a2-ff15-4d83-8f37-7dd945b5aa39"
+
+uuid_v4s = 10000.times.map { SecureRandom.uuid }
+uuid_v4s.uniq.size == 10000 #=> Probably `true`
+
+ulids = uuid_v4s.map { |uuid_v4| ULID.from_uuidv4(uuid_v4) }
+ulids.map(&:to_uuidv4) == uuid_v4s #=> **Probably** `true` except below examples.
+
+# NOTE: Some boundary values are not reversible. See below.
+
 ULID.min.to_uuidv4 #=> "00000000-0000-4000-8000-000000000000"
 ULID.max.to_uuidv4 #=> "ffffffff-ffff-4fff-bfff-ffffffffffff"
+
+# These importing results are same as https://github.com/ahawker/ulid/tree/96bdb1daad7ce96f6db8c91ac0410b66d2e1c4c1 on CPython 3.9.4
+reversed_min = ULID.from_uuidv4('00000000-0000-4000-8000-000000000000') #=> ULID(1970-01-01 00:00:00.000 UTC: 00000000008008000000000000)
+reversed_max = ULID.from_uuidv4('ffffffff-ffff-4fff-bfff-ffffffffffff') #=> ULID(10889-08-02 05:31:50.655 UTC: 7ZZZZZZZZZ9ZZVZZZZZZZZZZZZ)
+
+# But they are not reversible! Need to consider this issue in https://github.com/kachick/ruby-ulid/issues/76
+ULID.min == reversed_min #=> false
+ULID.max == reversed_max #=> false
 ```
 
 ## References

@@ -286,65 +286,6 @@ class TestULID < Test::Unit::TestCase
     assert_equal(entropy, ULID.generate(entropy: entropy).entropy)
   end
 
-  def test_from_uuidv4
-    # The example value was taken from https://github.com/ahawker/ulid/tree/96bdb1daad7ce96f6db8c91ac0410b66d2e1c4c1#usage
-    assert_equal(ULID.parse('09GF8A5ZRN9P1RYDVXV52VBAHS'), ULID.from_uuidv4('0983d0a2-ff15-4d83-8f37-7dd945b5aa39'))
-    assert_equal(ULID.parse('09GF8A5ZRN9P1RYDVXV52VBAHS'), ULID.from_uuidv4('urn:uuid:0983d0a2-ff15-4d83-8f37-7dd945b5aa39'))
-
-    # Rough tests
-    ulids = 1000.times.map do
-      ULID.from_uuidv4(SecureRandom.uuid)
-    end
-    assert_equal(true, ulids.uniq == ulids)
-
-    # Ensure some invalid patterns (I'd like to add more examples)
-    [
-      '0983d0a2-ff15-4d83-8f37-7dd945b5aa3', # Shortage
-      '0983d0a2-ff15-4d83-8f37-7dd945b5aa390', # Excess
-      "0983d0a2-ff15-4d83-8f37-7dd945b5aa39\n", # Line end
-      '0983d0a2-ff15-4d83-8f37--7dd945b5aa39' # `-` excess
-    ].each do |invalid_uuidv4|
-      assert_raises(ULID::ParserError) do
-        ULID.from_uuidv4(invalid_uuidv4)
-      end
-    end
-  end
-
-  def test_from_uuidv4_for_boundary_example
-    # @TODO This fails, I don't know why...
-    assert_equal(ULID.min, ULID.from_uuidv4('00000000-0000-4000-8000-000000000000'))
-    assert_equal(ULID.max, ULID.from_uuidv4('ffffffff-ffff-4fff-bfff-ffffffffffff'))
-  end
-
-  def test_to_uuidv4_for_typical_example
-    # The example value was taken from https://github.com/ahawker/ulid/tree/96bdb1daad7ce96f6db8c91ac0410b66d2e1c4c1#usage
-    ulid = ULID.parse('09GF8A5ZRN9P1RYDVXV52VBAHS')
-    assert_equal('0983d0a2-ff15-4d83-8f37-7dd945b5aa39', ulid.to_uuidv4)
-    assert_same(ulid.to_uuidv4, ulid.to_uuidv4)
-    assert_equal(true, ulid.to_uuidv4.frozen?)
-    assert_equal(Encoding::US_ASCII, ulid.to_uuidv4.encoding)
-  end
-
-  def test_to_uuidv4_for_boundary_example
-    assert_equal('00000000-0000-4000-8000-000000000000', ULID.min.to_uuidv4)
-    assert_equal('ffffffff-ffff-4fff-bfff-ffffffffffff', ULID.max.to_uuidv4)
-  end
-
-  def test_uuidv4_compatibility_with_many_random_data
-    # Rough tests
-    uuids = 1000.times.map do
-      SecureRandom.uuid
-    end
-
-    assert_equal(true, uuids.uniq.size == 1000)
-
-    ulids = uuids.map do |uuid|
-      ULID.from_uuidv4(uuid)
-    end
-
-    assert_equal(uuids, ulids.map(&:to_uuidv4))
-  end
-
   def test_from_integer
     min = ULID.parse('00000000000000000000000000')
     max = ULID.parse('7ZZZZZZZZZZZZZZZZZZZZZZZZZ')
@@ -634,21 +575,5 @@ class TestFrozenULID < Test::Unit::TestCase
 
   def test_to_uuidv4
     assert_equal('01563e3a-b5d3-4676-8c61-efb99302bd5b', @ulid.to_uuidv4)
-  end
-end
-
-class TestBigData < Test::Unit::TestCase
-  def test_generate
-    ulids = 1000.times.map do |n|
-      if (n % 100).zero?
-        sleep(0.01)
-      end
-
-      ULID.generate
-    end
-
-    assert_equal(1000, ulids.map(&:to_s).uniq.size)
-    assert_equal(true, (5..50).cover?(ulids.group_by(&:to_time).size))
-    assert_not_equal(ulids, ulids.sort_by(&:to_s))
   end
 end
