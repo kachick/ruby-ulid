@@ -125,7 +125,7 @@ class ULID
   # @return [Range<ULID>]
   # @raise [ArgumentError] if the given time_range is not a `Range[Time]` or `Range[nil]`
   def self.range(time_range)
-    raise ArgumentError, "ULID.range takes only Range[Time], given: #{time_range.inspect}" unless time_range.kind_of?(Range)
+    raise argument_error_for_range_building(time_range) unless time_range.kind_of?(Range)
     begin_time, end_time, exclude_end = time_range.begin, time_range.end, time_range.exclude_end?
 
     case begin_time
@@ -134,7 +134,7 @@ class ULID
     when nil
       begin_ulid = min
     else
-      raise ArgumentError, "ULID.range takes only Range[Time], given: #{time_range.inspect}"
+      raise argument_error_for_range_building(time_range)
     end
 
     case end_time
@@ -149,7 +149,7 @@ class ULID
       end_ulid = max
       exclude_end = false
     else
-      raise ArgumentError, "ULID.range takes only Range[Time], given: #{time_range.inspect}"
+      raise argument_error_for_range_building(time_range)
     end
 
     unless begin_ulid.to_time < end_ulid.to_time
@@ -244,6 +244,11 @@ class ULID
       num = (num * base) + digit
     end
     num
+  end
+
+  # @return [ArgumentError]
+  private_class_method def self.argument_error_for_range_building(argument)
+    ArgumentError.new "ULID.range takes only `Range[Time]` or `Range[nil]`, given: #{argument.inspect}"
   end
 
   attr_reader :milliseconds, :entropy

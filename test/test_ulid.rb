@@ -135,7 +135,7 @@ class TestULID < Test::Unit::TestCase
     err = assert_raises(ArgumentError) do
       ULID.range(0..42)
     end
-    assert_equal(true, err.message.include?('ULID.range takes only Range[Time]'))
+    assert_match(/ULID\.range takes only `Range\[Time\]`.+`Range\[nil\]`/, err.message)
     assert_raises(ArgumentError) do
       ULID.range('01ARZ3NDEKTSV4RRFFQ69G5FAV'..'7ZZZZZZZZZZZZZZZZZZZZZZZZZ')
     end

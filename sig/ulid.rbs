@@ -105,6 +105,7 @@ class ULID
   def freeze: -> self
 
   private
+  def self.argument_error_for_range_building: (untyped argument) -> ArgumentError
   def matchdata: -> MatchData
   def cache_all_instance_variables: -> void
 end
