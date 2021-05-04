@@ -35,7 +35,7 @@ class ULID
   STRICT_PATTERN = /\A#{PATTERN.source}\z/i.freeze
 
   # Imported from https://stackoverflow.com/a/38191104/1212807, thank you!
-  UUIDV4_PATTERN = /\A[0-9A-F]{8}-[0-9A-F]{4}-[4][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}\z/i
+  UUIDV4_PATTERN = /\A[0-9A-F]{8}-[0-9A-F]{4}-[4][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}\z/i.freeze
 
   # Same as Time#inspect since Ruby 2.7, just to keep backward compatibility
   # @see https://bugs.ruby-lang.org/issues/15958
@@ -377,6 +377,17 @@ class ULID
     @pred ||= self.class.from_integer(pre_int)
   end
 
+  # @return [String]
+  def to_uuidv4
+    @uuidv4 ||= begin
+      # This code referenced https://github.com/ruby/ruby/blob/121fa24a3451b45c41ac0a661b64e9fc8600e589/lib/securerandom.rb#L221-L241
+      array = octets.pack('C*').unpack('NnnnnN')
+      array[2] = (array[2] & 0x0fff) | 0x4000
+      array[3] = (array[3] & 0x3fff) | 0x8000
+      ('%08x-%04x-%04x-%04x-%04x%08x' % array).freeze
+    end
+  end
+
   # @return [self]
   def freeze
     # Need to cache before freezing, because frozen objects can't assign instance variables
@@ -399,6 +410,7 @@ class ULID
     succ
     pred
     strict_pattern
+    to_uuidv4
   end
 end
 
