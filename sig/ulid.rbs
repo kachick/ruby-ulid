@@ -106,4 +106,5 @@ class ULID
 
   private
   def matchdata: -> MatchData
+  def cache_all_instance_variables: -> void
 end

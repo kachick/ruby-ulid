@@ -558,6 +558,19 @@ class TestFrozenULID < Test::Unit::TestCase
     @max = ULID.max.freeze
   end
 
+  def test_instance_variables
+    @ulid.instance_variables.each do |name|
+      ivar = @ulid.instance_variable_get(name)
+      assert_equal(true, !!ivar, "#{name} is still falsy: #{ivar.inspect}")
+      case name
+      when :@next, :@pred
+        assert_equal(false, ivar.frozen?, "#{name} is unexpected frozen")
+      else
+        assert_equal(true, ivar.frozen?, "#{name} is not frozen")
+      end
+    end
+  end
+
   def test_inspect
     assert_equal('ULID(2016-07-30 23:54:10.259 UTC: 01ARZ3NDEKTSV4RRFFQ69G5FAV)', @ulid.inspect)
   end

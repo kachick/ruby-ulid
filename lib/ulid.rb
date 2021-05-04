@@ -371,13 +371,8 @@ class ULID
 
   # @return [self]
   def freeze
-    # Evaluate all caching
-    inspect
-    octets
-    to_i
-    succ
-    pred
-    strict_pattern
+    # Need to cache before freezing, because frozen objects can't assign instance variables
+    cache_all_instance_variables
     super
   end
 
@@ -386,6 +381,16 @@ class ULID
   # @return [MatchData]
   def matchdata
     @matchdata ||= STRICT_PATTERN.match(to_s).freeze
+  end
+
+  # @return [void]
+  def cache_all_instance_variables
+    inspect
+    octets
+    to_i
+    succ
+    pred
+    strict_pattern
   end
 end
 
