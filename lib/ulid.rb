@@ -155,10 +155,6 @@ class ULID
     begin_ulid.freeze
     end_ulid.freeze
 
-    unless begin_ulid.milliseconds < end_ulid.milliseconds
-      raise NotImplementedError, "Given same milliseconds timestamps or inverted timestamps in the `Range[Time]`, it is considering in https://github.com/kachick/ruby-ulid/issues/74: #{time_range.inspect}"
-    end
-
     Range.new(begin_ulid, end_ulid, exclude_end)
   end
 

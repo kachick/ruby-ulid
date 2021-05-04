@@ -144,16 +144,41 @@ class TestULID < Test::Unit::TestCase
       ULID.range('01ARZ3NDEKTSV4RRFFQ69G5FAV'..'7ZZZZZZZZZZZZZZZZZZZZZZZZZ')
     end
 
-    # Currently I do not determine which behaviors will be best for below pattern, so temporary preventing accidents
-    # ref: https://github.com/kachick/ruby-ulid/issues/74
-    err = assert_raises(NotImplementedError) do
+    # Below section is for some edge cases ref: https://github.com/kachick/ruby-ulid/issues/74
+    assert_equal(
+      range = ULID.min(moment: ULID.floor(time_has_more_value_than_milliseconds1))..ULID.max(moment: ULID.floor(time_has_more_value_than_milliseconds1)),
       ULID.range(time_has_more_value_than_milliseconds1..time_has_more_value_than_milliseconds1)
-    end
-    assert_equal(true, err.message.include?('https://github.com/kachick/ruby-ulid/issues/74'))
-    err = assert_raises(NotImplementedError) do
+    )
+    assert_equal(true, range.cover?(ULID.generate(moment: time_has_more_value_than_milliseconds1)))
+    assert_equal(false, range.cover?(ULID.generate(moment: time_has_more_value_than_milliseconds2)))
+    assert_equal(true, range.cover?(range.begin))
+    assert_equal(true, range.cover?(range.end))
+
+    assert_equal(
+      range = ULID.min(moment: ULID.floor(time_has_more_value_than_milliseconds1))...ULID.min(moment: ULID.floor(time_has_more_value_than_milliseconds1)),
+      ULID.range(time_has_more_value_than_milliseconds1...time_has_more_value_than_milliseconds1)
+    )
+    assert_equal(false, range.cover?(ULID.generate(moment: time_has_more_value_than_milliseconds1)))
+    assert_equal(false, range.cover?(range.begin)) # Same as Range[Integer] `(1...1).cover?(1) #=> false`
+    assert_equal(false, range.cover?(range.end))
+
+    assert_equal(
+      range = ULID.min(moment: ULID.floor(time_has_more_value_than_milliseconds2))..ULID.max(moment: ULID.floor(time_has_more_value_than_milliseconds1)),
       ULID.range(time_has_more_value_than_milliseconds2..time_has_more_value_than_milliseconds1)
-    end
-    assert_equal(true, err.message.include?('https://github.com/kachick/ruby-ulid/issues/74'))
+    )
+    assert_equal(false, range.cover?(ULID.generate(moment: time_has_more_value_than_milliseconds2)))
+    assert_equal(false, range.cover?(ULID.generate(moment: time_has_more_value_than_milliseconds1)))
+    assert_equal(false, range.cover?(range.begin)) # This is bit weird, but same as Range[Integer] `(3..1).cover?(3) #=> false`
+    assert_equal(false, range.cover?(range.end))
+
+    assert_equal(
+      range = ULID.min(moment: ULID.floor(time_has_more_value_than_milliseconds2))...ULID.min(moment: ULID.floor(time_has_more_value_than_milliseconds1)),
+      ULID.range(time_has_more_value_than_milliseconds2...time_has_more_value_than_milliseconds1)
+    )
+    assert_equal(false, range.cover?(ULID.generate(moment: time_has_more_value_than_milliseconds2)))
+    assert_equal(false, range.cover?(ULID.generate(moment: time_has_more_value_than_milliseconds1)))
+    assert_equal(false, range.cover?(range.begin))
+    assert_equal(false, range.cover?(range.end))
   end
 
   def test_floor
