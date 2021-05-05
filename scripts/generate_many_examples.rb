@@ -3,7 +3,7 @@
 
 require 'bundler/setup'
 require_relative '../lib/ulid'
-require_relative '../test/fixtures/example'
+require_relative '../test/many_data/fixtures/example'
 
 min = Time.at(0).utc
 max = Time.at(56294995342131/200r).utc #=> 10889-08-02 05:31:50.655 UTC
