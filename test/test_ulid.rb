@@ -19,10 +19,17 @@ class TestULID < Test::Unit::TestCase
   end
 
   def test_parse
-    parsed = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
+    string = +'01ARZ3NDEKTSV4RRFFQ69G5FAV'
+    dup_string = string.dup
+    parsed = ULID.parse(string)
+
+    # Ensure the string is not modified in parser
+    assert_equal(false, string.frozen?)
+    assert_equal(dup_string, string)
+
     assert_instance_of(ULID, parsed)
-    assert_equal('01ARZ3NDEKTSV4RRFFQ69G5FAV', parsed.to_s)
-    assert_equal('01ARZ3NDEKTSV4RRFFQ69G5FAV', ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV'.downcase).to_s)
+    assert_equal(string, parsed.to_s)
+    assert_equal(string, ULID.parse(string.downcase).to_s)
 
     assert_raises(ULID::ParserError) do
       ULID.parse(nil)
