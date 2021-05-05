@@ -4,9 +4,16 @@ require 'bundler/gem_tasks'
 require 'rake/testtask'
 
 task default: [:test]
+task test_all: [:test, :test_heavy]
 
-Rake::TestTask.new do |tt|
-  tt.pattern = 'test/**/test_*.rb'
+Rake::TestTask.new(:test) do |tt|
+  tt.test_files = FileList['test/**/test_*.rb'].exclude(/many_data/)
+  tt.verbose = true
+  tt.warning = true
+end
+
+Rake::TestTask.new(:test_heavy) do |tt|
+  tt.pattern = 'test/many_data/**/test_*.rb'
   tt.verbose = true
   tt.warning = true
 end
@@ -35,4 +42,12 @@ task :benchmark do
   sh 'bundle exec ruby benchmark/generate.rb'
   sh 'bundle exec ruby benchmark/to_s.rb'
   sh 'bundle exec ruby benchmark/sort.rb'
+end
+
+task :update_fixed_examples do
+  filepath = './test/many_data/fixtures/dumped_fixed_examples.dat'
+  sh "rm #{filepath}" do |ok, status|
+    p({ok: ok, status: status})
+  end
+  sh "bundle exec ruby scripts/generate_many_examples.rb > #{filepath}"
 end
