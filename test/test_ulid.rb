@@ -19,10 +19,17 @@ class TestULID < Test::Unit::TestCase
   end
 
   def test_parse
-    parsed = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
+    string = +'01ARZ3NDEKTSV4RRFFQ69G5FAV'
+    dup_string = string.dup
+    parsed = ULID.parse(string)
+
+    # Ensure the string is not modified in parser
+    assert_equal(false, string.frozen?)
+    assert_equal(dup_string, string)
+
     assert_instance_of(ULID, parsed)
-    assert_equal('01ARZ3NDEKTSV4RRFFQ69G5FAV', parsed.to_s)
-    assert_equal('01ARZ3NDEKTSV4RRFFQ69G5FAV', ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV'.downcase).to_s)
+    assert_equal(string, parsed.to_s)
+    assert_equal(string, ULID.parse(string.downcase).to_s)
 
     assert_raises(ULID::ParserError) do
       ULID.parse(nil)
@@ -43,8 +50,7 @@ class TestULID < Test::Unit::TestCase
     err = assert_raises(ULID::ParserError) do
       ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FA')
     end
-
-    assert_match(/parsing failure as.+parsable string must be 26 characters, but actually given 25 characters.+01ARZ3NDEKTSV4RRFFQ69G5FA/, err.message)
+    assert_match(/given argument does not match to/, err.message)
   end
 
   def test_new
@@ -289,12 +295,6 @@ class TestULID < Test::Unit::TestCase
     assert_equal(true, ulid.strict_pattern.match?(ulid.to_s.downcase))
     assert_equal(false, ulid.strict_pattern.match?(ulid.next.to_s))
     assert_equal({'timestamp' => '01ARZ3NDEK', 'randomness' => 'TSV4RRFFQ69G5FAV'}, ulid.strict_pattern.match(ulid.to_s).named_captures)
-  end
-
-  def test_overflow
-    assert_raises(ULID::OverflowError) do
-      ULID.parse('80000000000000000000000000')
-    end
   end
 
   def test_generate
