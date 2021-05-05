@@ -18,14 +18,14 @@ class TestULIDWithExampleValues < Test::Unit::TestCase
     assert_instance_of(ULID, ULID.parse('00000000000000000000000000'))
     assert_instance_of(ULID, ULID.parse('70000000000000000000000000'))
     assert_instance_of(ULID, ULID.parse('7ZZZZZZZZZZZZZZZZZZZZZZZZZ'))
-    # Might be change to ULID::ParserError in this library ref: https://github.com/kachick/ruby-ulid/issues/45
-    assert_raises(ULID::OverflowError) do
+    # Changed to ULID::ParserError in this library ref: https://github.com/kachick/ruby-ulid/issues/45
+    assert_raises(ULID::ParserError) do
       ULID.parse('80000000000000000000000000')
     end
-    assert_raises(ULID::OverflowError) do
+    assert_raises(ULID::ParserError) do
       ULID.parse('80000000000000000000000001')
     end
-    assert_raises(ULID::OverflowError) do
+    assert_raises(ULID::ParserError) do
       ULID.parse('ZZZZZZZZZZZZZZZZZZZZZZZZZZ')
     end
 

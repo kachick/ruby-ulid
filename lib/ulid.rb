@@ -16,6 +16,7 @@ class ULID
   class Error < StandardError; end
   class OverflowError < Error; end
   class ParserError < Error; end
+  class SetupError < ScriptError; end
 
   encoding_string = '0123456789ABCDEFGHJKMNPQRSTVWXYZ'
   # Crockford's Base32. Excluded I, L, O, U.
@@ -190,11 +191,13 @@ class ULID
     SecureRandom.random_number(MAX_ENTROPY)
   end
 
+  # @api private
+  # @deprecated Just exists to compare performance with old implementation. ref: https://github.com/kachick/ruby-ulid/issues/7
   # @param [String, #to_str] string
   # @return [ULID]
   # @raise [ParserError] if the given format is not correct for ULID specs
   # @raise [OverflowError] if the given value is larger than the ULID limit
-  def self.parse(string)
+  def self.parse_with_integer_base(string)
     begin
       string = string.to_str
       unless string.size == ENCODED_ID_LENGTH
@@ -209,6 +212,67 @@ class ULID
     end
   
     new milliseconds: milliseconds, entropy: entropy
+  end
+
+  n32_chars = [*'0'..'9', *'A'..'V'].map(&:freeze).freeze
+  raise SetupError, 'obvious bug exists in the mapping algorithm' unless n32_chars.size == 32
+
+  n32_char_by_number = {}
+  n32_chars.each_with_index do |char, index|
+    n32_char_by_number[index] = char
+  end
+  n32_char_by_number.freeze
+
+  # Currently supporting only for `subset for actual use-case`
+  # See below
+  #   * https://github.com/ulid/spec/pull/57
+  #   * https://github.com/kachick/ruby-ulid/issues/57
+  #   * https://github.com/kachick/ruby-ulid/issues/78
+  crockford_base32_mappings = {
+    'J' => 18,
+    'K' => 19,
+    'M' => 20,
+    'N' => 21,
+    'P' => 22,
+    'Q' => 23,
+    'R' => 24,
+    'S' => 25,
+    'T' => 26,
+    'V' => 27,
+    'W' => 28,
+    'X' => 29,
+    'Y' => 30,
+    'Z' => 31
+  }.freeze
+
+  REPLACING_MAP = ENCODING_CHARS.each_with_object({}) do |encoding_char, map|
+    if n = crockford_base32_mappings[encoding_char]
+      char_32 = n32_char_by_number.fetch(n)
+      map[encoding_char] = char_32
+    end
+  end.freeze
+  raise SetupError, 'obvious bug exists in the mapping algorithm' unless REPLACING_MAP.keys == crockford_base32_mappings.keys
+  REPLACING_PATTERN = /[#{REPLACING_MAP.keys.join}]/.freeze
+
+  def self.parse(string)
+    begin
+      string = string.to_str
+      raise "given argument does not match to `#{STRICT_PATTERN.inspect}`" unless STRICT_PATTERN.match?(string)
+      n32encoded = convert_crockford_base32_to_n32(string.upcase)
+      timestamp = n32encoded.slice(0, TIMESTAMP_PART_LENGTH)
+      randomness = n32encoded.slice(TIMESTAMP_PART_LENGTH, RANDOMNESS_PART_LENGTH)
+      milliseconds = timestamp.to_i(32)
+      entropy = randomness.to_i(32)
+    rescue => err
+      raise ParserError, "parsing failure as #{err.inspect} for given #{string.inspect}"
+    end
+
+    new milliseconds: milliseconds, entropy: entropy
+  end
+
+  # @api private
+  private_class_method def self.convert_crockford_base32_to_n32(string)
+    string.gsub(REPLACING_PATTERN, REPLACING_MAP)
   end
 
   # @return [Boolean]
@@ -420,5 +484,5 @@ class ULID
   MAX = parse('7ZZZZZZZZZZZZZZZZZZZZZZZZZ').freeze
   MONOTONIC_GENERATOR = MonotonicGenerator.new
 
-  private_constant :ENCODING_CHARS, :TIME_FORMAT_IN_INSPECT, :UUIDV4_PATTERN, :MIN, :MAX
+  private_constant :ENCODING_CHARS, :TIME_FORMAT_IN_INSPECT, :UUIDV4_PATTERN, :MIN, :MAX, :REPLACING_PATTERN, :REPLACING_MAP
 end
