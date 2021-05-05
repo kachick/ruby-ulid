@@ -83,14 +83,14 @@ ulids = 1000.times.map do
   sleep(0.001)
   ULID.generate
 end
-ulids.sort == ulids #=> true
 ulids.uniq(&:to_time).size #=> 1000
+ulids.sort == ulids #=> true
 ```
 
 `ULID.generate` can take fixed `Time` instance
 
 ```ruby
-time = Time.at(946684800, in: 'UTC') #=> 2000-01-01 00:00:00 UTC
+time = Time.at(946684800).utc #=> 2000-01-01 00:00:00 UTC
 ULID.generate(moment: time) #=> ULID(2000-01-01 00:00:00.000 UTC: 00VHNCZB00N018DCPJA4H9379P)
 ULID.generate(moment: time) #=> ULID(2000-01-01 00:00:00.000 UTC: 00VHNCZB006WQT3JTMN0T14EBP)
 
@@ -144,7 +144,17 @@ ulids.sort == ulids #=> true
 
 ### Filtering IDs with `Time`
 
-When filtering ULIDs with `Time`, we should consider to handle the precision.
+`ULID` can be element of the `Range`. If you generated the IDs in monotonic generator, ID based filtering is easy and reliable
+
+```ruby
+include_end = ulid1..ulid2
+exclude_end = ulid1...ulid2
+
+ulids.grep(one_of_the_above)
+ulids.grep_v(one_of_the_above)
+```
+
+When want to filter ULIDs with `Time`, we should consider to handle the precision.
 So this gem provides `ULID.range` to generate reasonable `Range[ULID]` from `Range[Time]`
 
 ```ruby
@@ -152,9 +162,15 @@ So this gem provides `ULID.range` to generate reasonable `Range[ULID]` from `Ran
 include_end = ULID.range(time1..time2) #=> The end of `Range[ULID]` will be the maximum in the floored milliseconds of the time2
 exclude_end = ULID.range(time1...time2) #=> The end of `Range[ULID]` will be the minimum in the floored milliseconds of the time2
 
+# Below patterns are acceptable
+pinpointing = ULID.range(time1..time1) #=> This will match only for all IDs in `time1`
+until_the_end = ULID.range(..time1) #=> This will match only for all IDs upto `time1` (The `nil` starting `Range` can be used since Ruby 2.7)
+until_the_end = ULID.range(ULID.min.to_time..time1) #=> This is same as above for Ruby 2.6
+until_the_ulid_limit = ULID.range(time1..) # This will match only for all IDs from `time1` to max value of the ULID limit
+
 # So you can use the generated range objects as below
-ulids.grep(include_end)
-ulids.grep(exclude_end)
+ulids.grep(one_of_the_above)
+ulids.grep_v(one_of_the_above)
 #=> I hope the results should be actually you want!
 ```
 

@@ -133,6 +133,15 @@ class TestULID < Test::Unit::TestCase
       )
     end
 
+    assert_equal(
+      range = ULID.min(moment: ULID.floor(time_has_more_value_than_milliseconds1))..ULID.max(moment: ULID.floor(time_has_more_value_than_milliseconds1)),
+      ULID.range(time_has_more_value_than_milliseconds1..time_has_more_value_than_milliseconds1)
+    )
+    assert_equal(true, range.cover?(ULID.generate(moment: time_has_more_value_than_milliseconds1)))
+    assert_equal(false, range.cover?(ULID.generate(moment: time_has_more_value_than_milliseconds2)))
+    assert_equal(true, range.cover?(range.begin))
+    assert_equal(true, range.cover?(range.end))
+
     assert_raises(ArgumentError) do
       ULID.range(nil)
     end
@@ -145,15 +154,6 @@ class TestULID < Test::Unit::TestCase
     end
 
     # Below section is for some edge cases ref: https://github.com/kachick/ruby-ulid/issues/74
-    assert_equal(
-      range = ULID.min(moment: ULID.floor(time_has_more_value_than_milliseconds1))..ULID.max(moment: ULID.floor(time_has_more_value_than_milliseconds1)),
-      ULID.range(time_has_more_value_than_milliseconds1..time_has_more_value_than_milliseconds1)
-    )
-    assert_equal(true, range.cover?(ULID.generate(moment: time_has_more_value_than_milliseconds1)))
-    assert_equal(false, range.cover?(ULID.generate(moment: time_has_more_value_than_milliseconds2)))
-    assert_equal(true, range.cover?(range.begin))
-    assert_equal(true, range.cover?(range.end))
-
     assert_equal(
       range = ULID.min(moment: ULID.floor(time_has_more_value_than_milliseconds1))...ULID.min(moment: ULID.floor(time_has_more_value_than_milliseconds1)),
       ULID.range(time_has_more_value_than_milliseconds1...time_has_more_value_than_milliseconds1)
