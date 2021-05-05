@@ -262,6 +262,50 @@ ULID.min == reversed_min #=> false
 ULID.max == reversed_max #=> false
 ```
 
+## How to migrate from other gems
+
+As far as I know, major prior arts are below
+
+### [ulid gem](https://rubygems.org/gems/ulid) - [rafaelsales/ulid](https://github.com/rafaelsales/ulid)
+
+It is just providing basic `String` generator only.
+So you can replace the code as below
+
+```diff
+-ULID.generate
++ULID.generate.to_s
+```
+
+NOTE: It had crucial issue for handling precision, in version before `1.3.0`, when you extract timestamps from old generated ULIDs, it might be not accurate value.
+
+1. [Sort order does not respect millisecond ordering](https://github.com/rafaelsales/ulid/issues/22)
+1. [Fixed in this PR](https://github.com/rafaelsales/ulid/pull/23)
+1. [Released in 1.3.0](https://github.com/rafaelsales/ulid/compare/1.2.0...v1.3.0)
+
+### [ulid-ruby gem](https://rubygems.org/gems/ulid-ruby) - [abachman/ulid-ruby](https://github.com/abachman/ulid-ruby)
+
+It is providing basic generator(except monotonic generator) and parser.
+Major methods can be replaced as below.
+
+```diff
+-ULID.generate
++ULID.generate.to_s
+-ULID.at(time)
++ULID.generate(moment: time).to_s
+-ULID.time(string)
++ULID.parse(string).to_time
+-ULID.min_ulid_at(time)
++ULID.min(moment: time).to_s
+-ULID.max_ulid_at(time)
++ULID.max(moment: time).to_s
+```
+
+NOTE: It is still having precision issue similar as `ulid gem` in the both generator and parser. I sent PRs.
+
+1. [Parsed time object has more than milliseconds](https://github.com/abachman/ulid-ruby/issues/3)
+1. [Fix to handle timestamp precision in parser](https://github.com/abachman/ulid-ruby/pull/5)
+1. [Fix to handle timestamp precision in generator](https://github.com/abachman/ulid-ruby/pull/4)
+
 ## References
 
 - [Repository](https://github.com/kachick/ruby-ulid)
