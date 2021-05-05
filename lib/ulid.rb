@@ -254,6 +254,9 @@ class ULID
   raise SetupError, 'obvious bug exists in the mapping algorithm' unless REPLACING_MAP.keys == crockford_base32_mappings.keys
   REPLACING_PATTERN = /[#{REPLACING_MAP.keys.join}]/.freeze
 
+  # @param [String, #to_str] string
+  # @return [ULID]
+  # @raise [ParserError] if the given format is not correct for ULID specs
   def self.parse(string)
     begin
       string = string.to_str
