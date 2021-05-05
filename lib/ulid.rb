@@ -348,11 +348,13 @@ class ULID
     @randomness ||= matchdata[:randomness].freeze
   end
 
+  # @deprecated This method might be changed in https://github.com/kachick/ruby-ulid/issues/84
   # @return [Regexp]
   def pattern
     @pattern ||= /(?<timestamp>#{timestamp})(?<randomness>#{randomness})/i.freeze
   end
 
+  # @deprecated This method might be changed in https://github.com/kachick/ruby-ulid/issues/84
   # @return [Regexp]
   def strict_pattern
     @strict_pattern ||= /\A#{pattern.source}\z/i.freeze

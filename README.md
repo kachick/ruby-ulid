@@ -64,7 +64,6 @@ ulid = ULID.generate #=> ULID(2021-04-27 17:27:22.826 UTC: 01F4A5Y1YAQCYAYCTC7GR
 ulid.to_time #=> 2021-04-27 17:27:22.826 UTC
 ulid.to_s #=> "01F4A5Y1YAQCYAYCTC7GRMJ9AA"
 ulid.octets #=> [1, 121, 20, 95, 7, 202, 187, 60, 175, 51, 76, 60, 49, 73, 37, 74]
-ulid.pattern #=> /(?<timestamp>01F4A5Y1YA)(?<randomness>QCYAYCTC7GRMJ9AA)/i
 ```
 
 You can get the objects from exists encoded ULIDs
