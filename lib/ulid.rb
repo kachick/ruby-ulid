@@ -133,7 +133,7 @@ class ULID
     when Time
       begin_ulid = min(moment: begin_time)
     when nil
-      begin_ulid = min
+      begin_ulid = MIN
     else
       raise argument_error_for_range_building(time_range)
     end
@@ -147,7 +147,7 @@ class ULID
       end
     when nil
       # The end should be max and include end, because nil end means to cover endless ULIDs until the limit
-      end_ulid = max
+      end_ulid = MAX
       exclude_end = false
     else
       raise argument_error_for_range_building(time_range)
