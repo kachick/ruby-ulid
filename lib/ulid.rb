@@ -245,14 +245,17 @@ class ULID
     'Z' => 31
   }.freeze
 
-  REPLACING_MAP = ENCODING_CHARS.each_with_object({}) do |encoding_char, map|
+  N32_CHAR_BY_CROCKFORD_BASE32_CHAR = ENCODING_CHARS.each_with_object({}) do |encoding_char, map|
     if n = crockford_base32_mappings[encoding_char]
       char_32 = n32_char_by_number.fetch(n)
       map[encoding_char] = char_32
     end
   end.freeze
-  raise SetupError, 'obvious bug exists in the mapping algorithm' unless REPLACING_MAP.keys == crockford_base32_mappings.keys
-  REPLACING_PATTERN = /[#{REPLACING_MAP.keys.join}]/.freeze
+  raise SetupError, 'obvious bug exists in the mapping algorithm' unless N32_CHAR_BY_CROCKFORD_BASE32_CHAR.keys == crockford_base32_mappings.keys
+  CROCKFORD_BASE32_CHAR_PATTERN = /[#{N32_CHAR_BY_CROCKFORD_BASE32_CHAR.keys.join}]/.freeze
+
+  CROCKFORD_BASE32_CHAR_BY_N32_CHAR = N32_CHAR_BY_CROCKFORD_BASE32_CHAR.invert.freeze
+  N32_CHAR_PATTERN = /[#{CROCKFORD_BASE32_CHAR_BY_N32_CHAR.keys.join}]/.freeze
 
   # @param [String, #to_str] string
   # @return [ULID]
@@ -275,7 +278,7 @@ class ULID
 
   # @api private
   private_class_method def self.convert_crockford_base32_to_n32(string)
-    string.gsub(REPLACING_PATTERN, REPLACING_MAP)
+    string.gsub(CROCKFORD_BASE32_CHAR_PATTERN, N32_CHAR_BY_CROCKFORD_BASE32_CHAR)
   end
 
   # @return [Boolean]
@@ -338,6 +341,13 @@ class ULID
 
   # @return [String]
   def to_s
+    @string ||= convert_n32_to_crockford_base32(to_i.to_s(32).rjust(ENCODED_ID_LENGTH, '0').upcase).freeze
+  end
+
+  # @api private
+  # @deprecated Just exists to compare performance with old implementation. ref: https://github.com/kachick/ruby-ulid/issues/7
+  # @return [String]
+  def to_s_with_integer_base
     @string ||= Integer::Base.string_for(to_i, ENCODING_CHARS).rjust(ENCODED_ID_LENGTH, '0').upcase.freeze
   end
 
@@ -462,6 +472,11 @@ class ULID
 
   private
 
+  # @api private
+  def convert_n32_to_crockford_base32(string)
+    string.gsub(N32_CHAR_PATTERN, CROCKFORD_BASE32_CHAR_BY_N32_CHAR)
+  end
+
   # @return [MatchData]
   def matchdata
     @matchdata ||= STRICT_PATTERN.match(to_s).freeze
@@ -487,5 +502,5 @@ class ULID
   MAX = parse('7ZZZZZZZZZZZZZZZZZZZZZZZZZ').freeze
   MONOTONIC_GENERATOR = MonotonicGenerator.new
 
-  private_constant :ENCODING_CHARS, :TIME_FORMAT_IN_INSPECT, :UUIDV4_PATTERN, :MIN, :MAX, :REPLACING_PATTERN, :REPLACING_MAP
+  private_constant :ENCODING_CHARS, :TIME_FORMAT_IN_INSPECT, :UUIDV4_PATTERN, :MIN, :MAX, :CROCKFORD_BASE32_CHAR_PATTERN, :N32_CHAR_BY_CROCKFORD_BASE32_CHAR, :CROCKFORD_BASE32_CHAR_BY_N32_CHAR, :N32_CHAR_PATTERN
 end
