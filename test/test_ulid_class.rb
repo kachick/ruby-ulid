@@ -326,6 +326,30 @@ class TestULIDClass < Test::Unit::TestCase
     assert_equal(true, ULID.max.frozen?)
   end
 
+  def test_sample
+    assert_instance_of(ULID, ULID.sample)
+    assert_not_equal(ULID.sample, ULID.sample)
+    assert_equal([], ULID.sample(0))
+    assert_instance_of(Array, ULID.sample(1))
+    assert_equal(true, ULID.sample(1).size == 1)
+    assert_instance_of(ULID, ULID.sample(1)[0])
+    assert_instance_of(Array, ULID.sample(42))
+    assert_equal(true, ULID.sample(42).size == 42)
+    assert_nil(ULID.sample(42).uniq!)
+
+    [-1, ULID::MAX_INTEGER.succ].each do |invalid|
+      assert_raises(ArgumentError) do
+        ULID.sample(invalid)
+      end
+    end
+
+    [nil, BasicObject.new].each do |invalid|
+      assert_raises(TypeError) do
+        ULID.sample(invalid)
+      end
+    end
+  end
+
   def teardown
     ENV['TZ'] = @actual_timezone
   end

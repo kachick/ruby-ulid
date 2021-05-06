@@ -42,6 +42,9 @@ class ULID
   # @see https://bugs.ruby-lang.org/issues/15958
   TIME_FORMAT_IN_INSPECT = '%Y-%m-%d %H:%M:%S.%3N %Z'
 
+  UNDEFINED = BasicObject.new
+  Kernel.instance_method(:freeze).bind(UNDEFINED).call
+
   # @param [Integer, Time] moment
   # @param [Integer] entropy
   # @return [ULID]
@@ -59,6 +62,31 @@ class ULID
   # @return [ULID]
   def self.max(moment: MAX_MILLISECONDS)
     MAX_MILLISECONDS.equal?(moment) ? MAX : generate(moment: moment, entropy: MAX_ENTROPY)
+  end
+
+  # @param [Integer] number
+  # @return [ULID, Array<ULID>]
+  # @raise [ArgumentError] if the given number is lager than ULID spec limits or given negative number 
+  # @note Major difference of `Array#sample` interface is below
+  #   * Do not ensure the uniqueness
+  #   * Do not take random generator for the arguments
+  #   * Raising error instead of truncating elements for the given number
+  def self.sample(number=UNDEFINED)
+    if UNDEFINED.equal?(number)
+      from_integer(SecureRandom.random_number(MAX_INTEGER))
+    else
+      begin
+        int = number.to_int
+      rescue
+         # Can not use `number.to_s` and `number.inspect` for considering BasicObject here
+        raise TypeError, 'accepts no argument or integer only'
+      end
+
+      if int > MAX_INTEGER || int.negative?
+        raise ArgumentError, "given number is larger than ULID limit #{MAX_INTEGER} or negative: #{number.inspect}"
+      end
+      int.times.map { from_integer(SecureRandom.random_number(MAX_INTEGER)) }
+    end
   end
 
   # @param [String, #to_str] string
@@ -491,5 +519,5 @@ class ULID
   MIN = parse('00000000000000000000000000').freeze
   MAX = parse('7ZZZZZZZZZZZZZZZZZZZZZZZZZ').freeze
 
-  private_constant :ENCODING_CHARS, :TIME_FORMAT_IN_INSPECT, :UUIDV4_PATTERN, :MIN, :MAX, :CROCKFORD_BASE32_CHAR_PATTERN, :N32_CHAR_BY_CROCKFORD_BASE32_CHAR, :CROCKFORD_BASE32_CHAR_BY_N32_CHAR, :N32_CHAR_PATTERN
+  private_constant :ENCODING_CHARS, :TIME_FORMAT_IN_INSPECT, :UUIDV4_PATTERN, :MIN, :MAX, :CROCKFORD_BASE32_CHAR_PATTERN, :N32_CHAR_BY_CROCKFORD_BASE32_CHAR, :CROCKFORD_BASE32_CHAR_BY_N32_CHAR, :N32_CHAR_PATTERN, :UNDEFINED
 end

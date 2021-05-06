@@ -21,6 +21,7 @@ class ULID
   N32_CHAR_PATTERN: Regexp
   MIN: ULID
   MAX: ULID
+  UNDEFINED: BasicObject
   include Comparable
 
   # The `moment` is a `Time` or `Intger of the milliseconds`
@@ -80,6 +81,8 @@ class ULID
   def self.from_integer: (Integer integer) -> ULID
   def self.min: (?moment: moment) -> ULID
   def self.max: (?moment: moment) -> ULID
+  def self.sample: -> ULID
+                 | (Integer number) -> Array[ULID]
   def self.valid?: (untyped string) -> bool
   def self.scan:  (String string) -> Enumerator[ULID, singleton(ULID)]
                 | (String string) { (ULID ulid) -> void } -> singleton(ULID)
