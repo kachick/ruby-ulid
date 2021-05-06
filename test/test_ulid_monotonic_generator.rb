@@ -12,7 +12,15 @@ class TestULIDMonotonicGenerator < Test::Unit::TestCase
     assert_not_same(ULID::MonotonicGenerator.new, ULID::MonotonicGenerator.new)
   end
 
-  def test_bigdata
+  def test_interface
+    assert_instance_of(ULID::MonotonicGenerator, @generator)
+    assert_not_equal(@generator.generate, @generator.generate)
+    first = @generator.generate
+    second = @generator.generate
+    assert_equal(true, second > first)
+  end
+
+  def test_many_data
     ulids = 1000.times.map do |n|
       if (n % 100).zero?
         sleep(0.01)
@@ -94,54 +102,12 @@ class TestULIDMonotonicGenerator < Test::Unit::TestCase
       @generator.generate(moment: max_ulid_in_a_milliseconds.milliseconds)
     end
   end
-end
-
-class TestULIDMonotonicGeneratorOfClassState < Test::Unit::TestCase
-  def test_interface
-    assert_instance_of(ULID, ULID.monotonic_generate)
-    assert_not_equal(ULID.monotonic_generate, ULID.monotonic_generate)
-    first = ULID.monotonic_generate
-    second = ULID.monotonic_generate
-    assert_equal(true, second > first)
-  end
-
-  def test_bigdata
-    ulids = 1000.times.map do |n|
-      if (n % 100).zero?
-        sleep(0.01)
-      end
-
-      ULID.monotonic_generate
-    end
-
-    assert_equal(1000, ulids.map(&:to_s).uniq.size)
-    assert_equal(true, (5..50).cover?(ulids.group_by(&:to_time).size))
-    assert_equal(ulids, ulids.sort_by(&:to_s))
-    assert_equal(ulids, ulids.sort_by(&:to_i))
-    assert_equal(ulids, ulids.sort)
-  end
 
   def test_freeze
     assert_raises(TypeError) do
-      ULID::MONOTONIC_GENERATOR.freeze
+      @generator.freeze
     end
 
-    assert_equal(false, ULID::MONOTONIC_GENERATOR.frozen?)
-  end
-
-  def test_attributes
-    id = BasicObject.new # Invalid value for the actual use-case, just for test
-    assert_equal(0, ULID::MONOTONIC_GENERATOR.latest_milliseconds)
-    assert_equal(false, [nil, 0, 1, ULID::MAX_ENTROPY].include?(ULID::MONOTONIC_GENERATOR.latest_entropy))
-
-    ULID::MONOTONIC_GENERATOR.latest_milliseconds = id
-    ULID::MONOTONIC_GENERATOR.latest_entropy = id
-
-    assert_same(id, ULID::MONOTONIC_GENERATOR.latest_milliseconds)
-    assert_same(id, ULID::MONOTONIC_GENERATOR.latest_entropy)
-  end
-
-  def teardown
-    ULID::MONOTONIC_GENERATOR.reset
+    assert_equal(false, @generator.frozen?)
   end
 end
