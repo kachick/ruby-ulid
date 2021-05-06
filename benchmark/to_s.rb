@@ -5,7 +5,6 @@ require 'benchmark/ips'
 require_relative '../lib/ulid'
 
 Benchmark.ips do |x|
-  x.report('ULID#to_s_with_integer_base / Before #7') { ULID.generate.to_s_with_integer_base }
   x.report('ULID#to_s / After #7') { ULID.generate.to_s }
 
   x.compare!

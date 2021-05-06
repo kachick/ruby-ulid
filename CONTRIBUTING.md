@@ -17,6 +17,11 @@ $ bundle install
 # Executing first time might take longtime, because development mode dependent active_support via steep
 ```
 
+## Policy for the adding dependencies
+
+* Keep no runtime dependencies except `https://github.com/ruby/*` projects
+* Keep clean environment in `test` group. Do not add gems like active_support into `test` group # ref: [My struggle](https://github.com/kachick/ruby-ulid/pull/42#discussion_r623960639)
+
 ## Ensuring pre-release version's behaviors
 
 Play with the behaviors in REPL.
