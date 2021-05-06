@@ -9,8 +9,6 @@ if Warning.respond_to?(:[]=) # @TODO Removable this guard after dropped ruby 2.6
   Warning[:experimental] = true
 end
 
-Warning.ignore(/`ULID\.monotonic_generate` actually changes class state\. Use `ULID::MonotonicGenerator` instead\./)
-
 Warning.process do |warning|
   :raise
 end
