@@ -61,20 +61,6 @@ class ULID
     MAX_MILLISECONDS.equal?(moment) ? MAX : generate(moment: moment, entropy: MAX_ENTROPY)
   end
 
-  # @deprecated This method actually changes class state. Use {ULID::MonotonicGenerator} instead.
-  # @raise [OverflowError] if the entropy part is larger than the ULID limit in same milliseconds
-  # @return [ULID]
-  def self.monotonic_generate
-    warning = "`ULID.monotonic_generate` actually changes class state. Use `ULID::MonotonicGenerator` instead."
-    if RUBY_VERSION >= '3.0'
-      Warning.warn(warning, category: :deprecated)
-    else
-      Warning.warn(warning)
-    end
-
-    MONOTONIC_GENERATOR.generate
-  end
-
   # @param [String, #to_str] string
   # @return [Enumerator]
   # @yieldparam [ULID] ulid
@@ -169,23 +155,27 @@ class ULID
     end
   end
 
+  # @api private
   # @return [Integer]
   def self.current_milliseconds
     milliseconds_from_time(Time.now)
   end
 
+  # @api private
   # @param [Time] time
   # @return [Integer]
   def self.milliseconds_from_time(time)
     (time.to_r * 1000).to_i
   end
 
+  # @api private
   # @param [Time, Integer] moment
   # @return [Integer]
   def self.milliseconds_from_moment(moment)
     moment.kind_of?(Time) ? milliseconds_from_time(moment) : moment.to_int
   end
 
+  # @api private
   # @return [Integer]
   def self.reasonable_entropy
     SecureRandom.random_number(MAX_ENTROPY)
@@ -500,7 +490,6 @@ require_relative 'ulid/monotonic_generator'
 class ULID
   MIN = parse('00000000000000000000000000').freeze
   MAX = parse('7ZZZZZZZZZZZZZZZZZZZZZZZZZ').freeze
-  MONOTONIC_GENERATOR = MonotonicGenerator.new
 
   private_constant :ENCODING_CHARS, :TIME_FORMAT_IN_INSPECT, :UUIDV4_PATTERN, :MIN, :MAX, :CROCKFORD_BASE32_CHAR_PATTERN, :N32_CHAR_BY_CROCKFORD_BASE32_CHAR, :CROCKFORD_BASE32_CHAR_BY_N32_CHAR, :N32_CHAR_PATTERN
 end

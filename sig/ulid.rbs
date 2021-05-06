@@ -19,7 +19,6 @@ class ULID
   CROCKFORD_BASE32_CHAR_PATTERN: Regexp
   CROCKFORD_BASE32_CHAR_BY_N32_CHAR: Hash[String, String]
   N32_CHAR_PATTERN: Regexp
-  MONOTONIC_GENERATOR: MonotonicGenerator
   MIN: ULID
   MAX: ULID
   include Comparable
