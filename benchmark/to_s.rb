@@ -1,23 +1,12 @@
+# coding: utf-8
+# frozen_string_literal: true
+
 require 'benchmark/ips'
 require_relative '../lib/ulid'
 
-ulid = ULID.generate
-ulid.to_s # Cached the result
-
-many_ulids = 1000000.times.map do
-  ULID.generate
-end
-
 Benchmark.ips do |x|
-  x.report('ULID#to_s first time, having some overhead from taking the object pool') do
-    if non_cached_ulid = many_ulids.pop
-      non_cached_ulid.to_s
-    else
-      raise 'shortage ulid pool'
-    end
-  end
-
-  x.report('ULID#to_s multiple times makes faster') { ulid.to_s }
+  x.report('ULID#to_s_with_integer_base / Before #7') { ULID.generate.to_s_with_integer_base }
+  x.report('ULID#to_s / After #7') { ULID.generate.to_s }
 
   x.compare!
 end

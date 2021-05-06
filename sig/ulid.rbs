@@ -15,8 +15,10 @@ class ULID
   PATTERN: Regexp
   STRICT_PATTERN: Regexp
   UUIDV4_PATTERN: Regexp
-  REPLACING_MAP: Hash[String, String]
-  REPLACING_PATTERN: Regexp
+  N32_CHAR_BY_CROCKFORD_BASE32_CHAR: Hash[String, String]
+  CROCKFORD_BASE32_CHAR_PATTERN: Regexp
+  CROCKFORD_BASE32_CHAR_BY_N32_CHAR: Hash[String, String]
+  N32_CHAR_PATTERN: Regexp
   MONOTONIC_GENERATOR: MonotonicGenerator
   MIN: ULID
   MAX: ULID
@@ -85,7 +87,6 @@ class ULID
                 | (String string) { (ULID ulid) -> void } -> singleton(ULID)
   def self.octets_from_integer: (Integer integer, length: Integer) -> Array[Integer]
   def self.inverse_of_digits: (Array[Integer] reversed_digits) -> Integer
-  def self.convert_crockford_base32_to_n32: (String) -> String
   attr_reader milliseconds: Integer
   attr_reader entropy: Integer
   def initialize: (milliseconds: Integer, entropy: Integer) -> void
@@ -113,7 +114,9 @@ class ULID
   def freeze: -> self
 
   private
+  def self.convert_crockford_base32_to_n32: (String) -> String
   def self.argument_error_for_range_building: (untyped argument) -> ArgumentError
+  def convert_n32_to_crockford_base32: (String) -> String
   def matchdata: -> MatchData
   def cache_all_instance_variables: -> void
 end
