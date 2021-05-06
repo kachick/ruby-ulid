@@ -9,10 +9,6 @@ many_ulid_strings = ULID.sample(10000).map(&:to_s)
 raise 'Setup error' unless many_ulid_strings.uniq.size == 10000
 
 Benchmark.ips do |x|
-  x.report('ULID.parse_with_integer_base / Before #7') do
-    ULID.parse_with_integer_base(many_ulid_strings.sample)
-  end
-
   x.report('ULID.parse / After #7') do
     ULID.parse(many_ulid_strings.sample)
   end

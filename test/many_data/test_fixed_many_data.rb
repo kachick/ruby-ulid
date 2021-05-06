@@ -34,13 +34,6 @@ class TestFixedManyData < Test::Unit::TestCase
     end
   end
 
-  def test_many_fixed_examples_for_parse_with_integer_base
-    EXAMPLES.each do |example|
-      ulid = ULID.parse_with_integer_base(example.string)
-      assert_example(ulid, example)
-    end
-  end
-
   # Fix ME!
   def test_many_fixed_examples_from_uuidv4
     non_reversible_ulid_strings = []

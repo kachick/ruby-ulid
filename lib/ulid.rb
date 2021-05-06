@@ -3,7 +3,6 @@
 # Copyright (C) 2021 Kenichi Kamiya
 
 require 'securerandom'
-require 'integer/base'
 
 # @see https://github.com/ulid/spec
 # @!attribute [r] milliseconds
@@ -209,29 +208,6 @@ class ULID
     SecureRandom.random_number(MAX_ENTROPY)
   end
 
-  # @api private
-  # @deprecated Just exists to compare performance with old implementation. ref: https://github.com/kachick/ruby-ulid/issues/7
-  # @param [String, #to_str] string
-  # @return [ULID]
-  # @raise [ParserError] if the given format is not correct for ULID specs
-  # @raise [OverflowError] if the given value is larger than the ULID limit
-  def self.parse_with_integer_base(string)
-    begin
-      string = string.to_str
-      unless string.size == ENCODED_ID_LENGTH
-        raise "parsable string must be #{ENCODED_ID_LENGTH} characters, but actually given #{string.size} characters"
-      end
-      timestamp = string.slice(0, TIMESTAMP_PART_LENGTH)
-      randomness = string.slice(TIMESTAMP_PART_LENGTH, RANDOMNESS_PART_LENGTH)
-      milliseconds = Integer::Base.parse(timestamp, ENCODING_CHARS)
-      entropy = Integer::Base.parse(randomness, ENCODING_CHARS)
-    rescue => err
-      raise ParserError, "parsing failure as #{err.inspect} for given #{string.inspect}"
-    end
-  
-    new milliseconds: milliseconds, entropy: entropy
-  end
-
   n32_chars = [*'0'..'9', *'A'..'V'].map(&:freeze).freeze
   raise SetupError, 'obvious bug exists in the mapping algorithm' unless n32_chars.size == 32
 
@@ -360,13 +336,6 @@ class ULID
   # @return [String]
   def to_s
     @string ||= convert_n32_to_crockford_base32(to_i.to_s(32).rjust(ENCODED_ID_LENGTH, '0').upcase).freeze
-  end
-
-  # @api private
-  # @deprecated Just exists to compare performance with old implementation. ref: https://github.com/kachick/ruby-ulid/issues/7
-  # @return [String]
-  def to_s_with_integer_base
-    @string ||= Integer::Base.string_for(to_i, ENCODING_CHARS).rjust(ENCODED_ID_LENGTH, '0').upcase.freeze
   end
 
   # @return [Integer]
