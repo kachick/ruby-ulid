@@ -18,10 +18,21 @@ class TestManyData < Test::Unit::TestCase
     assert_not_equal(ulids, ulids.sort_by(&:to_s))
   end
 
-  def test_parse_reversible
-    10000.times do
-      ulid_string = ULID.from_integer(SecureRandom.random_number(ULID::MAX_INTEGER)).to_s
-      assert_equal(ulid_string, ULID.parse(ulid_string).to_s)
+  def test_string_format_and_reversible
+    ULID.sample(10000).each do |ulid|
+      assert_equal(ULID::ENCODED_ID_LENGTH, ulid.to_s.size)
+      assert_equal(ULID::ENCODED_ID_LENGTH, ulid.to_s.bytesize)
+      assert_equal(ulid.to_s, ULID.parse(ulid.to_s).to_s)
+      assert_equal(ulid.to_s, ULID.parse(ulid.to_s.downcase).to_s)
     end
+  end
+
+  def test_sample
+    ulids = ULID.sample(10000)
+
+    # Rough tests for the randomness. But I guess it basically will not fail :)
+    assert_equal(ulids, ulids.uniq)
+    assert_equal(ulids.size, ulids.group_by(&:timestamp).size)
+    assert_equal(ulids.size, ulids.group_by(&:randomness).size)
   end
 end
