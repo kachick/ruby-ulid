@@ -267,12 +267,7 @@ class ULID
     end
 
     n32encoded = string.upcase.gsub(CROCKFORD_BASE32_CHAR_PATTERN, N32_CHAR_BY_CROCKFORD_BASE32_CHAR)
-    timestamp = n32encoded.slice(0, TIMESTAMP_ENCODED_LENGTH)
-    randomness = n32encoded.slice(TIMESTAMP_ENCODED_LENGTH, RANDOMNESS_ENCODED_LENGTH)
-    milliseconds = timestamp.to_i(32)
-    entropy = randomness.to_i(32)
-
-    new milliseconds: milliseconds, entropy: entropy
+    from_integer(n32encoded.to_i(32))
   end
 
   # @return [Boolean]
