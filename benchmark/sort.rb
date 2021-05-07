@@ -4,9 +4,7 @@
 require 'benchmark/ips'
 require_relative '../lib/ulid'
 
-frozen_ulid_objects = 10000.times.map do
-  ULID.generate.freeze
-end
+frozen_ulid_objects = ULID.sample(10000).map(&:freeze)
 ulid_strings = frozen_ulid_objects.map(&:to_s)
 non_cached_ulid_objects = frozen_ulid_objects.map(&:dup)
 
