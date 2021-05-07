@@ -17,10 +17,13 @@ class ULID
   class ParserError < Error; end
   class SetupError < ScriptError; end
 
+  # `Subset` of Crockford's Base32. Just excluded I, L, O, U, -.
+  # refs:
+  #   * https://www.crockford.com/base32.html
+  #   * https://github.com/ulid/spec/pull/57
+  #   * https://github.com/kachick/ruby-ulid/issues/57
   encoding_string = '0123456789ABCDEFGHJKMNPQRSTVWXYZ'
-  # Crockford's Base32. Excluded I, L, O, U.
-  # @see https://www.crockford.com/base32.html
-  ENCODING_CHARS = encoding_string.chars.map(&:freeze).freeze
+  encoding_chars = encoding_string.chars.map(&:freeze).freeze
 
   TIMESTAMP_PART_LENGTH = 10
   RANDOMNESS_PART_LENGTH = 16
@@ -247,7 +250,7 @@ class ULID
     'Z' => 31
   }.freeze
 
-  N32_CHAR_BY_CROCKFORD_BASE32_CHAR = ENCODING_CHARS.each_with_object({}) do |encoding_char, map|
+  N32_CHAR_BY_CROCKFORD_BASE32_CHAR = encoding_chars.each_with_object({}) do |encoding_char, map|
     if n = crockford_base32_mappings[encoding_char]
       char_32 = n32_char_by_number.fetch(n)
       map[encoding_char] = char_32
@@ -493,5 +496,5 @@ class ULID
   MIN = parse('00000000000000000000000000').freeze
   MAX = parse('7ZZZZZZZZZZZZZZZZZZZZZZZZZ').freeze
 
-  private_constant :ENCODING_CHARS, :TIME_FORMAT_IN_INSPECT, :UUIDV4_PATTERN, :MIN, :MAX, :CROCKFORD_BASE32_CHAR_PATTERN, :N32_CHAR_BY_CROCKFORD_BASE32_CHAR, :CROCKFORD_BASE32_CHAR_BY_N32_CHAR, :N32_CHAR_PATTERN, :UNDEFINED
+  private_constant :TIME_FORMAT_IN_INSPECT, :UUIDV4_PATTERN, :MIN, :MAX, :CROCKFORD_BASE32_CHAR_PATTERN, :N32_CHAR_BY_CROCKFORD_BASE32_CHAR, :CROCKFORD_BASE32_CHAR_BY_N32_CHAR, :N32_CHAR_PATTERN, :UNDEFINED
 end
