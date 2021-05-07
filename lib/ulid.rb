@@ -42,6 +42,15 @@ class ULID
   TIME_FORMAT_IN_INSPECT = '%Y-%m-%d %H:%M:%S.%3N %Z'
 
   UNDEFINED = BasicObject.new
+  # @return [String]
+  def UNDEFINED.to_s
+    'ULID::UNDEFINED'
+  end
+
+  # @return [String]
+  def UNDEFINED.inspect
+    to_s
+  end
   Kernel.instance_method(:freeze).bind(UNDEFINED).call
 
   private_class_method :new
@@ -115,19 +124,19 @@ class ULID
   # @return [ULID]
   # @raise [OverflowError] if the given integer is larger than the ULID limit
   # @raise [ArgumentError] if the given integer is negative number
-  # @todo Need optimized for performance
   def self.from_integer(integer)
     integer = integer.to_int
     raise OverflowError, "integer overflow: given #{integer}, max: #{MAX_INTEGER}" unless integer <= MAX_INTEGER
     raise ArgumentError, "integer should not be negative: given: #{integer}" if integer.negative?
 
-    octets = octets_from_integer(integer, length: OCTETS_LENGTH).freeze
-    time_octets = octets.slice(0, TIMESTAMP_OCTETS_LENGTH).freeze
-    randomness_octets = octets.slice(TIMESTAMP_OCTETS_LENGTH, RANDOMNESS_OCTETS_LENGTH).freeze
-    milliseconds = inverse_of_digits(time_octets)
-    entropy = inverse_of_digits(randomness_octets)
+    n32encoded = integer.to_s(32).rjust(ENCODED_LENGTH, '0')
+    n32encoded_timestamp = n32encoded.slice(0, TIMESTAMP_ENCODED_LENGTH)
+    n32encoded_randomness = n32encoded.slice(TIMESTAMP_ENCODED_LENGTH, RANDOMNESS_ENCODED_LENGTH)
 
-    new milliseconds: milliseconds, entropy: entropy
+    milliseconds = n32encoded_timestamp.to_i(32)
+    entropy = n32encoded_randomness.to_i(32)
+
+    new milliseconds: milliseconds, entropy: entropy, integer: integer
   end
 
   # @param [Range<Time>, Range<nil>] time_range
@@ -319,12 +328,18 @@ class ULID
   # @api private
   # @param [Integer] milliseconds
   # @param [Integer] entropy
+  # @param [Integer] integer
   # @return [void]
   # @raise [OverflowError] if the given value is larger than the ULID limit
   # @raise [ArgumentError] if the given milliseconds and/or entropy is negative number
-  def initialize(milliseconds:, entropy:)
-    milliseconds = milliseconds.to_int
-    entropy = entropy.to_int
+  def initialize(milliseconds:, entropy:, integer: UNDEFINED)
+    if UNDEFINED.equal?(integer)
+      milliseconds = milliseconds.to_int
+      entropy = entropy.to_int
+    else
+      @integer = integer
+    end
+
     raise OverflowError, "timestamp overflow: given #{milliseconds}, max: #{MAX_MILLISECONDS}" unless milliseconds <= MAX_MILLISECONDS
     raise OverflowError, "entropy overflow: given #{entropy}, max: #{MAX_ENTROPY}" unless entropy <= MAX_ENTROPY
     raise ArgumentError, 'milliseconds and entropy should not be negative' if milliseconds.negative? || entropy.negative?
