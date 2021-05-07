@@ -353,13 +353,9 @@ class ULID
   def ===(other)
     case other
     when ULID
-      self == other
+      to_i == other.to_i
     when String
-      begin
-        self == self.class.parse(other)
-      rescue Exception
-        false
-      end
+      to_s == other.upcase
     else
       false
     end
