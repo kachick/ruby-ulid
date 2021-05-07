@@ -258,14 +258,15 @@ class ULID
     begin
       string = string.to_str
       raise "given argument does not match to `#{STRICT_PATTERN.inspect}`" unless STRICT_PATTERN.match?(string)
-      n32encoded = string.upcase.gsub(CROCKFORD_BASE32_CHAR_PATTERN, N32_CHAR_BY_CROCKFORD_BASE32_CHAR)
-      timestamp = n32encoded.slice(0, TIMESTAMP_PART_LENGTH)
-      randomness = n32encoded.slice(TIMESTAMP_PART_LENGTH, RANDOMNESS_PART_LENGTH)
-      milliseconds = timestamp.to_i(32)
-      entropy = randomness.to_i(32)
     rescue => err
       raise ParserError, "parsing failure as #{err.inspect} for given #{string.inspect}"
     end
+
+    n32encoded = string.upcase.gsub(CROCKFORD_BASE32_CHAR_PATTERN, N32_CHAR_BY_CROCKFORD_BASE32_CHAR)
+    timestamp = n32encoded.slice(0, TIMESTAMP_PART_LENGTH)
+    randomness = n32encoded.slice(TIMESTAMP_PART_LENGTH, RANDOMNESS_PART_LENGTH)
+    milliseconds = timestamp.to_i(32)
+    entropy = randomness.to_i(32)
 
     new milliseconds: milliseconds, entropy: entropy
   end
