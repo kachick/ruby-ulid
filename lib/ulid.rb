@@ -51,6 +51,14 @@ class ULID
     new milliseconds: milliseconds_from_moment(moment), entropy: entropy
   end
 
+  # Short hand of `ULID.generate(moment: time)`
+  # @param [Time] time
+  # @return [ULID]
+  def self.at(time)
+    raise ArgumentError, 'ULID.at takes only `Time` instance' unless Time === time
+    new milliseconds: milliseconds_from_time(time), entropy: reasonable_entropy
+  end
+
   # @param [Integer, Time] moment
   # @return [ULID]
   def self.min(moment: 0)
