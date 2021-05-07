@@ -15,6 +15,9 @@ class TestBoundaryULID < Test::Unit::TestCase
     assert_equal(ULID::MAX_MILLISECONDS, @max.milliseconds)
     assert_equal(ULID::MAX_ENTROPY, @max.entropy)
     assert_equal(ULID::MAX_INTEGER, @max.to_i)
+    assert_equal(0, @min.milliseconds)
+    assert_equal(0, @min.entropy)
+    assert_equal(0, @min.to_i)
   end
 
   def test_next
