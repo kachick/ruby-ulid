@@ -330,7 +330,7 @@ class ULID
 
   # @return [String]
   def to_s
-    @string ||= to_i.to_s(32).rjust(ENCODED_ID_LENGTH, '0').upcase.gsub(N32_CHAR_PATTERN, CROCKFORD_BASE32_CHAR_BY_N32_CHAR).freeze
+    @string ||= to_i.to_s(32).upcase.gsub(N32_CHAR_PATTERN, CROCKFORD_BASE32_CHAR_BY_N32_CHAR).rjust(ENCODED_ID_LENGTH, '0').freeze
   end
 
   # @return [Integer]
