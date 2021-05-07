@@ -11,7 +11,7 @@ Benchmark.ips do |x|
   x.report('ULID.generate') { ULID.generate }
   x.report('ULID::MonotonicGenerator#generate') { monotonic_generator.generate }
   x.report('ULID.from_integer with random value') { ULID.from_integer(SecureRandom.random_number(ULID::MAX_INTEGER)) }
-  x.report("ULID.from_integer with fixed integer `#{fixed_integer}` (To compare randomizing overhead)") { ULID.from_integer(SecureRandom.random_number(ULID::MAX_INTEGER)) }
+  x.report("ULID.from_integer with fixed integer `#{fixed_integer}` (To compare randomizing overhead)") { ULID.from_integer(fixed_integer) }
   x.report('ULID.min with no arguments is optimized') { ULID.min }
   x.report('ULID.max with no arguments is optimized') { ULID.max }
   x.report('ULID.sample') { ULID.sample }
