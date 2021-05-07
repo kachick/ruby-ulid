@@ -78,28 +78,54 @@ class ULID
     MAX_MILLISECONDS.equal?(moment) ? MAX : generate(moment: moment, entropy: MAX_ENTROPY)
   end
 
-  # @param [Integer] number
-  # @return [ULID, Array<ULID>]
-  # @raise [ArgumentError] if the given number is lager than ULID spec limits or given negative number 
+  # @param [Range<Time>, Range<nil>, Range[ULID], nil] period
+  # @overload sample(number, period: nil)
+  #   @param [Integer] number
+  #   @return [Array<ULID>]
+  #   @raise [ArgumentError] if the given number is lager than `ULID spec limits` or `Possibilities of given period`, or given negative number
+  # @overload sample(period: nil)
+  #   @return [ULID]
   # @note Major difference of `Array#sample` interface is below
   #   * Do not ensure the uniqueness
   #   * Do not take random generator for the arguments
   #   * Raising error instead of truncating elements for the given number
-  def self.sample(number=UNDEFINED)
-    if UNDEFINED.equal?(number)
-      from_integer(SecureRandom.random_number(MAX_INTEGER))
+  def self.sample(*args, period: nil)
+    int_generator = if period
+      ulid_range = range(period)
+      min, max, exclude_end = ulid_range.begin, ulid_range.end, ulid_range.exclude_end?
+
+      # I referenced https://stackoverflow.com/a/2683929/1212807 for below algorithm, thank you!
+      possibilities = (max.to_i - min.to_i) + (exclude_end ? 0 : 1)
+      raise ArgumentError, "given range `#{ulid_range.inspect}` does not have possibilities" unless possibilities.positive?
+
+      -> {
+        random = possibilities * SecureRandom.rand.to_r
+        (random + min.to_i).to_i
+      }
     else
-      begin
-        int = number.to_int
-      rescue
-         # Can not use `number.to_s` and `number.inspect` for considering BasicObject here
-        raise TypeError, 'accepts no argument or integer only'
+      -> {
+        SecureRandom.random_number(MAX_INTEGER)
+      }
+    end
+
+    case args.size
+    when 0
+      from_integer(int_generator.call)
+    when 1
+      number = args.first
+      raise ArgumentError, 'accepts no argument or integer only' unless Integer === number
+
+      if number > MAX_INTEGER || number.negative?
+        raise ArgumentError, "given number #{number} is larger than ULID limit #{MAX_INTEGER} or negative: #{number.inspect}"
       end
 
-      if int > MAX_INTEGER || int.negative?
-        raise ArgumentError, "given number is larger than ULID limit #{MAX_INTEGER} or negative: #{number.inspect}"
+      if period && (number > possibilities)
+        raise ArgumentError, "given number #{number} is larger than given possibilities #{possibilities}"
       end
-      int.times.map { from_integer(SecureRandom.random_number(MAX_INTEGER)) }
+
+      number.times.map { from_integer(int_generator.call) }
+    else
+      raise ArgumentError, "wrong number of arguments (given #{args.size}, expected 0..1)"
     end
   end
 
@@ -136,33 +162,38 @@ class ULID
     new milliseconds: milliseconds, entropy: entropy, integer: integer
   end
 
-  # @param [Range<Time>, Range<nil>] period
+  # @param [Range<Time>, Range<nil>, Range[ULID]] period
   # @return [Range<ULID>]
   # @raise [ArgumentError] if the given period is not a `Range[Time]` or `Range[nil]`
   def self.range(period)
     raise ArgumentError, 'ULID.range takes only `Range[Time]` or `Range[nil]`' unless Range === period
-    begin_time, end_time, exclude_end = period.begin, period.end, period.exclude_end?
+    begin_element, end_element, exclude_end = period.begin, period.end, period.exclude_end?
+    return period if self === begin_element && self === end_element
 
-    case begin_time
+    case begin_element
     when Time
-      begin_ulid = min(moment: begin_time)
+      begin_ulid = min(moment: begin_element)
     when nil
       begin_ulid = MIN
+    when self
+      begin_ulid = begin_element
     else
       raise ArgumentError, "ULID.range takes only `Range[Time]` or `Range[nil]`, given: #{period.inspect}"
     end
 
-    case end_time
+    case end_element
     when Time
       if exclude_end
-        end_ulid = min(moment: end_time)
+        end_ulid = min(moment: end_element)
       else
-        end_ulid = max(moment: end_time)
+        end_ulid = max(moment: end_element)
       end
     when nil
       # The end should be max and include end, because nil end means to cover endless ULIDs until the limit
       end_ulid = MAX
       exclude_end = false
+    when self
+      end_ulid = end_element
     else
       raise ArgumentError, "ULID.range takes only `Range[Time]` or `Range[nil]`, given: #{period.inspect}"
     end

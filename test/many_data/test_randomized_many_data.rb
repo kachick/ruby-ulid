@@ -34,6 +34,18 @@ class TestManyData < Test::Unit::TestCase
     assert_equal(ulids, ulids.uniq)
     assert_equal(ulids.size, ulids.group_by(&:timestamp).size)
     assert_equal(ulids.size, ulids.group_by(&:randomness).size)
+
+    first = Time.at(1619676780123456789/1000000000r).utc #=> 2021-04-29 06:13:00.123456789 UTC
+    last = Time.at(1620345540123456789/1000000000r).utc #=> 2021-05-06 23:59:00.123456789 UTC
+    exclude_end = first...last
+    ranged_ulids = ULID.sample(10000, period: exclude_end)
+    assert_equal(10000, ranged_ulids.size)
+    assert_nil(ranged_ulids.uniq!)
+    moments = ranged_ulids.map(&:to_time)
+    assert((9000..10000).cover?(moments.uniq.size))
+    moments.each do |moment|
+      assert(exclude_end.cover?(moment))
+    end
   end
 
   def test_octets
