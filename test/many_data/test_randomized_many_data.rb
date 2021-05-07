@@ -20,8 +20,8 @@ class TestManyData < Test::Unit::TestCase
 
   def test_string_format_and_reversible
     ULID.sample(10000).each do |ulid|
-      assert_equal(ULID::ENCODED_ID_LENGTH, ulid.to_s.size)
-      assert_equal(ULID::ENCODED_ID_LENGTH, ulid.to_s.bytesize)
+      assert_equal(ULID::ENCODED_LENGTH, ulid.to_s.size)
+      assert_equal(ULID::ENCODED_LENGTH, ulid.to_s.bytesize)
       assert_equal(ulid.to_s, ULID.parse(ulid.to_s).to_s)
       assert_equal(ulid.to_s, ULID.parse(ulid.to_s.downcase).to_s)
     end

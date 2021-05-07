@@ -25,16 +25,16 @@ class ULID
   encoding_string = '0123456789ABCDEFGHJKMNPQRSTVWXYZ'
   encoding_chars = encoding_string.chars.map(&:freeze).freeze
 
-  TIMESTAMP_PART_LENGTH = 10
-  RANDOMNESS_PART_LENGTH = 16
-  ENCODED_ID_LENGTH = TIMESTAMP_PART_LENGTH + RANDOMNESS_PART_LENGTH
+  TIMESTAMP_ENCODED_LENGTH = 10
+  RANDOMNESS_ENCODED_LENGTH = 16
+  ENCODED_LENGTH = TIMESTAMP_ENCODED_LENGTH + RANDOMNESS_ENCODED_LENGTH
   TIMESTAMP_OCTETS_LENGTH = 6
   RANDOMNESS_OCTETS_LENGTH = 10
   OCTETS_LENGTH = TIMESTAMP_OCTETS_LENGTH + RANDOMNESS_OCTETS_LENGTH
   MAX_MILLISECONDS = 281474976710655
   MAX_ENTROPY = 1208925819614629174706175
   MAX_INTEGER = 340282366920938463463374607431768211455
-  PATTERN = /(?<timestamp>[0-7][#{encoding_string}]{#{TIMESTAMP_PART_LENGTH - 1}})(?<randomness>[#{encoding_string}]{#{RANDOMNESS_PART_LENGTH}})/i.freeze
+  PATTERN = /(?<timestamp>[0-7][#{encoding_string}]{#{TIMESTAMP_ENCODED_LENGTH - 1}})(?<randomness>[#{encoding_string}]{#{RANDOMNESS_ENCODED_LENGTH}})/i.freeze
   STRICT_PATTERN = /\A#{PATTERN.source}\z/i.freeze
 
   # Same as Time#inspect since Ruby 2.7, just to keep backward compatibility
@@ -256,8 +256,8 @@ class ULID
     end
 
     n32encoded = string.upcase.gsub(CROCKFORD_BASE32_CHAR_PATTERN, N32_CHAR_BY_CROCKFORD_BASE32_CHAR)
-    timestamp = n32encoded.slice(0, TIMESTAMP_PART_LENGTH)
-    randomness = n32encoded.slice(TIMESTAMP_PART_LENGTH, RANDOMNESS_PART_LENGTH)
+    timestamp = n32encoded.slice(0, TIMESTAMP_ENCODED_LENGTH)
+    randomness = n32encoded.slice(TIMESTAMP_ENCODED_LENGTH, RANDOMNESS_ENCODED_LENGTH)
     milliseconds = timestamp.to_i(32)
     entropy = randomness.to_i(32)
 
@@ -324,7 +324,7 @@ class ULID
 
   # @return [String]
   def to_s
-    @string ||= to_i.to_s(32).upcase.gsub(N32_CHAR_PATTERN, CROCKFORD_BASE32_CHAR_BY_N32_CHAR).rjust(ENCODED_ID_LENGTH, '0').freeze
+    @string ||= to_i.to_s(32).upcase.gsub(N32_CHAR_PATTERN, CROCKFORD_BASE32_CHAR_BY_N32_CHAR).rjust(ENCODED_LENGTH, '0').freeze
   end
 
   # @return [Integer]
@@ -393,12 +393,12 @@ class ULID
 
   # @return [String]
   def timestamp
-    @timestamp ||= to_s.slice(0, TIMESTAMP_PART_LENGTH).freeze
+    @timestamp ||= to_s.slice(0, TIMESTAMP_ENCODED_LENGTH).freeze
   end
 
   # @return [String]
   def randomness
-    @randomness ||= to_s.slice(TIMESTAMP_PART_LENGTH, RANDOMNESS_PART_LENGTH).freeze
+    @randomness ||= to_s.slice(TIMESTAMP_ENCODED_LENGTH, RANDOMNESS_ENCODED_LENGTH).freeze
   end
 
   # @note Providing for rough operations. The keys and values is not fixed.
