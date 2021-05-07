@@ -26,7 +26,7 @@ class ULID
         @latest_entropy += 1
       end
 
-      ULID.new milliseconds: @latest_milliseconds, entropy: @latest_entropy
+      ULID.from_monotonic_generator(self)
     end
 
     # @api private
