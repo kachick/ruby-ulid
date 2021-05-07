@@ -62,7 +62,11 @@ require 'ulid'
 
 ulid = ULID.generate #=> ULID(2021-04-27 17:27:22.826 UTC: 01F4A5Y1YAQCYAYCTC7GRMJ9AA)
 ulid.to_time #=> 2021-04-27 17:27:22.826 UTC
+ulid.milliseconds #=> 1619544442826
 ulid.to_s #=> "01F4A5Y1YAQCYAYCTC7GRMJ9AA"
+ulid.timestamp #=> "01F4A5Y1YA"
+ulid.randomness #=> "QCYAYCTC7GRMJ9AA"
+ulid.to_i #=> 1957909092946624190749577070267409738
 ulid.octets #=> [1, 121, 20, 95, 7, 202, 187, 60, 175, 51, 76, 60, 49, 73, 37, 74]
 ```
 
@@ -172,6 +176,13 @@ until_the_ulid_limit = ULID.range(time1..) # This will match only for all IDs fr
 ulids.grep(one_of_the_above)
 ulids.grep_v(one_of_the_above)
 #=> I hope the results should be actually you want!
+```
+
+If you want to manually handle the Time objects, `ULID.floor` returns new `Time` with truncating excess precisions in ULID spec.
+
+```ruby
+time = Time.at(946684800, Rational('123456.789')).utc #=> 2000-01-01 00:00:00.123456789 UTC
+ULID.floor(time) #=> 2000-01-01 00:00:00.123 UTC
 ```
 
 ### Scanner for string (e.g. `JSON`)
