@@ -404,24 +404,34 @@ class ULID
 
   # @return [String]
   def timestamp
-    @timestamp ||= matchdata[:timestamp].freeze
+    @timestamp ||= to_s.slice(0, TIMESTAMP_PART_LENGTH).freeze
   end
 
   # @return [String]
   def randomness
-    @randomness ||= matchdata[:randomness].freeze
+    @randomness ||= to_s.slice(TIMESTAMP_PART_LENGTH, ENCODED_ID_LENGTH).freeze
   end
 
-  # @deprecated This method might be changed in https://github.com/kachick/ruby-ulid/issues/84
+  # @note Providing for rough operations. The keys and values is not fixed.
+  # @return [Hash{Symbol => Regexp, String}]
+  def patterns
+    named_captures = /(?<timestamp>#{timestamp})(?<randomness>#{randomness})/i.freeze
+    {
+      named_captures: named_captures,
+      strict_named_captures: /\A#{named_captures.source}\z/i.freeze
+    }
+  end
+
+  # @deprecated Use {#patterns} instead. ref: https://github.com/kachick/ruby-ulid/issues/84
   # @return [Regexp]
   def pattern
-    @pattern ||= /(?<timestamp>#{timestamp})(?<randomness>#{randomness})/i.freeze
+    patterns.fetch(:named_captures)
   end
 
-  # @deprecated This method might be changed in https://github.com/kachick/ruby-ulid/issues/84
+  # @deprecated Use {#patterns} instead. ref: https://github.com/kachick/ruby-ulid/issues/84
   # @return [Regexp]
   def strict_pattern
-    @strict_pattern ||= /\A#{pattern.source}\z/i.freeze
+    patterns.fetch(:strict_named_captures)
   end
 
   # @return [ULID, nil] when called on ULID as `7ZZZZZZZZZZZZZZZZZZZZZZZZZ`, returns `nil` instead of ULID
@@ -464,11 +474,6 @@ class ULID
     string.gsub(N32_CHAR_PATTERN, CROCKFORD_BASE32_CHAR_BY_N32_CHAR)
   end
 
-  # @return [MatchData]
-  def matchdata
-    @matchdata ||= STRICT_PATTERN.match(to_s).freeze
-  end
-
   # @return [void]
   def cache_all_instance_variables
     inspect
@@ -476,7 +481,8 @@ class ULID
     to_i
     succ
     pred
-    strict_pattern
+    timestamp
+    randomness
     to_uuidv4
   end
 end

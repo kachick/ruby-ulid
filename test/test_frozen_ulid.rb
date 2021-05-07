@@ -46,9 +46,26 @@ class TestFrozenULID < Test::Unit::TestCase
     assert_nil(@max.next)
   end
 
+  def test_succ
+    assert_equal(true, @ulid < @ulid.succ)
+    assert_nil(@max.succ)
+  end
+
   def test_pred
     assert_equal(true, @ulid > @ulid.pred)
     assert_nil(@min.pred)
+  end
+
+  def test_timestamp
+    assert_equal('01ARZ3NDEK', @ulid.timestamp)
+  end
+
+  def test_randomness
+    assert_equal('TSV4RRFFQ69G5FAV', @ulid.randomness)
+  end
+
+  def test_patterns
+    assert_instance_of(Hash, @ulid.patterns)
   end
 
   def test_to_uuidv4
