@@ -37,9 +37,6 @@ class ULID
   PATTERN = /(?<timestamp>[0-7][#{encoding_string}]{#{TIMESTAMP_PART_LENGTH - 1}})(?<randomness>[#{encoding_string}]{#{RANDOMNESS_PART_LENGTH}})/i.freeze
   STRICT_PATTERN = /\A#{PATTERN.source}\z/i.freeze
 
-  # Imported from https://stackoverflow.com/a/38191104/1212807, thank you!
-  UUIDV4_PATTERN = /\A[0-9A-F]{8}-[0-9A-F]{4}-[4][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}\z/i.freeze
-
   # Same as Time#inspect since Ruby 2.7, just to keep backward compatibility
   # @see https://bugs.ruby-lang.org/issues/15958
   TIME_FORMAT_IN_INSPECT = '%Y-%m-%d %H:%M:%S.%3N %Z'
@@ -110,21 +107,6 @@ class ULID
       yield parse(pair.join)
     end
     self
-  end
-
-  # @param [String, #to_str] uuid
-  # @return [ULID]
-  # @raise [ParserError] if the given format is not correct for UUIDv4 specs
-  def self.from_uuidv4(uuid)
-    begin
-      uuid = uuid.to_str
-      prefix_trimmed = uuid.sub(/\Aurn:uuid:/, '')
-      raise "given string is not matched to pattern #{UUIDV4_PATTERN.inspect}" unless UUIDV4_PATTERN.match?(prefix_trimmed)
-      normalized = prefix_trimmed.gsub(/[^0-9A-Fa-f]/, '')
-      from_integer(normalized.to_i(16))
-    rescue => err
-      raise ParserError, "parsing failure as #{err.inspect} for given #{uuid}"
-    end
   end
 
   # @param [Integer, #to_int] integer
@@ -456,17 +438,6 @@ class ULID
     @pred ||= self.class.from_integer(pre_int)
   end
 
-  # @return [String]
-  def to_uuidv4
-    @uuidv4 ||= begin
-      # This code referenced https://github.com/ruby/ruby/blob/121fa24a3451b45c41ac0a661b64e9fc8600e589/lib/securerandom.rb#L221-L241
-      array = octets.pack('C*').unpack('NnnnnN')
-      array[2] = (array[2] & 0x0fff) | 0x4000
-      array[3] = (array[3] & 0x3fff) | 0x8000
-      ('%08x-%04x-%04x-%04x-%04x%08x' % array).freeze
-    end
-  end
-
   # @return [self]
   def freeze
     # Need to cache before freezing, because frozen objects can't assign instance variables
@@ -485,7 +456,6 @@ class ULID
     pred
     timestamp
     randomness
-    to_uuidv4
   end
 end
 
@@ -496,5 +466,5 @@ class ULID
   MIN = parse('00000000000000000000000000').freeze
   MAX = parse('7ZZZZZZZZZZZZZZZZZZZZZZZZZ').freeze
 
-  private_constant :TIME_FORMAT_IN_INSPECT, :UUIDV4_PATTERN, :MIN, :MAX, :CROCKFORD_BASE32_CHAR_PATTERN, :N32_CHAR_BY_CROCKFORD_BASE32_CHAR, :CROCKFORD_BASE32_CHAR_BY_N32_CHAR, :N32_CHAR_PATTERN, :UNDEFINED
+  private_constant :TIME_FORMAT_IN_INSPECT, :MIN, :MAX, :CROCKFORD_BASE32_CHAR_PATTERN, :N32_CHAR_BY_CROCKFORD_BASE32_CHAR, :CROCKFORD_BASE32_CHAR_BY_N32_CHAR, :N32_CHAR_PATTERN, :UNDEFINED
 end

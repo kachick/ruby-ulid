@@ -3,6 +3,7 @@
 
 require 'bundler/setup'
 require_relative '../lib/ulid'
+require_relative '../lib/ulid/uuid'
 require_relative '../test/many_data/fixtures/example'
 
 min = Time.at(0).utc

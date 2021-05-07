@@ -279,9 +279,12 @@ ULID.sample(5)
 ### UUIDv4 converter for migration use-cases
 
 `ULID.from_uuidv4` and `ULID#to_uuidv4` is the converter.
-The imported timestamp is meaningless. So ULID's benefit will lost
+The imported timestamp is meaningless. So ULID's benefit will lost.
 
 ```ruby
+# Currently experimental feature, so needed to load the extension.
+require 'ulid/uuid'
+
 # Basically reversible 
 ulid = ULID.from_uuidv4('0983d0a2-ff15-4d83-8f37-7dd945b5aa39') #=> ULID(2301-07-10 00:28:28.821 UTC: 09GF8A5ZRN9P1RYDVXV52VBAHS)
 ulid.to_uuidv4 #=> "0983d0a2-ff15-4d83-8f37-7dd945b5aa39"
