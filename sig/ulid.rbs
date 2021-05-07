@@ -63,7 +63,6 @@ class ULID
   @inspect: String?
   @time: Time?
   @next: ULID?
-  @uuidv4: String?
 
   def self.generate: (?moment: moment, ?entropy: Integer) -> ULID
   def self.at: (Time time) -> ULID

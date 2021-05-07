@@ -67,8 +67,4 @@ class TestFrozenULID < Test::Unit::TestCase
   def test_patterns
     assert_instance_of(Hash, @ulid.patterns)
   end
-
-  def test_to_uuidv4
-    assert_equal('01563e3a-b5d3-4676-8c61-efb99302bd5b', @ulid.to_uuidv4)
-  end
 end

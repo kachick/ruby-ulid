@@ -4,10 +4,16 @@ require 'bundler/gem_tasks'
 require 'rake/testtask'
 
 task default: [:test]
-task test_all: [:test, :test_heavy]
+task test_all: [:test, :test_uuid, :test_heavy]
 
 Rake::TestTask.new(:test) do |tt|
-  tt.test_files = FileList['test/**/test_*.rb'].exclude(/many_data/)
+  tt.test_files = FileList['test/**/test_*.rb'].exclude(/many_data|uuid/)
+  tt.verbose = true
+  tt.warning = true
+end
+
+Rake::TestTask.new(:test_uuid) do |tt|
+  tt.pattern = 'test/**/test_uuid*.rb'
   tt.verbose = true
   tt.warning = true
 end

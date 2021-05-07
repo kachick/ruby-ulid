@@ -2,6 +2,7 @@
 # frozen_string_literal: true
 
 require_relative '../helper'
+require_relative '../../lib/ulid/uuid'
 require_relative 'fixtures/example'
 
 # https://github.com/kachick/ruby-ulid/issues/89

@@ -2,8 +2,12 @@
 # frozen_string_literal: true
 
 require_relative 'helper'
+require_relative '../lib/ulid/uuid'
 
 class TestUUIDHandlers < Test::Unit::TestCase
+  class Subclass < ULID
+  end
+
   def setup
     @actual_timezone = ENV['TZ']
     ENV['TZ'] = 'EST' # Just chosen from not UTC and JST
@@ -12,6 +16,22 @@ class TestUUIDHandlers < Test::Unit::TestCase
   def test_ensure_testing_environment
     assert_equal(Encoding::UTF_8, ''.encoding)
     assert_equal('EST', Time.now.zone)
+  end
+
+  def test_generators_return_own_instance_and_does_not_raise_in_some_basic_comparison
+    ulid = ULID.sample
+    [
+      Subclass.from_uuidv4(SecureRandom.uuid)
+    ].each do |instance|
+      assert_not_instance_of(ULID, instance)
+      assert_instance_of(Subclass, instance)
+      assert_equal(true, ULID === instance)
+      assert_boolean(ulid == instance)
+      assert_boolean(ulid === instance)
+      assert_boolean(ulid.eql?(instance))
+      assert_boolean(ulid.equal?(instance))
+      assert_equal(true, [0, 1, -1].include?(ulid <=> instance))
+    end
   end
 
   def test_from_uuidv4
@@ -52,7 +72,8 @@ class TestUUIDHandlers < Test::Unit::TestCase
     # The example value was taken from https://github.com/ahawker/ulid/tree/96bdb1daad7ce96f6db8c91ac0410b66d2e1c4c1#usage
     ulid = ULID.parse('09GF8A5ZRN9P1RYDVXV52VBAHS')
     assert_equal('0983d0a2-ff15-4d83-8f37-7dd945b5aa39', ulid.to_uuidv4)
-    assert_same(ulid.to_uuidv4, ulid.to_uuidv4)
+    assert_equal(ulid.to_uuidv4, ulid.to_uuidv4)
+    assert_not_same(ulid.to_uuidv4, ulid.to_uuidv4)
     assert_equal(true, ulid.to_uuidv4.frozen?)
     assert_equal(Encoding::US_ASCII, ulid.to_uuidv4.encoding)
   end
@@ -83,5 +104,9 @@ class TestUUIDHandlers < Test::Unit::TestCase
     end
 
     assert_equal(uuids, ulids.map(&:to_uuidv4))
+  end
+
+  def test_to_uuidv4_on_frozen_ulid
+    assert_equal('01563e3a-b5d3-4676-8c61-efb99302bd5b', ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV').freeze.to_uuidv4)
   end
 end
