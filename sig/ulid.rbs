@@ -103,6 +103,7 @@ class ULID
   def to_time: -> Time
   def timestamp: -> String
   def randomness: -> String
+  def patterns: -> Hash[Symbol, Regexp | String]
   def pattern: -> Regexp
   def strict_pattern: -> Regexp
   def octets: -> octets
