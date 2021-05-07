@@ -15,5 +15,6 @@ Benchmark.ips do |x|
   x.report('ULID.min with no arguments is optimized') { ULID.min }
   x.report('ULID.max with no arguments is optimized') { ULID.max }
   x.report('ULID.sample') { ULID.sample }
+  x.report('ULID.at') { ULID.at(Time.now) }
   x.compare!
 end

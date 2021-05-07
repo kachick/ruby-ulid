@@ -259,14 +259,39 @@ class TestULIDClass < Test::Unit::TestCase
     ulid = ULID.generate(moment: time)
     assert_not_equal(time, ulid.to_time)
     assert_equal(true, ulid.to_time < time)
-    if RUBY_VERSION >= '2.7'
-      assert_equal(time.floor(3), ulid.to_time)
-    end
+    assert_equal(ULID.floor(time), ulid.to_time)
     milliseconds = 42
     assert_equal(Time.at(0, milliseconds, :millisecond), ULID.generate(moment: milliseconds).to_time)
 
     entropy = 42
     assert_equal(entropy, ULID.generate(entropy: entropy).entropy)
+
+    [nil, BasicObject.new, '42'].each do |invalid|
+      assert_raises do
+        ULID.generate(moment: invalid)
+      end
+    end
+  end
+
+  def test_at
+    time = Time.at(946684800, Rational('123456.789')).utc
+    assert_instance_of(ULID, ULID.at(time))
+    assert_not_equal(ULID.at(time), ULID.at(time))
+    ulid = ULID.at(time)
+    assert_not_equal(time, ulid.to_time)
+    assert_equal(true, ulid.to_time < time)
+    assert_equal(ULID.floor(time), ulid.to_time)
+
+    assert_raise(ArgumentError) do
+      ULID.at
+    end
+
+    [nil, BasicObject.new, 42, '42'].each do |invalid|
+      err = assert_raise(ArgumentError) do
+        ULID.at(invalid)
+      end
+      assert_match(/ULID\.at takes only.+Time/, err.message)
+    end
   end
 
   def test_from_integer

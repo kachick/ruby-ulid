@@ -86,15 +86,16 @@ ulids.uniq(&:to_time).size #=> 1000
 ulids.sort == ulids #=> true
 ```
 
-`ULID.generate` can take fixed `Time` instance
+`ULID.generate` can take fixed `Time` instance. The shorthand is `ULID.at`
 
 ```ruby
 time = Time.at(946684800).utc #=> 2000-01-01 00:00:00 UTC
 ULID.generate(moment: time) #=> ULID(2000-01-01 00:00:00.000 UTC: 00VHNCZB00N018DCPJA4H9379P)
 ULID.generate(moment: time) #=> ULID(2000-01-01 00:00:00.000 UTC: 00VHNCZB006WQT3JTMN0T14EBP)
+ULID.at(time) #=> ULID(2000-01-01 00:00:00.000 UTC: 00VHNCZB002W5BGWWKN76N22H6)
 
 ulids = 1000.times.map do |n|
-  ULID.generate(moment: time + n)
+  ULID.at(time + n)
 end
 ulids.sort == ulids #=> true
 ```
@@ -334,7 +335,7 @@ Major methods can be replaced as below.
 -ULID.generate
 +ULID.generate.to_s
 -ULID.at(time)
-+ULID.generate(moment: time).to_s
++ULID.at(time).to_s
 -ULID.time(string)
 +ULID.parse(string).to_time
 -ULID.min_ulid_at(time)
