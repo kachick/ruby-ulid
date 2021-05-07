@@ -42,11 +42,15 @@ class ULID
   TIME_FORMAT_IN_INSPECT = '%Y-%m-%d %H:%M:%S.%3N %Z'
 
   UNDEFINED = BasicObject.new
-  class << UNDEFINED
-    def to_s
-      'ULID::UNDEFINED'
-    end
-    alias_method :inspect, :to_s
+
+  # @return [String]
+  def UNDEFINED.to_s
+    'ULID::UNDEFINED'
+  end
+
+  # @return [String]
+  def UNDEFINED.inspect
+    to_s
   end
   Kernel.instance_method(:freeze).bind(UNDEFINED).call
 
