@@ -285,18 +285,6 @@ class ULID
   end
 
   # @api private
-  # @param [Integer] integer
-  # @param [Integer] length
-  # @return [Array<Integer>]
-  def self.octets_from_integer(integer, length:)
-    digits = integer.digits(256)
-    (length - digits.size).times do
-      digits.push 0
-    end
-    digits.reverse!
-  end
-
-  # @api private
   # @see The logics taken from https://bugs.ruby-lang.org/issues/14401, thanks!
   # @param [Array<Integer>] reversed_digits
   # @return [Integer]
@@ -336,13 +324,13 @@ class ULID
     if UNDEFINED.equal?(integer)
       milliseconds = milliseconds.to_int
       entropy = entropy.to_int
+
+      raise OverflowError, "timestamp overflow: given #{milliseconds}, max: #{MAX_MILLISECONDS}" unless milliseconds <= MAX_MILLISECONDS
+      raise OverflowError, "entropy overflow: given #{entropy}, max: #{MAX_ENTROPY}" unless entropy <= MAX_ENTROPY
+      raise ArgumentError, 'milliseconds and entropy should not be negative' if milliseconds.negative? || entropy.negative?
     else
       @integer = integer
     end
-
-    raise OverflowError, "timestamp overflow: given #{milliseconds}, max: #{MAX_MILLISECONDS}" unless milliseconds <= MAX_MILLISECONDS
-    raise OverflowError, "entropy overflow: given #{entropy}, max: #{MAX_ENTROPY}" unless entropy <= MAX_ENTROPY
-    raise ArgumentError, 'milliseconds and entropy should not be negative' if milliseconds.negative? || entropy.negative?
 
     @milliseconds = milliseconds
     @entropy = entropy
@@ -355,7 +343,11 @@ class ULID
 
   # @return [Integer]
   def to_i
-    @integer ||= self.class.inverse_of_digits(octets)
+    @integer ||= begin
+      n32encoded_timestamp = milliseconds.to_s(32).rjust(TIMESTAMP_ENCODED_LENGTH, '0')
+      n32encoded_randomness = entropy.to_s(32).rjust(RANDOMNESS_ENCODED_LENGTH, '0')
+      (n32encoded_timestamp + n32encoded_randomness).to_i(32)
+    end
   end
   alias_method :hash, :to_i
 
@@ -404,17 +396,17 @@ class ULID
 
   # @return [Array(Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer)]
   def octets
-    @octets ||= (timestamp_octets + randomness_octets).freeze
+    @octets ||= octets_from_integer(to_i).freeze
   end
 
   # @return [Array(Integer, Integer, Integer, Integer, Integer, Integer)]
   def timestamp_octets
-    @timestamp_octets ||= self.class.octets_from_integer(@milliseconds, length: TIMESTAMP_OCTETS_LENGTH).freeze
+    @timestamp_octets ||= octets.slice(0, TIMESTAMP_OCTETS_LENGTH).freeze
   end
 
   # @return [Array(Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer)]
   def randomness_octets
-    @randomness_octets ||= self.class.octets_from_integer(@entropy, length: RANDOMNESS_OCTETS_LENGTH).freeze
+    @randomness_octets ||= octets.slice(TIMESTAMP_OCTETS_LENGTH, RANDOMNESS_OCTETS_LENGTH).freeze
   end
 
   # @return [String]
@@ -472,6 +464,16 @@ class ULID
   end
 
   private
+
+  # @param [Integer] integer
+  # @return [Array(Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer)]
+  def octets_from_integer(integer)
+    digits = integer.digits(256)
+    (OCTETS_LENGTH - digits.size).times do
+      digits.push 0
+    end
+    digits.reverse!
+  end
 
   # @return [void]
   def cache_all_instance_variables

@@ -82,7 +82,7 @@ class ULID
   def self.valid?: (untyped string) -> bool
   def self.scan:  (String string) -> Enumerator[ULID, singleton(ULID)]
                 | (String string) { (ULID ulid) -> void } -> singleton(ULID)
-  def self.octets_from_integer: (Integer integer, length: Integer) -> Array[Integer]
+  def self.octets_from_integer: (Integer integer) -> octets
   def self.inverse_of_digits: (Array[Integer] reversed_digits) -> Integer
   def self.from_monotonic_generator: (MonotonicGenerator generator) -> ULID
   attr_reader milliseconds: Integer
