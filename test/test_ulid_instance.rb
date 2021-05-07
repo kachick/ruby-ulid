@@ -84,6 +84,11 @@ class TestULIDInstance < Test::Unit::TestCase
     assert_not_equal(ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV').to_s, ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV'))
     assert_not_same(ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV'), ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV'))
     assert_not_equal(ULID.parse('01BX5ZZKBKACTAV9WEVGEMMVRZ'), ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV'))
+
+    ulid = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
+    [nil, BasicObject.new, '01ARZ3NDEKTSV4RRFFQ69G5FAV', 42, Time.now].each do |not_comparable|
+      assert_equal(false, ulid == not_comparable)
+    end
   end
 
   def test_eqq
@@ -112,6 +117,13 @@ class TestULIDInstance < Test::Unit::TestCase
       ],
       grepped
     )
+  end
+
+  def test_cmp
+    ulid = ULID.sample
+    [nil, BasicObject.new, '01ARZ3NDEKTSV4RRFFQ69G5FAV', 42, Time.now].each do |not_comparable|
+      assert_nil(ulid <=> not_comparable)
+    end
   end
 
   def test_sortable
