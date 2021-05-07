@@ -64,10 +64,7 @@ class ULID
   @inspect: String?
   @time: Time?
   @next: ULID?
-  @pattern: Regexp?
-  @strict_pattern: Regexp?
   @uuidv4: String?
-  @matchdata: MatchData?
 
   def self.generate: (?moment: moment, ?entropy: Integer) -> ULID
   def self.current_milliseconds: -> Integer
@@ -119,6 +116,5 @@ class ULID
   def self.convert_crockford_base32_to_n32: (String) -> String
   def self.argument_error_for_range_building: (untyped argument) -> ArgumentError
   def convert_n32_to_crockford_base32: (String) -> String
-  def matchdata: -> MatchData
   def cache_all_instance_variables: -> void
 end
