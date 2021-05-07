@@ -378,17 +378,21 @@ class ULID
 
   # @return [Array(Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer)]
   def octets
-    @octets ||= octets_from_integer(to_i).freeze
+    digits = to_i.digits(256)
+    (OCTETS_LENGTH - digits.size).times do
+      digits.push 0
+    end
+    digits.reverse!
   end
 
   # @return [Array(Integer, Integer, Integer, Integer, Integer, Integer)]
   def timestamp_octets
-    @timestamp_octets ||= octets.slice(0, TIMESTAMP_OCTETS_LENGTH).freeze
+    octets.slice(0, TIMESTAMP_OCTETS_LENGTH)
   end
 
   # @return [Array(Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer)]
   def randomness_octets
-    @randomness_octets ||= octets.slice(TIMESTAMP_OCTETS_LENGTH, RANDOMNESS_OCTETS_LENGTH).freeze
+    octets.slice(TIMESTAMP_OCTETS_LENGTH, RANDOMNESS_OCTETS_LENGTH)
   end
 
   # @return [String]
@@ -447,20 +451,9 @@ class ULID
 
   private
 
-  # @param [Integer] integer
-  # @return [Array(Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer)]
-  def octets_from_integer(integer)
-    digits = integer.digits(256)
-    (OCTETS_LENGTH - digits.size).times do
-      digits.push 0
-    end
-    digits.reverse!
-  end
-
   # @return [void]
   def cache_all_instance_variables
     inspect
-    octets
     to_i
     succ
     pred

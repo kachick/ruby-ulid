@@ -192,22 +192,22 @@ class TestULIDInstance < Test::Unit::TestCase
   def test_octets
     ulid = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
     assert_equal([1, 86, 62, 58, 181, 211, 214, 118, 76, 97, 239, 185, 147, 2, 189, 91], ulid.octets)
-    assert_same(ulid.octets, ulid.octets)
-    assert_equal(true, ulid.octets.frozen?)
+    assert_not_same(ulid.octets, ulid.octets)
+    assert_equal(false, ulid.octets.frozen?)
   end
 
   def test_timestamp_octets
     ulid = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
     assert_equal([1, 86, 62, 58, 181, 211], ulid.timestamp_octets)
-    assert_same(ulid.timestamp_octets, ulid.timestamp_octets)
-    assert_equal(true, ulid.timestamp_octets.frozen?)
+    assert_not_same(ulid.timestamp_octets, ulid.timestamp_octets)
+    assert_equal(false, ulid.timestamp_octets.frozen?)
   end
 
   def test_randomness_octets
     ulid = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
     assert_equal([214, 118, 76, 97, 239, 185, 147, 2, 189, 91], ulid.randomness_octets)
-    assert_same(ulid.randomness_octets, ulid.randomness_octets)
-    assert_equal(true, ulid.randomness_octets.frozen?)
+    assert_not_same(ulid.randomness_octets, ulid.randomness_octets)
+    assert_equal(false, ulid.randomness_octets.frozen?)
   end
 
   def test_next
