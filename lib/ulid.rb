@@ -280,19 +280,6 @@ class ULID
   end
 
   # @api private
-  # @see The logics taken from https://bugs.ruby-lang.org/issues/14401, thanks!
-  # @param [Array<Integer>] reversed_digits
-  # @return [Integer]
-  def self.inverse_of_digits(reversed_digits)
-    base = 256
-    num = 0
-    reversed_digits.each do |digit|
-      num = (num * base) + digit
-    end
-    num
-  end
-
-  # @api private
   # @param [MonotonicGenerator] generator
   # @return [ULID]
   def self.from_monotonic_generator(generator)
