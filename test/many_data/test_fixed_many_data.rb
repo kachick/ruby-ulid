@@ -4,11 +4,11 @@
 require_relative '../helper'
 require_relative 'fixtures/example'
 
-dump_data = File.binread("#{__dir__}/fixtures/dumped_fixed_examples.dat")
-EXAMPLES = Marshal.load(dump_data)
-
 # https://github.com/kachick/ruby-ulid/issues/89
 class TestFixedManyData < Test::Unit::TestCase
+  dump_data = File.binread("#{__dir__}/fixtures/dumped_fixed_examples.dat")
+  EXAMPLES = Marshal.load(dump_data)
+
   def assert_example(ulid, example)
     assert_equal(example.string, ulid.to_s)
     assert_equal(example.integer, ulid.to_i)
