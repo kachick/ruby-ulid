@@ -113,8 +113,6 @@ class ULID
   def freeze: -> self
 
   private
-  def self.convert_crockford_base32_to_n32: (String) -> String
   def self.argument_error_for_range_building: (untyped argument) -> ArgumentError
-  def convert_n32_to_crockford_base32: (String) -> String
   def cache_all_instance_variables: -> void
 end

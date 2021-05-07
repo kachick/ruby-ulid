@@ -258,7 +258,7 @@ class ULID
     begin
       string = string.to_str
       raise "given argument does not match to `#{STRICT_PATTERN.inspect}`" unless STRICT_PATTERN.match?(string)
-      n32encoded = convert_crockford_base32_to_n32(string.upcase)
+      n32encoded = string.upcase.gsub(CROCKFORD_BASE32_CHAR_PATTERN, N32_CHAR_BY_CROCKFORD_BASE32_CHAR)
       timestamp = n32encoded.slice(0, TIMESTAMP_PART_LENGTH)
       randomness = n32encoded.slice(TIMESTAMP_PART_LENGTH, RANDOMNESS_PART_LENGTH)
       milliseconds = timestamp.to_i(32)
@@ -268,11 +268,6 @@ class ULID
     end
 
     new milliseconds: milliseconds, entropy: entropy
-  end
-
-  # @api private
-  private_class_method def self.convert_crockford_base32_to_n32(string)
-    string.gsub(CROCKFORD_BASE32_CHAR_PATTERN, N32_CHAR_BY_CROCKFORD_BASE32_CHAR)
   end
 
   # @return [Boolean]
@@ -335,7 +330,7 @@ class ULID
 
   # @return [String]
   def to_s
-    @string ||= convert_n32_to_crockford_base32(to_i.to_s(32).rjust(ENCODED_ID_LENGTH, '0').upcase).freeze
+    @string ||= to_i.to_s(32).rjust(ENCODED_ID_LENGTH, '0').upcase.gsub(N32_CHAR_PATTERN, CROCKFORD_BASE32_CHAR_BY_N32_CHAR).freeze
   end
 
   # @return [Integer]
@@ -409,7 +404,7 @@ class ULID
 
   # @return [String]
   def randomness
-    @randomness ||= to_s.slice(TIMESTAMP_PART_LENGTH, ENCODED_ID_LENGTH).freeze
+    @randomness ||= to_s.slice(TIMESTAMP_PART_LENGTH, RANDOMNESS_PART_LENGTH).freeze
   end
 
   # @note Providing for rough operations. The keys and values is not fixed.
@@ -468,11 +463,6 @@ class ULID
   end
 
   private
-
-  # @api private
-  def convert_n32_to_crockford_base32(string)
-    string.gsub(N32_CHAR_PATTERN, CROCKFORD_BASE32_CHAR_BY_N32_CHAR)
-  end
 
   # @return [void]
   def cache_all_instance_variables
