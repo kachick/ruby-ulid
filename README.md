@@ -49,7 +49,7 @@ Should be installed!
 Add this line to your application/library's `Gemfile` is needed in basic use-case
 
 ```ruby
-gem 'ruby-ulid', '0.0.17'
+gem 'ruby-ulid', '0.0.18'
 ```
 
 ### Generator and Parser
