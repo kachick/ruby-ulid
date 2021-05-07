@@ -42,6 +42,12 @@ class ULID
   TIME_FORMAT_IN_INSPECT = '%Y-%m-%d %H:%M:%S.%3N %Z'
 
   UNDEFINED = BasicObject.new
+  class << UNDEFINED
+    def to_s
+      'ULID::UNDEFINED'
+    end
+    alias_method :inspect, :to_s
+  end
   Kernel.instance_method(:freeze).bind(UNDEFINED).call
 
   private_class_method :new
@@ -121,13 +127,13 @@ class ULID
     raise OverflowError, "integer overflow: given #{integer}, max: #{MAX_INTEGER}" unless integer <= MAX_INTEGER
     raise ArgumentError, "integer should not be negative: given: #{integer}" if integer.negative?
 
-    octets = octets_from_integer(integer, length: OCTETS_LENGTH).freeze
-    time_octets = octets.slice(0, TIMESTAMP_OCTETS_LENGTH).freeze
-    randomness_octets = octets.slice(TIMESTAMP_OCTETS_LENGTH, RANDOMNESS_OCTETS_LENGTH).freeze
-    milliseconds = inverse_of_digits(time_octets)
-    entropy = inverse_of_digits(randomness_octets)
+    # octets = octets_from_integer(integer, length: OCTETS_LENGTH).freeze
+    # time_octets = octets.slice(0, TIMESTAMP_OCTETS_LENGTH).freeze
+    # randomness_octets = octets.slice(TIMESTAMP_OCTETS_LENGTH, RANDOMNESS_OCTETS_LENGTH).freeze
+    # milliseconds = inverse_of_digits(time_octets)
+    # entropy = inverse_of_digits(randomness_octets)
 
-    new milliseconds: milliseconds, entropy: entropy
+    new integer: integer
   end
 
   # @param [Range<Time>, Range<nil>] time_range
@@ -322,16 +328,42 @@ class ULID
   # @return [void]
   # @raise [OverflowError] if the given value is larger than the ULID limit
   # @raise [ArgumentError] if the given milliseconds and/or entropy is negative number
-  def initialize(milliseconds:, entropy:)
-    milliseconds = milliseconds.to_int
-    entropy = entropy.to_int
-    raise OverflowError, "timestamp overflow: given #{milliseconds}, max: #{MAX_MILLISECONDS}" unless milliseconds <= MAX_MILLISECONDS
-    raise OverflowError, "entropy overflow: given #{entropy}, max: #{MAX_ENTROPY}" unless entropy <= MAX_ENTROPY
-    raise ArgumentError, 'milliseconds and entropy should not be negative' if milliseconds.negative? || entropy.negative?
+  def initialize(milliseconds: UNDEFINED, entropy: UNDEFINED, integer: UNDEFINED)
+    if !UNDEFINED.equal?(integer)
+      @integer = integer.to_int
+      raise OverflowError, "integer overflow: given #{@integer}, max: #{MAX_INTEGER}" unless @integer <= MAX_INTEGER
+      raise ArgumentError, "integer should not be negative: given: #{@integer}" if @integer.negative?
+  
+      @octets = self.class.octets_from_integer(@integer, length: OCTETS_LENGTH).freeze
+      @timestamp_octets = @octets.slice(0, TIMESTAMP_OCTETS_LENGTH).freeze
+      @randomness_octets = @octets.slice(TIMESTAMP_OCTETS_LENGTH, RANDOMNESS_OCTETS_LENGTH).freeze
+      @milliseconds = self.class.inverse_of_digits(@timestamp_octets)
+      @entropy = self.class.inverse_of_digits(@randomness_octets)
 
-    @milliseconds = milliseconds
-    @entropy = entropy
+      return
+    end
+
+    if !UNDEFINED.equal?(milliseconds) && !UNDEFINED.equal?(entropy)
+      @milliseconds = milliseconds.to_int
+      @entropy = entropy.to_int
+      raise OverflowError, "timestamp overflow: given #{@milliseconds}, max: #{MAX_MILLISECONDS}" unless @milliseconds <= MAX_MILLISECONDS
+      raise OverflowError, "entropy overflow: given #{@entropy}, max: #{MAX_ENTROPY}" unless @entropy <= MAX_ENTROPY
+      raise ArgumentError, 'milliseconds and entropy should not be negative' if @milliseconds.negative? || @entropy.negative?
+
+      n32encoded_timestamp = @milliseconds.to_s(32).rjust(TIMESTAMP_ENCODED_LENGTH, '0').upcase
+      n32encoded_randomness = @entropy.to_s(32).rjust(RANDOMNESS_ENCODED_LENGTH, '0').upcase
+      @timestamp = n32encoded_timestamp.gsub(N32_CHAR_PATTERN, CROCKFORD_BASE32_CHAR_BY_N32_CHAR).freeze
+      @randomness = n32encoded_randomness.gsub(N32_CHAR_PATTERN, CROCKFORD_BASE32_CHAR_BY_N32_CHAR).freeze
+      @string = (@timestamp + @randomness).freeze
+      @integer = (n32encoded_timestamp + n32encoded_randomness).to_i(32)
+
+      return
+    end
+
+    b = binding
+    raise Error, "unexpected arguments patterns happened: #{b.local_variables.to_h { |name| [name, b.local_variable_get(name)] }.inspect}"
   end
+  
 
   # @return [String]
   def to_s
@@ -340,7 +372,7 @@ class ULID
 
   # @return [Integer]
   def to_i
-    @integer ||= self.class.inverse_of_digits(octets)
+    @integer
   end
   alias_method :hash, :to_i
 
@@ -389,17 +421,17 @@ class ULID
 
   # @return [Array(Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer)]
   def octets
-    @octets ||= (timestamp_octets + randomness_octets).freeze
+    @octets ||= self.class.octets_from_integer(to_i, length: OCTETS_LENGTH).freeze
   end
 
   # @return [Array(Integer, Integer, Integer, Integer, Integer, Integer)]
   def timestamp_octets
-    @timestamp_octets ||= self.class.octets_from_integer(@milliseconds, length: TIMESTAMP_OCTETS_LENGTH).freeze
+    @timestamp_octets ||= octets.slice(0, TIMESTAMP_OCTETS_LENGTH).freeze
   end
 
   # @return [Array(Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer)]
   def randomness_octets
-    @randomness_octets ||= self.class.octets_from_integer(@entropy, length: RANDOMNESS_OCTETS_LENGTH).freeze
+    @randomness_octets ||= octets.slice(TIMESTAMP_OCTETS_LENGTH, RANDOMNESS_ENCODED_LENGTH).freeze
   end
 
   # @return [String]
