@@ -44,6 +44,8 @@ class ULID
   UNDEFINED = BasicObject.new
   Kernel.instance_method(:freeze).bind(UNDEFINED).call
 
+  private_class_method :new
+
   # @param [Integer, Time] moment
   # @param [Integer] entropy
   # @return [ULID]
@@ -298,6 +300,15 @@ class ULID
     num
   end
 
+  # @api private
+  # @param [MonotonicGenerator] generator
+  # @return [ULID]
+  def self.from_monotonic_generator(generator)
+    raise ArgumentError, 'this method provided only for MonotonicGenerator' unless MonotonicGenerator === generator
+    new milliseconds: generator.latest_milliseconds, entropy: generator.latest_entropy
+  end
+
+  # @api private
   # @return [ArgumentError]
   private_class_method def self.argument_error_for_range_building(argument)
     ArgumentError.new "ULID.range takes only `Range[Time]` or `Range[nil]`, given: #{argument.inspect}"

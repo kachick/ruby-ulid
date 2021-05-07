@@ -84,6 +84,7 @@ class ULID
                 | (String string) { (ULID ulid) -> void } -> singleton(ULID)
   def self.octets_from_integer: (Integer integer, length: Integer) -> Array[Integer]
   def self.inverse_of_digits: (Array[Integer] reversed_digits) -> Integer
+  def self.from_monotonic_generator: (MonotonicGenerator generator) -> ULID
   attr_reader milliseconds: Integer
   attr_reader entropy: Integer
   def initialize: (milliseconds: Integer, entropy: Integer) -> void
