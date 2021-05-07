@@ -35,4 +35,28 @@ class TestManyData < Test::Unit::TestCase
     assert_equal(ulids.size, ulids.group_by(&:timestamp).size)
     assert_equal(ulids.size, ulids.group_by(&:randomness).size)
   end
+
+  def test_octets
+    ULID.sample(10000).each do |ulid|
+      assert_instance_of(Array, ulid.octets)
+      assert(ulid.octets.all?(Integer))
+      assert_equal(ULID::OCTETS_LENGTH, ulid.octets.size)
+      assert_same(ulid.octets, ulid.octets)
+      assert(ulid.octets.frozen?)
+
+      assert_instance_of(Array, ulid.timestamp_octets)
+      assert(ulid.timestamp_octets.all?(Integer))
+      assert_equal(ULID::TIMESTAMP_OCTETS_LENGTH, ulid.timestamp_octets.size)
+      assert_same(ulid.timestamp_octets, ulid.timestamp_octets)
+      assert(ulid.timestamp_octets.frozen?)
+
+      assert_instance_of(Array, ulid.randomness_octets)
+      assert(ulid.randomness_octets.all?(Integer))
+      assert_equal(ULID::RANDOMNESS_OCTETS_LENGTH, ulid.randomness_octets.size)
+      assert_same(ulid.randomness_octets, ulid.randomness_octets)
+      assert(ulid.randomness_octets.frozen?)
+
+      assert_equal(ulid.octets, ulid.timestamp_octets + ulid.randomness_octets)
+    end
+  end
 end
