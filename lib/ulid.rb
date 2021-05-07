@@ -15,15 +15,11 @@ class ULID
   class Error < StandardError; end
   class OverflowError < Error; end
   class ParserError < Error; end
-  class SetupError < ScriptError; end
 
-  # `Subset` of Crockford's Base32. Just excluded I, L, O, U, -.
-  # refs:
-  #   * https://www.crockford.com/base32.html
-  #   * https://github.com/ulid/spec/pull/57
-  #   * https://github.com/kachick/ruby-ulid/issues/57
-  encoding_string = '0123456789ABCDEFGHJKMNPQRSTVWXYZ'
-  encoding_chars = encoding_string.chars.map(&:freeze).freeze
+  # Excluded I, L, O, U, -.
+  # This is the encoding patterns.
+  # The decoding issue is written in ULID::CrockfordBase32
+  CROCKFORD_BASE32_ENCODING_STRING = '0123456789ABCDEFGHJKMNPQRSTVWXYZ'
 
   TIMESTAMP_ENCODED_LENGTH = 10
   RANDOMNESS_ENCODED_LENGTH = 16
@@ -34,7 +30,7 @@ class ULID
   MAX_MILLISECONDS = 281474976710655
   MAX_ENTROPY = 1208925819614629174706175
   MAX_INTEGER = 340282366920938463463374607431768211455
-  PATTERN = /(?<timestamp>[0-7][#{encoding_string}]{#{TIMESTAMP_ENCODED_LENGTH - 1}})(?<randomness>[#{encoding_string}]{#{RANDOMNESS_ENCODED_LENGTH}})/i.freeze
+  PATTERN = /(?<timestamp>[0-7][#{CROCKFORD_BASE32_ENCODING_STRING}]{#{TIMESTAMP_ENCODED_LENGTH - 1}})(?<randomness>[#{CROCKFORD_BASE32_ENCODING_STRING}]{#{RANDOMNESS_ENCODED_LENGTH}})/i.freeze
   STRICT_PATTERN = /\A#{PATTERN.source}\z/i.freeze
 
   # Same as Time#inspect since Ruby 2.7, just to keep backward compatibility
@@ -212,49 +208,6 @@ class ULID
     SecureRandom.random_number(MAX_ENTROPY)
   end
 
-  n32_chars = [*'0'..'9', *'A'..'V'].map(&:freeze).freeze
-  raise SetupError, 'obvious bug exists in the mapping algorithm' unless n32_chars.size == 32
-
-  n32_char_by_number = {}
-  n32_chars.each_with_index do |char, index|
-    n32_char_by_number[index] = char
-  end
-  n32_char_by_number.freeze
-
-  # Currently supporting only for `subset for actual use-case`
-  # See below
-  #   * https://github.com/ulid/spec/pull/57
-  #   * https://github.com/kachick/ruby-ulid/issues/57
-  #   * https://github.com/kachick/ruby-ulid/issues/78
-  crockford_base32_mappings = {
-    'J' => 18,
-    'K' => 19,
-    'M' => 20,
-    'N' => 21,
-    'P' => 22,
-    'Q' => 23,
-    'R' => 24,
-    'S' => 25,
-    'T' => 26,
-    'V' => 27,
-    'W' => 28,
-    'X' => 29,
-    'Y' => 30,
-    'Z' => 31
-  }.freeze
-
-  N32_CHAR_BY_CROCKFORD_BASE32_CHAR = encoding_chars.each_with_object({}) do |encoding_char, map|
-    if n = crockford_base32_mappings[encoding_char]
-      char_32 = n32_char_by_number.fetch(n)
-      map[encoding_char] = char_32
-    end
-  end.freeze
-  raise SetupError, 'obvious bug exists in the mapping algorithm' unless N32_CHAR_BY_CROCKFORD_BASE32_CHAR.keys == crockford_base32_mappings.keys
-  CROCKFORD_BASE32_CHAR_PATTERN = /[#{N32_CHAR_BY_CROCKFORD_BASE32_CHAR.keys.join}]/.freeze
-
-  CROCKFORD_BASE32_CHAR_BY_N32_CHAR = N32_CHAR_BY_CROCKFORD_BASE32_CHAR.invert.freeze
-  N32_CHAR_PATTERN = /[#{CROCKFORD_BASE32_CHAR_BY_N32_CHAR.keys.join}]/.freeze
-
   # @param [String, #to_str] string
   # @return [ULID]
   # @raise [ParserError] if the given format is not correct for ULID specs
@@ -266,8 +219,7 @@ class ULID
       raise ParserError, "parsing failure as #{err.inspect} for given #{string.inspect}"
     end
 
-    n32encoded = string.upcase.gsub(CROCKFORD_BASE32_CHAR_PATTERN, N32_CHAR_BY_CROCKFORD_BASE32_CHAR)
-    from_integer(n32encoded.to_i(32))
+    from_integer(CrockfordBase32.decode(string))
   end
 
   # @return [Boolean]
@@ -320,7 +272,7 @@ class ULID
 
   # @return [String]
   def to_s
-    @string ||= to_i.to_s(32).upcase.gsub(N32_CHAR_PATTERN, CROCKFORD_BASE32_CHAR_BY_N32_CHAR).rjust(ENCODED_LENGTH, '0').freeze
+    @string ||= CrockfordBase32.encode(to_i).freeze
   end
 
   # @return [Integer]
@@ -459,11 +411,12 @@ class ULID
 end
 
 require_relative 'ulid/version'
+require_relative 'ulid/crockford_base32'
 require_relative 'ulid/monotonic_generator'
 
 class ULID
   MIN = parse('00000000000000000000000000').freeze
   MAX = parse('7ZZZZZZZZZZZZZZZZZZZZZZZZZ').freeze
 
-  private_constant :TIME_FORMAT_IN_INSPECT, :MIN, :MAX, :CROCKFORD_BASE32_CHAR_PATTERN, :N32_CHAR_BY_CROCKFORD_BASE32_CHAR, :CROCKFORD_BASE32_CHAR_BY_N32_CHAR, :N32_CHAR_PATTERN, :UNDEFINED
+  private_constant :TIME_FORMAT_IN_INSPECT, :MIN, :MAX, :UNDEFINED
 end

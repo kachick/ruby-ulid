@@ -1,6 +1,7 @@
 # Classes
 class ULID
   VERSION: String
+  CROCKFORD_BASE32_ENCODING_STRING: String
   TIMESTAMP_ENCODED_LENGTH: 10
   RANDOMNESS_ENCODED_LENGTH: 16
   ENCODED_LENGTH: 26
@@ -14,10 +15,6 @@ class ULID
   PATTERN: Regexp
   STRICT_PATTERN: Regexp
   UUIDV4_PATTERN: Regexp
-  N32_CHAR_BY_CROCKFORD_BASE32_CHAR: Hash[String, String]
-  CROCKFORD_BASE32_CHAR_PATTERN: Regexp
-  CROCKFORD_BASE32_CHAR_BY_N32_CHAR: Hash[String, String]
-  N32_CHAR_PATTERN: Regexp
   MIN: ULID
   MAX: ULID
   UNDEFINED: BasicObject
@@ -35,7 +32,17 @@ class ULID
   class ParserError < Error
   end
 
-  class SetupError < ScriptError
+  module CrockfordBase32
+    class SetupError < ScriptError
+    end
+
+    N32_CHAR_BY_CROCKFORD_BASE32_CHAR: Hash[String, String]
+    CROCKFORD_BASE32_CHAR_PATTERN: Regexp
+    CROCKFORD_BASE32_CHAR_BY_N32_CHAR: Hash[String, String]
+    N32_CHAR_PATTERN: Regexp
+
+    def self.encode: (Integer integer) -> String
+    def self.decode: (String string) -> Integer
   end
 
   class MonotonicGenerator
