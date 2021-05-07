@@ -34,6 +34,19 @@ class TestFixedManyData < Test::Unit::TestCase
     end
   end
 
+  def test_many_fixed_examples_for_sortable
+    ulid_strings = []
+    ulid_objects = []
+    EXAMPLES.each do |example|
+      ulid_strings << example.string
+      ulid = ULID.parse(example.string)
+      ulid_objects << ulid
+    end
+
+    assert_instance_of(ULID, ulid_objects.sample)
+    assert_equal(ulid_strings.shuffle.sort, ulid_objects.shuffle.sort.map(&:to_s))
+  end
+
   # Fix ME!
   def test_many_fixed_examples_from_uuidv4
     non_reversible_ulid_strings = []
