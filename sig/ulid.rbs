@@ -91,7 +91,7 @@ class ULID
   def to_i: -> Integer
   alias hash to_i
   def <=>: (ULID other) -> Integer
-         | (untyped other) -> Integer?
+         | (untyped other) -> nil
   def inspect: -> String
   def eql?: (untyped other) -> bool
   alias == eql?
