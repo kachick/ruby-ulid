@@ -103,8 +103,6 @@ class ULID
   def timestamp: -> String
   def randomness: -> String
   def patterns: -> Hash[Symbol, Regexp | String]
-  def pattern: -> Regexp
-  def strict_pattern: -> Regexp
   def octets: -> octets
   def timestamp_octets: -> timestamp_octets
   def randomness_octets: -> randomness_octets

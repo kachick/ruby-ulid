@@ -361,18 +361,6 @@ class ULID
     }
   end
 
-  # @deprecated Use {#patterns} instead. ref: https://github.com/kachick/ruby-ulid/issues/84
-  # @return [Regexp]
-  def pattern
-    patterns.fetch(:named_captures)
-  end
-
-  # @deprecated Use {#patterns} instead. ref: https://github.com/kachick/ruby-ulid/issues/84
-  # @return [Regexp]
-  def strict_pattern
-    patterns.fetch(:strict_named_captures)
-  end
-
   # @return [ULID, nil] when called on ULID as `7ZZZZZZZZZZZZZZZZZZZZZZZZZ`, returns `nil` instead of ULID
   def succ
     succ_int = to_i.succ
