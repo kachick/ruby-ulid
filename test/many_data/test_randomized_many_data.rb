@@ -4,6 +4,8 @@
 require_relative '../helper'
 
 class TestManyData < Test::Unit::TestCase
+  include ULIDAssertions
+
   def test_generate
     ulids = 1000.times.map do |n|
       if (n % 100).zero?
@@ -32,8 +34,16 @@ class TestManyData < Test::Unit::TestCase
 
     # Rough tests for the randomness. But I guess it basically will not fail :)
     assert_equal(ulids, ulids.uniq)
-    assert_equal(ulids.size, ulids.group_by(&:timestamp).size)
-    assert_equal(ulids.size, ulids.group_by(&:randomness).size)
+    timestamps = ulids.map(&:timestamp)
+    assert_equal(ulids.size, timestamps.uniq.size)
+    randomnesses = ulids.map(&:randomness)
+    assert_equal(ulids.size, randomnesses.uniq.size)
+    timestamps.shuffle.each_cons(2) do |a, b|
+      assert_acceptable_timestamp_string(a, b)
+    end
+    randomnesses.shuffle.each_cons(2) do |a, b|
+      assert_acceptable_randomness_string(a, b)
+    end
 
     first = Time.at(1619676780123456789/1000000000r).utc #=> 2021-04-29 06:13:00.123456789 UTC
     last = Time.at(1620345540123456789/1000000000r).utc #=> 2021-05-06 23:59:00.123456789 UTC
@@ -43,8 +53,8 @@ class TestManyData < Test::Unit::TestCase
     assert_nil(ranged_ulids.uniq!)
     moments = ranged_ulids.map(&:to_time)
     assert((9000..10000).cover?(moments.uniq.size))
-    moments.each do |moment|
-      assert(exclude_end.cover?(moment))
+    ranged_ulids.shuffle.each_cons(2) do |ulid1, ulid2|
+      assert_acceptable_randomness_string(ulid1.randomness, ulid2.randomness)
     end
   end
 

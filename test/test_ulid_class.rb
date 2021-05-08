@@ -4,6 +4,8 @@
 require_relative 'helper'
 
 class TestULIDClass < Test::Unit::TestCase
+  include ULIDAssertions
+
   def setup
     @actual_timezone = ENV['TZ']
     ENV['TZ'] = 'EST' # Just chosen from not UTC and JST
@@ -432,6 +434,11 @@ class TestULIDClass < Test::Unit::TestCase
     assert_equal(true, ULID.sample(42).size == 42)
     assert_nil(ULID.sample(42).uniq!)
 
+    ULID.sample(42).shuffle.each_cons(2) do |ulid1, ulid2|
+      assert_acceptable_timestamp_string(ulid1.timestamp, ulid2.timestamp)
+      assert_acceptable_randomness_string(ulid1.randomness, ulid2.randomness)
+    end
+
     time1 = Time.at(1620365807)
     time2 = Time.at(1624065807)
     assert_instance_of(ULID, ULID.sample(period: time1..time2))
@@ -444,6 +451,10 @@ class TestULIDClass < Test::Unit::TestCase
     assert_nil(ULID.sample(42, period: time1..time2).uniq!)
     assert_equal(42, ULID.sample(42, period: time1..time2).uniq(&:to_time).size)
     assert(ULID.sample(42, period: time1..time2).all? { |ulid| ULID.range(time1..time2).cover?(ulid) })
+    ULID.sample(42, period: time1..time2).shuffle.each_cons(2) do |ulid1, ulid2|
+      assert_acceptable_timestamp_string(ulid1.timestamp, ulid2.timestamp)
+      assert_acceptable_randomness_string(ulid1.randomness, ulid2.randomness)
+    end
 
     assert_instance_of(ULID, ULID.sample(period: time1..time1))
     assert_equal([], ULID.sample(0, period: time1..time1))
@@ -454,6 +465,10 @@ class TestULIDClass < Test::Unit::TestCase
     assert_equal(42, ULID.sample(42, period: time1..time1).size)
     assert_nil(ULID.sample(42, period: time1..time1).uniq!)
     assert_equal(1, ULID.sample(42, period: time1..time1).uniq(&:to_time).size)
+    ULID.sample(42, period: time1..time1).shuffle.each_cons(2) do |ulid1, ulid2|
+      # assert_acceptable_timestamp_string(ulid1.timestamp, ulid2.timestamp)
+      assert_acceptable_randomness_string(ulid1.randomness, ulid2.randomness)
+    end
 
     ulid = ULID.sample
     err = assert_raises(ArgumentError) do
