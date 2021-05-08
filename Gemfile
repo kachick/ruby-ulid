@@ -4,6 +4,7 @@ gemspec
 
 group :development, :test do
   gem 'rake', '>= 13.0.3', '< 20'
+  gem 'did_you_mean', '>= 1.5.0'
 end
 
 group :development do
