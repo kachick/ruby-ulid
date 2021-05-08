@@ -4,7 +4,7 @@
 
 class ULID
   # Currently supporting only for `subset` for actual use-case`
-  # Original decoding spec allowes other characters.
+  # Original decoding spec allows other characters.
   # But I think ULID should allow `subset` of Crockford's Base32.
   # See below
   #   * https://github.com/ulid/spec/pull/57

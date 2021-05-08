@@ -30,8 +30,16 @@ class ULID
   MAX_MILLISECONDS = 281474976710655
   MAX_ENTROPY = 1208925819614629174706175
   MAX_INTEGER = 340282366920938463463374607431768211455
-  PATTERN = /(?<timestamp>[0-7][#{CROCKFORD_BASE32_ENCODING_STRING}]{#{TIMESTAMP_ENCODED_LENGTH - 1}})(?<randomness>[#{CROCKFORD_BASE32_ENCODING_STRING}]{#{RANDOMNESS_ENCODED_LENGTH}})/i.freeze
-  STRICT_PATTERN = /\A#{PATTERN.source}\z/i.freeze
+
+  # @see https://github.com/ulid/spec/pull/57
+  # Currently not used as a constant, but kept as a reference for now.
+  PATTERN_WITH_CROCKFORD_BASE32_SUBSET = /(?<timestamp>[0-7][#{CROCKFORD_BASE32_ENCODING_STRING}]{#{TIMESTAMP_ENCODED_LENGTH - 1}})(?<randomness>[#{CROCKFORD_BASE32_ENCODING_STRING}]{#{RANDOMNESS_ENCODED_LENGTH}})/i.freeze
+
+  STRICT_PATTERN_WITH_CROCKFORD_BASE32_SUBSET = /\A#{PATTERN_WITH_CROCKFORD_BASE32_SUBSET.source}\z/i.freeze
+
+  # Optimized for `ULID.scan`, might be changed the definition with gathered `ULID.scan` spec changed.
+  # This can't contain `\b` for considering UTF-8 (e.g. Japanese), so intentional `false negative` definition.
+  SCANNING_PATTERN = /[0-7][#{CROCKFORD_BASE32_ENCODING_STRING}]{#{TIMESTAMP_ENCODED_LENGTH - 1}}[#{CROCKFORD_BASE32_ENCODING_STRING}]{#{RANDOMNESS_ENCODED_LENGTH}}/i.freeze
 
   # Same as Time#inspect since Ruby 2.7, just to keep backward compatibility
   # @see https://bugs.ruby-lang.org/issues/15958
@@ -125,8 +133,8 @@ class ULID
     string = String.try_convert(string)
     raise ArgumentError, 'ULID.scan takes only strings' unless string
     return to_enum(__callee__, string) unless block_given?
-    string.scan(PATTERN) do |pair|
-      yield parse(pair.join)
+    string.scan(SCANNING_PATTERN) do |matched|
+      yield parse(matched)
     end
     self
   end
@@ -243,8 +251,8 @@ class ULID
     string = String.try_convert(string)
     raise ArgumentError, 'ULID.parse takes only strings' unless string
 
-    unless STRICT_PATTERN.match?(string)
-      raise ParserError, "given `#{string}` does not match to `#{STRICT_PATTERN.inspect}`"
+    unless STRICT_PATTERN_WITH_CROCKFORD_BASE32_SUBSET.match?(string)
+      raise ParserError, "given `#{string}` does not match to `#{STRICT_PATTERN_WITH_CROCKFORD_BASE32_SUBSET.inspect}`"
     end
 
     from_integer(CrockfordBase32.decode(string))
@@ -254,7 +262,7 @@ class ULID
   # @return [Boolean]
   def self.valid?(string)
     string = String.try_convert(string)
-    string ? STRICT_PATTERN.match?(string) : false
+    string ? STRICT_PATTERN_WITH_CROCKFORD_BASE32_SUBSET.match?(string) : false
   end
 
   # @api private
