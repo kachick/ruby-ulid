@@ -8,6 +8,7 @@ class ULID
     attr_accessor :latest_milliseconds, :latest_entropy
 
     def initialize
+      @mutex = Thread::Mutex.new
       reset
     end
 
@@ -19,14 +20,15 @@ class ULID
       milliseconds = ULID.milliseconds_from_moment(moment)
       raise ArgumentError, "milliseconds should not be negative: given: #{milliseconds}" if milliseconds.negative?
 
-      if @latest_milliseconds < milliseconds
-        @latest_milliseconds = milliseconds
-        @latest_entropy = ULID.reasonable_entropy
-      else
-        @latest_entropy += 1
+      @mutex.synchronize do
+        if @latest_milliseconds < milliseconds
+          @latest_milliseconds = milliseconds
+          @latest_entropy = ULID.reasonable_entropy
+        else
+          @latest_entropy += 1
+        end
+        ULID.from_monotonic_generator(self)
       end
-
-      ULID.from_monotonic_generator(self)
     end
 
     # @api private
