@@ -45,8 +45,7 @@ task :yard do
 end
 
 task :benchmark do
-  sh 'bundle exec ruby benchmark/generate.rb'
-  sh 'bundle exec ruby benchmark/parse.rb'
+  sh 'bundle exec ruby benchmark/generators.rb'
   sh 'bundle exec ruby benchmark/core_instance_methods.rb'
   sh 'bundle exec ruby benchmark/extra_instance_methods.rb'
   sh 'bundle exec ruby benchmark/sort.rb'
