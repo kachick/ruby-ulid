@@ -233,6 +233,17 @@ class TestULIDClass < Test::Unit::TestCase
     assert_equal(123000000, floored.nsec)
     assert_equal(ulid.to_time, floored)
     assert_equal('EST', floored.zone)
+
+    [nil, 42, ulid, ulid.to_s, BasicObject.new, Object.new].each do |evil|
+      err = assert_raises(ArgumentError) do
+        ULID.floor(evil)
+      end
+      assert_equal('ULID.floor takes only `Time` instance', err.message)
+    end
+
+    assert_raises(ArgumentError) do
+      ULID.floor
+    end
   end
 
   def test_scan
@@ -338,10 +349,11 @@ class TestULIDClass < Test::Unit::TestCase
     entropy = 42
     assert_equal(entropy, ULID.generate(entropy: entropy).entropy)
 
-    [nil, BasicObject.new, '42'].each do |invalid|
-      assert_raises do
-        ULID.generate(moment: invalid)
+    [nil, 4.2, 42/24r, '42', ulid, ulid.to_s, BasicObject.new, Object.new].each do |evil|
+      err = assert_raises(ArgumentError) do
+        ULID.generate(moment: evil)
       end
+      assert_equal('`moment` should be a `Time` or `Integer as milliseconds`', err.message)
     end
   end
 

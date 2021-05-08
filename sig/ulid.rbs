@@ -71,7 +71,6 @@ class ULID
   def self.generate: (?moment: moment, ?entropy: Integer) -> ULID
   def self.at: (Time time) -> ULID
   def self.current_milliseconds: -> Integer
-  def self.milliseconds_from_time: (Time time) -> Integer
   def self.milliseconds_from_moment: (moment moment) -> Integer
   def self.range: (period period) -> Range[ULID]
   def self.floor: (Time time) -> Time
@@ -113,5 +112,6 @@ class ULID
   def freeze: -> self
 
   private
+  def self.milliseconds_from_time: (Time time) -> Integer
   def cache_all_instance_variables: -> void
 end

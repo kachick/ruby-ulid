@@ -195,6 +195,8 @@ class ULID
   # @param [Time] time
   # @return [Time]
   def self.floor(time)
+    raise ArgumentError, 'ULID.floor takes only `Time` instance' unless Time === time
+
     if RUBY_VERSION >= '2.7'
       time.floor(3)
     else
@@ -208,10 +210,9 @@ class ULID
     milliseconds_from_time(Time.now)
   end
 
-  # @api private
   # @param [Time] time
   # @return [Integer]
-  def self.milliseconds_from_time(time)
+  private_class_method def self.milliseconds_from_time(time)
     (time.to_r * 1000).to_i
   end
 
@@ -219,7 +220,14 @@ class ULID
   # @param [Time, Integer] moment
   # @return [Integer]
   def self.milliseconds_from_moment(moment)
-    moment.kind_of?(Time) ? milliseconds_from_time(moment) : moment.to_int
+    case moment
+    when Integer
+      moment
+    when Time
+      milliseconds_from_time(moment)
+    else
+      raise ArgumentError, '`moment` should be a `Time` or `Integer as milliseconds`'
+    end
   end
 
   # @api private
