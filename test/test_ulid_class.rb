@@ -435,8 +435,8 @@ class TestULIDClass < Test::Unit::TestCase
     assert_nil(ULID.sample(42).uniq!)
 
     ULID.sample(42).shuffle.each_cons(2) do |ulid1, ulid2|
-      assert_acceptable_timestamp_string(ulid1.timestamp, ulid2.timestamp)
-      assert_acceptable_randomness_string(ulid1.randomness, ulid2.randomness)
+      assert_acceptable_timestamp_string(ulid1.timestamp, ulid2.timestamp, 5)
+      assert_acceptable_randomness_string(ulid1.randomness, ulid2.randomness, 11)
     end
 
     time1 = Time.at(1620365807)
@@ -452,8 +452,8 @@ class TestULIDClass < Test::Unit::TestCase
     assert_equal(42, ULID.sample(42, period: time1..time2).uniq(&:to_time).size)
     assert(ULID.sample(42, period: time1..time2).all? { |ulid| ULID.range(time1..time2).cover?(ulid) })
     ULID.sample(42, period: time1..time2).shuffle.each_cons(2) do |ulid1, ulid2|
-      assert_acceptable_timestamp_string(ulid1.timestamp, ulid2.timestamp)
-      assert_acceptable_randomness_string(ulid1.randomness, ulid2.randomness)
+      assert_acceptable_timestamp_string(ulid1.timestamp, ulid2.timestamp, 4)
+      assert_acceptable_randomness_string(ulid1.randomness, ulid2.randomness, 11)
     end
 
     assert_instance_of(ULID, ULID.sample(period: time1..time1))
@@ -466,8 +466,7 @@ class TestULIDClass < Test::Unit::TestCase
     assert_nil(ULID.sample(42, period: time1..time1).uniq!)
     assert_equal(1, ULID.sample(42, period: time1..time1).uniq(&:to_time).size)
     ULID.sample(42, period: time1..time1).shuffle.each_cons(2) do |ulid1, ulid2|
-      # assert_acceptable_timestamp_string(ulid1.timestamp, ulid2.timestamp)
-      assert_acceptable_randomness_string(ulid1.randomness, ulid2.randomness)
+      assert_acceptable_randomness_string(ulid1.randomness, ulid2.randomness, 11)
     end
 
     ulid = ULID.sample
