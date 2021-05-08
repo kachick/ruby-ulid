@@ -49,6 +49,7 @@ task :benchmark do
   sh 'bundle exec ruby benchmark/core_instance_methods.rb'
   sh 'bundle exec ruby benchmark/extra_instance_methods.rb'
   sh 'bundle exec ruby benchmark/sort.rb'
+  sh 'bundle exec ruby benchmark/sample.rb'
 end
 
 task :update_fixed_examples do
