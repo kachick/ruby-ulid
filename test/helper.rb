@@ -6,6 +6,10 @@ require 'warning'
 # How to use => https://test-unit.github.io/test-unit/en/
 require 'test/unit'
 
+if RUBY_VERSION > '3.0.1'
+  require 'power_assert/colorize'
+end
+
 if Warning.respond_to?(:[]=) # @TODO Removable this guard after dropped ruby 2.6
   Warning[:deprecated] = true
   Warning[:experimental] = true
@@ -18,19 +22,17 @@ end
 require_relative '../lib/ulid'
 
 module ULIDAssertions
-  # Taken the features of https://github.com/ruby/did_you_mean/blob/fbe5aaaae8405d19dc1bf691c5bead6348c6da10/lib/did_you_mean/levenshtein.rb :yum:
+  def assert_acceptable_randomized_string(ulid)
+    assert do
+      (0..4).cover?(ULID::TIMESTAMP_ENCODED_LENGTH - ulid.timestamp.squeeze.size)
+    end
 
-  def assert_acceptable_timestamp_string(a, b, min)
-    raise ArgumentError unless (2..ULID::TIMESTAMP_ENCODED_LENGTH).cover?(min)
-    distance = DidYouMean::Levenshtein.distance(a, b)
-    acceptable = min..ULID::TIMESTAMP_ENCODED_LENGTH
-    assert(acceptable.cover?(distance), "#{a} vs #{b} => #{distance} is not in #{acceptable}, needed to check the randomness is not broken in `timestamp` part!")
-  end
+    assert do
+      (0..5).cover?(ULID::RANDOMNESS_ENCODED_LENGTH - ulid.randomness.squeeze.size)
+    end
 
-  def assert_acceptable_randomness_string(a, b, min)
-    raise ArgumentError unless (2..ULID::RANDOMNESS_ENCODED_LENGTH).cover?(min)
-    distance = DidYouMean::Levenshtein.distance(a, b)
-    acceptable = min..ULID::RANDOMNESS_ENCODED_LENGTH
-    assert(acceptable.cover?(distance), "#{a} vs #{b} => #{distance} is not in #{acceptable}, needed to check the randomness is not broken in `randomness` part!")
+    assert do
+      '000' != ulid.randomness.slice(-3, 3)
+    end
   end
 end
