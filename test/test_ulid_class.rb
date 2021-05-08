@@ -19,7 +19,7 @@ class TestULIDClass < Test::Unit::TestCase
     end
   end
 
-  def test_constants
+  def test_constant_version
     assert_equal(true, ULID::VERSION.frozen?)
   end
 
@@ -310,28 +310,42 @@ class TestULIDClass < Test::Unit::TestCase
   end
 
   def test_constant_regexp
-    assert_equal(true, ULID::PATTERN.casefold?)
-    assert_equal(Encoding::US_ASCII, ULID::PATTERN.encoding)
-    assert_equal(true, ULID::PATTERN.frozen?)
-    assert_equal(true, ULID::PATTERN.match?('01ARZ3NDEKTSV4RRFFQ69G5FAV'))
-    assert_equal(true, ULID::PATTERN.match?("\nfoo01ARZ3NDEKTSV4RRFFQ69G5FAVbar\n"))
-    assert_equal(false, ULID::PATTERN.match?(''))
-    assert_equal(true, ULID::PATTERN.match?('01ARZ3NDEKTSV4RRFFQ69G5FAV'.downcase))
-    assert_equal(true, ULID::PATTERN.match?('00000000000000000000000000'))
-    assert_equal(true, ULID::PATTERN.match?('7ZZZZZZZZZZZZZZZZZZZZZZZZZ'))
-    assert_equal(false, ULID::PATTERN.match?('80000000000000000000000000'))
+    assert_equal(true, ULID::PATTERN_WITH_CROCKFORD_BASE32_SUBSET.casefold?)
+    assert_equal(Encoding::US_ASCII, ULID::PATTERN_WITH_CROCKFORD_BASE32_SUBSET.encoding)
+    assert_equal(true, ULID::PATTERN_WITH_CROCKFORD_BASE32_SUBSET.frozen?)
+    assert_equal(true, ULID::PATTERN_WITH_CROCKFORD_BASE32_SUBSET.match?('01ARZ3NDEKTSV4RRFFQ69G5FAV'))
+    assert_equal(true, ULID::PATTERN_WITH_CROCKFORD_BASE32_SUBSET.match?("\nfoo01ARZ3NDEKTSV4RRFFQ69G5FAVbar\n")) # false negative
+    assert_equal(false, ULID::PATTERN_WITH_CROCKFORD_BASE32_SUBSET.match?(''))
+    assert_equal(true, ULID::PATTERN_WITH_CROCKFORD_BASE32_SUBSET.match?('01ARZ3NDEKTSV4RRFFQ69G5FAV'.downcase))
+    assert_equal(true, ULID::PATTERN_WITH_CROCKFORD_BASE32_SUBSET.match?('00000000000000000000000000'))
+    assert_equal(true, ULID::PATTERN_WITH_CROCKFORD_BASE32_SUBSET.match?('7ZZZZZZZZZZZZZZZZZZZZZZZZZ'))
+    assert_equal(false, ULID::PATTERN_WITH_CROCKFORD_BASE32_SUBSET.match?('80000000000000000000000000'))
+    assert_equal({'timestamp' => '01ARZ3NDEK', 'randomness' => 'TSV4RRFFQ69G5FAV'}, ULID::PATTERN_WITH_CROCKFORD_BASE32_SUBSET.match('01ARZ3NDEKTSV4RRFFQ69G5FAV').named_captures)
 
-    assert_equal(true, ULID::STRICT_PATTERN.casefold?)
-    assert_equal(Encoding::US_ASCII, ULID::STRICT_PATTERN.encoding)
-    assert_equal(true, ULID::STRICT_PATTERN.frozen?)
-    assert_equal(true, ULID::STRICT_PATTERN.match?('01ARZ3NDEKTSV4RRFFQ69G5FAV'))
-    assert_equal(false, ULID::STRICT_PATTERN.match?("\nfoo01ARZ3NDEKTSV4RRFFQ69G5FAVbar\n"))
-    assert_equal(false, ULID::STRICT_PATTERN.match?(''))
-    assert_equal(true, ULID::STRICT_PATTERN.match?('01ARZ3NDEKTSV4RRFFQ69G5FAV'.downcase))
-    assert_equal(true, ULID::STRICT_PATTERN.match?('00000000000000000000000000'))
-    assert_equal(true, ULID::STRICT_PATTERN.match?('7ZZZZZZZZZZZZZZZZZZZZZZZZZ'))
-    assert_equal(false, ULID::STRICT_PATTERN.match?('80000000000000000000000000'))
-    assert_equal({'timestamp' => '01ARZ3NDEK', 'randomness' => 'TSV4RRFFQ69G5FAV'}, ULID::STRICT_PATTERN.match('01ARZ3NDEKTSV4RRFFQ69G5FAV').named_captures)
+    assert_equal(true, ULID::STRICT_PATTERN_WITH_CROCKFORD_BASE32_SUBSET.casefold?)
+    assert_equal(Encoding::US_ASCII, ULID::STRICT_PATTERN_WITH_CROCKFORD_BASE32_SUBSET.encoding)
+    assert_equal(true, ULID::STRICT_PATTERN_WITH_CROCKFORD_BASE32_SUBSET.frozen?)
+    assert_equal(true, ULID::STRICT_PATTERN_WITH_CROCKFORD_BASE32_SUBSET.match?('01ARZ3NDEKTSV4RRFFQ69G5FAV'))
+    assert_equal(false, ULID::STRICT_PATTERN_WITH_CROCKFORD_BASE32_SUBSET.match?("01ARZ3NDEKTSV4RRFFQ69G5FAV\n"))
+    assert_equal(false, ULID::STRICT_PATTERN_WITH_CROCKFORD_BASE32_SUBSET.match?("\nfoo01ARZ3NDEKTSV4RRFFQ69G5FAVbar\n"))
+    assert_equal(false, ULID::STRICT_PATTERN_WITH_CROCKFORD_BASE32_SUBSET.match?(''))
+    assert_equal(true, ULID::STRICT_PATTERN_WITH_CROCKFORD_BASE32_SUBSET.match?('01ARZ3NDEKTSV4RRFFQ69G5FAV'.downcase))
+    assert_equal(true, ULID::STRICT_PATTERN_WITH_CROCKFORD_BASE32_SUBSET.match?('00000000000000000000000000'))
+    assert_equal(true, ULID::STRICT_PATTERN_WITH_CROCKFORD_BASE32_SUBSET.match?('7ZZZZZZZZZZZZZZZZZZZZZZZZZ'))
+    assert_equal(false, ULID::STRICT_PATTERN_WITH_CROCKFORD_BASE32_SUBSET.match?('80000000000000000000000000'))
+    assert_equal({'timestamp' => '01ARZ3NDEK', 'randomness' => 'TSV4RRFFQ69G5FAV'}, ULID::STRICT_PATTERN_WITH_CROCKFORD_BASE32_SUBSET.match('01ARZ3NDEKTSV4RRFFQ69G5FAV').named_captures)
+
+    assert_equal(true, ULID::SCANNING_PATTERN.casefold?)
+    assert_equal(Encoding::US_ASCII, ULID::SCANNING_PATTERN.encoding)
+    assert_equal(true, ULID::SCANNING_PATTERN.frozen?)
+    assert_equal(true, ULID::SCANNING_PATTERN.match?('01ARZ3NDEKTSV4RRFFQ69G5FAV'))
+    assert_equal(true, ULID::SCANNING_PATTERN.match?("\nfoo01ARZ3NDEKTSV4RRFFQ69G5FAVbar\n")) # false negative
+    assert_equal(false, ULID::SCANNING_PATTERN.match?(''))
+    assert_equal(true, ULID::SCANNING_PATTERN.match?('01ARZ3NDEKTSV4RRFFQ69G5FAV'.downcase))
+    assert_equal(true, ULID::SCANNING_PATTERN.match?('00000000000000000000000000'))
+    assert_equal(true, ULID::SCANNING_PATTERN.match?('7ZZZZZZZZZZZZZZZZZZZZZZZZZ'))
+    assert_equal(false, ULID::SCANNING_PATTERN.match?('80000000000000000000000000'))
+    assert_equal([], ULID::SCANNING_PATTERN.names)
   end
 
   def test_generate

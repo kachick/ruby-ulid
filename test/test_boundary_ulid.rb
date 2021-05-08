@@ -11,7 +11,7 @@ class TestBoundaryULID < Test::Unit::TestCase
     @max_entropy = ULID.parse('01BX5ZZKBKZZZZZZZZZZZZZZZZ')
   end
 
-  def test_constants
+  def test_consistency_with_constants
     assert_equal(ULID::MAX_MILLISECONDS, @max.milliseconds)
     assert_equal(ULID::MAX_ENTROPY, @max.entropy)
     assert_equal(ULID::MAX_INTEGER, @max.to_i)
