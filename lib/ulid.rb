@@ -374,18 +374,32 @@ class ULID
   end
 
   # @return [ULID, nil] when called on ULID as `7ZZZZZZZZZZZZZZZZZZZZZZZZZ`, returns `nil` instead of ULID
-  def next
-    next_int = to_i.next
-    return nil if next_int > MAX_INTEGER
-    @next ||= self.class.from_integer(next_int)
+  def succ
+    succ_int = to_i.succ
+    if succ_int >= MAX_INTEGER
+      if succ_int == MAX_INTEGER
+        MAX
+      else
+        nil
+      end
+    else
+      ULID.from_integer(succ_int)
+    end
   end
-  alias_method :succ, :next
+  alias_method :next, :succ
 
   # @return [ULID, nil] when called on ULID as `00000000000000000000000000`, returns `nil` instead of ULID
   def pred
-    pre_int = to_i.pred
-    return nil if pre_int.negative?
-    @pred ||= self.class.from_integer(pre_int)
+    pred_int = to_i.pred
+    if pred_int <= 0
+      if pred_int == 0
+        MIN
+      else
+        nil
+      end
+    else
+      ULID.from_integer(pred_int)
+    end
   end
 
   # @return [self]

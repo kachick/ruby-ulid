@@ -214,7 +214,7 @@ class TestULIDInstance < Test::Unit::TestCase
     ulid = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
     assert_equal(ulid.next.to_i, ulid.to_i + 1)
     assert_instance_of(ULID, ulid.next)
-    assert_same(ulid.next, ulid.next)
+    assert_not_same(ulid.next, ulid.next)
 
     first = ULID.parse('01BX5ZZKBKACTAV9WEVGEMMVRY')
     assert_equal(ULID.parse('01BX5ZZKBKACTAV9WEVGEMMVRZ'), first.next)
@@ -226,7 +226,7 @@ class TestULIDInstance < Test::Unit::TestCase
     ulid = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
     assert_equal(ulid.pred.to_i, ulid.to_i - 1)
     assert_instance_of(ULID, ulid.pred)
-    assert_same(ulid.pred, ulid.pred)
+    assert_not_same(ulid.pred, ulid.pred)
 
     first = ULID.parse('01BX5ZZKBKACTAV9WEVGEMMVR2')
     assert_equal(ULID.parse('01BX5ZZKBKACTAV9WEVGEMMVR1'), first.pred)

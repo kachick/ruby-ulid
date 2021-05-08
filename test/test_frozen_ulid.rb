@@ -16,12 +16,7 @@ class TestFrozenULID < Test::Unit::TestCase
     @ulid.instance_variables.each do |name|
       ivar = @ulid.instance_variable_get(name)
       assert_equal(true, !!ivar, "#{name} is still falsy: #{ivar.inspect}")
-      case name
-      when :@next, :@pred
-        assert_equal(false, ivar.frozen?, "#{name} is unexpected frozen")
-      else
-        assert_equal(true, ivar.frozen?, "#{name} is not frozen")
-      end
+      assert_equal(true, ivar.frozen?, "#{name} is not frozen")
     end
   end
 

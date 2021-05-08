@@ -38,6 +38,12 @@ class TestULIDSubClass < Test::Unit::TestCase
     end
   end
 
+  def test_succ_pred_returns_original_class
+    instance = Subclass.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
+    assert_instance_of(ULID, instance.succ)
+    assert_instance_of(ULID, instance.pred)
+  end
+
   def teardown
     ENV['TZ'] = @actual_timezone
   end

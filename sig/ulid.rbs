@@ -66,8 +66,6 @@ class ULID
   @randomness: String?
   @inspect: String?
   @time: Time?
-  @next: ULID?
-  @pred: ULID?
 
   def self.generate: (?moment: moment, ?entropy: Integer) -> ULID
   def self.at: (Time time) -> ULID

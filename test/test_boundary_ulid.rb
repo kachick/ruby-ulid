@@ -23,11 +23,13 @@ class TestBoundaryULID < Test::Unit::TestCase
   def test_next
     assert_nil(@max.next)
     assert_equal(ULID.parse('01BX5ZZKBM0000000000000000'), @max_entropy.next)
+    assert_same(@max, ULID.parse('7ZZZZZZZZZZZZZZZZZZZZZZZZY').next)
   end
 
   def test_pred
     assert_nil(@min.pred)
     assert_equal(ULID.parse('01BX5ZZKBJZZZZZZZZZZZZZZZZ'), @min_entropy.pred)
+    assert_same(@min, ULID.parse('00000000000000000000000001').pred)
   end
 
   def test_octets
