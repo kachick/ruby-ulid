@@ -66,6 +66,10 @@ class ULID
     MAX_MILLISECONDS.equal?(moment) ? MAX : generate(moment: moment, entropy: MAX_ENTROPY)
   end
 
+  RANDOM_INTEGER_GENERATOR = -> {
+    SecureRandom.random_number(MAX_INTEGER)
+  }
+
   # @param [Range<Time>, Range<nil>, Range[ULID], nil] period
   # @overload sample(number, period: nil)
   #   @param [Integer] number
@@ -89,9 +93,7 @@ class ULID
         SecureRandom.random_number(possibilities) + min.to_i
       }
     else
-      -> {
-        SecureRandom.random_number(MAX_INTEGER)
-      }
+      RANDOM_INTEGER_GENERATOR
     end
 
     case args.size
@@ -427,5 +429,5 @@ class ULID
   MIN = parse('00000000000000000000000000').freeze
   MAX = parse('7ZZZZZZZZZZZZZZZZZZZZZZZZZ').freeze
 
-  private_constant :TIME_FORMAT_IN_INSPECT, :MIN, :MAX
+  private_constant :TIME_FORMAT_IN_INSPECT, :MIN, :MAX, :RANDOM_INTEGER_GENERATOR
 end
