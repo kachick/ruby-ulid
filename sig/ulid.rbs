@@ -17,7 +17,6 @@ class ULID
   UUIDV4_PATTERN: Regexp
   MIN: ULID
   MAX: ULID
-  UNDEFINED: BasicObject
   include Comparable
 
   # The `moment` is a `Time` or `Intger of the milliseconds`

@@ -37,18 +37,6 @@ class ULID
   # @see https://bugs.ruby-lang.org/issues/15958
   TIME_FORMAT_IN_INSPECT = '%Y-%m-%d %H:%M:%S.%3N %Z'
 
-  UNDEFINED = BasicObject.new
-  # @return [String]
-  def UNDEFINED.to_s
-    'ULID::UNDEFINED'
-  end
-
-  # @return [String]
-  def UNDEFINED.inspect
-    to_s
-  end
-  Kernel.instance_method(:freeze).bind(UNDEFINED).call
-
   private_class_method :new
 
   # @param [Integer, Time] moment
@@ -276,16 +264,16 @@ class ULID
   # @return [void]
   # @raise [OverflowError] if the given value is larger than the ULID limit
   # @raise [ArgumentError] if the given milliseconds and/or entropy is negative number
-  def initialize(milliseconds:, entropy:, integer: UNDEFINED)
-    if UNDEFINED.equal?(integer)
+  def initialize(milliseconds:, entropy:, integer: nil)
+    if integer
+      @integer = integer
+    else
       milliseconds = milliseconds.to_int
       entropy = entropy.to_int
 
       raise OverflowError, "timestamp overflow: given #{milliseconds}, max: #{MAX_MILLISECONDS}" unless milliseconds <= MAX_MILLISECONDS
       raise OverflowError, "entropy overflow: given #{entropy}, max: #{MAX_ENTROPY}" unless entropy <= MAX_ENTROPY
       raise ArgumentError, 'milliseconds and entropy should not be negative' if milliseconds.negative? || entropy.negative?
-    else
-      @integer = integer
     end
 
     @milliseconds = milliseconds
@@ -439,5 +427,5 @@ class ULID
   MIN = parse('00000000000000000000000000').freeze
   MAX = parse('7ZZZZZZZZZZZZZZZZZZZZZZZZZ').freeze
 
-  private_constant :TIME_FORMAT_IN_INSPECT, :MIN, :MAX, :UNDEFINED
+  private_constant :TIME_FORMAT_IN_INSPECT, :MIN, :MAX
 end
