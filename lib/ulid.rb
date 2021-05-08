@@ -403,9 +403,6 @@ class ULID
   # @return [void]
   def cache_all_instance_variables
     inspect
-    to_i
-    succ
-    pred
     timestamp
     randomness
   end
