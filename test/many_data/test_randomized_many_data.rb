@@ -4,6 +4,8 @@
 require_relative '../helper'
 
 class TestManyData < Test::Unit::TestCase
+  include ULIDAssertions
+
   def test_generate
     ulids = 1000.times.map do |n|
       if (n % 100).zero?
@@ -25,15 +27,6 @@ class TestManyData < Test::Unit::TestCase
       assert_equal(ulid.to_s, ULID.parse(ulid.to_s).to_s)
       assert_equal(ulid.to_s, ULID.parse(ulid.to_s.downcase).to_s)
     end
-  end
-
-  def test_sample
-    ulids = ULID.sample(10000)
-
-    # Rough tests for the randomness. But I guess it basically will not fail :)
-    assert_equal(ulids, ulids.uniq)
-    assert_equal(ulids.size, ulids.group_by(&:timestamp).size)
-    assert_equal(ulids.size, ulids.group_by(&:randomness).size)
   end
 
   def test_octets

@@ -4,6 +4,8 @@
 require_relative 'helper'
 
 class TestULIDClass < Test::Unit::TestCase
+  include ULIDAssertions
+
   def setup
     @actual_timezone = ENV['TZ']
     ENV['TZ'] = 'EST' # Just chosen from not UTC and JST
@@ -178,8 +180,15 @@ class TestULIDClass < Test::Unit::TestCase
       ULID.range
     end
 
+    assert_same(range, ULID.range(range))
+    assert_equal(range.begin..ULID.max, ULID.range(range.begin..nil))
+
+    if RUBY_VERSION >= '2.7'
+      assert_equal(ULID.min..range.end, ULID.range(nil..range.end))
+    end
+
     [nil, 42, 1..42, time_has_more_value_than_milliseconds1, ULID.sample.to_s, ULID.sample,
-    BasicObject.new, Object.new, range, range.begin.to_s..range.end.to_s].each do |evil|
+    BasicObject.new, Object.new, range.begin.to_s..range.end.to_s].each do |evil|
       err = assert_raises(ArgumentError) do
         ULID.range(evil)
       end
@@ -425,17 +434,74 @@ class TestULIDClass < Test::Unit::TestCase
     assert_equal(true, ULID.sample(42).size == 42)
     assert_nil(ULID.sample(42).uniq!)
 
-    [-1, ULID::MAX_INTEGER.succ].each do |invalid|
-      assert_raises(ArgumentError) do
-        ULID.sample(invalid)
-      end
+    ULID.sample(42).each do |ulid|
+      assert_acceptable_randomized_string(ulid)
     end
 
-    [nil, BasicObject.new].each do |invalid|
-      assert_raises(TypeError) do
-        ULID.sample(invalid)
-      end
+    time1 = Time.at(1620365807)
+    time2 = Time.at(1624065807)
+    assert_instance_of(ULID, ULID.sample(period: time1..time2))
+    assert_equal([], ULID.sample(0, period: time1..time2))
+    assert_instance_of(Array, ULID.sample(1, period: time1..time2))
+    assert_equal(true, ULID.sample(1, period: time1..time2).size == 1)
+    assert_instance_of(ULID, ULID.sample(1, period: time1..time2)[0])
+    assert_instance_of(Array, ULID.sample(42, period: time1..time2))
+    assert_equal(true, ULID.sample(42, period: time1..time2).size == 42)
+    assert_nil(ULID.sample(42, period: time1..time2).uniq!)
+    assert_equal(42, ULID.sample(42, period: time1..time2).uniq(&:to_time).size)
+    assert(ULID.sample(42, period: time1..time2).all? { |ulid| ULID.range(time1..time2).cover?(ulid) })
+    ULID.sample(42, period: time1..time2).each do |ulid|
+      assert_acceptable_randomized_string(ulid)
     end
+
+    assert_instance_of(ULID, ULID.sample(period: time1..time1))
+    assert_equal([], ULID.sample(0, period: time1..time1))
+    assert_instance_of(Array, ULID.sample(1, period: time1..time1))
+    assert_equal(true, ULID.sample(1, period: time1..time1).size == 1)
+    assert_instance_of(ULID, ULID.sample(1, period: time1..time1)[0])
+    assert_instance_of(Array, ULID.sample(42, period: time1..time1))
+    assert_equal(42, ULID.sample(42, period: time1..time1).size)
+    assert_nil(ULID.sample(42, period: time1..time1).uniq!)
+    assert_equal(1, ULID.sample(42, period: time1..time1).uniq(&:to_time).size)
+    ULID.sample(42, period: time1..time1).each do |ulid|
+      assert_acceptable_randomized_string(ulid)
+    end
+
+    ulid = ULID.sample
+    err = assert_raises(ArgumentError) do
+      ULID.sample(period: ulid...ulid)
+    end
+    assert_match(/does not have possibilities/, err.message)
+    err = assert_raises(ArgumentError) do
+      ULID.sample(period: ulid.succ..ulid)
+    end
+    assert_match(/does not have possibilities/, err.message)
+    assert_equal(ulid, ULID.sample(period: ulid..ulid))
+    err = assert_raises(ArgumentError) do
+      ULID.sample(2, period: ulid..ulid)
+    end
+    assert_match('given number 2 is larger than given possibilities 1', err.message)
+    assert_equal(2, ULID.sample(2, period: ulid..ulid.succ).size)
+    assert_equal(0, (ULID.sample(2, period: ulid..ulid.succ) - [ulid, ulid.succ]).size)
+    
+    [-1, ULID::MAX_INTEGER.succ].each do |out_of_range|
+      err = assert_raises(ArgumentError) do
+        ULID.sample(out_of_range)
+      end
+      assert_match(/larger than ULID limit.+or negative/, err.message)
+    end
+
+    [nil, BasicObject.new, '42', 4.2].each do |evil|
+      err = assert_raises(ArgumentError) do
+        ULID.sample(evil)
+      end
+      assert_match('accepts no argument or integer only', err.message)
+    end
+
+    err = assert_raises(ArgumentError) do
+      ULID.sample(42, 42)
+    end
+    assert_match('wrong number of arguments', err.message)
   end
 
   def teardown

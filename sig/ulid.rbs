@@ -57,6 +57,7 @@ class ULID
   type octets = [Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer]
   type timestamp_octets = [Integer, Integer, Integer, Integer, Integer, Integer]
   type randomness_octets = [Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer]
+  type period = Range[Time] | Range[nil] | Range[ULID]
 
   @milliseconds: Integer
   @entropy: Integer
@@ -72,7 +73,7 @@ class ULID
   def self.current_milliseconds: -> Integer
   def self.milliseconds_from_time: (Time time) -> Integer
   def self.milliseconds_from_moment: (moment moment) -> Integer
-  def self.range: (Range[Time] | Range[nil] period) -> Range[ULID]
+  def self.range: (period period) -> Range[ULID]
   def self.floor: (Time time) -> Time
   def self.reasonable_entropy: -> Integer
   def self.parse: (String string) -> ULID
@@ -80,8 +81,8 @@ class ULID
   def self.from_integer: (Integer integer) -> ULID
   def self.min: (?moment: moment) -> ULID
   def self.max: (?moment: moment) -> ULID
-  def self.sample: -> ULID
-                 | (Integer number) -> Array[ULID]
+  def self.sample: (?period: period) -> ULID
+                 | (Integer number, ?period: period) -> Array[ULID]
   def self.valid?: (untyped string) -> bool
   def self.scan:  (String string) -> Enumerator[ULID, singleton(ULID)]
                 | (String string) { (ULID ulid) -> void } -> singleton(ULID)
