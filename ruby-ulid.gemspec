@@ -26,6 +26,7 @@ Gem::Specification.new do |gem|
     'source_code_uri'   => repository_url,
   }
 
+  gem.add_development_dependency 'did_you_mean', '>= 1.5.0'
   gem.add_development_dependency 'rbs', '>= 1.2.0'
   gem.add_development_dependency 'benchmark-ips', '>= 2.8.4', '< 3'
   gem.add_development_dependency 'yard', '>= 0.9.26', '< 2'
