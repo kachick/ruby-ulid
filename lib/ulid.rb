@@ -84,13 +84,13 @@ class ULID
   def self.sample(*args, period: nil)
     int_generator = if period
       ulid_range = range(period)
-      min, max, exclude_end = ulid_range.begin, ulid_range.end, ulid_range.exclude_end?
+      min, max, exclude_end = ulid_range.begin.to_i, ulid_range.end.to_i, ulid_range.exclude_end?
 
-      possibilities = (max.to_i - min.to_i) + (exclude_end ? 0 : 1)
+      possibilities = (max - min) + (exclude_end ? 0 : 1)
       raise ArgumentError, "given range `#{ulid_range.inspect}` does not have possibilities" unless possibilities.positive?
 
       -> {
-        SecureRandom.random_number(possibilities) + min.to_i
+        SecureRandom.random_number(possibilities) + min
       }
     else
       RANDOM_INTEGER_GENERATOR
@@ -111,7 +111,7 @@ class ULID
         raise ArgumentError, "given number #{number} is larger than given possibilities #{possibilities}"
       end
 
-      number.times.map { from_integer(int_generator.call) }
+      Array.new(number) { from_integer(int_generator.call) }
     else
       raise ArgumentError, "wrong number of arguments (given #{args.size}, expected 0..1)"
     end
