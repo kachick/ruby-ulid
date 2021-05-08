@@ -34,26 +34,28 @@ class TestULIDClass < Test::Unit::TestCase
     assert_equal(string, parsed.to_s)
     assert_equal(string, ULID.parse(string.downcase).to_s)
 
-    assert_raises(ULID::ParserError) do
-      ULID.parse(nil)
+    [
+      '',
+      "01ARZ3NDEKTSV4RRFFQ69G5FAV\n",
+      '01ARZ3NDEKTSV4RRFFQ69G5FAU',
+      '01ARZ3NDEKTSV4RRFFQ69G5FA'
+    ].each do |invalid|
+      err = assert_raises(ULID::ParserError) do
+        ULID.parse(invalid)
+      end
+      assert_match(/does not match to/, err.message)
     end
 
-    assert_raises(ULID::ParserError) do
-      ULID.parse('')
+    assert_raises(ArgumentError) do
+      ULID.parse
     end
 
-    assert_raises(ULID::ParserError) do
-      ULID.parse("01ARZ3NDEKTSV4RRFFQ69G5FAV\n")
+    [nil, 42, string.to_sym, BasicObject.new, Object.new, parsed].each do |evil|
+      err = assert_raises(ArgumentError) do
+        ULID.parse(evil)
+      end
+      assert_equal('ULID.parse takes only strings', err.message)
     end
-
-    assert_raises(ULID::ParserError) do
-      ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAU')
-    end
-
-    err = assert_raises(ULID::ParserError) do
-      ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FA')
-    end
-    assert_match(/given argument does not match to/, err.message)
   end
 
   def test_new
@@ -224,7 +226,32 @@ class TestULIDClass < Test::Unit::TestCase
   end
 
   def test_scan
-    json_string = "{\n  \"id\": \"01F4GNAV5ZR6FJQ5SFQC7WDSY3\",\n  \"author\": {\n    \"id\": \"01F4GNBXW1AM2KWW52PVT3ZY9X\",\n    \"name\": \"kachick\"\n  },\n  \"title\": \"My awesome blog post\",\n  \"comments\": [\n    {\n      \"id\": \"01F4GNCNC3CH0BCRZBPPDEKBKS\",\n      \"commenter\": {\n        \"id\": \"01F4GNBXW1AM2KWW52PVT3ZY9X\",\n        \"name\": \"kachick\"\n      }\n    },\n    {\n      \"id\": \"01F4GNCXAMXQ1SGBH5XCR6ZH0M\",\n      \"commenter\": {\n        \"id\": \"01F4GND4RYYSKNAADHQ9BNXAWJ\",\n        \"name\": \"pankona\"\n      }\n    }\n  ]\n}\n"
+    json_string =<<-'EOD'
+    {
+      "id": "01F4GNAV5ZR6FJQ5SFQC7WDSY3",
+      "author": {
+        "id": "01F4GNBXW1AM2KWW52PVT3ZY9X",
+        "name": "kachick"
+      },
+      "title": "My awesome blog post",
+      "comments": [
+        {
+          "id": "01F4GNCNC3CH0BCRZBPPDEKBKS",
+          "commenter": {
+            "id": "01F4GNBXW1AM2KWW52PVT3ZY9X",
+            "name": "kachick"
+          }
+        },
+        {
+          "id": "01F4GNCXAMXQ1SGBH5XCR6ZH0M",
+          "commenter": {
+            "id": "01F4GND4RYYSKNAADHQ9BNXAWJ",
+            "name": "pankona"
+          }
+        }
+      ]
+    }
+    EOD
 
     enum = ULID.scan(json_string)
     assert_instance_of(Enumerator, enum)
@@ -248,6 +275,17 @@ class TestULIDClass < Test::Unit::TestCase
     ]
     assert_equal(expectation, yielded)
     assert_equal(2, expectation.count(ULID.parse('01F4GNBXW1AM2KWW52PVT3ZY9X')))
+
+    assert_raises(ArgumentError) do
+      ULID.scan
+    end
+
+    [nil, 42, json_string.to_sym, BasicObject.new, Object.new, expectation.first].each do |evil|
+      err = assert_raises(ArgumentError) do
+        ULID.scan(evil)
+      end
+      assert_equal('ULID.scan takes only strings', err.message)
+    end
   end
 
   def test_constant_regexp

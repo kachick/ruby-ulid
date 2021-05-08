@@ -56,6 +56,17 @@ class TestUUIDHandlers < Test::Unit::TestCase
         ULID.from_uuidv4(invalid_uuidv4)
       end
     end
+
+    assert_raises(ArgumentError) do
+      ULID.from_uuidv4
+    end
+
+    [nil, 42, :'0983d0a2-ff15-4d83-8f37-7dd945b5aa39', BasicObject.new, Object.new, ulids.sample].each do |evil|
+      err = assert_raises(ArgumentError) do
+        ULID.from_uuidv4(evil)
+      end
+      assert_equal('ULID.from_uuidv4 takes only strings', err.message)
+    end
   end
 
   def test_from_uuidv4_for_boundary_example
