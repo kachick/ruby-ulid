@@ -136,12 +136,12 @@ class ULID
     new milliseconds: milliseconds, entropy: entropy, integer: integer
   end
 
-  # @param [Range<Time>, Range<nil>] time_range
+  # @param [Range<Time>, Range<nil>] period
   # @return [Range<ULID>]
-  # @raise [ArgumentError] if the given time_range is not a `Range[Time]` or `Range[nil]`
-  def self.range(time_range)
-    raise argument_error_for_range_building(time_range) unless time_range.kind_of?(Range)
-    begin_time, end_time, exclude_end = time_range.begin, time_range.end, time_range.exclude_end?
+  # @raise [ArgumentError] if the given period is not a `Range[Time]` or `Range[nil]`
+  def self.range(period)
+    raise ArgumentError, 'ULID.range takes only `Range[Time]` or `Range[nil]`' unless Range === period
+    begin_time, end_time, exclude_end = period.begin, period.end, period.exclude_end?
 
     case begin_time
     when Time
@@ -149,7 +149,7 @@ class ULID
     when nil
       begin_ulid = MIN
     else
-      raise argument_error_for_range_building(time_range)
+      raise ArgumentError, "ULID.range takes only `Range[Time]` or `Range[nil]`, given: #{period.inspect}"
     end
 
     case end_time
@@ -164,7 +164,7 @@ class ULID
       end_ulid = MAX
       exclude_end = false
     else
-      raise argument_error_for_range_building(time_range)
+      raise ArgumentError, "ULID.range takes only `Range[Time]` or `Range[nil]`, given: #{period.inspect}"
     end
 
     begin_ulid.freeze
@@ -236,12 +236,6 @@ class ULID
   def self.from_monotonic_generator(generator)
     raise ArgumentError, 'this method provided only for MonotonicGenerator' unless MonotonicGenerator === generator
     new milliseconds: generator.latest_milliseconds, entropy: generator.latest_entropy
-  end
-
-  # @api private
-  # @return [ArgumentError]
-  private_class_method def self.argument_error_for_range_building(argument)
-    ArgumentError.new "ULID.range takes only `Range[Time]` or `Range[nil]`, given: #{argument.inspect}"
   end
 
   attr_reader :milliseconds, :entropy

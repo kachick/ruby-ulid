@@ -175,14 +175,15 @@ class TestULIDClass < Test::Unit::TestCase
     assert_equal(true, range.cover?(range.end))
 
     assert_raises(ArgumentError) do
-      ULID.range(nil)
+      ULID.range
     end
-    err = assert_raises(ArgumentError) do
-      ULID.range(0..42)
-    end
-    assert_match(/ULID\.range takes only `Range\[Time\]`.+`Range\[nil\]`/, err.message)
-    assert_raises(ArgumentError) do
-      ULID.range('01ARZ3NDEKTSV4RRFFQ69G5FAV'..'7ZZZZZZZZZZZZZZZZZZZZZZZZZ')
+
+    [nil, 42, 1..42, time_has_more_value_than_milliseconds1, ULID.sample.to_s, ULID.sample,
+    BasicObject.new, Object.new, range, range.begin.to_s..range.end.to_s].each do |evil|
+      err = assert_raises(ArgumentError) do
+        ULID.range(evil)
+      end
+      assert(err.message.start_with?('ULID.range takes only `Range[Time]` or `Range[nil]`'))
     end
 
     # Below section is for some edge cases ref: https://github.com/kachick/ruby-ulid/issues/74

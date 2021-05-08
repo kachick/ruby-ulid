@@ -72,7 +72,7 @@ class ULID
   def self.current_milliseconds: -> Integer
   def self.milliseconds_from_time: (Time time) -> Integer
   def self.milliseconds_from_moment: (moment moment) -> Integer
-  def self.range: (Range[Time] | Range[nil] time_range) -> Range[ULID]
+  def self.range: (Range[Time] | Range[nil] period) -> Range[ULID]
   def self.floor: (Time time) -> Time
   def self.reasonable_entropy: -> Integer
   def self.parse: (String string) -> ULID
@@ -113,6 +113,5 @@ class ULID
   def freeze: -> self
 
   private
-  def self.argument_error_for_range_building: (untyped argument) -> ArgumentError
   def cache_all_instance_variables: -> void
 end
