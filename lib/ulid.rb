@@ -222,13 +222,11 @@ class ULID
     from_integer(CrockfordBase32.decode(string))
   end
 
+  # @param [String, #to_str] string
   # @return [Boolean]
   def self.valid?(string)
-    parse(string)
-  rescue Exception
-    false
-  else
-    true
+    string = String.try_convert(string)
+    string ? STRICT_PATTERN.match?(string) : false
   end
 
   # @api private
