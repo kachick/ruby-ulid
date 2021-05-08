@@ -15,15 +15,16 @@ class ULID
   # @return [ULID]
   # @raise [ParserError] if the given format is not correct for UUIDv4 specs
   def self.from_uuidv4(uuid)
-    begin
-      uuid = uuid.to_str
-      prefix_trimmed = uuid.sub(/\Aurn:uuid:/, '')
-      raise "given string is not matched to pattern #{UUIDV4_PATTERN.inspect}" unless UUIDV4_PATTERN.match?(prefix_trimmed)
-      normalized = prefix_trimmed.gsub(/[^0-9A-Fa-f]/, '')
-      from_integer(normalized.to_i(16))
-    rescue => err
-      raise ParserError, "parsing failure as #{err.inspect} for given #{uuid}"
+    uuid = String.try_convert(uuid)
+    raise ArgumentError, 'ULID.from_uuidv4 takes only strings' unless uuid
+
+    prefix_trimmed = uuid.sub(/\Aurn:uuid:/, '')
+    unless UUIDV4_PATTERN.match?(prefix_trimmed)
+      raise ParserError, "given `#{uuid}` does not match to `#{UUIDV4_PATTERN.inspect}`"
     end
+
+    normalized = prefix_trimmed.gsub(/[^0-9A-Fa-f]/, '')
+    from_integer(normalized.to_i(16))
   end
 
   # @return [String]

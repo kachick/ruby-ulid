@@ -108,7 +108,8 @@ class ULID
   # @yieldparam [ULID] ulid
   # @yieldreturn [self]
   def self.scan(string)
-    string = string.to_str
+    string = String.try_convert(string)
+    raise ArgumentError, 'ULID.scan takes only strings' unless string
     return to_enum(__callee__, string) unless block_given?
     string.scan(PATTERN) do |pair|
       yield parse(pair.join)
@@ -212,11 +213,11 @@ class ULID
   # @return [ULID]
   # @raise [ParserError] if the given format is not correct for ULID specs
   def self.parse(string)
-    begin
-      string = string.to_str
-      raise "given argument does not match to `#{STRICT_PATTERN.inspect}`" unless STRICT_PATTERN.match?(string)
-    rescue => err
-      raise ParserError, "parsing failure as #{err.inspect} for given #{string.inspect}"
+    string = String.try_convert(string)
+    raise ArgumentError, 'ULID.parse takes only strings' unless string
+
+    unless STRICT_PATTERN.match?(string)
+      raise ParserError, "given `#{string}` does not match to `#{STRICT_PATTERN.inspect}`"
     end
 
     from_integer(CrockfordBase32.decode(string))
