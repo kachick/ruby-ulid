@@ -93,12 +93,21 @@ class TestULIDClass < Test::Unit::TestCase
   def test_valid?
     assert_equal(false, ULID.valid?(nil))
     assert_equal(false, ULID.valid?(''))
+    assert_equal(false, ULID.valid?(BasicObject.new))
+    assert_equal(false, ULID.valid?(Object.new))
+    assert_equal(false, ULID.valid?(42))
+    assert_equal(false, ULID.valid?(:'01ARZ3NDEKTSV4RRFFQ69G5FAV'))
+    assert_equal(false, ULID.valid?(ULID.sample))
     assert_equal(false, ULID.valid?("01ARZ3NDEKTSV4RRFFQ69G5FAV\n"))
     assert_equal(false, ULID.valid?('01ARZ3NDEKTSV4RRFFQ69G5FAU'))
     assert_equal(true, ULID.valid?('01ARZ3NDEKTSV4RRFFQ69G5FAV'))
     assert_equal(true, ULID.valid?('01ARZ3NDEKTSV4RRFFQ69G5FAV'.downcase))
     assert_equal(true, ULID.valid?('7ZZZZZZZZZZZZZZZZZZZZZZZZZ'))
     assert_equal(false, ULID.valid?('80000000000000000000000000'))
+
+    assert_raises(ArgumentError) do
+      ULID.valid?
+    end
   end
 
   def test_range

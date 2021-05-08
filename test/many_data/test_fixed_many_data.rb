@@ -19,6 +19,7 @@ class TestFixedManyData < Test::Unit::TestCase
     assert_equal(example.uuidv4, ulid.to_uuidv4)
     assert_equal(example.to_time, ulid.to_time)
     assert_equal(ULID.floor(example.time), ulid.to_time)
+    assert_equal(true, ULID.valid?(example.string))
   end
 
   def test_many_fixed_examples_for_from_integer
