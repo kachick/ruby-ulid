@@ -94,13 +94,11 @@ class ULID
       ulid_range = range(period)
       min, max, exclude_end = ulid_range.begin, ulid_range.end, ulid_range.exclude_end?
 
-      # I referenced https://stackoverflow.com/a/2683929/1212807 for below algorithm, thank you!
       possibilities = (max.to_i - min.to_i) + (exclude_end ? 0 : 1)
       raise ArgumentError, "given range `#{ulid_range.inspect}` does not have possibilities" unless possibilities.positive?
 
       -> {
-        random = possibilities * SecureRandom.rand.to_r
-        (random + min.to_i).to_i
+        SecureRandom.random_number(possibilities) + min.to_i
       }
     else
       -> {
