@@ -63,7 +63,7 @@ class ULID
   @milliseconds: Integer
   @entropy: Integer
   @string: String?
-  @integer: Integer?
+  @integer: Integer
   @timestamp: String?
   @randomness: String?
   @inspect: String?
@@ -86,10 +86,10 @@ class ULID
   def self.valid?: (untyped string) -> bool
   def self.scan:  (String string) -> Enumerator[self, singleton(ULID)]
                 | (String string) { (self ulid) -> void } -> singleton(ULID)
-  def self.from_monotonic_generator: (MonotonicGenerator generator) -> self
+  def self.from_milliseconds_and_entropy: (milliseconds: Integer, entropy: Integer) -> self
   attr_reader milliseconds: Integer
   attr_reader entropy: Integer
-  def initialize: (milliseconds: Integer, entropy: Integer, ?integer: Integer) -> void
+  def initialize: (milliseconds: Integer, entropy: Integer, integer: Integer) -> void
   def to_s: -> String
   def to_i: -> Integer
   alias hash to_i

@@ -51,7 +51,7 @@ class ULID
   # @param [Integer] entropy
   # @return [ULID]
   def self.generate(moment: current_milliseconds, entropy: reasonable_entropy)
-    new milliseconds: milliseconds_from_moment(moment), entropy: entropy
+    from_milliseconds_and_entropy(milliseconds: milliseconds_from_moment(moment), entropy: entropy)
   end
 
   # Short hand of `ULID.generate(moment: time)`
@@ -59,7 +59,7 @@ class ULID
   # @return [ULID]
   def self.at(time)
     raise ArgumentError, 'ULID.at takes only `Time` instance' unless Time === time
-    new milliseconds: milliseconds_from_time(time), entropy: reasonable_entropy
+    from_milliseconds_and_entropy(milliseconds: milliseconds_from_time(time), entropy: reasonable_entropy)
   end
 
   # @param [Integer, Time] moment
@@ -266,11 +266,22 @@ class ULID
   end
 
   # @api private
-  # @param [MonotonicGenerator] generator
+  # @param [Integer] milliseconds
+  # @param [Integer] entropy
   # @return [ULID]
-  def self.from_monotonic_generator(generator)
-    raise ArgumentError, 'this method provided only for MonotonicGenerator' unless MonotonicGenerator === generator
-    new milliseconds: generator.latest_milliseconds, entropy: generator.latest_entropy
+  # @raise [OverflowError] if the given value is larger than the ULID limit
+  # @raise [ArgumentError] if the given milliseconds and/or entropy is negative number
+  def self.from_milliseconds_and_entropy(milliseconds:, entropy:)
+    raise ArgumentError, 'milliseconds and entropy should be an `Integer`' unless Integer === milliseconds && Integer === entropy
+    raise OverflowError, "timestamp overflow: given #{milliseconds}, max: #{MAX_MILLISECONDS}" unless milliseconds <= MAX_MILLISECONDS
+    raise OverflowError, "entropy overflow: given #{entropy}, max: #{MAX_ENTROPY}" unless entropy <= MAX_ENTROPY
+    raise ArgumentError, 'milliseconds and entropy should not be negative' if milliseconds.negative? || entropy.negative?
+
+    n32encoded_timestamp = milliseconds.to_s(32).rjust(TIMESTAMP_ENCODED_LENGTH, '0')
+    n32encoded_randomness = entropy.to_s(32).rjust(RANDOMNESS_ENCODED_LENGTH, '0')
+    integer = (n32encoded_timestamp + n32encoded_randomness).to_i(32)
+
+    new milliseconds: milliseconds, entropy: entropy, integer: integer
   end
 
   attr_reader :milliseconds, :entropy
@@ -280,20 +291,9 @@ class ULID
   # @param [Integer] entropy
   # @param [Integer] integer
   # @return [void]
-  # @raise [OverflowError] if the given value is larger than the ULID limit
-  # @raise [ArgumentError] if the given milliseconds and/or entropy is negative number
-  def initialize(milliseconds:, entropy:, integer: nil)
-    if integer
-      @integer = integer
-    else
-      milliseconds = milliseconds.to_int
-      entropy = entropy.to_int
-
-      raise OverflowError, "timestamp overflow: given #{milliseconds}, max: #{MAX_MILLISECONDS}" unless milliseconds <= MAX_MILLISECONDS
-      raise OverflowError, "entropy overflow: given #{entropy}, max: #{MAX_ENTROPY}" unless entropy <= MAX_ENTROPY
-      raise ArgumentError, 'milliseconds and entropy should not be negative' if milliseconds.negative? || entropy.negative?
-    end
-
+  def initialize(milliseconds:, entropy:, integer:)
+    # All arguments check should be done with each constructors, not here
+    @integer = integer
     @milliseconds = milliseconds
     @entropy = entropy
   end
@@ -305,11 +305,7 @@ class ULID
 
   # @return [Integer]
   def to_i
-    @integer ||= begin
-      n32encoded_timestamp = milliseconds.to_s(32).rjust(TIMESTAMP_ENCODED_LENGTH, '0')
-      n32encoded_randomness = entropy.to_s(32).rjust(RANDOMNESS_ENCODED_LENGTH, '0')
-      (n32encoded_timestamp + n32encoded_randomness).to_i(32)
-    end
+    @integer
   end
   alias_method :hash, :to_i
 
