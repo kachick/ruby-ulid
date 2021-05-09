@@ -67,30 +67,26 @@ class TestULIDClass < Test::Unit::TestCase
     assert_match(/private method `new' called/, err.message)
   end
 
-  def test_from_monotonic_generator
-    monotonic_generator = ULID::MonotonicGenerator.new
-    monotonic_generator.latest_milliseconds = 0
-    monotonic_generator.latest_entropy = 0
-    assert_equal(ULID.parse('00000000000000000000000000'), ULID.from_monotonic_generator(monotonic_generator))
-
-    monotonic_generator.latest_milliseconds = -1
+  def from_milliseconds_and_entropy
     err = assert_raises(ArgumentError) do
-      ULID.from_monotonic_generator(monotonic_generator)
+      ULID.from_milliseconds_and_entropy(milliseconds: -1, entropy: 42)
     end
     assert_match('milliseconds and entropy should not be negative', err.message)
 
-    monotonic_generator.latest_milliseconds = 0
-    monotonic_generator.latest_entropy = -1
     err = assert_raises(ArgumentError) do
-      ULID.from_monotonic_generator(monotonic_generator)
+      ULID.from_milliseconds_and_entropy(milliseconds: 42, entropy: -1)
     end
     assert_match('milliseconds and entropy should not be negative', err.message)
 
-    [nil, BasicObject.new, '01ARZ3NDEKTSV4RRFFQ69G5FAV', 42, Time.now].each do |evil|
+    [nil, BasicObject.new, '01ARZ3NDEKTSV4RRFFQ69G5FAV', '42', Time.now, ULID.sample, 4.2, Object.new].each do |evil|
       err = assert_raises(ArgumentError) do
-        ULID.from_monotonic_generator(evil)
+        ULID.from_monotonic_generator(milliseconds: 42, entropy: evil)
       end
-      assert_match(/this method provided only for MonotonicGenerator/, err.message)
+      assert_match('milliseconds and entropy should be an `Integer`', err.message)
+      err = assert_raises(ArgumentError) do
+        ULID.from_monotonic_generator(milliseconds: evil, entropy: 42)
+      end
+      assert_match('milliseconds and entropy should be an `Integer`', err.message)
     end
   end
 

@@ -27,7 +27,7 @@ class ULID
         else
           @latest_entropy += 1
         end
-        ULID.from_monotonic_generator(self)
+        ULID.from_milliseconds_and_entropy(milliseconds: @latest_milliseconds, entropy: @latest_entropy)
       end
     end
 
