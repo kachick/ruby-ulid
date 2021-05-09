@@ -147,13 +147,22 @@ class TestULIDInstance < Test::Unit::TestCase
     assert_equal(:ulid1_2, hash.fetch(ulid1_1))
     assert_equal(:ulid2, hash.fetch(ulid2))
 
-    ulid2_int = ulid2.to_i
-    hash[ulid2_int] = :ulid2_int
+    ulid2_hash = ulid2.hash
+
+    having_same_hash = Object.new
+    having_same_hash.singleton_class.class_eval do
+      define_method(:hash) do
+        ulid2_hash
+      end
+    end
+    assert_equal(having_same_hash.hash, ulid2.hash)
+
+    hash[having_same_hash] = :having_same_hash
 
     assert_equal({
       ulid1_2 => :ulid1_2,
       ulid2 => :ulid2,
-      ulid2_int => :ulid2_int,
+      having_same_hash => :having_same_hash
     }, hash)
   end
 
