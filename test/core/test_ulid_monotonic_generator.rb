@@ -20,27 +20,6 @@ class TestULIDMonotonicGenerator < Test::Unit::TestCase
     assert_equal(true, second > first)
   end
 
-  def test_many_data
-    ulids = 1000.times.map do |n|
-      if (n % 100).zero?
-        sleep(0.01)
-      end
-
-      @generator.generate
-    end
-
-    assert_equal(1000, ulids.map(&:to_s).uniq.size)
-    assert_equal(true, (5..50).cover?(ulids.group_by(&:to_time).size))
-    assert_equal(ulids, ulids.sort_by(&:to_s))
-    assert_equal(ulids, ulids.sort_by(&:to_i))
-    assert_equal(ulids, ulids.sort)
-  end
-
-  def test_generate_with_no_moment_uses_current_time
-    running_at = Time.now
-    assert_equal(true, (ULID.floor(running_at)..(running_at + 3)).cover?(@generator.generate.to_time))
-  end
-
   def test_generate_with_negative_moment
     assert_raises(ArgumentError) do
       @generator.generate(moment: -1)
