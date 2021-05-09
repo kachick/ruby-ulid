@@ -25,7 +25,8 @@ class TestULIDSubClass < Test::Unit::TestCase
       Subclass.generate,
       Subclass.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV'),
       Subclass.at(Time.now),
-      Subclass.from_integer(42)
+      Subclass.from_integer(42),
+      Subclass.scan('01ARZ3NDEKTSV4RRFFQ69G5FAV').first
     ].each do |instance|
       assert_not_instance_of(ULID, instance)
       assert_instance_of(Subclass, instance)
