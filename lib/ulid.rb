@@ -437,6 +437,8 @@ class ULID
     self
   end
 
+  undef_method :instance_variable_set
+
   private
 
   # @return [void]

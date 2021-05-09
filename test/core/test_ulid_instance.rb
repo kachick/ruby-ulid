@@ -169,6 +169,24 @@ class TestULIDInstance < Test::Unit::TestCase
     assert_same(ulid, ulid.clone(freeze: false))
   end
 
+  def test_instance_variable_set
+    ulid = ULID.sample
+    int = ulid.to_i
+    str = ulid.to_s
+
+    assert_raises(NoMethodError) do
+      ulid.instance_variable_set(:@integer, int + 42)
+    end
+    assert_equal(int, ulid.to_i)
+    assert_equal(int, ulid.instance_variable_get(:@integer))
+
+    assert_raises(NoMethodError) do
+      ulid.instance_variable_set(:@string, str.downcase)
+    end
+    assert_same(str, ulid.to_s)
+    assert_same(str, ulid.instance_variable_get(:@string))
+  end
+
   def test_to_time
     ulid = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
     time = ulid.to_time
