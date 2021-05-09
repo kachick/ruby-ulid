@@ -9,10 +9,10 @@ class TestULIDWithExampleValues < Test::Unit::TestCase
     assert_equal('0000XSNJG0', ULID.generate(moment: Time.at(1000000)).timestamp)
     time = Time.utc(2019, 3, 31, 3, 51, 23, 536000)
     assert_equal(time, ULID.parse('01D78XZ44G0000000000000000').to_time)
-    assert_equal('01D78XZ44G0000000000000000', ULID.min(moment: time).to_s)
+    assert_equal('01D78XZ44G0000000000000000', ULID.min(time).to_s)
 
     # https://github.com/oklog/ulid/blob/e7ac4de44d238ff4707cc84b9c98ae471f31e2d1/ulid_test.go#L204-L213
-    assert_equal('01ARYZ6S410000000000000000', ULID.min(moment: 1469918176385).to_s)
+    assert_equal('01ARYZ6S410000000000000000', ULID.min(1469918176385).to_s)
 
     # https://github.com/oklog/ulid/blob/e7ac4de44d238ff4707cc84b9c98ae471f31e2d1/ulid_test.go#L472-L487
     assert_instance_of(ULID, ULID.parse('00000000000000000000000000'))

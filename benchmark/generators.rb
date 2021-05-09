@@ -17,9 +17,9 @@ Benchmark.ips do |x|
   x.report('ULID.parse') { ULID.parse(encoded) }
   x.report('ULID.from_integer') { ULID.from_integer(fixed_integer) }
   x.report('ULID.min with no arguments is optimized') { ULID.min }
-  x.report('ULID.min with moment(Time)') { ULID.min(moment: moment) }
+  x.report('ULID.min with moment(Time)') { ULID.min(moment) }
   x.report('ULID.max with no arguments is optimized') { ULID.max }
-  x.report('ULID.max with moment(Time)') { ULID.max(moment: moment) }
+  x.report('ULID.max with moment(Time)') { ULID.max(moment) }
   x.report('ULID.sample with no arguments') { ULID.sample }
   x.report('ULID.sample with period') { ULID.sample(period: period) }
   x.report('ULID.at') { ULID.at(Time.now) }

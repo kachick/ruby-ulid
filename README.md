@@ -248,8 +248,8 @@ ULID.min #=> ULID(1970-01-01 00:00:00.000 UTC: 00000000000000000000000000)
 ULID.max #=> ULID(10889-08-02 05:31:50.655 UTC: 7ZZZZZZZZZZZZZZZZZZZZZZZZZ)
 
 time = Time.at(946684800, Rational('123456.789')).utc #=> 2000-01-01 00:00:00.123456789 UTC
-ULID.min(moment: time) #=> ULID(2000-01-01 00:00:00.123 UTC: 00VHNCZB3V0000000000000000)
-ULID.max(moment: time) #=> ULID(2000-01-01 00:00:00.123 UTC: 00VHNCZB3VZZZZZZZZZZZZZZZZ)
+ULID.min(time) #=> ULID(2000-01-01 00:00:00.123 UTC: 00VHNCZB3V0000000000000000)
+ULID.max(time) #=> ULID(2000-01-01 00:00:00.123 UTC: 00VHNCZB3VZZZZZZZZZZZZZZZZ)
 ```
 
 `ULID#next` and `ULID#succ` returns next(successor) ULID.
@@ -388,9 +388,9 @@ Major methods can be replaced as below.
 -ULID.time(string)
 +ULID.parse(string).to_time
 -ULID.min_ulid_at(time)
-+ULID.min(moment: time).to_s
++ULID.min(time).to_s
 -ULID.max_ulid_at(time)
-+ULID.max(moment: time).to_s
++ULID.max(time).to_s
 ```
 
 NOTE: It is still having precision issue similar as `ulid gem` in the both generator and parser. I sent PRs.

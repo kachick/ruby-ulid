@@ -65,7 +65,7 @@ class TestULIDMonotonicGenerator < Test::Unit::TestCase
   end
 
   def test_generate_raises_overflow_when_called_on_max_entropy
-    max_ulid_in_a_milliseconds = ULID.max(moment: 42)
+    max_ulid_in_a_milliseconds = ULID.max(42)
 
     @generator.latest_milliseconds = max_ulid_in_a_milliseconds.milliseconds
     @generator.latest_entropy = ULID::MAX_ENTROPY.pred

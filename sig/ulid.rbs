@@ -79,8 +79,8 @@ class ULID
   def self.parse: (String string) -> self
   def self.from_uuidv4: (String uuid) -> ULID
   def self.from_integer: (Integer integer) -> self
-  def self.min: (?moment: moment) -> ULID
-  def self.max: (?moment: moment) -> ULID
+  def self.min: (?moment moment) -> ULID
+  def self.max: (?moment moment) -> ULID
   def self.sample: (?period: period) -> self
                  | (Integer number, ?period: period) -> Array[self]
   def self.valid?: (untyped string) -> bool
