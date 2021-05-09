@@ -146,6 +146,15 @@ class TestULIDInstance < Test::Unit::TestCase
     assert_equal([:ulid1_2, :ulid2], hash.values)
     assert_equal(:ulid1_2, hash.fetch(ulid1_1))
     assert_equal(:ulid2, hash.fetch(ulid2))
+
+    ulid2_int = ulid2.to_i
+    hash[ulid2_int] = :ulid2_int
+
+    assert_equal({
+      ulid1_2 => :ulid1_2,
+      ulid2 => :ulid2,
+      ulid2_int => :ulid2_int,
+    }, hash)
   end
 
   def test_dup
