@@ -28,11 +28,7 @@ class TestULIDUseCase < Test::Unit::TestCase
 
     sorted_times.each_cons(2) do |pred, succ|
       assert do
-        pred.to_i == succ.to_i
-      end
-
-      assert do
-        ULID.milliseconds_from_moment(pred) < ULID.milliseconds_from_moment(succ)
+        (pred.to_i == succ.to_i) || (pred.to_i.succ == succ.to_i)
       end
     end
 
