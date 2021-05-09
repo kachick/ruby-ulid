@@ -17,11 +17,6 @@ $ bundle install
 # Executing first time might take longtime, because development mode dependent active_support via steep
 ```
 
-## Policy for the adding dependencies
-
-* Keep no runtime dependencies except `https://github.com/ruby/*` projects
-* Keep clean environment in `test` group. Do not add gems like active_support into `test` group # ref: [My struggle](https://github.com/kachick/ruby-ulid/pull/42#discussion_r623960639)
-
 ## Ensuring pre-release version's behaviors
 
 Play with the behaviors in REPL.
@@ -62,3 +57,21 @@ If you try to improve any performance issue, please add benchmarking and check t
 $ bundle exec ruby benchmark/the_added_file.rb
 # Showing the results
 ```
+
+## ADR - Architecture decision record
+
+### What is `ADR`?
+
+* [English](https://github.com/joelparkerhenderson/architecture_decision_record)
+* [Japanese](https://quipper.hatenablog.com/entry/architecture_decision_records)
+
+### Adding dependencies for this gem
+
+* Keep no runtime dependencies except `https://github.com/ruby/*` projects
+* Keep clean environment in `test` group. Do not add gems like `active_support` into `test` group # ref: [My struggle](https://github.com/kachick/ruby-ulid/pull/42#discussion_r623960639)
+
+### Adding `ULID` instance variables
+
+* Basically should be reduced. ref: [#91](https://github.com/kachick/ruby-ulid/issues/91)
+* When having some objects, they should be frozen. ref: [#126](https://github.com/kachick/ruby-ulid/pull/126)
+* Reader methods should return same value, should not be changed
