@@ -4,10 +4,10 @@ gemspec
 
 group :development, :test do
   gem 'rake', '>= 13.0.3', '< 20'
+  gem 'irb', '>= 1.3.5'
 end
 
 group :development do
-  gem 'irb', '>= 1.3.5'
   gem 'steep', '>= 0.44.1'
 end
 

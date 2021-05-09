@@ -6,9 +6,8 @@ require 'warning'
 # How to use => https://test-unit.github.io/test-unit/en/
 require 'test/unit'
 
-if RUBY_VERSION >= '3.0.1'
-  require 'power_assert/colorize'
-end
+require 'irb'
+require 'power_assert/colorize'
 
 if Warning.respond_to?(:[]=) # @TODO Removable this guard after dropped ruby 2.6
   Warning[:deprecated] = true
