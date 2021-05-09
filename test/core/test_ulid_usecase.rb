@@ -113,4 +113,32 @@ class TestULIDUseCase < Test::Unit::TestCase
     assert_equal([ulid1_2, ulid1_3, ulid2, ulid3_1, ulid3_2, ulid3_3], ulids.grep(ULID.range(time1_2..time3_2)))
     assert_equal([ulid1_2, ulid1_3, ulid2, ulid3_1], ulids.grep(ULID.range(time1_2...time3_3)))
   end
+
+  # This gem does not keep compatibilities for dumped data in different versions. Even in patch version updating.
+  def test_marshal_and_unmarshal
+    ulid = ULID.sample
+    dumped = Marshal.dump(ulid)
+    unmarshaled = Marshal.load(dumped)
+    assert_not_same(ulid, unmarshaled)
+    assert_instance_of(ULID, unmarshaled)
+    assert_equal(ulid, unmarshaled)
+    assert_equal(ulid.to_i, unmarshaled.to_i)
+    assert_equal(ulid.to_s, unmarshaled.to_s)
+    assert_equal(ulid.inspect, unmarshaled.inspect)
+    assert_equal(ulid.hash, unmarshaled.hash)
+    assert_equal(ulid.to_time, unmarshaled.to_time)
+    assert_equal(ulid.milliseconds, unmarshaled.milliseconds)
+    assert_equal(ulid.entropy, unmarshaled.entropy)
+    assert_equal(ulid.timestamp, unmarshaled.timestamp)
+    assert_equal(ulid.randomness, unmarshaled.randomness)
+    assert_equal(ulid.milliseconds, unmarshaled.milliseconds)
+    assert_equal(ulid.octets, unmarshaled.octets)
+    assert_equal(ulid.patterns, unmarshaled.patterns)
+
+    frozen = ULID.sample.freeze
+    dumped = Marshal.dump(frozen)
+    unmarshaled = Marshal.load(dumped)
+    assert(!unmarshaled.frozen?)
+    assert(!unmarshaled.to_s.frozen?)
+  end
 end
