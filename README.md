@@ -243,6 +243,8 @@ ULID.parse('01F4GNBXW1AM2KWW52PVT3ZY9X').patterns
 
 `ULID.min` and `ULID.max` return termination values for ULID spec.
 
+It can take `Time` instance as an optional argument. Then returns min/max ID that has limit of randomness part in the time.
+
 ```ruby
 ULID.min #=> ULID(1970-01-01 00:00:00.000 UTC: 00000000000000000000000000)
 ULID.max #=> ULID(10889-08-02 05:31:50.655 UTC: 7ZZZZZZZZZZZZZZZZZZZZZZZZZ)
