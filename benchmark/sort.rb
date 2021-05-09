@@ -6,11 +6,11 @@ require_relative '../lib/ulid'
 
 frozen_ulid_objects = ULID.sample(10000).map(&:freeze)
 ulid_strings = frozen_ulid_objects.map(&:to_s)
-non_cached_ulid_objects = frozen_ulid_objects.map(&:dup)
+non_cached_ulid_objects = ulid_strings.map { |s| ULID.parse(s) }
 
 Benchmark.ips do |x|
-  x.report('Sort ULID instance') do
-    non_cached_ulid_objects.shuffle.sort # After second sorting, cache will be work. So this benchmark is not accurate.
+  x.report('Sort ULID instance / After second sorting, cache will be work. So this benchmark is not accurate.') do
+    non_cached_ulid_objects.shuffle.sort
   end
 
   x.report('Sort frozen ULID instance(some values cached)') do
