@@ -92,7 +92,7 @@ class TestULIDMonotonicGeneratorThreadSafety < Test::Unit::TestCase
     uniq_times = ulids_by_time.keys
 
     # Really? I have a feeling it should get much greater...
-    acceptable_same_timestamp_count = 5
+    acceptable_same_timestamp_count = 3
     assert do
       uniq_times.size >= acceptable_same_timestamp_count
     end
