@@ -4,22 +4,34 @@ require 'bundler/gem_tasks'
 require 'rake/testtask'
 
 task default: [:test]
-task test_all: [:test, :test_uuid, :test_heavy]
 
-Rake::TestTask.new(:test) do |tt|
-  tt.test_files = FileList['test/**/test_*.rb'].exclude(/many_data|uuid/)
+# Keep lightweight!
+basic_test_tasks = [:test_core, :test_experimental]
+task test: basic_test_tasks
+
+# Basically checked in CI only
+task test_all: basic_test_tasks | [:test_many_data, :test_concurrency]
+
+Rake::TestTask.new(:test_core) do |tt|
+  tt.pattern = 'test/core/**/test_*.rb'
   tt.verbose = true
   tt.warning = true
 end
 
-Rake::TestTask.new(:test_uuid) do |tt|
-  tt.pattern = 'test/**/test_uuid*.rb'
+Rake::TestTask.new(:test_experimental) do |tt|
+  tt.pattern = 'test/experimental/**/test_*.rb'
   tt.verbose = true
   tt.warning = true
 end
 
-Rake::TestTask.new(:test_heavy) do |tt|
+Rake::TestTask.new(:test_many_data) do |tt|
   tt.pattern = 'test/many_data/**/test_*.rb'
+  tt.verbose = true
+  tt.warning = true
+end
+
+Rake::TestTask.new(:test_concurrency) do |tt|
+  tt.pattern = 'test/concurrency/**/test_*.rb'
   tt.verbose = true
   tt.warning = true
 end

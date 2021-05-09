@@ -1,7 +1,7 @@
 # coding: utf-8
 # frozen_string_literal: true
 
-require_relative 'helper'
+require_relative '../helper'
 
 # Just to confirm `current behavior` for some testing reasons. Basically does not support subclass behaviors.
 class TestULIDSubClass < Test::Unit::TestCase

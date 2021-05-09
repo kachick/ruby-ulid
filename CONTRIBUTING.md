@@ -48,6 +48,14 @@ $ echo $?
 0
 ```
 
+CI includes other heavy tests, if you want to check it in own machine, below command is the one.
+
+```console
+$ bundle exec rake test_all
+$ echo $?
+0
+```
+
 If you try to improve any performance issue, please add benchmarking and check the result of before and after.
 
 ```console

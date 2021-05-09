@@ -21,18 +21,20 @@ end
 
 require_relative '../lib/ulid'
 
-module ULIDAssertions
-  def assert_acceptable_randomized_string(ulid)
-    assert do
-      (0..4).cover?(ULID::TIMESTAMP_ENCODED_LENGTH - ulid.timestamp.squeeze.size)
-    end
+class Test::Unit::TestCase
+  module ULIDAssertions
+    def assert_acceptable_randomized_string(ulid)
+      assert do
+        (0..4).cover?(ULID::TIMESTAMP_ENCODED_LENGTH - ulid.timestamp.squeeze.size)
+      end
 
-    assert do
-      (0..5).cover?(ULID::RANDOMNESS_ENCODED_LENGTH - ulid.randomness.squeeze.size)
-    end
+      assert do
+        (0..5).cover?(ULID::RANDOMNESS_ENCODED_LENGTH - ulid.randomness.squeeze.size)
+      end
 
-    assert do
-      '000' != ulid.randomness.slice(-3, 3)
+      assert do
+        '000' != ulid.randomness.slice(-3, 3)
+      end
     end
   end
 end
