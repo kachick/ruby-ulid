@@ -139,12 +139,12 @@ class ULID
     self
   end
 
-  # @param [Integer, #to_int] integer
+  # @param [Integer] integer
   # @return [ULID]
   # @raise [OverflowError] if the given integer is larger than the ULID limit
   # @raise [ArgumentError] if the given integer is negative number
   def self.from_integer(integer)
-    integer = integer.to_int
+    raise ArgumentError, 'ULID.from_integer takes only `Integer`' unless Integer === integer
     raise OverflowError, "integer overflow: given #{integer}, max: #{MAX_INTEGER}" unless integer <= MAX_INTEGER
     raise ArgumentError, "integer should not be negative: given: #{integer}" if integer.negative?
 

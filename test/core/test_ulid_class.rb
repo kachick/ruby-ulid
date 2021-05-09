@@ -397,6 +397,10 @@ class TestULIDClass < Test::Unit::TestCase
     assert_equal(max, ULID.from_integer(max.to_i))
 
     assert_raises(ArgumentError) do
+      ULID.from_integer
+    end
+
+    assert_raises(ArgumentError) do
       ULID.from_integer(-1)
     end
 
@@ -404,8 +408,11 @@ class TestULIDClass < Test::Unit::TestCase
       ULID.from_integer(max.to_i.succ)
     end
 
-    assert_raises do
-      ULID.from_integer(nil)
+    [nil, BasicObject.new, '01ARZ3NDEKTSV4RRFFQ69G5FAV', '42', Time.now, ULID.sample, 4.2, Object.new].each do |evil|
+      err = assert_raises(ArgumentError) do
+        ULID.from_integer(evil)
+      end
+      assert_equal('ULID.from_integer takes only `Integer`', err.message)
     end
   end
 
