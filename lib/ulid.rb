@@ -62,15 +62,15 @@ class ULID
     from_milliseconds_and_entropy(milliseconds: milliseconds_from_time(time), entropy: reasonable_entropy)
   end
 
-  # @param [Integer, Time] moment
+  # @param [Time, Integer] moment
   # @return [ULID]
-  def self.min(moment: 0)
+  def self.min(moment=0)
     0.equal?(moment) ? MIN : generate(moment: moment, entropy: 0)
   end
 
-  # @param [Integer, Time] moment
+  # @param [Time, Integer] moment
   # @return [ULID]
-  def self.max(moment: MAX_MILLISECONDS)
+  def self.max(moment=MAX_MILLISECONDS)
     MAX_MILLISECONDS.equal?(moment) ? MAX : generate(moment: moment, entropy: MAX_ENTROPY)
   end
 
@@ -168,7 +168,7 @@ class ULID
 
     case begin_element
     when Time
-      begin_ulid = min(moment: begin_element)
+      begin_ulid = min(begin_element)
     when nil
       begin_ulid = MIN
     when self
@@ -180,9 +180,9 @@ class ULID
     case end_element
     when Time
       if exclude_end
-        end_ulid = min(moment: end_element)
+        end_ulid = min(end_element)
       else
-        end_ulid = max(moment: end_element)
+        end_ulid = max(end_element)
       end
     when nil
       # The end should be max and include end, because nil end means to cover endless ULIDs until the limit
