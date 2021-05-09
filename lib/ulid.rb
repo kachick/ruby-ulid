@@ -160,9 +160,9 @@ class ULID
 
   # @param [Range<Time>, Range<nil>, Range[ULID]] period
   # @return [Range<ULID>]
-  # @raise [ArgumentError] if the given period is not a `Range[Time]` or `Range[nil]`
+  # @raise [ArgumentError] if the given period is not a `Range[Time]`, `Range[nil]` or `Range[ULID]`
   def self.range(period)
-    raise ArgumentError, 'ULID.range takes only `Range[Time]` or `Range[nil]`' unless Range === period
+    raise ArgumentError, 'ULID.range takes only `Range[Time]`, `Range[nil]` or `Range[ULID]`' unless Range === period
     begin_element, end_element, exclude_end = period.begin, period.end, period.exclude_end?
     return period if self === begin_element && self === end_element
 
@@ -174,7 +174,7 @@ class ULID
     when self
       begin_ulid = begin_element
     else
-      raise ArgumentError, "ULID.range takes only `Range[Time]` or `Range[nil]`, given: #{period.inspect}"
+      raise ArgumentError, "ULID.range takes only `Range[Time]`, `Range[nil]` or `Range[ULID]`, given: #{period.inspect}"
     end
 
     case end_element
@@ -191,7 +191,7 @@ class ULID
     when self
       end_ulid = end_element
     else
-      raise ArgumentError, "ULID.range takes only `Range[Time]` or `Range[nil]`, given: #{period.inspect}"
+      raise ArgumentError, "ULID.range takes only `Range[Time]`, `Range[nil]` or `Range[ULID]`, given: #{period.inspect}"
     end
 
     begin_ulid.freeze

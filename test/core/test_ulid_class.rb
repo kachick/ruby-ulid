@@ -192,7 +192,7 @@ class TestULIDClass < Test::Unit::TestCase
       err = assert_raises(ArgumentError) do
         ULID.range(evil)
       end
-      assert(err.message.start_with?('ULID.range takes only `Range[Time]` or `Range[nil]`'))
+      assert(err.message.start_with?('ULID.range takes only `Range[Time]`, `Range[nil]` or `Range[ULID]`'))
     end
 
     # Below section is for some edge cases ref: https://github.com/kachick/ruby-ulid/issues/74
