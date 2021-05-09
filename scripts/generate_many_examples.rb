@@ -6,28 +6,66 @@ require_relative '../lib/ulid'
 require_relative '../lib/ulid/uuid'
 require_relative '../test/many_data/fixtures/example'
 
-min = Time.at(0).utc
-max = Time.at(56294995342131/200r).utc #=> 10889-08-02 05:31:50.655 UTC
+require 'time' # To use `Time.parse` for readability, Do not depend on tests
 
-example_count = 10000
-ulids = []
-examples = example_count.times.map do
-  # https://stackoverflow.com/a/2683929/1212807
-  time = Time.at(((max.to_r - min.to_r) * SecureRandom.rand) + min.to_r).utc
-  ulid = ULID.generate(moment: time)
-  ulids << ulid
-  Example.new(
-    time: time,
-    to_time: ulid.to_time,
-    string: ulid.to_s,
-    integer: ulid.to_i,
-    timestamp: ulid.timestamp,
-    randomness: ulid.randomness,
-    inspect: ulid.inspect,
-    uuidv4: ulid.to_uuidv4
-  )
+# Needless to rollback. This is rough script.
+ENV['TZ'] = 'UTC'
+
+# 1999 is not ancient to me. But ancient in `Time` objects.
+ancient = Time.at(0)..Time.parse('1999/12/31')
+
+# Birthday of `Doraemon` is the near feature!
+recently = Time.parse('2020/1/1')..Time.parse('2112/9/3')
+
+# Quoted from https://en.wikipedia.org/wiki/Timeline_of_the_far_future
+#
+# Years from now - 2000
+# The average length of a solar day is likely to exceed 86,400¹⁄₃₀ SI seconds due to lunar tides decelerating the Earth's rotation, making the current UTC standard of inserting a leap second only at the end of a UTC month insufficient to keep UTC within one second of UT1 at all times. To compensate, either leap seconds will have to be added at multiple times during the month or multiple leap seconds will have to be added at the end of some or all months.[8]
+distant_future = Time.parse("#{2021 + 2000}/1/1")...Time.parse("#{2021 + 4000}/12/31")
+
+# When we want to use this timestamp...? :)
+limit_of_the_ulid = (ULID.max.to_time - 1000000)..ULID.max.to_time
+
+examples = [ancient, recently, distant_future, limit_of_the_ulid].flat_map do |period|
+  ulids = ULID.sample(1000, period: period)
+  if ulids.uniq!
+    raise 'Very rare case happened or bug exists' 
+  end
+
+  ulids.map do |ulid|
+    unless period.cover?(ulid.to_time)
+      raise ULID::Error, 'Crucial bug exists!'
+    end
+
+    Example.new(
+      period: period,
+      to_time: ulid.to_time,
+      string: ulid.to_s,
+      integer: ulid.to_i,
+      timestamp: ulid.timestamp,
+      randomness: ulid.randomness,
+      octets: ulid.octets,
+      inspect: ulid.inspect,
+      uuidv4: ulid.to_uuidv4
+    )
+  end
 end
 
-raise 'Very rare case happened or bug exists' unless ulids.uniq.size == example_count
+unless examples.size == 4000
+  raise ScriptError, 'This script should have a bug! (or interpreter bug...?)'
+end
 
-Marshal.dump(examples, STDOUT)
+puts 'The generated samples are below '
+p examples.shuffle.take(20)
+
+filename = "dumped_fixed_examples_#{Time.now.strftime('%Y-%m-%d_%H-%M')}.bin"
+output_path = "#{File.expand_path('.')}/test/many_data/fixtures/#{filename}"
+
+
+File.open(output_path, 'w+b') do |file|
+  Marshal.dump(examples, file)
+end
+
+puts '-' * 72
+
+puts "Need to bump unmarshalling code in `test/many_data/test_fixed_many_data.rb` with #{filename}"

@@ -57,17 +57,14 @@ task :yard do
 end
 
 task :benchmark do
-  sh 'bundle exec ruby benchmark/generators.rb'
-  sh 'bundle exec ruby benchmark/core_instance_methods.rb'
-  sh 'bundle exec ruby benchmark/extra_instance_methods.rb'
-  sh 'bundle exec ruby benchmark/sort.rb'
-  sh 'bundle exec ruby benchmark/sample.rb'
+  sh 'bundle exec ruby ./benchmark/generators.rb'
+  sh 'bundle exec ruby ./benchmark/core_instance_methods.rb'
+  sh 'bundle exec ruby ./benchmark/extra_instance_methods.rb'
+  sh 'bundle exec ruby ./benchmark/sort.rb'
+  sh 'bundle exec ruby ./benchmark/sample.rb'
 end
 
 task :update_fixed_examples do
-  filepath = './test/many_data/fixtures/dumped_fixed_examples.dat'
-  sh "rm #{filepath}" do |ok, status|
-    p({ok: ok, status: status})
-  end
-  sh "bundle exec ruby scripts/generate_many_examples.rb > #{filepath}"
+  sh 'rm ./test/many_data/fixtures/dumped_fixed_examples_*.bin'
+  sh 'bundle exec ruby ./scripts/generate_many_examples.rb'
 end
