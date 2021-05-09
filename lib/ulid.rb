@@ -112,11 +112,11 @@ class ULID
       raise ArgumentError, 'accepts no argument or integer only' unless Integer === number
 
       if number > MAX_INTEGER || number.negative?
-        raise ArgumentError, "given number #{number} is larger than ULID limit #{MAX_INTEGER} or negative: #{number.inspect}"
+        raise ArgumentError, "given number `#{number}` is larger than ULID limit `#{MAX_INTEGER}` or negative"
       end
 
       if period && (number > possibilities)
-        raise ArgumentError, "given number #{number} is larger than given possibilities #{possibilities}"
+        raise ArgumentError, "given number `#{number}` is larger than given possibilities `#{possibilities}`"
       end
 
       Array.new(number) { from_integer(int_generator.call) }

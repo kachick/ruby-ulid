@@ -509,7 +509,7 @@ class TestULIDClass < Test::Unit::TestCase
     err = assert_raises(ArgumentError) do
       ULID.sample(2, period: ulid..ulid)
     end
-    assert_match('given number 2 is larger than given possibilities 1', err.message)
+    assert_match('given number `2` is larger than given possibilities `1`', err.message)
     assert_equal(2, ULID.sample(2, period: ulid..ulid.succ).size)
     assert_equal(0, (ULID.sample(2, period: ulid..ulid.succ) - [ulid, ulid.succ]).size)
     
