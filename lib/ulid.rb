@@ -300,7 +300,7 @@ class ULID
 
   # @return [String]
   def to_s
-    @string ||= CrockfordBase32.encode(to_i).freeze
+    @string ||= CrockfordBase32.encode(@integer).freeze
   end
 
   # @return [Integer]
@@ -311,7 +311,7 @@ class ULID
 
   # @return [Integer, nil]
   def <=>(other)
-    (ULID === other) ? (to_i <=> other.to_i) : nil
+    (ULID === other) ? (@integer <=> other.to_i) : nil
   end
 
   # @return [String]
@@ -321,7 +321,7 @@ class ULID
 
   # @return [Boolean]
   def eql?(other)
-    equal?(other) || (ULID === other && to_i == other.to_i)
+    equal?(other) || (ULID === other && @integer == other.to_i)
   end
   alias_method :==, :eql?
 
@@ -329,7 +329,7 @@ class ULID
   def ===(other)
     case other
     when ULID
-      to_i == other.to_i
+      @integer == other.to_i
     when String
       to_s == other.upcase
     else
@@ -350,7 +350,7 @@ class ULID
 
   # @return [Array(Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer)]
   def octets
-    digits = to_i.digits(256)
+    digits = @integer.digits(256)
     (OCTETS_LENGTH - digits.size).times do
       digits.push 0
     end
@@ -389,7 +389,7 @@ class ULID
 
   # @return [ULID, nil] when called on ULID as `7ZZZZZZZZZZZZZZZZZZZZZZZZZ`, returns `nil` instead of ULID
   def succ
-    succ_int = to_i.succ
+    succ_int = @integer.succ
     if succ_int >= MAX_INTEGER
       if succ_int == MAX_INTEGER
         MAX
@@ -404,7 +404,7 @@ class ULID
 
   # @return [ULID, nil] when called on ULID as `00000000000000000000000000`, returns `nil` instead of ULID
   def pred
-    pred_int = to_i.pred
+    pred_int = @integer.pred
     if pred_int <= 0
       if pred_int == 0
         MIN
