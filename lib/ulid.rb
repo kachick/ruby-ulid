@@ -218,6 +218,7 @@ class ULID
     milliseconds_from_time(Time.now)
   end
 
+  # @api private
   # @param [Time] time
   # @return [Integer]
   private_class_method def self.milliseconds_from_time(time)
