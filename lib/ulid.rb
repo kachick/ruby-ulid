@@ -427,6 +427,16 @@ class ULID
     super
   end
 
+  # @return [self]
+  def dup
+    self
+  end
+
+  # @return [self]
+  def clone(freeze: true)
+    self
+  end
+
   private
 
   # @return [void]

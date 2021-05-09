@@ -148,6 +148,18 @@ class TestULIDInstance < Test::Unit::TestCase
     assert_equal(:ulid2, hash.fetch(ulid2))
   end
 
+  def test_dup
+    ulid = ULID.sample
+    assert_same(ulid, ulid.dup)
+  end
+
+  def test_clone
+    ulid = ULID.sample
+    assert_same(ulid, ulid.clone)
+    assert_same(ulid, ulid.clone(freeze: true))
+    assert_same(ulid, ulid.clone(freeze: false))
+  end
+
   def test_to_time
     ulid = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
     time = ulid.to_time
