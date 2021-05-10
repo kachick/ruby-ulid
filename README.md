@@ -417,28 +417,28 @@ One of the result at 2021/05/10 on my machine
 cd ./benchmark/compare_with_othergems/rafaelsales && bundle install --quiet && bundle exec ruby -v ./generate.rb
 ruby 3.0.1p64 (2021-04-05 revision 0fb782ee38) [x86_64-darwin20]
 Warming up --------------------------------------
-       ULID.generate    10.118k i/100ms
+       ULID.generate     5.560k i/100ms
 Calculating -------------------------------------
-       ULID.generate     84.398k (±11.5%) i/s -    424.956k in   5.110762s
-"`ulid gem - 1.3.0` generated products: 601789 - sample: [\"01F59WTR62H95XYW522GGH5CWJ\", \"01F59WTMKKF6CY2S6BSVSCZNRC\", \"01F59WTPBP7BQ6QR8AJAHNCE3Z\", \"01F59WTNS266NHSR1ABK65PN8W\", \"01F59WTN7NY9JQ4XRKSSJMXYKN\"]"
+       ULID.generate     52.655k (±11.0%) i/s -    261.320k in   5.029719s
+"`ulid gem - 1.3.0` generated products: 371927 - sample: [\"01F59Y97807D2S67KE6X7ATK7Z\", \"01F59Y9AVRQJFAT5M2N7Z72BVF\", \"01F59Y95Z1042X4Z1K9729BSE3\", \"01F59Y95ZMVDFKD63Y8TT145GQ\", \"01F59Y94YQEZ3PH5STZ8PS1JPG\"]"
 ------------------------------------------------------------------------
 #### abachman - ulid-ruby
 cd ./benchmark/compare_with_othergems/abachman && bundle install --quiet && bundle exec ruby -v ./generate.rb
 ruby 3.0.1p64 (2021-04-05 revision 0fb782ee38) [x86_64-darwin20]
 Warming up --------------------------------------
-       ULID.generate     8.283k i/100ms
+       ULID.generate     3.862k i/100ms
 Calculating -------------------------------------
-       ULID.generate     68.643k (±10.9%) i/s -    339.603k in   5.010994s
-"`ulid-ruby gem - 1.0.0` generated products: 496251 - sample: [\"01F59WV1VCYJ666ZYYY5MHA3ED\", \"01F59WTX6MXZGQEBAASZG851XR\", \"01F59WTWDZ0443FSYXAQGDC0F5\", \"01F59WV0A6EKNGZ49285WBTR3D\", \"01F59WTXD2WBM3QQ8Z34ZQJFDQ\"]"
+       ULID.generate     38.415k (±13.1%) i/s -    189.238k in   5.025788s
+"`ulid-ruby gem - 1.0.0` generated products: 260625 - sample: [\"01F59Y9H9V17EPXTYNZDCXB9EZ\", \"01F59Y9J4S4XZ68MF5DJDWHTAC\", \"01F59Y9J8887VC8E850QSBDCDX\", \"01F59Y9JEJPD088EYXVHB86W3N\", \"01F59Y9GGAZFXGCB92EQD695CZ\"]"
 ------------------------------------------------------------------------
 #### kachick - ruby-ulid(This one)
 cd ./benchmark/compare_with_othergems/kachick && bundle install --quiet && bundle exec ruby -v ./generate.rb
 ruby 3.0.1p64 (2021-04-05 revision 0fb782ee38) [x86_64-darwin20]
 Warming up --------------------------------------
-       ULID.generate     7.197k i/100ms
+  ULID.generate.to_s     3.185k i/100ms
 Calculating -------------------------------------
-       ULID.generate     63.617k (± 8.5%) i/s -    316.668k in   5.018090s
-"`ruby-ulid gem (this one) - 0.1.0` generated products: 454173 - sample: [\"01F59WV9DQJMGV29N4MJPWVP18\", \"01F59WV4QDH431FNMNP9YVEKVV\", \"01F59WV6PPR1MYYH4ZN822RCBG\", \"01F59WV8DFSXG4SJ69W9QWPAWE\", \"01F59WV7N9WG3ES8NB3PM6F4QF\"]"
+  ULID.generate.to_s     31.934k (± 9.1%) i/s -    159.250k in   5.030707s
+"`ruby-ulid gem (this one) - 0.1.0` generated products: 223867 - sample: [\"01F59Y9SPZHM6JCTYP50CHGVAX\", \"01F59Y9VB7X0SX32MMKF78KJR3\", \"01F59Y9W0C83RYCNYVH84R4JG3\", \"01F59Y9V218Q3D4YP3W74ET3EW\", \"01F59Y9X6DD8NX99WBGCR7RNXF\"]"
 ```
 
 I have an excuse, This gem does not aim `faster than other`.
