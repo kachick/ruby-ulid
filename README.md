@@ -410,7 +410,8 @@ $ rake benchmark_with_other_gems
 (Do not use `bundle exec`!)
 ```
 
-One of the result at 2021/05/10 on my machine
+<details>
+<summary>One of the result at 2021/05/10 on my machine</summary>
 
 ```plaintext
 #### rafaelsales - ulid
@@ -441,8 +442,40 @@ Calculating -------------------------------------
 "`ruby-ulid gem (this one) - 0.1.0` generated products: 223867 - sample: [\"01F59Y9SPZHM6JCTYP50CHGVAX\", \"01F59Y9VB7X0SX32MMKF78KJR3\", \"01F59Y9W0C83RYCNYVH84R4JG3\", \"01F59Y9V218Q3D4YP3W74ET3EW\", \"01F59Y9X6DD8NX99WBGCR7RNXF\"]"
 ```
 
+In another execution, Changed as below. So there doesn't seem to be a big difference.
+
+```plaintext
+#### rafaelsales - ulid
+cd ./benchmark/compare_with_othergems/rafaelsales && bundle install --quiet && bundle exec ruby -v ./generate.rb
+ruby 3.0.1p64 (2021-04-05 revision 0fb782ee38) [x86_64-darwin20]
+Warming up --------------------------------------
+       ULID.generate     2.473k i/100ms
+Calculating -------------------------------------
+       ULID.generate     24.101k (±15.9%) i/s -    118.704k in   5.066190s
+"`ulid gem - 1.3.0` generated products: 164763 - sample: [\"01F59YEGPFMXXZWC1YQ49TSK8Y\", \"01F59YEFF7VX5WAW91VTCSE2N9\", \"01F59YEEZ5P9428SDYEDYW8D27\", \"01F59YEHVK56DZBJSNSQK6V1W6\", \"01F59YEHE07M98PVV97ABBAKHM\"]"
+------------------------------------------------------------------------
+#### abachman - ulid-ruby
+cd ./benchmark/compare_with_othergems/abachman && bundle install --quiet && bundle exec ruby -v ./generate.rb
+ruby 3.0.1p64 (2021-04-05 revision 0fb782ee38) [x86_64-darwin20]
+Warming up --------------------------------------
+       ULID.generate     2.620k i/100ms
+Calculating -------------------------------------
+       ULID.generate     27.571k (±14.2%) i/s -    136.240k in   5.056272s
+"`ulid-ruby gem - 1.0.0` generated products: 186683 - sample: [\"01F59YEVX6GC9TC0RCZ74RC6Z3\", \"01F59YESJXWYGZ61TXHKRVKS97\", \"01F59YEVQ4QQKBED5T49RTV1MA\", \"01F59YEPJ6MMZY1N63DNW7C4SN\", \"01F59YEQK52K8TKTP1ESC6VC5X\"]"
+------------------------------------------------------------------------
+#### kachick - ruby-ulid(This one)
+cd ./benchmark/compare_with_othergems/kachick && bundle install --quiet && bundle exec ruby -v ./generate.rb
+ruby 3.0.1p64 (2021-04-05 revision 0fb782ee38) [x86_64-darwin20]
+Warming up --------------------------------------
+  ULID.generate.to_s     3.014k i/100ms
+Calculating -------------------------------------
+  ULID.generate.to_s     31.612k (±10.1%) i/s -    156.728k in   5.013432s
+"`ruby-ulid gem (this one) - 0.1.0` generated products: 212293 - sample: [\"01F59YF1WP49TT4GQPDN3E9JTJ\", \"01F59YF1MW1ZDQW93NX4J6RG4G\", \"01F59YF0KRX2CZKHDQQSN5HXHW\", \"01F59YEZVNH8YHP4ZHDK2ZRWSR\", \"01F59YF1J0FV3CVV099SHA2Q9A\"]"
+```
+
 I have an excuse, This gem does not aim `faster than other`.
 So I think the results are acceptable.
+</details>
 
 ## References
 
