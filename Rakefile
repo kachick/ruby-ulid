@@ -64,6 +64,18 @@ task :benchmark do
   sh 'bundle exec ruby ./benchmark/sample.rb'
 end
 
+# This can't be used `bundle exec rake benchmark_with_other_gems`. Use `rake benchmark_with_other_gems` instead
+task :benchmark_with_other_gems do
+  puts '#### rafaelsales - ulid'
+  sh 'cd ./benchmark/compare_with_othergems/rafaelsales && bundle install --quiet && bundle exec ruby -v ./generate.rb'
+  puts '-' * 72
+  puts '#### abachman - ulid-ruby'
+  sh 'cd ./benchmark/compare_with_othergems/abachman && bundle install --quiet && bundle exec ruby -v ./generate.rb'
+  puts '-' * 72
+  puts '#### kachick - ruby-ulid(This one)'
+  sh 'cd ./benchmark/compare_with_othergems/kachick && bundle install --quiet && bundle exec ruby -v ./generate.rb'
+end
+
 task :update_fixed_examples do
   sh 'rm ./test/many_data/fixtures/dumped_fixed_examples_*.bin'
   sh 'bundle exec ruby ./scripts/generate_many_examples.rb'

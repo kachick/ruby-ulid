@@ -401,6 +401,49 @@ NOTE: It is still having precision issue similar as `ulid gem` in the both gener
 1. [Fix to handle timestamp precision in parser](https://github.com/abachman/ulid-ruby/pull/5)
 1. [Fix to handle timestamp precision in generator](https://github.com/abachman/ulid-ruby/pull/4)
 
+### Generating benchmarks
+
+This runs rough benchmarks
+
+```console
+$ rake benchmark_with_other_gems
+(Do not use `bundle exec`!)
+```
+
+One of the result at 2021/05/10 on my machine
+
+```plaintext
+#### rafaelsales - ulid
+cd ./benchmark/compare_with_othergems/rafaelsales && bundle install --quiet && bundle exec ruby -v ./generate.rb
+ruby 3.0.1p64 (2021-04-05 revision 0fb782ee38) [x86_64-darwin20]
+Warming up --------------------------------------
+       ULID.generate    10.118k i/100ms
+Calculating -------------------------------------
+       ULID.generate     84.398k (±11.5%) i/s -    424.956k in   5.110762s
+"`ulid gem - 1.3.0` generated products: 601789 - sample: [\"01F59WTR62H95XYW522GGH5CWJ\", \"01F59WTMKKF6CY2S6BSVSCZNRC\", \"01F59WTPBP7BQ6QR8AJAHNCE3Z\", \"01F59WTNS266NHSR1ABK65PN8W\", \"01F59WTN7NY9JQ4XRKSSJMXYKN\"]"
+------------------------------------------------------------------------
+#### abachman - ulid-ruby
+cd ./benchmark/compare_with_othergems/abachman && bundle install --quiet && bundle exec ruby -v ./generate.rb
+ruby 3.0.1p64 (2021-04-05 revision 0fb782ee38) [x86_64-darwin20]
+Warming up --------------------------------------
+       ULID.generate     8.283k i/100ms
+Calculating -------------------------------------
+       ULID.generate     68.643k (±10.9%) i/s -    339.603k in   5.010994s
+"`ulid-ruby gem - 1.0.0` generated products: 496251 - sample: [\"01F59WV1VCYJ666ZYYY5MHA3ED\", \"01F59WTX6MXZGQEBAASZG851XR\", \"01F59WTWDZ0443FSYXAQGDC0F5\", \"01F59WV0A6EKNGZ49285WBTR3D\", \"01F59WTXD2WBM3QQ8Z34ZQJFDQ\"]"
+------------------------------------------------------------------------
+#### kachick - ruby-ulid(This one)
+cd ./benchmark/compare_with_othergems/kachick && bundle install --quiet && bundle exec ruby -v ./generate.rb
+ruby 3.0.1p64 (2021-04-05 revision 0fb782ee38) [x86_64-darwin20]
+Warming up --------------------------------------
+       ULID.generate     7.197k i/100ms
+Calculating -------------------------------------
+       ULID.generate     63.617k (± 8.5%) i/s -    316.668k in   5.018090s
+"`ruby-ulid gem (this one) - 0.1.0` generated products: 454173 - sample: [\"01F59WV9DQJMGV29N4MJPWVP18\", \"01F59WV4QDH431FNMNP9YVEKVV\", \"01F59WV6PPR1MYYH4ZN822RCBG\", \"01F59WV8DFSXG4SJ69W9QWPAWE\", \"01F59WV7N9WG3ES8NB3PM6F4QF\"]"
+```
+
+I have an excuse, This gem does not aim `faster than other`.
+So I think the results are acceptable.
+
 ## References
 
 - [Repository](https://github.com/kachick/ruby-ulid)
