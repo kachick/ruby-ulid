@@ -9,7 +9,7 @@ raise "Bug to setup: #{ULID.methods(false)}" unless (ULID::VERSION == '0.1.0') &
 products = []
 
 Benchmark.ips do |x|
-  x.report('ULID.generate') do
+  x.report('ULID.generate.to_s') do
     products << ULID.generate.to_s
   end
 end
