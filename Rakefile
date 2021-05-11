@@ -36,7 +36,7 @@ Rake::TestTask.new(:test_concurrency) do |tt|
   tt.warning = true
 end
 
-task test_signatures: [:test_yard, :'signature:validate']
+task validate_signatures: [:test_yard, :'signature:validate']
 
 namespace :signature do
   task :validate do
