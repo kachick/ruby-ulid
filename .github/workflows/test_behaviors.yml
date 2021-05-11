@@ -1,0 +1,48 @@
+# https://docs.github.com/ja/actions/reference/workflow-syntax-for-github-actions
+name: Test
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - 'docs/**'
+      - 'benchmark/**'
+      - 'bin/**'
+      - 'scripts/**'
+      - 'sig/**'
+      - 'Steepfile'
+      - '**.md'
+      - 'LICENSE'
+      - 'logo.png'
+      - '.yardopts'
+  pull_request:
+    paths-ignore:
+      - 'docs/**'
+      - 'benchmark/**'
+      - 'bin/**'
+      - 'scripts/**'
+      - 'sig/**'
+      - 'Steepfile'
+      - '**.md'
+      - 'LICENSE'
+      - 'logo.png'
+      - '.yardopts'
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        # Due to https://github.com/actions/runner/issues/849, we have to use quotes for '3.0'
+        ruby: [2.6, 2.7, '3.0', head]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v2
+    - uses: ruby/setup-ruby@v1
+      env:
+        # https://github.com/kachick/ruby-ulid/blob/104834846baf5caa1e8536a11c43acdd56fc849c/CONTRIBUTING.md#adding-dependencies-for-this-gem
+        BUNDLE_WITHOUT: development
+      with:
+        ruby-version: ${{ matrix.ruby }}
+        bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+    - run: bundle exec rake test_all
