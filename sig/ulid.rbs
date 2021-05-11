@@ -33,6 +33,9 @@ class ULID
   class ParserError < Error
   end
 
+  class UnexpectedError < Error
+  end
+
   module CrockfordBase32
     class SetupError < ScriptError
     end
@@ -47,16 +50,12 @@ class ULID
   end
 
   class MonotonicGenerator
-    attr_accessor latest_milliseconds: Integer
-    attr_accessor latest_entropy: Integer
-    attr_reader last: ULID | nil
+    attr_reader prev: ULID | nil
     def initialize: -> void
     def generate: (?moment: moment) -> ULID
     def inspect: -> String
     alias to_s inspect
     def freeze: -> void
-    private
-    def reset: -> void
   end
 
   type octets = [Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer]
@@ -64,8 +63,6 @@ class ULID
   type randomness_octets = [Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer]
   type period = Range[Time] | Range[nil] | Range[ULID]
 
-  @milliseconds: Integer
-  @entropy: Integer
   @string: String?
   @integer: Integer
   @timestamp: String?

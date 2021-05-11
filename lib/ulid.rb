@@ -15,6 +15,7 @@ class ULID
   class Error < StandardError; end
   class OverflowError < Error; end
   class ParserError < Error; end
+  class UnexpectedError < Error; end
 
   # Excluded I, L, O, U, -.
   # This is the encoding patterns.
@@ -239,9 +240,8 @@ class ULID
     end
   end
 
-  # @api private
   # @return [Integer]
-  def self.reasonable_entropy
+  private_class_method def self.reasonable_entropy
     SecureRandom.random_number(MAX_ENTROPY)
   end
 

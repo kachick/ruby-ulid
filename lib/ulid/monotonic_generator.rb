@@ -4,67 +4,62 @@
 
 class ULID
   class MonotonicGenerator
-    class ConcurrencyError < ThreadError; end
-
-    # @api private
-    attr_accessor :latest_milliseconds, :latest_entropy
-
     # @return [ULID, nil]
-    attr_reader :last
+    attr_reader :prev
 
     undef_method :instance_variable_set
 
     def initialize
       @mutex = Thread::Mutex.new
-      reset
+      @prev = nil
     end
 
     # @return [String]
     def inspect
-      "ULID::MonotonicGenerator(last: #{@last.inspect})"
+      "ULID::MonotonicGenerator(prev: #{@prev.inspect})"
     end
     alias_method :to_s, :inspect
 
     # @param [Time, Integer] moment
     # @return [ULID]
     # @raise [OverflowError] if the entropy part is larger than the ULID limit in same milliseconds
-    # @raise [ArgumentError] if the given moment(milliseconds) is negative number
     def generate(moment: ULID.current_milliseconds)
-      milliseconds = ULID.milliseconds_from_moment(moment)
-      raise ArgumentError, "milliseconds should not be negative: given: #{milliseconds}" if milliseconds.negative?
-
       @mutex.synchronize do
-        if @latest_milliseconds < milliseconds
-          @latest_milliseconds = milliseconds
-          @latest_entropy = ULID.reasonable_entropy
-        else
-          @latest_entropy += 1
+        unless @prev
+          @prev = ULID.generate(moment: moment)
+          return @prev
         end
-        ulid = ULID.from_milliseconds_and_entropy(milliseconds: @latest_milliseconds, entropy: @latest_entropy)
-        if @last && !(ulid > @last)
-          raise ConcurrencyError,
-            "This error means generated obviously unsuitable ULID. this_time:#{ulid.inspect} - last_time:#{@last.inspect}, we can think of some bug might exist"
-        end
-        @last = ulid
 
+        milliseconds = ULID.milliseconds_from_moment(moment)
+
+        ulid = if @prev.milliseconds < milliseconds
+          ULID.generate(moment: milliseconds)
+        else
+          ULID.from_milliseconds_and_entropy(milliseconds: @prev.milliseconds, entropy: @prev.entropy.succ)
+        end
+
+        unless ulid > @prev
+          base_message = "monotonicity broken from unexpected reasons # generated: #{ulid.inspect}, prev: #{@prev.inspect}"
+          additional_information = if Thread.list == [Thread.main]
+            '# NOTE: looks single thread only exist'
+          else
+            '# NOTE: ran on multi threads, so this might from concurrency issue'
+          end
+
+          raise UnexpectedError, base_message + additional_information
+        end
+
+        @prev = ulid
         ulid
       end
     end
 
+    undef_method :freeze
+
     # @raise [TypeError] always raises exception and does not freeze self
     # @return [void]
     def freeze
-      raise TypeError, "cannot freeze ULID::MonotonicGenerator"
-    end
-
-    private
-
-    # @api private
-    # @return [void]
-    def reset
-      @latest_milliseconds = 0
-      @latest_entropy = ULID.reasonable_entropy
-      @last = nil
+      raise TypeError, "cannot freeze #{self.class}"
     end
   end
 end

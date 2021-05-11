@@ -6,23 +6,6 @@ require_relative '../helper'
 class TestULIDMonotonicGeneratorThreadSafety < Test::Unit::TestCase
   include ULIDAssertions
 
-  def test_prefer_error_rather_than_returns_unsuitable
-    generator = ULID::MonotonicGenerator.new
-
-    assert_nil(generator.last)
-
-    ulid = generator.generate
-    assert_same(ulid, generator.last)
-
-    generator.instance_exec do
-      @last = ULID.at(Time.now + 2)
-    end
-
-    assert_raises(ULID::MonotonicGenerator::ConcurrencyError) do
-      generator.generate
-    end
-  end
-
   def test_thread_safe_with_fixed_times
     generator = ULID::MonotonicGenerator.new
     thread_count = 5000
@@ -59,8 +42,9 @@ class TestULIDMonotonicGeneratorThreadSafety < Test::Unit::TestCase
     thread_count = 5000
     initial_and_median = ULID.generate
 
-    # Using private api to setup test.
-    generator.latest_milliseconds = initial_and_median.milliseconds
+    generator.instance_exec do
+      @prev = initial_and_median
+    end
 
     # Given smaller than initial should not be happened... But addeed for ensuring https://github.com/kachick/ruby-ulid/issues/56
     sample_1000_times_before_median = ULID.sample(1000, period: (initial_and_median.to_time - 999999)..initial_and_median.to_time).map(&:to_time)
