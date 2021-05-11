@@ -67,7 +67,7 @@ class TestULIDClass < Test::Unit::TestCase
     assert_match(/private method `new' called/, err.message)
   end
 
-  def from_milliseconds_and_entropy
+  def test_from_milliseconds_and_entropy
     err = assert_raises(ArgumentError) do
       ULID.from_milliseconds_and_entropy(milliseconds: -1, entropy: 42)
     end
@@ -80,11 +80,11 @@ class TestULIDClass < Test::Unit::TestCase
 
     [nil, BasicObject.new, '01ARZ3NDEKTSV4RRFFQ69G5FAV', '42', Time.now, ULID.sample, 4.2, Object.new].each do |evil|
       err = assert_raises(ArgumentError) do
-        ULID.from_monotonic_generator(milliseconds: 42, entropy: evil)
+        ULID.from_milliseconds_and_entropy(milliseconds: 42, entropy: evil)
       end
       assert_match('milliseconds and entropy should be an `Integer`', err.message)
       err = assert_raises(ArgumentError) do
-        ULID.from_monotonic_generator(milliseconds: evil, entropy: 42)
+        ULID.from_milliseconds_and_entropy(milliseconds: evil, entropy: 42)
       end
       assert_match('milliseconds and entropy should be an `Integer`', err.message)
     end
