@@ -49,10 +49,14 @@ class ULID
   class MonotonicGenerator
     attr_accessor latest_milliseconds: Integer
     attr_accessor latest_entropy: Integer
+    attr_reader last: ULID | nil
     def initialize: -> void
     def generate: (?moment: moment) -> ULID
-    def reset: -> void
+    def inspect: -> String
+    alias to_s inspect
     def freeze: -> void
+    private
+    def reset: -> void
   end
 
   type octets = [Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer]

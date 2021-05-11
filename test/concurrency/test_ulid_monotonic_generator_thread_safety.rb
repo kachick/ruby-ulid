@@ -6,6 +6,23 @@ require_relative '../helper'
 class TestULIDMonotonicGeneratorThreadSafety < Test::Unit::TestCase
   include ULIDAssertions
 
+  def test_prefer_error_rather_than_returns_unsuitable
+    generator = ULID::MonotonicGenerator.new
+
+    assert_nil(generator.last)
+
+    ulid = generator.generate
+    assert_same(ulid, generator.last)
+
+    generator.instance_exec do
+      @last = ULID.at(Time.now + 2)
+    end
+
+    assert_raises(ULID::MonotonicGenerator::ConcurrencyError) do
+      generator.generate
+    end
+  end
+
   def test_thread_safe_with_fixed_times
     generator = ULID::MonotonicGenerator.new
     thread_count = 5000

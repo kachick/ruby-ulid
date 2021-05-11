@@ -4,13 +4,26 @@
 
 class ULID
   class MonotonicGenerator
+    class ConcurrencyError < ThreadError; end
+
     # @api private
     attr_accessor :latest_milliseconds, :latest_entropy
+
+    # @return [ULID, nil]
+    attr_reader :last
+
+    undef_method :instance_variable_set
 
     def initialize
       @mutex = Thread::Mutex.new
       reset
     end
+
+    # @return [String]
+    def inspect
+      "ULID::MonotonicGenerator(last: #{@last.inspect})"
+    end
+    alias_method :to_s, :inspect
 
     # @param [Time, Integer] moment
     # @return [ULID]
@@ -27,22 +40,31 @@ class ULID
         else
           @latest_entropy += 1
         end
-        ULID.from_milliseconds_and_entropy(milliseconds: @latest_milliseconds, entropy: @latest_entropy)
+        ulid = ULID.from_milliseconds_and_entropy(milliseconds: @latest_milliseconds, entropy: @latest_entropy)
+        if @last && !(ulid > @last)
+          raise ConcurrencyError,
+            "This error means generated obviously unsuitable ULID. this_time:#{ulid.inspect} - last_time:#{@last.inspect}, we can think of some bug might exist"
+        end
+        @last = ulid
+
+        ulid
       end
     end
+
+    # @raise [TypeError] always raises exception and does not freeze self
+    # @return [void]
+    def freeze
+      raise TypeError, "cannot freeze ULID::MonotonicGenerator"
+    end
+
+    private
 
     # @api private
     # @return [void]
     def reset
       @latest_milliseconds = 0
       @latest_entropy = ULID.reasonable_entropy
-      nil
-    end
-
-    # @raise [TypeError] always raises exception and does not freeze self
-    # @return [void]
-    def freeze
-      raise TypeError, "cannot freeze #{self.class}"
+      @last = nil
     end
   end
 end

@@ -72,7 +72,7 @@ class TestULIDMonotonicGenerator < Test::Unit::TestCase
 
     assert_equal(max_ulid_in_a_milliseconds, @generator.generate(moment: max_ulid_in_a_milliseconds.milliseconds))
 
-    @generator.reset
+    @generator.__send__ :reset
 
     @generator.latest_milliseconds = max_ulid_in_a_milliseconds.milliseconds
     @generator.latest_entropy = ULID::MAX_ENTROPY
@@ -88,5 +88,26 @@ class TestULIDMonotonicGenerator < Test::Unit::TestCase
     end
 
     assert_equal(false, @generator.frozen?)
+  end
+
+  def test_last
+    assert_nil(@generator.last)
+
+    ulid1 = @generator.generate
+    assert_same(ulid1, @generator.last)
+    ulid2 = @generator.generate
+    assert_same(ulid2, @generator.last)
+
+    @generator.__send__ :reset
+    assert_nil(@generator.last)
+  end
+
+  def test_inspect
+    assert_equal('ULID::MonotonicGenerator(last: nil)', @generator.inspect)
+    assert_not_same(@generator.inspect, @generator.inspect)
+
+    ulid = @generator.generate
+
+    assert_equal("ULID::MonotonicGenerator(last: #{ulid.inspect})", @generator.inspect)
   end
 end
