@@ -57,7 +57,7 @@ class TestULIDMonotonicGenerator < Test::Unit::TestCase
     assert_equal(second.entropy, first.entropy.next)
   end
 
-  def test_generate_ignores_lower_moment_than_latest_is_given
+  def test_generate_ignores_lower_moment_than_prev_is_given
     first = @generator.generate(moment: 42)
     second = @generator.generate(moment: 41)
     assert_equal(second.to_time, first.to_time)
@@ -65,17 +65,21 @@ class TestULIDMonotonicGenerator < Test::Unit::TestCase
   end
 
   def test_generate_raises_overflow_when_called_on_max_entropy
-    max_ulid_in_a_milliseconds = ULID.max(42)
+    max_ulid_in_a_milliseconds = ULID.max(Time.now)
 
-    @generator.latest_milliseconds = max_ulid_in_a_milliseconds.milliseconds
-    @generator.latest_entropy = ULID::MAX_ENTROPY.pred
+    @generator.instance_exec do
+      @prev = max_ulid_in_a_milliseconds.pred
+    end
 
     assert_equal(max_ulid_in_a_milliseconds, @generator.generate(moment: max_ulid_in_a_milliseconds.milliseconds))
 
-    @generator.__send__ :reset
+    @generator.instance_exec do
+      @prev = nil
+    end
 
-    @generator.latest_milliseconds = max_ulid_in_a_milliseconds.milliseconds
-    @generator.latest_entropy = ULID::MAX_ENTROPY
+    @generator.instance_exec do
+      @prev = max_ulid_in_a_milliseconds
+    end
 
     assert_raises(ULID::OverflowError) do
       @generator.generate(moment: max_ulid_in_a_milliseconds.milliseconds)
@@ -90,24 +94,21 @@ class TestULIDMonotonicGenerator < Test::Unit::TestCase
     assert_equal(false, @generator.frozen?)
   end
 
-  def test_last
-    assert_nil(@generator.last)
+  def test_prev
+    assert_nil(@generator.prev)
 
     ulid1 = @generator.generate
-    assert_same(ulid1, @generator.last)
+    assert_same(ulid1, @generator.prev)
     ulid2 = @generator.generate
-    assert_same(ulid2, @generator.last)
-
-    @generator.__send__ :reset
-    assert_nil(@generator.last)
+    assert_same(ulid2, @generator.prev)
   end
 
   def test_inspect
-    assert_equal('ULID::MonotonicGenerator(last: nil)', @generator.inspect)
+    assert_equal('ULID::MonotonicGenerator(prev: nil)', @generator.inspect)
     assert_not_same(@generator.inspect, @generator.inspect)
 
     ulid = @generator.generate
 
-    assert_equal("ULID::MonotonicGenerator(last: #{ulid.inspect})", @generator.inspect)
+    assert_equal("ULID::MonotonicGenerator(prev: #{ulid.inspect})", @generator.inspect)
   end
 end

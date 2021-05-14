@@ -6,26 +6,9 @@ require_relative '../helper'
 class TestULIDMonotonicGeneratorThreadSafety < Test::Unit::TestCase
   include ULIDAssertions
 
-  def test_prefer_error_rather_than_returns_unsuitable
-    generator = ULID::MonotonicGenerator.new
-
-    assert_nil(generator.last)
-
-    ulid = generator.generate
-    assert_same(ulid, generator.last)
-
-    generator.instance_exec do
-      @last = ULID.at(Time.now + 2)
-    end
-
-    assert_raises(ULID::MonotonicGenerator::ConcurrencyError) do
-      generator.generate
-    end
-  end
-
   def test_thread_safe_with_fixed_times
     generator = ULID::MonotonicGenerator.new
-    thread_count = 5000
+    thread_count = 2000
     moment = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV').to_time
 
     ulids = []
@@ -56,29 +39,30 @@ class TestULIDMonotonicGeneratorThreadSafety < Test::Unit::TestCase
   # I don't have confident for this test is the reasonable one... Concurrency is hard to human. :cry:
   def test_thread_safe_with_randomized_time
     generator = ULID::MonotonicGenerator.new
-    thread_count = 5000
+    thread_count = 3000
     initial_and_median = ULID.generate
 
-    # Using private api to setup test.
-    generator.latest_milliseconds = initial_and_median.milliseconds
+    generator.instance_exec do
+      @prev = initial_and_median
+    end
 
     # Given smaller than initial should not be happened... But addeed for ensuring https://github.com/kachick/ruby-ulid/issues/56
     sample_1000_times_before_median = ULID.sample(1000, period: (initial_and_median.to_time - 999999)..initial_and_median.to_time).map(&:to_time)
-    sample_4000_times_after_median = ULID.sample(4000, period: initial_and_median.to_time..(initial_and_median.to_time + 999999)).map(&:to_time)
+    sample_2000_times_after_median = ULID.sample(2000, period: initial_and_median.to_time..(initial_and_median.to_time + 999999)).map(&:to_time)
 
-    sample_times = sample_1000_times_before_median + sample_4000_times_after_median
+    sample_times = sample_1000_times_before_median + sample_2000_times_after_median
     assert_equal(thread_count, sample_times.uniq.size)
 
     sample_times.shuffle!
-    basically_random_but_contain_same_1000_times = sample_times.take(4000) + sample_times.take(1000) 
+    basically_random_but_contain_same_1000_times = sample_times.take(2000) + sample_times.take(1000)
     assert_equal(thread_count, basically_random_but_contain_same_1000_times.size)
-    assert_equal(4000, basically_random_but_contain_same_1000_times.uniq.size)
+    assert_equal(2000, basically_random_but_contain_same_1000_times.uniq.size)
     assert(basically_random_but_contain_same_1000_times.none?(initial_and_median.to_time))
 
     # Might be flaky...
     later_than_initial_and_median_count = basically_random_but_contain_same_1000_times.count{ |time| time > initial_and_median.to_time }
     assert do
-      3000 < later_than_initial_and_median_count
+      1500 < later_than_initial_and_median_count
     end
 
     ulids = []
@@ -102,14 +86,14 @@ class TestULIDMonotonicGeneratorThreadSafety < Test::Unit::TestCase
     given_times = time_by_thread_number.values
     assert_equal(thread_count, worked_thread_numbers.uniq.size)
     assert_not_equal(worked_thread_numbers.sort, worked_thread_numbers)
-    assert_equal(4000, given_times.uniq.size)
+    assert_equal(2000, given_times.uniq.size)
     assert_equal(later_than_initial_and_median_count, given_times.count{ |time| time > initial_and_median.to_time })
 
     ulids_by_time = ulids.group_by(&:to_time)
     uniq_times = ulids_by_time.keys
 
     # Really? I have a feeling it should get much greater...
-    acceptable_same_timestamp_count = 3
+    acceptable_same_timestamp_count = 5
     assert do
       uniq_times.size >= acceptable_same_timestamp_count
     end
