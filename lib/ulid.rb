@@ -259,10 +259,9 @@ class ULID
     from_integer(CrockfordBase32.decode(string))
   end
 
-  # @param [String, #to_str] string
   # @return [Boolean]
-  def self.valid?(string)
-    string = String.try_convert(string)
+  def self.valid?(object)
+    string = String.try_convert(object)
     string ? STRICT_PATTERN_WITH_CROCKFORD_BASE32_SUBSET.match?(string) : false
   end
 

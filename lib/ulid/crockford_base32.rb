@@ -51,6 +51,7 @@ class ULID
     CROCKFORD_BASE32_CHAR_BY_N32_CHAR = N32_CHAR_BY_CROCKFORD_BASE32_CHAR.invert.freeze
     N32_CHAR_PATTERN = /[#{CROCKFORD_BASE32_CHAR_BY_N32_CHAR.keys.join}]/.freeze
 
+    # @api private
     # @param [String] string
     # @return [Integer]
     def self.decode(string)
@@ -58,6 +59,7 @@ class ULID
       n32encoded.to_i(32)
     end
 
+    # @api private
     # @param [Integer] integer
     # @return [String]
     def self.encode(integer)
