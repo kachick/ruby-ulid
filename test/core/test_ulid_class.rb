@@ -533,6 +533,53 @@ class TestULIDClass < Test::Unit::TestCase
     assert_match('wrong number of arguments', err.message)
   end
 
+  def test_try_convert
+    ulid = ULID.sample
+    assert_same(ulid, ULID.try_convert(ulid))
+    assert_nil(ULID.try_convert(ulid.to_s))
+    assert_nil(ULID.try_convert(ulid.to_i))
+    assert_nil(ULID.try_convert(BasicObject.new))
+
+    convertible = BasicObject.new
+    (class << convertible; self; end).class_eval do
+      define_method(:to_ulid) do
+        ulid
+      end
+    end
+    assert_same(ulid, ULID.try_convert(convertible))
+
+    evil = BasicObject.new
+    def evil.to_ulid
+      BasicObject.new
+    end
+    err = assert_raises(TypeError) do
+      ULID.try_convert(evil)
+    end
+    # `UnknownObject` does not reproduce `built-in class's #to_the_class` message. It is unavoidable.
+    assert_match(/can't convert UnknownObject to ULID \(UnknownObject#to_ulid gives UnknownObject\)/, err.message)
+
+    no_offense = Object.new
+    def no_offense.to_ulid
+      42
+    end
+    err = assert_raises(TypeError) do
+      ULID.try_convert(no_offense)
+    end
+    assert_match(/can't convert Object to ULID \(Object#to_ulid gives Integer\)/, err.message)
+
+    accidental = BasicObject.new
+    error = Exception.new
+    (class << accidental; self; end).class_eval do
+      define_method(:to_ulid) do
+        ::Kernel.raise error
+      end
+    end
+    err = assert_raises(Exception) do
+      ULID.try_convert(accidental)
+    end
+    assert_same(error, err)
+  end
+
   def teardown
     ENV['TZ'] = @actual_timezone
   end

@@ -266,6 +266,39 @@ class ULID
     string ? STRICT_PATTERN_WITH_CROCKFORD_BASE32_SUBSET.match?(string) : false
   end
 
+  # @param [ULID, #to_ulid] object
+  # @return [ULID, nil]
+  # @raise [TypeError] if `object.to_ulid` did not return ULID instance
+  def self.try_convert(object)
+    begin
+      converted = object.to_ulid
+    rescue NoMethodError
+      nil
+    else
+      if ULID === converted
+        converted
+      else
+        object_class_name = safe_get_class_name(object)
+        converted_class_name = safe_get_class_name(converted)
+        raise TypeError, "can't convert #{object_class_name} to ULID (#{object_class_name}#to_ulid gives #{converted_class_name})"
+      end
+    end
+  end
+
+  # @param [BasicObject] object
+  # @return [String]
+  private_class_method def self.safe_get_class_name(object)
+    fallback = 'UnknownObject'
+
+    begin
+      name = String.try_convert(object.class.name)
+    rescue Exception
+      fallback
+    else
+      name || fallback
+    end
+  end
+
   # @api private
   # @param [Integer] milliseconds
   # @param [Integer] entropy
