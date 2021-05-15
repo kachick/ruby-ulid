@@ -7,7 +7,8 @@ class TestULIDMonotonicGeneratorThreadSafety < Test::Unit::TestCase
   include ULIDAssertions
 
   def sleeping_time
-    SecureRandom.random_number(0.42..1.42)
+    # NOTE: `SecureRandom.random_number(0.42..1.42)` made `SIGSEGV` on `ruby 3.0.1p64 (2021-04-05 revision 0fb782ee38) [x86_64-darwin20]`
+    SecureRandom.random_number(0.12..0.42)
   end
 
   def test_thread_safe_without_arguments
