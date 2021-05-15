@@ -246,17 +246,24 @@ class ULID
   end
 
   # @param [String, #to_str] string
+  # @param [Boolean] crockford_original
   # @return [ULID]
   # @raise [ParserError] if the given format is not correct for ULID specs
-  def self.parse(string)
+  def self.parse(string, crockford_original: false)
     string = String.try_convert(string)
     raise ArgumentError, 'ULID.parse takes only strings' unless string
 
-    unless STRICT_PATTERN_WITH_CROCKFORD_BASE32_SUBSET.match?(string)
-      raise ParserError, "given `#{string}` does not match to `#{STRICT_PATTERN_WITH_CROCKFORD_BASE32_SUBSET.inspect}`"
+    integer = if crockford_original
+      CrockfordBase32.decode(string)
+    else
+      unless STRICT_PATTERN_WITH_CROCKFORD_BASE32_SUBSET.match?(string)
+        raise ParserError, "given `#{string}` does not match to `#{STRICT_PATTERN_WITH_CROCKFORD_BASE32_SUBSET.inspect}`"
+      end
+
+      CrockfordBase32.decode(string)
     end
 
-    from_integer(CrockfordBase32.decode(string))
+    from_integer(integer)
   end
 
   # @param [String, #to_str] string

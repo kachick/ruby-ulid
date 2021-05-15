@@ -36,6 +36,8 @@ class TestULIDClass < Test::Unit::TestCase
     assert_equal(string, parsed.to_s)
     assert_equal(string, ULID.parse(string.downcase).to_s)
 
+    assert_equal(parsed, ULID.parse(string, crockford_original: true))
+
     [
       '',
       "01ARZ3NDEKTSV4RRFFQ69G5FAV\n",
@@ -46,15 +48,29 @@ class TestULIDClass < Test::Unit::TestCase
         ULID.parse(invalid)
       end
       assert_match(/does not match to/, err.message)
+
+      err = assert_raises(ULID::ParserError) do
+        ULID.parse(invalid, crockford_original: true)
+      end
+      assert_match(/does not match to/, err.message)
     end
 
     assert_raises(ArgumentError) do
       ULID.parse
     end
 
+    assert_raises(ArgumentError) do
+      ULID.parse(crockford_original: true)
+    end
+
     [nil, 42, string.to_sym, BasicObject.new, Object.new, parsed].each do |evil|
       err = assert_raises(ArgumentError) do
         ULID.parse(evil)
+      end
+      assert_equal('ULID.parse takes only strings', err.message)
+
+      err = assert_raises(ArgumentError) do
+        ULID.parse(evil, crockford_original: true)
       end
       assert_equal('ULID.parse takes only strings', err.message)
     end

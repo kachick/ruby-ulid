@@ -81,7 +81,7 @@ class ULID
   def self.milliseconds_from_moment: (moment moment) -> Integer
   def self.range: (period period) -> Range[ULID]
   def self.floor: (Time time) -> Time
-  def self.parse: (String string) -> self
+  def self.parse: (String string, ?crockford_original: boolish) -> self
   def self.from_uuidv4: (String uuid) -> ULID
   def self.from_integer: (Integer integer) -> self
   def self.min: (?moment moment) -> ULID
