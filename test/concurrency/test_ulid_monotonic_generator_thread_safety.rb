@@ -10,57 +10,6 @@ class TestULIDMonotonicGeneratorThreadSafety < Test::Unit::TestCase
     SecureRandom.random_number(0.42..1.42)
   end
 
-  def test_prefer_error_rather_than_invalid_value_even_if_thread_safe_is_broken_with_evil_code
-    generator = ULID::MonotonicGenerator.new
-    thread_count = 2000
-    starts_at = Time.now
-
-    # Evil!
-    generator.instance_exec do
-      @mutex = Object.new
-      def @mutex.synchronize(*args)
-        yield
-      end
-    end
-
-    ulids = []
-
-    # The error does not happen if the generated ULIDs are valid even in evil codes.
-    # So making stable CI hard to me, currently allow both patterns in tests.
-    begin
-      threads = 1.upto(thread_count).map do |n|
-        Thread.start(n) do |_thread_number|
-          # Suppress noisy logs
-          Thread.current.report_on_exception = false
-          sleep(sleeping_time)
-          ulids << generator.generate
-        end
-      end
-
-      threads.each(&:join)
-    rescue ULID::UnexpectedError => err
-      assert_match(/monotonicity broken from unexpected reasons # generated: .+?, prev: .+?# NOTE: ran on multi threads, so this might from concurrency issue/, err.message)
-    else
-      possible_period = ULID.floor(starts_at)...Time.now
-      assert_equal(thread_count, ulids.size)
-      assert_equal(ulids, ulids.uniq)
-      ulids_by_the_time = ulids.group_by(&:to_time)
-      assert(ulids_by_the_time.size > 42)
-
-      assert do
-        ulids_by_the_time.keys.all?(possible_period)
-      end
-
-      ulids_by_the_time.sort.each do |_time, ulids|
-        ulids.sort.each_cons(2) do |pred, succ|
-          assert do
-            pred.to_i.succ == succ.to_i
-          end
-        end
-      end
-    end
-  end
-
   def test_thread_safe_without_arguments
     generator = ULID::MonotonicGenerator.new
     thread_count = 2000
