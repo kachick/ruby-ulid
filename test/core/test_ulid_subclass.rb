@@ -45,6 +45,12 @@ class TestULIDSubClass < Test::Unit::TestCase
     assert_instance_of(ULID, instance.pred)
   end
 
+  def test_to_ulid
+    instance = Subclass.sample
+    assert_instance_of(Subclass, instance)
+    assert_same(instance, instance.to_ulid)
+  end
+
   def teardown
     ENV['TZ'] = @actual_timezone
   end

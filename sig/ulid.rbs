@@ -113,6 +113,7 @@ class ULID
   alias succ next
   def pred: -> ULID?
   def freeze: -> self
+  def to_ulid: -> self
   def dup: -> self
   # Same as https://github.com/ruby/rbs/blob/4fb4c33b2325d1a73d79ff7aaeb49f21cec1e0e5/core/object.rbs#L79
   def clone: (?freeze: bool) -> self

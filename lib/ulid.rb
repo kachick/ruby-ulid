@@ -425,6 +425,11 @@ class ULID
   end
 
   # @return [self]
+  def to_ulid
+    self
+  end
+
+  # @return [self]
   def dup
     self
   end
