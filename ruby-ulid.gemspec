@@ -7,8 +7,6 @@ require_relative './lib/ulid/version'
 repository_url = "https://github.com/kachick/#{lib_name}"
 
 Gem::Specification.new do |gem|
-  gem.authors       = ['Kenichi Kamiya']
-  gem.email         = ['kachick1+ruby@gmail.com']
   gem.summary       = %q{A handy ULID library}
   gem.description   = <<-EOF
     The ULID(Universally Unique Lexicographically Sortable Identifier) has useful specs for applications (e.g. `Database key`), especially possess all `uniqueness`, `randomness`, `extractable timestamps` and `sortable` features.
@@ -31,7 +29,7 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'yard', '>= 0.9.26', '< 2'
 
   gem.required_ruby_version = '>= 2.6.0'
-  
+
   # common
 
   gem.authors       = ['Kenichi Kamiya']

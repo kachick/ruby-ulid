@@ -70,10 +70,10 @@ class TestUUIDHandlers < Test::Unit::TestCase
   end
 
   def test_from_uuidv4_for_boundary_example
-    # This behavior is same as https://github.com/ahawker/ulid/tree/96bdb1daad7ce96f6db8c91ac0410b66d2e1c4c1 on CPython 3.9.4 
+    # This behavior is same as https://github.com/ahawker/ulid/tree/96bdb1daad7ce96f6db8c91ac0410b66d2e1c4c1 on CPython 3.9.4
     assert_equal(ULID.parse('00000000008008000000000000'), ULID.from_uuidv4('00000000-0000-4000-8000-000000000000'))
     assert_equal(ULID.parse('7ZZZZZZZZZ9ZZVZZZZZZZZZZZZ'), ULID.from_uuidv4('ffffffff-ffff-4fff-bfff-ffffffffffff'))
-    
+
     omit('Below cases might be correct behavior rather than above, to handle the `V4` specifying. Considering in https://github.com/kachick/ruby-ulid/issues/76')
     assert_equal(ULID.min, ULID.from_uuidv4('00000000-0000-4000-8000-000000000000'))
     assert_equal(ULID.max, ULID.from_uuidv4('ffffffff-ffff-4fff-bfff-ffffffffffff'))

@@ -99,15 +99,15 @@ class TestULIDUseCase < Test::Unit::TestCase
     time4 = Time.at(4, Rational('123456.789'))
 
     ulids = [
-      ulid1_1 = ULID.generate(moment: time1_1),
+      _ulid1_1 = ULID.generate(moment: time1_1),
       ulid1_2 = ULID.generate(moment: time1_2),
       ulid1_3 = ULID.generate(moment: time1_3),
       ulid2 = ULID.generate(moment: time2),
       ulid3_1 = ULID.generate(moment: time3_1),
       ulid3_2 = ULID.generate(moment: time3_2),
       ulid3_3 = ULID.generate(moment: time3_3),
-      ulid3_4 = ULID.generate(moment: time3_4),
-      ulid4 = ULID.generate(moment: time4),
+      _ulid3_4 = ULID.generate(moment: time3_4),
+      _ulid4 = ULID.generate(moment: time4),
     ]
 
     assert_equal([ulid1_2, ulid1_3, ulid2, ulid3_1, ulid3_2, ulid3_3], ulids.grep(ULID.range(time1_2..time3_2)))

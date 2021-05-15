@@ -35,7 +35,7 @@ ls ULID
 
 ## How to make ideal PRs (Not a mandatory rule, feel free to PR!)
 
-If you try to add/change/fix features, please update tests and ensure they are not broken.
+If you try to add/change/fix features, please update and/or confirm core feature's tests are not broken.
 
 ```console
 $ bundle exec rake test
@@ -43,10 +43,12 @@ $ echo $?
 0
 ```
 
-CI includes other heavy tests, if you want to check it in own machine, below command is the one.
+CI includes other heavy tests, signature check, lint, if you want to check them in own machine, below command is the one.
+
+But please don't hesitate to send PRs even if something fail in this command!
 
 ```console
-$ bundle exec rake test_all
+$ bundle exec rake simulate_ci
 $ echo $?
 0
 ```

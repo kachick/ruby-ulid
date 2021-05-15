@@ -512,7 +512,7 @@ class TestULIDClass < Test::Unit::TestCase
     assert_match('given number `2` is larger than given possibilities `1`', err.message)
     assert_equal(2, ULID.sample(2, period: ulid..ulid.succ).size)
     assert_equal(0, (ULID.sample(2, period: ulid..ulid.succ) - [ulid, ulid.succ]).size)
-    
+
     [-1, ULID::MAX_INTEGER.succ].each do |out_of_range|
       err = assert_raises(ArgumentError) do
         ULID.sample(out_of_range)

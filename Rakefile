@@ -3,6 +3,14 @@ require 'bundler/gem_tasks'
 
 require 'rake/testtask'
 
+begin
+  require 'rubocop/rake_task'
+rescue LoadError
+  puts 'can not use rubocop in this environment'
+else
+  RuboCop::RakeTask.new
+end
+
 task default: [:test]
 
 # Keep lightweight!
@@ -37,6 +45,8 @@ Rake::TestTask.new(:test_concurrency) do |tt|
 end
 
 task validate_signatures: [:test_yard, :'signature:validate']
+
+multitask simulate_ci: [:test_all, :validate_signatures, :rubocop]
 
 namespace :signature do
   task :validate do
