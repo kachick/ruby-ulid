@@ -18,7 +18,7 @@ class ULID
     uuid = String.try_convert(uuid)
     raise ArgumentError, 'ULID.from_uuidv4 takes only strings' unless uuid
 
-    prefix_trimmed = uuid.sub(/\Aurn:uuid:/, '')
+    prefix_trimmed = uuid.delete_prefix('urn:uuid:')
     unless UUIDV4_PATTERN.match?(prefix_trimmed)
       raise ParserError, "given `#{uuid}` does not match to `#{UUIDV4_PATTERN.inspect}`"
     end

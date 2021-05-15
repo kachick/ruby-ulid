@@ -170,7 +170,7 @@ exclude_end = ULID.range(time1...time2) #=> The end of `Range[ULID]` will be the
 
 # Below patterns are acceptable
 pinpointing = ULID.range(time1..time1) #=> This will match only for all IDs in `time1`
-until_the_end = ULID.range(..time1) #=> This will match only for all IDs upto `time1` (The `nil` starting `Range` can be used since Ruby 2.7)
+# until_the_end = ULID.range(..time1) #=> This will match only for all IDs upto `time1` (The `nil` starting `Range` can be used since Ruby 2.7)
 until_the_end = ULID.range(ULID.min.to_time..time1) #=> This is same as above for Ruby 2.6
 until_the_ulid_limit = ULID.range(time1..) # This will match only for all IDs from `time1` to max value of the ULID limit
 
@@ -313,7 +313,7 @@ ulids.take(10)
 # ULID(2021-04-29 03:18:24.152 UTC: 01F4DT4Z4RA0QV8WFQGRAG63EH),
 # ULID(2021-05-02 13:27:16.394 UTC: 01F4PM605ABF5SDVMEHBH8JJ9R)]
 ULID.sample(10, period: ulid1.to_time..ulid2.to_time)
-#=> 
+#=>
 # [ULID(2021-04-29 06:44:41.513 UTC: 01F4E5YPD9XQ3MYXWK8ZJKY8SW),
 #  ULID(2021-05-01 00:35:06.629 UTC: 01F4JNKD85SVK1EAEYSJGF53A2),
 #  ULID(2021-05-02 12:45:28.408 UTC: 01F4PHSEYRG9BWBEWMRW1XE6WW),
@@ -335,7 +335,7 @@ The imported timestamp is meaningless. So ULID's benefit will lost.
 # Currently experimental feature, so needed to load the extension.
 require 'ulid/uuid'
 
-# Basically reversible 
+# Basically reversible
 ulid = ULID.from_uuidv4('0983d0a2-ff15-4d83-8f37-7dd945b5aa39') #=> ULID(2301-07-10 00:28:28.821 UTC: 09GF8A5ZRN9P1RYDVXV52VBAHS)
 ulid.to_uuidv4 #=> "0983d0a2-ff15-4d83-8f37-7dd945b5aa39"
 

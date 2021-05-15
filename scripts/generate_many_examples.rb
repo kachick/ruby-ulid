@@ -20,7 +20,7 @@ recently = Time.parse('2020/1/1')..Time.parse('2112/9/3')
 # Quoted from https://en.wikipedia.org/wiki/Timeline_of_the_far_future
 #
 # Years from now - 2000
-# The average length of a solar day is likely to exceed 86,400¹⁄₃₀ SI seconds due to lunar tides decelerating the Earth's rotation, making the current UTC standard of inserting a leap second only at the end of a UTC month insufficient to keep UTC within one second of UT1 at all times. To compensate, either leap seconds will have to be added at multiple times during the month or multiple leap seconds will have to be added at the end of some or all months.[8]
+# To compensate, either leap seconds will have to be added at multiple times during the month or multiple leap seconds will have to be added at the end of some or all months.
 distant_future = Time.parse("#{2021 + 2000}/1/1")...Time.parse("#{2021 + 4000}/12/31")
 
 # When we want to use this timestamp...? :)
@@ -29,7 +29,7 @@ limit_of_the_ulid = (ULID.max.to_time - 1000000)..ULID.max.to_time
 examples = [ancient, recently, distant_future, limit_of_the_ulid].flat_map do |period|
   ulids = ULID.sample(1000, period: period)
   if ulids.uniq!
-    raise 'Very rare case happened or bug exists' 
+    raise 'Very rare case happened or bug exists'
   end
 
   ulids.map do |ulid|

@@ -43,8 +43,8 @@ class TestULIDMonotonicGeneratorThreadSafety < Test::Unit::TestCase
       ulids_by_the_time.keys.all?(possible_period)
     end
 
-    ulids_by_the_time.sort.each do |_time, ulids|
-      ulids.sort.each_cons(2) do |pred, succ|
+    ulids_by_the_time.sort.each do |_time, ulids_in_the_time|
+      ulids_in_the_time.sort.each_cons(2) do |pred, succ|
         assert do
           pred.to_i.succ == succ.to_i
         end

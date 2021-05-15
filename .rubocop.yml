@@ -1,0 +1,142 @@
+require:
+  - rubocop-rake
+  - rubocop-performance
+  - rubocop-md
+
+AllCops:
+  TargetRubyVersion: 2.6
+  DisplayCopNames: true
+  DisabledByDefault: true
+  Exclude:
+    - '**/vendor/**/*'
+  NewCops: enable
+
+Security:
+  Enabled: true
+
+Security/MarshalLoad:
+  Exclude:
+    - 'test/**/*'
+
+Style/HashSyntax:
+  Enabled: true
+
+Style/TrailingMethodEndStatement:
+  Enabled: true
+
+Style/MethodDefParentheses:
+  Enabled: true
+
+Style/TrailingCommaInBlockArgs:
+  Enabled: true
+
+Style/StringLiterals:
+  Enabled: true
+  EnforcedStyle: 'single_quotes'
+
+Style/StringLiteralsInInterpolation:
+  Enabled: true
+  EnforcedStyle: 'single_quotes'
+
+Layout/TrailingEmptyLines:
+  Enabled: true
+
+Layout/TrailingWhitespace:
+  Enabled: true
+
+Layout/SpaceBeforeFirstArg:
+  Enabled: true
+
+Layout/SpaceBeforeSemicolon:
+  Enabled: true
+
+Layout/SpaceInsideArrayPercentLiteral:
+  Enabled: true
+
+Layout/SpaceInsideBlockBraces:
+  Enabled: true
+
+Layout/SpaceInsideParens:
+  Enabled: true
+
+Layout/SpaceInsidePercentLiteralDelimiters:
+  Enabled: true
+
+Layout/SpaceInsideRangeLiteral:
+  Enabled: true
+
+Layout/SpaceInsideReferenceBrackets:
+  Enabled: true
+
+Layout/SpaceInsideStringInterpolation:
+  Enabled: true
+
+Layout/SpaceAroundMethodCallOperator:
+  Enabled: true
+
+Naming/MethodName:
+  Enabled: true
+
+Naming/FileName:
+  Enabled: true
+
+Naming/ConstantName:
+  Enabled: true
+
+Naming/ClassAndModuleCamelCase:
+  Enabled: true
+
+Naming/BlockParameterName:
+  Enabled: true
+
+Naming/HeredocDelimiterCase:
+  Enabled: true
+
+Bundler:
+  Enabled: true
+
+Bundler/OrderedGems:
+  Enabled: false
+
+Gemspec:
+  Enabled: true
+
+Gemspec/OrderedDependencies:
+  Enabled: false
+
+Performance:
+  Enabled: true
+  Include:
+    - 'lib/**/*'
+
+Lint:
+  Enabled: true
+
+Lint/InheritException:
+  Enabled: false
+
+Lint/RedundantStringCoercion:
+  Enabled: false
+
+Lint/StructNewOverride:
+  Exclude:
+    - 'test/many_data/fixtures/example.rb'
+
+Lint/BinaryOperatorWithIdenticalOperands:
+  Exclude:
+    - 'test/**/*'
+
+Lint/UnusedMethodArgument:
+  Enabled: false
+
+Lint/AssignmentInCondition:
+  Enabled: false
+
+Lint/RescueException:
+  Enabled: false
+
+Lint/DuplicateMethods:
+  Enabled: true
+
+Markdown:
+  Autodetect: true

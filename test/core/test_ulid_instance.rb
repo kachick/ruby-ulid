@@ -137,7 +137,7 @@ class TestULIDInstance < Test::Unit::TestCase
     ulid1_2 = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
     ulid2 =  ULID.parse('01BX5ZZKBKACTAV9WEVGEMMVRZ')
 
-    hash = { 
+    hash = {
       ulid1_1 => :ulid1_1,
       ulid1_2 => :ulid1_2,
       ulid2 => :ulid2
