@@ -139,4 +139,5 @@ Lint/DuplicateMethods:
   Enabled: true
 
 Markdown:
+  WarnInvalid: true
   Autodetect: true
