@@ -50,6 +50,7 @@ class ULID
   end
 
   class MonotonicGenerator
+    @mutex: Thread::Mutex
     attr_reader prev: ULID | nil
     def initialize: -> void
     def generate: (?moment: moment) -> ULID
