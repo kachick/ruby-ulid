@@ -1,6 +1,7 @@
 require:
   - rubocop-rake
   - rubocop-performance
+  - rubocop-rubycw
   - rubocop-md
 
 AllCops:
@@ -137,6 +138,11 @@ Lint/RescueException:
 
 Lint/DuplicateMethods:
   Enabled: true
+
+Rubycw/Rubycw:
+  Enabled: true
+  Exclude:
+    - '**/*.md'
 
 Markdown:
   WarnInvalid: true
