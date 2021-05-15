@@ -6,6 +6,52 @@ require_relative '../helper'
 class TestULIDMonotonicGeneratorThreadSafety < Test::Unit::TestCase
   include ULIDAssertions
 
+  def sleeping_time
+    # NOTE: `SecureRandom.random_number(0.42..1.42)` made `SIGSEGV` on `ruby 3.0.1p64 (2021-04-05 revision 0fb782ee38) [x86_64-darwin20]`
+    SecureRandom.random_number(0.12..0.42)
+  end
+
+  def test_thread_safe_without_arguments
+    generator = ULID::MonotonicGenerator.new
+    thread_count = 2000
+    starts_at = Time.now
+
+    ulids = []
+    worked_thread_numbers = []
+
+    threads = 1.upto(thread_count).map do |n|
+      Thread.start(n) do |thread_number|
+        sleep(sleeping_time)
+        worked_thread_numbers << thread_number
+        ulids << generator.generate
+      end
+    end
+
+    threads.each(&:join)
+
+    possible_period = ULID.floor(starts_at)...Time.now
+
+    assert_equal(thread_count, worked_thread_numbers.uniq.size)
+    assert_not_equal(worked_thread_numbers.sort, worked_thread_numbers)
+
+    ulids_by_the_time = ulids.group_by(&:to_time)
+
+    # I don't know thw `42` is reasonable or not :yum:
+    assert(ulids_by_the_time.size > 42)
+
+    assert do
+      ulids_by_the_time.keys.all?(possible_period)
+    end
+
+    ulids_by_the_time.sort.each do |_time, ulids|
+      ulids.sort.each_cons(2) do |pred, succ|
+        assert do
+          pred.to_i.succ == succ.to_i
+        end
+      end
+    end
+  end
+
   def test_thread_safe_with_fixed_times
     generator = ULID::MonotonicGenerator.new
     thread_count = 2000
@@ -16,7 +62,7 @@ class TestULIDMonotonicGeneratorThreadSafety < Test::Unit::TestCase
 
     threads = 1.upto(thread_count).map do |n|
       Thread.start(n) do |thread_number|
-        sleep(rand)
+        sleep(sleeping_time)
         worked_thread_numbers << thread_number
         ulids << generator.generate(moment: moment)
       end
@@ -72,7 +118,7 @@ class TestULIDMonotonicGeneratorThreadSafety < Test::Unit::TestCase
     offset = 1
     threads = basically_random_but_contain_same_1000_times.shuffle.each_with_index.map do |time, index|
       Thread.start(time, index + offset) do |time_in_thread, thread_number|
-        sleep(rand)
+        sleep(sleeping_time)
         time_by_thread_number[thread_number] = time_in_thread
         ulids << generator.generate(moment: time_in_thread)
       end
@@ -93,7 +139,7 @@ class TestULIDMonotonicGeneratorThreadSafety < Test::Unit::TestCase
     uniq_times = ulids_by_time.keys
 
     # Really? I have a feeling it should get much greater...
-    acceptable_same_timestamp_count = 5
+    acceptable_same_timestamp_count = 3
     assert do
       uniq_times.size >= acceptable_same_timestamp_count
     end

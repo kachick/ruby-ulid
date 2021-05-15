@@ -23,6 +23,8 @@ class ULID
     # @param [Time, Integer] moment
     # @return [ULID]
     # @raise [OverflowError] if the entropy part is larger than the ULID limit in same milliseconds
+    # @raise [UnexpectedError] if the generated ULID is an invalid value in monotonicity spec.
+    #   Basically will not happen. Just means this feature prefers error rather than invalid value.
     def generate(moment: ULID.current_milliseconds)
       @mutex.synchronize do
         unless @prev
