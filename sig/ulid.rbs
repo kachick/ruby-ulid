@@ -59,6 +59,10 @@ class ULID
     def freeze: -> void
   end
 
+  interface _ULID
+    def to_ulid: () -> ULID
+  end
+
   type octets = [Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer]
   type timestamp_octets = [Integer, Integer, Integer, Integer, Integer, Integer]
   type randomness_octets = [Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer]
@@ -77,7 +81,6 @@ class ULID
   def self.milliseconds_from_moment: (moment moment) -> Integer
   def self.range: (period period) -> Range[ULID]
   def self.floor: (Time time) -> Time
-  def self.reasonable_entropy: -> Integer
   def self.parse: (String string) -> self
   def self.from_uuidv4: (String uuid) -> ULID
   def self.from_integer: (Integer integer) -> self
@@ -89,6 +92,8 @@ class ULID
   def self.scan:  (String string) -> Enumerator[self, singleton(ULID)]
                 | (String string) { (self ulid) -> void } -> singleton(ULID)
   def self.from_milliseconds_and_entropy: (milliseconds: Integer, entropy: Integer) -> self
+  def self.try_convert: (_ULID) -> self
+                      | (untyped) -> nil
   attr_reader milliseconds: Integer
   attr_reader entropy: Integer
   def initialize: (milliseconds: Integer, entropy: Integer, integer: Integer) -> void
@@ -113,11 +118,14 @@ class ULID
   alias succ next
   def pred: -> ULID?
   def freeze: -> self
+  def to_ulid: -> self
   def dup: -> self
   # Same as https://github.com/ruby/rbs/blob/4fb4c33b2325d1a73d79ff7aaeb49f21cec1e0e5/core/object.rbs#L79
   def clone: (?freeze: bool) -> self
 
   private
+  def self.reasonable_entropy: -> Integer
   def self.milliseconds_from_time: (Time time) -> Integer
+  def self.safe_get_class_name: (untyped object) -> String
   def cache_all_instance_variables: -> void
 end

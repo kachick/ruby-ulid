@@ -196,6 +196,11 @@ class TestULIDInstance < Test::Unit::TestCase
     assert_same(str, ulid.instance_variable_get(:@string))
   end
 
+  def test_to_ulid
+    ulid = ULID.sample
+    assert_same(ulid, ulid.to_ulid)
+  end
+
   def test_to_time
     ulid = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
     time = ulid.to_time
