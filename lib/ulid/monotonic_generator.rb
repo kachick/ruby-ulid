@@ -4,6 +4,9 @@
 
 class ULID
   class MonotonicGenerator
+    # @return [ULID, nil]
+    attr_reader :prev
+
     undef_method :instance_variable_set
 
     def initialize
@@ -11,18 +14,9 @@ class ULID
       @prev = nil
     end
 
-    # @return [ULID, nil]
-    def prev
-      @mutex.synchronize do
-        @prev
-      end
-    end
-
     # @return [String]
     def inspect
-      @mutex.synchronize do
-        "ULID::MonotonicGenerator(prev: #{@prev.inspect})"
-      end
+      "ULID::MonotonicGenerator(prev: #{@prev.inspect})"
     end
     alias_method :to_s, :inspect
 
