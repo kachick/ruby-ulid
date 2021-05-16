@@ -10,7 +10,16 @@ on:
       - 'scripts/**'
       - 'test/**'
       - 'logo.png'
-  pull_request: null # This enables to run on each PRs
+      - '.rubocop.yml'
+  pull_request:
+    paths-ignore:
+      - 'docs/**'
+      - 'benchmark/**'
+      - 'bin/**'
+      - 'scripts/**'
+      - 'test/**'
+      - 'logo.png'
+      - '.rubocop.yml'
 jobs:
   validate_signatures:
     strategy:

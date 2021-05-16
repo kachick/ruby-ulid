@@ -15,6 +15,7 @@ on:
       - 'LICENSE'
       - 'logo.png'
       - '.yardopts'
+      - '.rubocop.yml'
   pull_request:
     paths-ignore:
       - 'docs/**'
@@ -27,6 +28,7 @@ on:
       - 'LICENSE'
       - 'logo.png'
       - '.yardopts'
+      - '.rubocop.yml'
 jobs:
   test:
     strategy:
