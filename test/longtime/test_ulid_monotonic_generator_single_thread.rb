@@ -10,7 +10,7 @@ class TestULIDMonotonicGeneratorWithSingleThread < Test::Unit::TestCase
     generator = ULID::MonotonicGenerator.new
     prevs = []
 
-    1.upto(2000).map do |n|
+    1.upto(2000) do
       sleep(0.0042)
       prevs << generator.prev
       generator.generate
@@ -30,7 +30,7 @@ class TestULIDMonotonicGeneratorWithSingleThread < Test::Unit::TestCase
     generator = ULID::MonotonicGenerator.new
     prevs = []
 
-    1.upto(2000).map do |n|
+    1.upto(2000) do
       sleep(0.0042)
       prevs << generator.inspect
       generator.generate
