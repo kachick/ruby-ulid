@@ -5,6 +5,7 @@ gemspec
 group :development, :test do
   gem 'rake'
   gem 'irb'
+  gem 'irb-power_assert'
 end
 
 group :development do

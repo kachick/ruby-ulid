@@ -26,6 +26,7 @@ Gem::Specification.new do |gem|
 
   gem.add_development_dependency 'test-unit', '>= 3.4.1', '< 4.0'
   gem.add_development_dependency 'irb', '>= 1.3.5', '< 2.0'
+  gem.add_development_dependency 'irb-power_assert', '0.0.2'
   gem.add_development_dependency 'warning', '>= 1.2.0', '< 2.0'
   gem.add_development_dependency 'rbs', '>= 1.2.0', '< 2.0'
   gem.add_development_dependency 'rake', '>= 13.0.3', '< 20.0'

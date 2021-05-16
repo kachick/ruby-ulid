@@ -3,6 +3,7 @@
 require 'bundler/setup'
 require 'irb'
 require 'irb/completion' # easy tab completion ref: https://docs.ruby-lang.org/ja/latest/library/irb=2fcompletion.html
+require 'irb/power_assert'
 
 require_relative '../lib/ulid'
 
