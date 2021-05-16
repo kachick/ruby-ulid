@@ -53,6 +53,8 @@ class ULID < Object
 
   class MonotonicGenerator
     @mutex: Thread::Mutex
+
+    # The returned value is `not` Thready-safety
     attr_reader prev: ULID | nil
 
     # A pribate API. Should not be used in your code.
@@ -60,6 +62,8 @@ class ULID < Object
 
     # See [How to keep `Sortable` even if in same timestamp](https://github.com/kachick/ruby-ulid#how-to-keep-sortable-even-if-in-same-timestamp)
     def generate: (?moment: moment) -> ULID
+
+    # The returned value is `not` Thready-safety
     def inspect: -> String
     alias to_s inspect
     def freeze: -> void

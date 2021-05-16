@@ -18,7 +18,7 @@ basic_test_tasks = [:test_core, :test_experimental]
 task test: basic_test_tasks
 
 # Basically checked in CI only
-task test_all: basic_test_tasks | [:test_many_data, :test_concurrency]
+task test_all: basic_test_tasks | [:test_many_data, :test_concurrency, :test_longtime]
 
 Rake::TestTask.new(:test_core) do |tt|
   tt.pattern = 'test/core/**/test_*.rb'
@@ -40,6 +40,12 @@ end
 
 Rake::TestTask.new(:test_concurrency) do |tt|
   tt.pattern = 'test/concurrency/**/test_*.rb'
+  tt.verbose = true
+  tt.warning = true
+end
+
+Rake::TestTask.new(:test_longtime) do |tt|
+  tt.pattern = 'test/longtime/**/test_*.rb'
   tt.verbose = true
   tt.warning = true
 end
