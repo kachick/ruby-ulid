@@ -4,14 +4,63 @@
 require_relative '../helper'
 
 class TestULIDMonotonicGeneratorThreadSafety < Test::Unit::TestCase
+  include ULIDHelpers
   include ULIDAssertions
 
-  def sleeping_time
-    # NOTE: `SecureRandom.random_number(0.42..1.42)` made `SIGSEGV` on `ruby 3.0.1p64 (2021-04-05 revision 0fb782ee38) [x86_64-darwin20]`
-    SecureRandom.random_number(0.12..0.42)
+  def test_thread_safe_prev
+    generator = ULID::MonotonicGenerator.new
+    thread_count = 2000
+
+    prevs = []
+
+    threads = 1.upto(thread_count).map do |n|
+      Thread.start(n) do |_thread_number|
+        sleep(sleeping_time)
+        prevs << generator.prev
+        generator.generate
+      end
+    end
+
+    threads.each(&:join)
+
+    assert_equal(1, prevs.count(nil))
+    assert(prevs.compact.all?(ULID))
+    assert_equal(thread_count, prevs.size)
+
+    # This branch does not mean to omit Ruby 2.6. Just to use Enumerable#tally for debug
+    if RUBY_VERSION >= '2.7'
+      weirds = prevs.tally.select{ |_ulid, count| count > 1 }
+      assert do
+        weirds.empty?
+      end
+    end
+    # binding.irb
+
+    assert_equal(thread_count, prevs.uniq.size)
   end
 
-  def test_thread_safe_without_arguments
+  def test_thread_safe_inspect
+    generator = ULID::MonotonicGenerator.new
+    thread_count = 2000
+
+    inspects = []
+
+    threads = 1.upto(thread_count).map do |n|
+      Thread.start(n) do |_thread_number|
+        sleep(sleeping_time)
+        inspects << generator.inspect
+        generator.generate
+      end
+    end
+
+    threads.each(&:join)
+
+    assert(inspects.all?(String))
+    assert_equal(thread_count, inspects.size)
+    assert_equal(thread_count, inspects.uniq.size)
+  end
+
+  def test_thread_safe_generate_without_arguments
     generator = ULID::MonotonicGenerator.new
     thread_count = 2000
     starts_at = Time.now
@@ -34,6 +83,8 @@ class TestULIDMonotonicGeneratorThreadSafety < Test::Unit::TestCase
     assert_equal(thread_count, worked_thread_numbers.uniq.size)
     assert_not_equal(worked_thread_numbers.sort, worked_thread_numbers)
 
+    assert_equal(thread_count, ulids.uniq.size)
+
     ulids_by_the_time = ulids.group_by(&:to_time)
 
     # I don't know thw `42` is reasonable or not :yum:
@@ -52,7 +103,7 @@ class TestULIDMonotonicGeneratorThreadSafety < Test::Unit::TestCase
     end
   end
 
-  def test_thread_safe_with_fixed_times
+  def test_thread_safe_generate_with_fixed_times
     generator = ULID::MonotonicGenerator.new
     thread_count = 2000
     moment = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV').to_time
@@ -83,7 +134,7 @@ class TestULIDMonotonicGeneratorThreadSafety < Test::Unit::TestCase
   end
 
   # I don't have confident for this test is the reasonable one... Concurrency is hard to human. :cry:
-  def test_thread_safe_with_randomized_time
+  def test_thread_safe_generate_with_randomized_time
     generator = ULID::MonotonicGenerator.new
     thread_count = 3000
     initial_and_median = ULID.generate
