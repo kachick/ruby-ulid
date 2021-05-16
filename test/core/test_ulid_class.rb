@@ -21,6 +21,10 @@ class TestULIDClass < Test::Unit::TestCase
 
   def test_constant_version
     assert_equal(true, ULID::VERSION.frozen?)
+
+    assert do
+      Gem::Version.correct?(ULID::VERSION)
+    end
   end
 
   def test_parse
