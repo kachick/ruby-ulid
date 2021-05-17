@@ -233,4 +233,45 @@ class TestULIDMonotonicGeneratorThreadSafety < Test::Unit::TestCase
       assert_equal(thread_count, inspects.uniq.size)
     end
   end
+
+  def test_generate_prev_and_inspect_ensure_thread_safety_when_called_in_synchronize
+    generator = ULID::MonotonicGenerator.new
+    thread_count = 2000
+
+    prevs = []
+    inspects = []
+
+    threads = 1.upto(thread_count).map do |n|
+      Thread.start(n) do |_thread_number|
+        sleep(sleeping_time)
+        generator.synchronize do
+          prevs << generator.prev
+          inspects << generator.inspect
+          generator.generate
+        end
+      end
+    end
+
+    threads.each(&:join)
+
+    assert(prevs.compact.all?(ULID))
+    assert_equal(thread_count, prevs.size)
+
+    assert_equal(1, prevs.count(nil)) # Basically passed, but can't be guaranteed
+
+    # This branch does not mean to omit Ruby 2.6. Just to use Enumerable#tally for debug
+    if RUBY_VERSION >= '2.7'
+      weirds = prevs.tally.select{ |_ulid, count| count > 1 }
+      assert do
+        weirds.empty?
+      end
+    end
+
+    assert_equal(thread_count, prevs.uniq.size)
+
+    assert(inspects.all?(String))
+    assert_equal(thread_count, inspects.size)
+
+    assert_equal(thread_count, inspects.uniq.size)
+  end
 end

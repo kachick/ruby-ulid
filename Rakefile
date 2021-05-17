@@ -56,7 +56,7 @@ multitask simulate_ci: [:test_all, :validate_signatures, :rubocop]
 
 namespace :signature do
   task :validate do
-    sh 'bundle exec rbs -rsecurerandom -I sig validate'
+    sh 'bundle exec rbs -rsecurerandom -rmonitor -I sig validate'
   end
 
   task :check_false_positive do

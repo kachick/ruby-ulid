@@ -3,5 +3,5 @@ target :lib do
 
   check 'lib'
 
-  library 'securerandom'
+  library 'securerandom', 'monitor'
 end
