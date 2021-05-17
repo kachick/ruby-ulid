@@ -28,7 +28,7 @@ Instead, herein is proposed ULID:
 - 1.21e+24 unique ULIDs per millisecond
 - Lexicographically sortable!
 - Canonically encoded as a 26 character string, as opposed to the 36 character UUID
-- Uses [Crockford's base32](https://www.crockford.com/base32.html) for better efficiency and readability (5 bits per character) # See also exists issues in [Note](#note)
+- Uses [Crockford's base32](https://www.crockford.com/base32.html) for better efficiency and readability (5 bits per character)
 - Case insensitive
 - No special characters (URL safe)
 - Monotonic sort order (correctly detects and handles the same millisecond)
@@ -326,6 +326,34 @@ ULID.sample(10, period: ulid1.to_time..ulid2.to_time)
 #  ULID(2021-04-28 15:05:06.808 UTC: 01F4CG68ZRST94T056KRZ5K9S4)]
 ```
 
+### ULID specification ambiguity around orthographical variants of the format
+
+I'm afraid so, we should consider [Current ULID spec](https://github.com/ulid/spec/tree/d0c7170df4517939e70129b4d6462cc162f2d5bf#universally-unique-lexicographically-sortable-identifier) has `orthographical variants of the format` possibilities.
+
+>Uses Crockford's base32 for better efficiency and readability (5 bits per character)
+
+The original `Crockford's base32` maps `I`, `L` to `1`, `O` to `0`.
+And accepts freestyle inserting `Hyphens (-)`.
+To consider this patterns or not is different in each implementations.
+
+Current parser/validator/matcher aims to cover `subset of Crockford's base32`.
+I have suggested it would be clarified in [ulid/spec#57](https://github.com/ulid/spec/pull/57).
+
+>Case insensitive
+
+I can understand it might be considered in actual use-case.
+But it is a controversial point, discussing in [ulid/spec#3](https://github.com/ulid/spec/issues/3).
+
+Be that as it may, this gem provides API for handling the nasty possibilities.
+
+`ULID.normalize` and `ULID.normalized?`
+
+```ruby
+ULID.normalize('-olarz3-noekisv4rrff-q6ig5fav--') #=> "01ARZ3N0EK1SV4RRFFQ61G5FAV"
+ULID.normalized?('-olarz3-noekisv4rrff-q6ig5fav--') #=> false
+ULID.normalized?('01ARZ3N0EK1SV4RRFFQ61G5FAV') #=> true
+```
+
 ### UUIDv4 converter for migration use-cases
 
 `ULID.from_uuidv4` and `ULID#to_uuidv4` is the converter.
@@ -418,4 +446,3 @@ The results are not something to be proud of.
 ## Note
 
 - Another choices for sortable and randomness IDs, [UUIDv6, UUIDv7, UUIDv8 might be the one. (But they are still in draft state)](https://www.ietf.org/archive/id/draft-peabody-dispatch-new-uuid-format-01.html), I will track them in [ruby-ulid#37](https://github.com/kachick/ruby-ulid/issues/37)
-- Current parser/validator/matcher aims to cover `subset of Crockford's base32`. Suggesting it in [ulid/spec#57](https://github.com/ulid/spec/pull/57). Be that as it may, I might provide special handler or converter for the exception in [ruby-ulid#57](https://github.com/kachick/ruby-ulid/issues/57) and/or [ruby-ulid#78](https://github.com/kachick/ruby-ulid/issues/78)

@@ -259,6 +259,27 @@ class ULID
     from_integer(CrockfordBase32.decode(string))
   end
 
+  # @param [String, #to_str] string
+  # @return [String]
+  # @raise [ParserError] if the given format is not correct for ULID specs, even if ignored `orthographical variants of the format`
+  def self.normalize(string)
+    string = String.try_convert(string)
+    raise ArgumentError, 'ULID.normalize takes only strings' unless string
+
+    normalized_in_crockford = CrockfordBase32.normalize(string)
+    # Ensure the ULID correctness, because CrockfordBase32 does not always mean to satisfy ULID format
+    parse(normalized_in_crockford).to_s
+  end
+
+  # @return [Boolean]
+  def self.normalized?(object)
+    normalized = normalize(object)
+  rescue Exception
+    false
+  else
+    normalized == object
+  end
+
   # @return [Boolean]
   def self.valid?(object)
     string = String.try_convert(object)
