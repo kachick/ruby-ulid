@@ -195,7 +195,7 @@ class TestULIDMonotonicGeneratorThreadSafety < Test::Unit::TestCase
     assert(prevs.compact.all?(ULID))
     assert_equal(thread_count, prevs.size)
 
-    omit("ULID::MonotonicGenerator#pred can't be guaranteed the returned value is Thread-safety") do
+    omit("ULID::MonotonicGenerator#pred can't be guaranteed the returned value is Thread-safety when separately called with #generate") do
       assert_equal(1, prevs.count(nil)) # Basically passed, but can't be guaranteed
 
       # This branch does not mean to omit Ruby 2.6. Just to use Enumerable#tally for debug
@@ -229,7 +229,7 @@ class TestULIDMonotonicGeneratorThreadSafety < Test::Unit::TestCase
     assert(inspects.all?(String))
     assert_equal(thread_count, inspects.size)
 
-    omit("ULID::MonotonicGenerator#inspect can't be guaranteed the returned value is Thread-safety") do
+    omit("ULID::MonotonicGenerator#inspect can't be guaranteed the returned value is Thread-safety when separately called with #generate") do
       assert_equal(thread_count, inspects.uniq.size)
     end
   end
@@ -273,5 +273,59 @@ class TestULIDMonotonicGeneratorThreadSafety < Test::Unit::TestCase
     assert_equal(thread_count, inspects.size)
 
     assert_equal(thread_count, inspects.uniq.size)
+  end
+
+  def test_duplicated_generator
+    generator = ULID::MonotonicGenerator.new
+    duped = generator.dup
+    thread_count = 2000
+
+    ulids = []
+
+    threads1 = 1.upto(thread_count / 2).map do |n|
+      Thread.start(n) do |_thread_number|
+        sleep(sleeping_time)
+        ulids << generator.generate
+      end
+    end
+
+    threads2 = ((thread_count / 2) + 1).upto(thread_count).map do |n|
+      Thread.start(n) do |_thread_number|
+        sleep(sleeping_time)
+        ulids << duped.generate
+      end
+    end
+
+    [*threads1, *threads2].each(&:join)
+
+    assert_equal(thread_count, ulids.size)
+    assert_equal(thread_count, ulids.uniq.size)
+  end
+
+  def test_cloned_generator
+    generator = ULID::MonotonicGenerator.new
+    cloned = generator.clone
+    thread_count = 2000
+
+    ulids = []
+
+    threads1 = 1.upto(thread_count / 2).map do |n|
+      Thread.start(n) do |_thread_number|
+        sleep(sleeping_time)
+        ulids << generator.generate
+      end
+    end
+
+    threads2 = ((thread_count / 2) + 1).upto(thread_count).map do |n|
+      Thread.start(n) do |_thread_number|
+        sleep(sleeping_time)
+        ulids << cloned.generate
+      end
+    end
+
+    [*threads1, *threads2].each(&:join)
+
+    assert_equal(thread_count, ulids.size)
+    assert_equal(thread_count, ulids.uniq.size)
   end
 end
