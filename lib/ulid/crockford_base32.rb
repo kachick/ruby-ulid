@@ -51,13 +51,13 @@ class ULID
     CROCKFORD_BASE32_CHAR_BY_N32_CHAR = N32_CHAR_BY_CROCKFORD_BASE32_CHAR.invert.freeze
     N32_CHAR_PATTERN = /[#{CROCKFORD_BASE32_CHAR_BY_N32_CHAR.keys.join}]/.freeze
 
-    VARIANT_BY_STANDARD = {
+    STANDARD_BY_VARIANT = {
       'L' => '1',
       'I' => '1',
       'O' => '0',
       '-' => ''
     }.freeze
-    VARIANT_PATTERN = /[#{VARIANT_BY_STANDARD.keys.join}]/.freeze
+    VARIANT_PATTERN = /[#{STANDARD_BY_VARIANT.keys.join}]/.freeze
 
     # @api private
     # @param [String] string
@@ -79,7 +79,7 @@ class ULID
     # @param [String] string
     # @return [String]
     def self.normalize(string)
-      string.upcase.gsub(VARIANT_PATTERN, VARIANT_BY_STANDARD)
+      string.upcase.gsub(VARIANT_PATTERN, STANDARD_BY_VARIANT)
     end
   end
 end

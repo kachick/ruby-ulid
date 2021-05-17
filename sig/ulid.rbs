@@ -43,7 +43,7 @@ class ULID < Object
     CROCKFORD_BASE32_CHAR_PATTERN: Regexp
     CROCKFORD_BASE32_CHAR_BY_N32_CHAR: Hash[String, String]
     N32_CHAR_PATTERN: Regexp
-    VARIANT_BY_STANDARD: Hash[String, String]
+    STANDARD_BY_VARIANT: Hash[String, String]
     VARIANT_PATTERN: Regexp
 
     # A pribate API. Should not be used in your code.
