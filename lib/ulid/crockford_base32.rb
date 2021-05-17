@@ -53,8 +53,11 @@ class ULID
 
     STANDARD_BY_VARIANT = {
       'L' => '1',
+      'l' => '1',
       'I' => '1',
+      'i' => '1',
       'O' => '0',
+      'o' => '0',
       '-' => ''
     }.freeze
     VARIANT_PATTERN = /[#{STANDARD_BY_VARIANT.keys.join}]/.freeze
@@ -79,7 +82,7 @@ class ULID
     # @param [String] string
     # @return [String]
     def self.normalize(string)
-      string.upcase.gsub(VARIANT_PATTERN, STANDARD_BY_VARIANT)
+      string.gsub(VARIANT_PATTERN, STANDARD_BY_VARIANT)
     end
   end
 end
