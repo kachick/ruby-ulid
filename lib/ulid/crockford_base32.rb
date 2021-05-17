@@ -3,7 +3,9 @@
 # Copyright (C) 2021 Kenichi Kamiya
 
 class ULID
-  # Currently supporting only for `subset` for actual use-case`
+  # @see https://www.crockford.com/base32.html
+  #
+  # This module supporting only `subset of original crockford for actual use-case` in ULID context.
   # Original decoding spec allows other characters.
   # But I think ULID should allow `subset` of Crockford's Base32.
   # See below
