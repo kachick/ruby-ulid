@@ -114,6 +114,98 @@ class TestULIDClass < Test::Unit::TestCase
     end
   end
 
+  def test_normalize
+    # This is the core of this feature
+    assert_equal(ULID.parse('01ARZ3N0EK1SV4RRFFQ61G5FAV'), ULID.parse(ULID.normalize('-OlARZ3-NoEKISV4rRFF-Q6iG5FAV--')))
+    assert_equal(ULID.parse('01ARZ3N0EK1SV4RRFFQ61G5FAV').to_s, ULID.normalize('-olarz3-noekisv4rrff-q6ig5fav--'))
+
+    normalized = '01ARZ3NDEKTSV4RRFFQ69G5FAV'
+    downcased = normalized.downcase
+    dup_downcased = downcased.dup
+
+    assert(normalized.frozen?)
+    assert_not_same(normalized, ULID.normalize(normalized))
+
+    # This behavior is controversial, should be return non frozen string?
+    assert do
+      ULID.normalize(normalized).frozen?
+    end
+
+    # Ensure the string is not modified in parser
+    assert_equal(false, downcased.frozen?)
+    assert_not_same(downcased, ULID.normalize(downcased))
+    assert_equal(dup_downcased, downcased)
+
+    assert_equal(normalized, ULID.normalize(downcased))
+    assert_instance_of(String, ULID.normalize(downcased))
+
+    # This encoding handling is controversial, should be return original encoding?
+    assert_equal(Encoding::UTF_8, downcased.encoding)
+    assert_equal(Encoding::US_ASCII, ULID.normalize(downcased).encoding)
+
+    [
+      '',
+      "01ARZ3NDEKTSV4RRFFQ69G5FAV\n",
+      '01ARZ3NDEKTSV4RRFFQ69G5FAU',
+      '01ARZ3NDEKTSV4RRFFQ69G5FA',
+      '80000000000000000000000000'
+    ].each do |invalid|
+      err = assert_raises(ULID::ParserError) do
+        ULID.normalize(invalid)
+      end
+      assert_match(/does not match to/, err.message)
+    end
+
+    ULID.sample(1000).each do |sample|
+      assert_equal(sample.to_s, ULID.normalize(sample.to_s))
+      assert_equal(sample.to_s, ULID.normalize(sample.to_s.downcase))
+    end
+
+    assert_raises(ArgumentError) do
+      ULID.normalize
+    end
+
+    [nil, 42, normalized.to_sym, BasicObject.new, Object.new, ULID.parse(normalized)].each do |evil|
+      err = assert_raises(ArgumentError) do
+        ULID.normalize(evil)
+      end
+      assert_equal('ULID.normalize takes only strings', err.message)
+    end
+  end
+
+  def test_normalized?
+    nasty = '-olarz3-noekisv4rrff-q6ig5fav--'
+    assert_equal(false, ULID.normalized?(nasty))
+    assert_equal(true, ULID.normalized?(ULID.normalize(nasty)))
+
+    normalized = '01ARZ3NDEKTSV4RRFFQ69G5FAV'
+    assert_equal(true, ULID.normalized?(normalized))
+    assert_equal(false, ULID.normalized?(normalized.downcase))
+
+    [
+      '',
+      "01ARZ3NDEKTSV4RRFFQ69G5FAV\n",
+      '01ARZ3NDEKTSV4RRFFQ69G5FAU',
+      '01ARZ3NDEKTSV4RRFFQ69G5FA',
+      '80000000000000000000000000'
+    ].each do |invalid|
+      assert_equal(false, ULID.normalized?(invalid))
+    end
+
+    ULID.sample(1000).each do |sample|
+      assert_equal(true, ULID.normalized?(sample.to_s))
+      assert_equal(false, ULID.normalized?(sample.to_s.downcase))
+    end
+
+    assert_raises(ArgumentError) do
+      ULID.normalized?
+    end
+
+    [nil, 42, normalized.to_sym, BasicObject.new, Object.new, ULID.parse(normalized)].each do |evil|
+      assert_equal(false, ULID.normalized?(evil))
+    end
+  end
+
   def test_range
     time_has_more_value_than_milliseconds1 = Time.at(946684800, Rational('123456.789')) # 2000-01-01 00:00:00.123456789 UTC
     time_has_more_value_than_milliseconds2 = Time.at(1620045632, Rational('123456.789')) # 2021-05-03 12:40:32.123456789 UTC

@@ -43,12 +43,17 @@ class ULID < Object
     CROCKFORD_BASE32_CHAR_PATTERN: Regexp
     CROCKFORD_BASE32_CHAR_BY_N32_CHAR: Hash[String, String]
     N32_CHAR_PATTERN: Regexp
+    VARIANT_BY_STANDARD: Hash[String, String]
+    VARIANT_PATTERN: Regexp
 
     # A pribate API. Should not be used in your code.
     def self.encode: (Integer integer) -> String
 
     # A pribate API. Should not be used in your code.
     def self.decode: (String string) -> Integer
+
+    # A pribate API. Should not be used in your code.
+    def self.normalize: (String string) -> String
   end
 
   class MonotonicGenerator
@@ -316,6 +321,28 @@ class ULID < Object
   def self.sample: (?period: period) -> self
                  | (Integer number, ?period: period) -> Array[self]
   def self.valid?: (untyped) -> bool
+
+  # Returns normalized string
+  #
+  # ```ruby
+  # ULID.normalize('-olarz3-noekisv4rrff-q6ig5fav--') #=> "01ARZ3N0EK1SV4RRFFQ61G5FAV"
+  # ULID.normalized?('-olarz3-noekisv4rrff-q6ig5fav--') #=> false
+  # ULID.normalized?('01ARZ3N0EK1SV4RRFFQ61G5FAV') #=> true
+  # ```
+  #
+  # See also [ulid/spec#57](https://github.com/ulid/spec/pull/57) and [ulid/spec#3](https://github.com/ulid/spec/issues/3)
+  def self.normalize: (_ToStr string) -> String
+
+  # Returns `true` if it is normalized string
+  #
+  # ```ruby
+  # ULID.normalize('-olarz3-noekisv4rrff-q6ig5fav--') #=> "01ARZ3N0EK1SV4RRFFQ61G5FAV"
+  # ULID.normalized?('-olarz3-noekisv4rrff-q6ig5fav--') #=> false
+  # ULID.normalized?('01ARZ3N0EK1SV4RRFFQ61G5FAV') #=> true
+  # ```
+  #
+  # See also [ulid/spec#57](https://github.com/ulid/spec/pull/57) and [ulid/spec#3](https://github.com/ulid/spec/issues/3)
+  def self.normalized?: (untyped) -> bool
 
   # Returns parsed ULIDs from given String for rough operations.
   #
