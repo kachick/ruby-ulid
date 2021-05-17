@@ -23,7 +23,7 @@ $ bundle install
 $ ./bin/console
 # Starting up IRB with loading developing ULID library
 irb(main):001:0> ULID::VERSION
-=> "0.1.3"
+=> "0.1.4"
 ```
 
 ```ruby
