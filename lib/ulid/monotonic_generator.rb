@@ -4,13 +4,15 @@
 
 class ULID
   class MonotonicGenerator
+    include MonitorMixin
+
     # @return [ULID, nil]
     attr_reader :prev
 
     undef_method :instance_variable_set
 
     def initialize
-      @mutex = Thread::Mutex.new
+      super()
       @prev = nil
     end
 
@@ -26,7 +28,7 @@ class ULID
     # @raise [UnexpectedError] if the generated ULID is an invalid value in monotonicity spec.
     #   Basically will not happen. Just means this feature prefers error rather than invalid value.
     def generate(moment: ULID.current_milliseconds)
-      @mutex.synchronize do
+      synchronize do
         unless @prev
           @prev = ULID.generate(moment: moment)
           return @prev

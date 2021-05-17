@@ -52,7 +52,7 @@ class ULID < Object
   end
 
   class MonotonicGenerator
-    @mutex: Thread::Mutex
+    include MonitorMixin
 
     # The returned value is `not` Thready-safety
     attr_reader prev: ULID | nil

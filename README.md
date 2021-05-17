@@ -146,7 +146,7 @@ sample_ulids_by_the_time.take(5) #=>
 ulids.sort == ulids #=> true
 ```
 
-Same generator does not generate duplicated ULIDs even in multi threads environment. It is implemented with [Thread::Mutex](https://github.com/ruby/ruby/blob/5f8bca32571fa9c651f6903d36f66082363f8879/thread_sync.c#L1572-L1582)
+Same generator does not generate duplicated ULIDs even in multi threads environment. It is implemented with [Monitor](https://bugs.ruby-lang.org/issues/16255)
 
 ### Filtering IDs with `Time`
 
