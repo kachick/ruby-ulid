@@ -54,16 +54,35 @@ class ULID < Object
   class MonotonicGenerator
     include MonitorMixin
 
-    # The returned value is `not` Thready-safety
+    # Returned value is `basically not` Thread-safety
+    # If you want to keep Thread-safety, keep to call {#generate} only in same {#synchronize} block
+    #
+    # ```ruby
+    # generator.synchronize do
+    #   generator.prev
+    #   generator.inspect
+    #   generator.generate
+    # end
+    # ```
     attr_reader prev: ULID | nil
 
     # A pribate API. Should not be used in your code.
     def initialize: -> void
 
     # See [How to keep `Sortable` even if in same timestamp](https://github.com/kachick/ruby-ulid#how-to-keep-sortable-even-if-in-same-timestamp)
+    # The `Thread-safety` is implemented with [Monitor](https://bugs.ruby-lang.org/issues/16255)
     def generate: (?moment: moment) -> ULID
 
-    # The returned value is `not` Thready-safety
+    # Returned value is `basically not` Thread-safety
+    # If you want to keep Thread-safety, keep to call {#generate} only in same {#synchronize} block
+    #
+    # ```ruby
+    # generator.synchronize do
+    #   generator.prev
+    #   generator.inspect
+    #   generator.generate
+    # end
+    # ```
     def inspect: -> String
     alias to_s inspect
     def freeze: -> void
