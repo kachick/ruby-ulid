@@ -22,6 +22,7 @@ Gem::Specification.new do |gem|
     'documentation_uri' => 'https://kachick.github.io/ruby-ulid/',
     'homepage_uri'      => repository_url,
     'source_code_uri'   => repository_url,
+    'bug_tracker_uri'   => "#{repository_url}/issues",
   }
 
   gem.add_development_dependency 'test-unit', '>= 3.4.1', '< 4.0'
