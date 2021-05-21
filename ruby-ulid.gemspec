@@ -46,8 +46,11 @@ Gem::Specification.new do |gem|
 
   gem.authors       = ['Kenichi Kamiya']
   gem.email         = ['kachick1+ruby@gmail.com']
+  might_be_parsing_by_tool_as_dependabot = `git ls-files`.lines.empty?
   files = Dir['README*', '*LICENSE*',  'lib/**/*', 'sig/**/*'].uniq
-  raise "obvious mistaken in packaging files: #{files.inspect}" unless files.grep(%r!\A(?:lib|sig)/!).size > 5
+  if !might_be_parsing_by_tool_as_dependabot && files.grep(%r!\A(?:lib|sig)/!).size < 5
+    raise "obvious mistaken in packaging files: #{files.inspect}"
+  end
   gem.files         = files
   gem.require_paths = ['lib']
 end
