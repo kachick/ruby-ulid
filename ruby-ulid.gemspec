@@ -34,7 +34,7 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'benchmark-ips', '>= 2.8.4', '< 3'
   gem.add_development_dependency 'yard', '>= 0.9.26', '< 2'
   gem.add_development_dependency 'steep', '>= 0.44.1', '< 0.50.0'
-  gem.add_development_dependency 'rubocop', '>= 1.14.0', '< 1.15.0'
+  gem.add_development_dependency 'rubocop', '>= 1.14.0', '< 1.16.0'
   gem.add_development_dependency 'rubocop-rake'
   gem.add_development_dependency 'rubocop-performance'
   gem.add_development_dependency 'rubocop-rubycw'
