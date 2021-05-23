@@ -40,6 +40,9 @@ Style/StringLiteralsInInterpolation:
   Enabled: true
   EnforcedStyle: 'single_quotes'
 
+Style/TopLevelMethodDefinition:
+  Enabled: true
+
 Layout/TrailingEmptyLines:
   Enabled: true
 
