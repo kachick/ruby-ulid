@@ -31,7 +31,7 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'warning', '>= 1.2.0', '< 2.0'
   gem.add_development_dependency 'rbs', '>= 1.2.0', '< 2.0'
   gem.add_development_dependency 'rake', '>= 13.0.3', '< 20.0'
-  gem.add_development_dependency 'benchmark-ips', '>= 2.8.4', '< 3'
+  gem.add_development_dependency 'benchmark-ips', '>= 2.9.0', '< 3'
   gem.add_development_dependency 'yard', '>= 0.9.26', '< 2'
   gem.add_development_dependency 'steep', '>= 0.44.1', '< 0.50.0'
   gem.add_development_dependency 'rubocop', '>= 1.15.0', '< 1.16.0'
