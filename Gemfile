@@ -11,6 +11,10 @@ end
 group :development do
   gem 'steep', require: false
   gem 'rubocop', require: false
+  gem 'rubocop-rake', require: false
+  gem 'rubocop-performance', require: false
+  gem 'rubocop-rubycw', require: false
+  gem 'rubocop-md', require: false
 end
 
 group :test do

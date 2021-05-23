@@ -35,10 +35,10 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'yard', '>= 0.9.26', '< 2'
   gem.add_development_dependency 'steep', '>= 0.44.1', '< 0.50.0'
   gem.add_development_dependency 'rubocop', '>= 1.15.0', '< 1.16.0'
-  gem.add_development_dependency 'rubocop-rake'
-  gem.add_development_dependency 'rubocop-performance'
-  gem.add_development_dependency 'rubocop-rubycw'
-  gem.add_development_dependency 'rubocop-md'
+  gem.add_development_dependency 'rubocop-rake', '>= 0.5.1', '< 0.6.0'
+  gem.add_development_dependency 'rubocop-performance', '>= 1.11.3', '< 1.12.0'
+  gem.add_development_dependency 'rubocop-rubycw', '>= 0.1.6', '< 0.2.0'
+  gem.add_development_dependency 'rubocop-md', '>= 1.0.1', '< 2.0.0'
 
   gem.required_ruby_version = '>= 2.6.0'
 
