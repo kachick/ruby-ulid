@@ -1,5 +1,6 @@
 # coding: us-ascii
 # frozen_string_literal: true
+
 # Copyright (C) 2021 Kenichi Kamiya
 
 class ULID
@@ -48,6 +49,7 @@ class ULID
       end
     end.freeze
     raise SetupError, 'obvious bug exists in the mapping algorithm' unless N32_CHAR_BY_CROCKFORD_BASE32_CHAR.keys == crockford_base32_mappings.keys
+
     CROCKFORD_BASE32_CHAR_PATTERN = /[#{N32_CHAR_BY_CROCKFORD_BASE32_CHAR.keys.join}]/.freeze
 
     CROCKFORD_BASE32_CHAR_BY_N32_CHAR = N32_CHAR_BY_CROCKFORD_BASE32_CHAR.invert.freeze

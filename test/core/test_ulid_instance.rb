@@ -135,7 +135,7 @@ class TestULIDInstance < Test::Unit::TestCase
   def test_hash_key
     ulid1_1 = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
     ulid1_2 = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
-    ulid2 =  ULID.parse('01BX5ZZKBKACTAV9WEVGEMMVRZ')
+    ulid2 = ULID.parse('01BX5ZZKBKACTAV9WEVGEMMVRZ')
 
     hash = {
       ulid1_1 => :ulid1_1,
@@ -159,11 +159,12 @@ class TestULIDInstance < Test::Unit::TestCase
 
     hash[having_same_hash] = :having_same_hash
 
-    assert_equal({
-      ulid1_2 => :ulid1_2,
-      ulid2 => :ulid2,
-      having_same_hash => :having_same_hash
-    }, hash)
+    assert_equal(
+      {
+        ulid1_2 => :ulid1_2,
+        ulid2 => :ulid2,
+        having_same_hash => :having_same_hash
+      }, hash)
   end
 
   def test_dup

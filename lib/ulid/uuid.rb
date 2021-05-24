@@ -1,5 +1,6 @@
 # coding: us-ascii
 # frozen_string_literal: true
+
 # Copyright (C) 2021 Kenichi Kamiya
 
 # Extracted features around UUID from some reasons
@@ -8,7 +9,7 @@
 #  * https://github.com/kachick/ruby-ulid/issues/76
 class ULID
   # Imported from https://stackoverflow.com/a/38191104/1212807, thank you!
-  UUIDV4_PATTERN = /\A[0-9A-F]{8}-[0-9A-F]{4}-[4][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}\z/i.freeze
+  UUIDV4_PATTERN = /\A[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}\z/i.freeze
   private_constant :UUIDV4_PATTERN
 
   # @param [String, #to_str] uuid

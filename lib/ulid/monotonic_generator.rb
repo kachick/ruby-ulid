@@ -1,5 +1,6 @@
 # coding: us-ascii
 # frozen_string_literal: true
+
 # Copyright (C) 2021 Kenichi Kamiya
 
 class ULID
@@ -36,19 +37,23 @@ class ULID
 
         milliseconds = ULID.milliseconds_from_moment(moment)
 
-        ulid = if @prev.milliseconds < milliseconds
-          ULID.generate(moment: milliseconds)
-        else
-          ULID.from_milliseconds_and_entropy(milliseconds: @prev.milliseconds, entropy: @prev.entropy.succ)
-        end
+        ulid = (
+          if @prev.milliseconds < milliseconds
+            ULID.generate(moment: milliseconds)
+          else
+            ULID.from_milliseconds_and_entropy(milliseconds: @prev.milliseconds, entropy: @prev.entropy.succ)
+          end
+        )
 
         unless ulid > @prev
           base_message = "monotonicity broken from unexpected reasons # generated: #{ulid.inspect}, prev: #{@prev.inspect}"
-          additional_information = if Thread.list == [Thread.main]
-            '# NOTE: looks single thread only exist'
-          else
-            '# NOTE: ran on multi threads, so this might from concurrency issue'
-          end
+          additional_information = (
+            if Thread.list == [Thread.main]
+              '# NOTE: looks single thread only exist'
+            else
+              '# NOTE: ran on multi threads, so this might from concurrency issue'
+            end
+          )
 
           raise UnexpectedError, base_message + additional_information
         end

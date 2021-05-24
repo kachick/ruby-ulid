@@ -1,5 +1,6 @@
 # coding: us-ascii
 # frozen_string_literal: true
+
 # Copyright (C) 2021 Kenichi Kamiya
 
 require 'securerandom'
@@ -60,6 +61,7 @@ class ULID
   # @return [ULID]
   def self.at(time)
     raise ArgumentError, 'ULID.at takes only `Time` instance' unless Time === time
+
     from_milliseconds_and_entropy(milliseconds: milliseconds_from_time(time), entropy: reasonable_entropy)
   end
 
@@ -91,19 +93,21 @@ class ULID
   #   * Do not take random generator for the arguments
   #   * Raising error instead of truncating elements for the given number
   def self.sample(*args, period: nil)
-    int_generator = if period
-      ulid_range = range(period)
-      min, max, exclude_end = ulid_range.begin.to_i, ulid_range.end.to_i, ulid_range.exclude_end?
+    int_generator = (
+      if period
+        ulid_range = range(period)
+        min, max, exclude_end = ulid_range.begin.to_i, ulid_range.end.to_i, ulid_range.exclude_end?
 
-      possibilities = (max - min) + (exclude_end ? 0 : 1)
-      raise ArgumentError, "given range `#{ulid_range.inspect}` does not have possibilities" unless possibilities.positive?
+        possibilities = (max - min) + (exclude_end ? 0 : 1)
+        raise ArgumentError, "given range `#{ulid_range.inspect}` does not have possibilities" unless possibilities.positive?
 
-      -> {
-        SecureRandom.random_number(possibilities) + min
-      }
-    else
-      RANDOM_INTEGER_GENERATOR
-    end
+        -> {
+          SecureRandom.random_number(possibilities) + min
+        }
+      else
+        RANDOM_INTEGER_GENERATOR
+      end
+    )
 
     case args.size
     when 0
@@ -134,6 +138,7 @@ class ULID
     string = String.try_convert(string)
     raise ArgumentError, 'ULID.scan takes only strings' unless string
     return to_enum(__callee__, string) unless block_given?
+
     string.scan(SCANNING_PATTERN) do |matched|
       yield parse(matched)
     end
@@ -156,7 +161,7 @@ class ULID
     milliseconds = n32encoded_timestamp.to_i(32)
     entropy = n32encoded_randomness.to_i(32)
 
-    new milliseconds: milliseconds, entropy: entropy, integer: integer
+    new(milliseconds: milliseconds, entropy: entropy, integer: integer)
   end
 
   # @param [Range<Time>, Range<nil>, Range[ULID]] period
@@ -164,6 +169,7 @@ class ULID
   # @raise [ArgumentError] if the given period is not a `Range[Time]`, `Range[nil]` or `Range[ULID]`
   def self.range(period)
     raise ArgumentError, 'ULID.range takes only `Range[Time]`, `Range[nil]` or `Range[ULID]`' unless Range === period
+
     begin_element, end_element, exclude_end = period.begin, period.end, period.exclude_end?
     return period if self === begin_element && self === end_element
 
@@ -180,11 +186,7 @@ class ULID
 
     case end_element
     when Time
-      if exclude_end
-        end_ulid = min(end_element)
-      else
-        end_ulid = max(end_element)
-      end
+      end_ulid = exclude_end ? min(end_element) : max(end_element)
     when nil
       # The end should be max and include end, because nil end means to cover endless ULIDs until the limit
       end_ulid = MAX
@@ -335,7 +337,7 @@ class ULID
     n32encoded_randomness = entropy.to_s(32).rjust(RANDOMNESS_ENCODED_LENGTH, '0')
     integer = (n32encoded_timestamp + n32encoded_randomness).to_i(32)
 
-    new milliseconds: milliseconds, entropy: entropy, integer: integer
+    new(milliseconds: milliseconds, entropy: entropy, integer: integer)
   end
 
   attr_reader :milliseconds, :entropy
@@ -406,7 +408,7 @@ class ULID
   def octets
     digits = @integer.digits(256)
     (OCTETS_LENGTH - digits.size).times do
-      digits.push 0
+      digits.push(0)
     end
     digits.reverse!
   end

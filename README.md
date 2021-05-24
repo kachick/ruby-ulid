@@ -192,7 +192,7 @@ ULID.floor(time) #=> 2000-01-01 00:00:00.123 UTC
 For rough operations, `ULID.scan` might be useful.
 
 ```ruby
-json =<<'EOD'
+json = <<'JSON'
 {
   "id": "01F4GNAV5ZR6FJQ5SFQC7WDSY3",
   "author": {
@@ -217,7 +217,7 @@ json =<<'EOD'
     }
   ]
 }
-EOD
+JSON
 
 ULID.scan(json).to_a
 #=>

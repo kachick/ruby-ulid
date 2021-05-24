@@ -107,7 +107,7 @@ class TestULIDUseCase < Test::Unit::TestCase
       ulid3_2 = ULID.generate(moment: time3_2),
       ulid3_3 = ULID.generate(moment: time3_3),
       _ulid3_4 = ULID.generate(moment: time3_4),
-      _ulid4 = ULID.generate(moment: time4),
+      _ulid4 = ULID.generate(moment: time4)
     ]
 
     assert_equal([ulid1_2, ulid1_3, ulid2, ulid3_1, ulid3_2, ulid3_3], ulids.grep(ULID.range(time1_2..time3_2)))

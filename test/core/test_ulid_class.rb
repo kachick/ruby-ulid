@@ -339,7 +339,7 @@ class TestULIDClass < Test::Unit::TestCase
   end
 
   def test_scan
-    json_string =<<-'EOD'
+    json_string = <<-'JSON'
     {
       "id": "01F4GNAV5ZR6FJQ5SFQC7WDSY3",
       "author": {
@@ -364,7 +364,7 @@ class TestULIDClass < Test::Unit::TestCase
         }
       ]
     }
-    EOD
+    JSON
 
     enum = ULID.scan(json_string)
     assert_instance_of(Enumerator, enum)
@@ -384,7 +384,7 @@ class TestULIDClass < Test::Unit::TestCase
       ULID.parse('01F4GNCNC3CH0BCRZBPPDEKBKS'),
       ULID.parse('01F4GNBXW1AM2KWW52PVT3ZY9X'),
       ULID.parse('01F4GNCXAMXQ1SGBH5XCR6ZH0M'),
-      ULID.parse('01F4GND4RYYSKNAADHQ9BNXAWJ'),
+      ULID.parse('01F4GND4RYYSKNAADHQ9BNXAWJ')
     ]
     assert_equal(expectation, yielded)
     assert_equal(2, expectation.count(ULID.parse('01F4GNBXW1AM2KWW52PVT3ZY9X')))

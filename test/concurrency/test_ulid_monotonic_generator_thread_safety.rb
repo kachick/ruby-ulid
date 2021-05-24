@@ -131,7 +131,7 @@ class TestULIDMonotonicGeneratorThreadSafety < Test::Unit::TestCase
     assert_equal(thread_count, worked_thread_numbers.uniq.size)
     assert_not_equal(worked_thread_numbers.sort, worked_thread_numbers)
     assert_equal(2000, given_times.uniq.size)
-    assert_equal(later_than_initial_and_median_count, given_times.count{ |time| time > initial_and_median.to_time })
+    assert_equal(later_than_initial_and_median_count, given_times.count { |time| time > initial_and_median.to_time })
 
     ulids_by_time = ulids.group_by(&:to_time)
     uniq_times = ulids_by_time.keys
@@ -156,7 +156,7 @@ class TestULIDMonotonicGeneratorThreadSafety < Test::Unit::TestCase
 
         # This is a crucial spec. But I don't know the 420000 is reasonable or not...
         assert do
-          (pred.entropy -  succ.entropy).abs > 420000
+          (pred.entropy - succ.entropy).abs > 420000
         end
         assert_acceptable_randomized_string(pred)
       when pred.to_time == succ.to_time
@@ -200,7 +200,7 @@ class TestULIDMonotonicGeneratorThreadSafety < Test::Unit::TestCase
 
       # This branch does not mean to omit Ruby 2.6. Just to use Enumerable#tally for debug
       if RUBY_VERSION >= '2.7'
-        weirds = prevs.tally.select{ |_ulid, count| count > 1 }
+        weirds = prevs.tally.select { |_ulid, count| count > 1 }
         assert do
           weirds.empty?
         end
@@ -261,7 +261,7 @@ class TestULIDMonotonicGeneratorThreadSafety < Test::Unit::TestCase
 
     # This branch does not mean to omit Ruby 2.6. Just to use Enumerable#tally for debug
     if RUBY_VERSION >= '2.7'
-      weirds = prevs.tally.select{ |_ulid, count| count > 1 }
+      weirds = prevs.tally.select { |_ulid, count| count > 1 }
       assert do
         weirds.empty?
       end
