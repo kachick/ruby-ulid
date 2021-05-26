@@ -20,7 +20,13 @@ class TestULIDClass < Test::Unit::TestCase
   end
 
   def test_constant_version
-    assert_equal(true, ULID::VERSION.frozen?)
+    assert do
+      ULID::VERSION.instance_of?(String)
+    end
+
+    assert do
+      ULID::VERSION.frozen?
+    end
 
     assert do
       Gem::Version.correct?(ULID::VERSION)
