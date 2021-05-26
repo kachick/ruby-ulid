@@ -479,6 +479,20 @@ class ULID
     super
   end
 
+  # @api private
+  # @return [Integer]
+  def marshal_dump
+    @integer
+  end
+
+  # @api private
+  # @param [Integer] integer
+  # @return [void]
+  def marshal_load(integer)
+    unmarshaled = ULID.from_integer(integer)
+    initialize(integer: unmarshaled.to_i, milliseconds: unmarshaled.milliseconds, entropy: unmarshaled.entropy)
+  end
+
   # @return [self]
   def to_ulid
     self

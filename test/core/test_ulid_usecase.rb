@@ -114,10 +114,13 @@ class TestULIDUseCase < Test::Unit::TestCase
     assert_equal([ulid1_2, ulid1_3, ulid2, ulid3_1], ulids.grep(ULID.range(time1_2...time3_3)))
   end
 
-  # This gem does not keep compatibilities for dumped data in different versions. Even in patch version updating.
   def test_marshal_and_unmarshal
-    ulid = ULID.sample
+    # * Keep basic compatibilities for dumped data in different patch versions since `0.1.5`
+    # * Might be changed the behavior in different major/minor versions
+    # * Might be changed the behavior in different `Marshal::MAJOR_VERSION` and `Marshal::MINOR_VERSION`
+    ulid = ULID.parse('01F6K1RX8VBEA52C9V6CVQ63YK')
     dumped = Marshal.dump(ulid)
+    assert_equal((+"U:\tULIDl+\r\xD3\x0Fs73;1Q\x94[\eu\x1C\xA6y\x01").force_encoding(Encoding::ASCII_8BIT), dumped.unpack('c*').slice(2..).pack('c*'))
     unmarshaled = Marshal.load(dumped)
     assert_not_same(ulid, unmarshaled)
     assert_instance_of(ULID, unmarshaled)
@@ -135,10 +138,11 @@ class TestULIDUseCase < Test::Unit::TestCase
     assert_equal(ulid.octets, unmarshaled.octets)
     assert_equal(ulid.patterns, unmarshaled.patterns)
 
+    # Do not ensure frozen instance behaviors, this tests just check current behavior
     frozen = ULID.sample.freeze
     dumped = Marshal.dump(frozen)
     unmarshaled = Marshal.load(dumped)
     assert(!unmarshaled.frozen?)
-    assert(!unmarshaled.to_s.frozen?)
+    assert(unmarshaled.to_s.frozen?)
   end
 end
