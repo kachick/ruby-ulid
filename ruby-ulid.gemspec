@@ -7,7 +7,7 @@ require_relative './lib/ulid/version'
 repository_url = "https://github.com/kachick/#{lib_name}"
 
 Gem::Specification.new do |gem|
-  gem.summary       = %q{A handy ULID library}
+  gem.summary       = %q{Useful ULID library}
   gem.description   = <<-'DESCRIPTION'
     The ULID(Universally Unique Lexicographically Sortable Identifier) has useful specs for applications (e.g. `Database key`), especially possess all `uniqueness`, `randomness`, `extractable timestamps` and `sortable` features.
     This gem aims to provide the generator, monotonic generator, parser and handy manipulation features around the ULID.
@@ -40,7 +40,7 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'rubocop-rubycw', '>= 0.1.6', '< 0.2.0'
   gem.add_development_dependency 'rubocop-md', '>= 1.0.1', '< 2.0.0'
 
-  gem.required_ruby_version = '>= 2.6.0'
+  gem.required_ruby_version = Gem::Requirement.new('>= 2.6.0')
 
   # common
 
