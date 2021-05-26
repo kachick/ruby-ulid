@@ -51,8 +51,10 @@ Gem::Specification.new do |gem|
   base_files = Dir['README*', '*LICENSE*',  'lib/**/*', 'sig/**/*'].uniq
   files = might_be_parsing_by_tool_as_dependabot ? base_files : (base_files & git_managed_files)
 
-  if files.grep(%r!\A(?:lib|sig)/!).size < 5
-    raise "obvious mistaken in packaging files, looks shortage: #{files.inspect}"
+  unless might_be_parsing_by_tool_as_dependabot
+    if files.grep(%r!\A(?:lib|sig)/!).size < 5
+      raise "obvious mistaken in packaging files, looks shortage: #{files.inspect}"
+    end
   end
 
   gem.files         = files
