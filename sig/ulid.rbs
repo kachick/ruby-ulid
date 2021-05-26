@@ -143,7 +143,7 @@ class ULID < Object
   #
   # If you want to keep sortable even if in same timestamp, See also [ULID::MonotonicGenerator](https://github.com/kachick/ruby-ulid#how-to-keep-sortable-even-if-in-same-timestamp)
   #
-  def self.generate: (?moment: moment, ?entropy: Integer) -> self
+  def self.generate: (?moment: moment, ?entropy: Integer) -> ULID
 
   # Shorthand of `ULID.generate(moment: Time)`
   # See also [ULID.generate](https://kachick.github.io/ruby-ulid/ULID.html#generate-class_method)
@@ -157,7 +157,7 @@ class ULID < Object
   # end
   # ulids.sort == ulids #=> true
   # ```
-  def self.at: (Time time) -> self
+  def self.at: (Time time) -> ULID
 
   # A pribate API. Should not be used in your code.
   def self.current_milliseconds: -> Integer
@@ -212,7 +212,7 @@ class ULID < Object
   # ulid = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
   # #=> ULID(2016-07-30 23:54:10.259 UTC: 01ARZ3NDEKTSV4RRFFQ69G5FAV)
   # ```
-  def self.parse: (_ToStr string) -> self
+  def self.parse: (_ToStr string) -> ULID
 
   # ```ruby
   # # Currently experimental feature, so needed to load the extension.
@@ -226,7 +226,7 @@ class ULID < Object
   #
   # See also [Why this is experimental?](https://github.com/kachick/ruby-ulid/issues/76)
   def self.from_uuidv4: (String uuid) -> ULID
-  def self.from_integer: (Integer integer) -> self
+  def self.from_integer: (Integer integer) -> ULID
 
   # Returns termination values for ULID spec.
   #
@@ -318,8 +318,8 @@ class ULID < Object
   # #  ULID(2021-04-28 16:49:06.484 UTC: 01F4CP4PDM214Q6H3KJP7DYJRR),
   # #  ULID(2021-04-28 15:05:06.808 UTC: 01F4CG68ZRST94T056KRZ5K9S4)]
   # ```
-  def self.sample: (?period: period) -> self
-                 | (Integer number, ?period: period) -> Array[self]
+  def self.sample: (?period: period) -> ULID
+                 | (Integer number, ?period: period) -> Array[ULID]
   def self.valid?: (untyped) -> bool
 
   # Returns normalized string
@@ -384,8 +384,8 @@ class ULID < Object
   # #  ULID(2021-04-30 05:53:12.478 UTC: 01F4GND4RYYSKNAADHQ9BNXAWJ)]
   # ```
   def self.scan:  (_ToStr string) -> Enumerator[self, singleton(ULID)]
-                | (_ToStr string) { (self ulid) -> void } -> singleton(ULID)
-  def self.from_milliseconds_and_entropy: (milliseconds: Integer, entropy: Integer) -> self
+                | (_ToStr string) { (ULID ulid) -> void } -> singleton(ULID)
+  def self.from_milliseconds_and_entropy: (milliseconds: Integer, entropy: Integer) -> ULID
   def self.try_convert: (_ToULID) -> ULID
                       | (untyped) -> nil
 
@@ -506,6 +506,12 @@ class ULID < Object
   # See also [ULID#succ](https://kachick.github.io/ruby-ulid/ULID.html#succ-instance_method)
   def pred: -> ULID?
   def freeze: -> self
+
+  # A pribate API. Should not be used in your code.
+  def marshal_dump: -> Integer
+
+  # A pribate API. Should not be used in your code.
+  def marshal_load: (Integer integer) -> void
 
   # Returns `self`
   def to_ulid: -> self
