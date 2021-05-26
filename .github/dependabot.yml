@@ -1,6 +1,36 @@
 version: 2
 updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "daily"
+      time: "08:00"
+      timezone: "Asia/Tokyo"
   - package-ecosystem: "bundler"
     directory: "/"
     schedule:
       interval: "daily"
+      time: "08:00"
+      timezone: "Asia/Tokyo"
+    versioning-strategy: increase
+  - package-ecosystem: "bundler"
+    directory: "/benchmark/compare_with_othergems/kachick"
+    schedule:
+      interval: "daily"
+      time: "08:00"
+      timezone: "Asia/Tokyo"
+    versioning-strategy: increase
+  - package-ecosystem: "bundler"
+    directory: "/benchmark/compare_with_othergems/rafaelsales"
+    schedule:
+      interval: "daily"
+      time: "08:00"
+      timezone: "Asia/Tokyo"
+    versioning-strategy: increase
+  - package-ecosystem: "bundler"
+    directory: "/benchmark/compare_with_othergems/abachman"
+    schedule:
+      interval: "daily"
+      time: "08:00"
+      timezone: "Asia/Tokyo"
+    versioning-strategy: increase
