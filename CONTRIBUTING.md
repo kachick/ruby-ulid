@@ -13,7 +13,7 @@ At first, you should install development dependencies
 ```console
 $ git clone git@github.com:kachick/ruby-ulid.git
 $ cd ./ruby-ulid
-$ bundle install
+$ ./bin/setup
 # Executing first time might take longtime, because development mode dependent active_support via steep
 ```
 
