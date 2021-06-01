@@ -46,13 +46,13 @@ class ULID < Object
     STANDARD_BY_VARIANT: Hash[String, String]
     VARIANT_PATTERN: Regexp
 
-    # A pribate API. Should not be used in your code.
+    # A private API. Should not be used in your code.
     def self.encode: (Integer integer) -> String
 
-    # A pribate API. Should not be used in your code.
+    # A private API. Should not be used in your code.
     def self.decode: (String string) -> Integer
 
-    # A pribate API. Should not be used in your code.
+    # A private API. Should not be used in your code.
     def self.normalize: (String string) -> String
   end
 
@@ -71,7 +71,7 @@ class ULID < Object
     # ```
     attr_reader prev: ULID | nil
 
-    # A pribate API. Should not be used in your code.
+    # A private API. Should not be used in your code.
     def initialize: -> void
 
     # See [How to keep `Sortable` even if in same timestamp](https://github.com/kachick/ruby-ulid#how-to-keep-sortable-even-if-in-same-timestamp)
@@ -159,10 +159,10 @@ class ULID < Object
   # ```
   def self.at: (Time time) -> ULID
 
-  # A pribate API. Should not be used in your code.
+  # A private API. Should not be used in your code.
   def self.current_milliseconds: -> Integer
 
-  # A pribate API. Should not be used in your code.
+  # A private API. Should not be used in your code.
   def self.milliseconds_from_moment: (moment moment) -> Integer
 
   # `ULID` can be element of the `Range`. If you generated the IDs in monotonic generator, ID based filtering is easy and reliable
@@ -507,10 +507,10 @@ class ULID < Object
   def pred: -> ULID?
   def freeze: -> self
 
-  # A pribate API. Should not be used in your code.
+  # A private API. Should not be used in your code.
   def marshal_dump: -> Integer
 
-  # A pribate API. Should not be used in your code.
+  # A private API. Should not be used in your code.
   def marshal_load: (Integer integer) -> void
 
   # Returns `self`
@@ -525,21 +525,21 @@ class ULID < Object
 
   private
 
-  # A pribate API. Should not be used in your code.
+  # A private API. Should not be used in your code.
   def self.new: (milliseconds: Integer, entropy: Integer, integer: Integer) -> self
 
-  # A pribate API. Should not be used in your code.
+  # A private API. Should not be used in your code.
   def self.reasonable_entropy: -> Integer
 
-  # A pribate API. Should not be used in your code.
+  # A private API. Should not be used in your code.
   def self.milliseconds_from_time: (Time time) -> Integer
 
-  # A pribate API. Should not be used in your code.
+  # A private API. Should not be used in your code.
   def self.safe_get_class_name: (untyped object) -> String
 
-  # A pribate API. Should not be used in your code.
+  # A private API. Should not be used in your code.
   def initialize: (milliseconds: Integer, entropy: Integer, integer: Integer) -> void
 
-  # A pribate API. Should not be used in your code.
+  # A private API. Should not be used in your code.
   def cache_all_instance_variables: -> void
 end
