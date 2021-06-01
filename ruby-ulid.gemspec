@@ -25,16 +25,16 @@ Gem::Specification.new do |gem|
     'bug_tracker_uri'   => "#{repository_url}/issues"
   }
 
-  gem.add_development_dependency 'test-unit', '>= 3.4.1', '< 4.0'
+  gem.add_development_dependency 'test-unit', '>= 3.4.2', '< 4.0'
   gem.add_development_dependency 'irb', '>= 1.3.5', '< 2.0'
   gem.add_development_dependency 'irb-power_assert', '0.0.2'
   gem.add_development_dependency 'warning', '>= 1.2.0', '< 2.0'
-  gem.add_development_dependency 'rbs', '>= 1.2.0', '< 2.0'
+  gem.add_development_dependency 'rbs', '>= 1.2.1', '< 2.0'
   gem.add_development_dependency 'rake', '>= 13.0.3', '< 20.0'
   gem.add_development_dependency 'benchmark-ips', '>= 2.9.1', '< 3'
   gem.add_development_dependency 'yard', '>= 0.9.26', '< 2'
   gem.add_development_dependency 'steep', '>= 0.44.1', '< 0.50.0'
-  gem.add_development_dependency 'rubocop', '>= 1.15.0', '< 1.17.0'
+  gem.add_development_dependency 'rubocop', '>= 1.16.0', '< 1.17.0'
   gem.add_development_dependency 'rubocop-rake', '>= 0.5.1', '< 0.6.0'
   gem.add_development_dependency 'rubocop-performance', '>= 1.11.3', '< 1.12.0'
   gem.add_development_dependency 'rubocop-rubycw', '>= 0.1.6', '< 0.2.0'
