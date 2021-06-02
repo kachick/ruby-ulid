@@ -312,8 +312,19 @@ class ULID
   private_class_method def self.safe_get_class_name(object)
     fallback = 'UnknownObject'
 
+    # This class getter implementation used https://github.com/rspec/rspec-support/blob/4ad8392d0787a66f9c351d9cf6c7618e18b3d0f2/lib/rspec/support.rb#L83-L89 as a reference, thank you!
+    # ref: https://twitter.com/_kachick/status/1400064896759304196
+    klass = (
+      begin
+        object.class
+      rescue NoMethodError
+        singleton_class = class << object; self; end
+        singleton_class.ancestors.detect { |ancestor| !ancestor.equal?(singleton_class) }
+      end
+    )
+
     begin
-      name = String.try_convert(object.class.name)
+      name = String.try_convert(klass.name)
     rescue Exception
       fallback
     else

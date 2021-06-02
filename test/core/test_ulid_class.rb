@@ -657,8 +657,7 @@ class TestULIDClass < Test::Unit::TestCase
     err = assert_raises(TypeError) do
       ULID.try_convert(evil)
     end
-    # `UnknownObject` does not reproduce `built-in class's #to_the_class` message. It is unavoidable.
-    assert_match(/can't convert UnknownObject to ULID \(UnknownObject#to_ulid gives UnknownObject\)/, err.message)
+    assert_match(/can't convert BasicObject to ULID \(BasicObject#to_ulid gives BasicObject\)/, err.message)
 
     no_offense = Object.new
     def no_offense.to_ulid
