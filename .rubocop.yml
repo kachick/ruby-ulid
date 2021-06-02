@@ -625,8 +625,7 @@ Style/SoleNestedConditional:
   Enabled: false
 
 Style/SpecialGlobalVars:
-  Enabled: true
-  EnforcedStyle: 'use_english_names'
+  Enabled: false
 
 Style/StabbyLambdaParentheses:
   Enabled: false
@@ -733,6 +732,16 @@ Style/YodaCondition:
 Style/ZeroLengthPredicate:
   Enabled: true
 
+Style/InPatternThen:
+  Enabled: true
+
+Style/QuotedSymbols:
+  Enabled: true
+  EnforcedStyle: 'single_quotes'
+
+Style/MultilineInPatternThen:
+  Enabled: true
+
 Layout/TrailingEmptyLines:
   Enabled: true
 
@@ -789,6 +798,15 @@ Layout/EmptyLineBetweenDefs:
 Layout/SpaceAroundEqualsInParameterDefault:
   Enabled: true
   EnforcedStyle: 'no_space'
+
+Layout/SpaceAroundKeyword:
+  Enabled: true
+
+Layout/ArgumentAlignment:
+  Enabled: true
+
+Layout/CaseIndentation:
+  Enabled: true
 
 Naming/MethodName:
   Enabled: true
@@ -889,6 +907,9 @@ Lint/ConstantDefinitionInBlock:
 
 Lint/ConstantResolution:
   Enabled: false
+
+Lint/EmptyInPattern:
+  Enabled: true
 
 Rubycw/Rubycw:
   Enabled: true
