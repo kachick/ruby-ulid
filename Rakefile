@@ -23,31 +23,26 @@ task test_all: basic_test_tasks | [:test_many_data, :test_concurrency, :test_lon
 
 Rake::TestTask.new(:test_core) do |tt|
   tt.pattern = 'test/core/**/test_*.rb'
-  tt.verbose = true
   tt.warning = true
 end
 
 Rake::TestTask.new(:test_experimental) do |tt|
   tt.pattern = 'test/experimental/**/test_*.rb'
-  tt.verbose = true
   tt.warning = true
 end
 
 Rake::TestTask.new(:test_many_data) do |tt|
   tt.pattern = 'test/many_data/**/test_*.rb'
-  tt.verbose = true
   tt.warning = true
 end
 
 Rake::TestTask.new(:test_concurrency) do |tt|
   tt.pattern = 'test/concurrency/**/test_*.rb'
-  tt.verbose = true
   tt.warning = true
 end
 
 Rake::TestTask.new(:test_longtime) do |tt|
   tt.pattern = 'test/longtime/**/test_*.rb'
-  tt.verbose = true
   tt.warning = true
 end
 
