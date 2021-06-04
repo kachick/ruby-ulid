@@ -101,3 +101,14 @@ task :update_fixed_examples do
   sh 'rm ./test/many_data/fixtures/dumped_fixed_examples_*.bin'
   ruby './scripts/generate_many_examples.rb'
 end
+
+desc 'To prevent #69 anymore!'
+task :view_packaging_files do
+  sh 'rm -rf ./pkg'
+  sh 'rake build'
+  cd 'pkg' do
+    sh 'gem unpack *.gem'
+    sh 'tree -I *\.gem'
+  end
+  sh 'rm -rf ./pkg'
+end
