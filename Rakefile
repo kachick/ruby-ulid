@@ -14,11 +14,11 @@ end
 
 task default: [:test]
 
-# Keep lightweight!
 basic_test_tasks = [:test_core, :test_experimental]
+desc 'Keep light weight!'
 task test: basic_test_tasks
 
-# Basically checked in CI only
+desc 'Contains heavy tests. So basically checked in CI only'
 task test_all: basic_test_tasks | [:test_many_data, :test_concurrency, :test_longtime]
 
 Rake::TestTask.new(:test_core) do |tt|
@@ -46,49 +46,58 @@ Rake::TestTask.new(:test_longtime) do |tt|
   tt.warning = true
 end
 
-task validate_signatures: [:test_yard, :'signature:validate']
+desc 'Signature check, it means `rbs` and `YARD` syntax correctness'
+multitask validate_signatures: [:'signature:validate_yard', :'signature:validate_rbs']
 
+desc 'Simulate CI results in local machine as possible'
 multitask simulate_ci: [:test_all, :validate_signatures, :rubocop]
 
 namespace :signature do
-  task :validate do
+  desc 'Validate `rbs` syntax, this should be passed'
+  task :validate_rbs do
     sh 'bundle exec rbs -rsecurerandom -rmonitor -I sig validate'
   end
 
+  desc 'Check `rbs` definition with `steep`, but it faults from some reasons ref: #26'
   task :check_false_positive do
     sh 'bundle exec steep check --log-level=fatal'
   end
+
+  desc 'Generate YARD docs for the syntax check'
+  task :validate_yard do
+    sh "bundle exec yard --fail-on-warning #{'--no-progress' if ENV['CI']}"
+  end
 end
 
-task :test_yard do
-  sh "bundle exec yard --fail-on-warning #{'--no-progress' if ENV['CI']}"
-end
-
+desc 'Generate YARD docs'
 task :yard do
   sh 'bundle exec yard --fail-on-warning'
 end
 
-task :benchmark do
-  sh 'bundle exec ruby ./benchmark/generators.rb'
-  sh 'bundle exec ruby ./benchmark/core_instance_methods.rb'
-  sh 'bundle exec ruby ./benchmark/extra_instance_methods.rb'
-  sh 'bundle exec ruby ./benchmark/sort.rb'
-  sh 'bundle exec ruby ./benchmark/sample.rb'
+FileList['benchmark/*.rb'].each do |path|
+  desc "Rough benchmark for #{File.basename(path)}"
+  task path do
+    ruby path
+  end
 end
 
-# This can't be used `bundle exec rake benchmark_with_other_gems`. Use `rake benchmark_with_other_gems` instead
+# This can't be used `bundle exec rake`. Use `rake` instead
+desc %q{Compare generating String performance with other gems}
 task :benchmark_with_other_gems do
-  puts '#### rafaelsales - ulid'
-  sh 'cd ./benchmark/compare_with_othergems/rafaelsales && bundle install --quiet && bundle exec ruby -v ./generate.rb'
-  puts '-' * 72
-  puts '#### abachman - ulid-ruby'
-  sh 'cd ./benchmark/compare_with_othergems/abachman && bundle install --quiet && bundle exec ruby -v ./generate.rb'
-  puts '-' * 72
-  puts '#### kachick - ruby-ulid(This one)'
-  sh 'cd ./benchmark/compare_with_othergems/kachick && bundle install --quiet && bundle exec ruby -v ./generate.rb'
+  [{ rafaelsales: 'ulid'}, {abachman: 'ulid-ruby'}, {kachick: 'ruby-ulid(This one)'}].each do |gem_name_by_author|
+    gem_name_by_author.each_pair do |author, gem_name|
+      puts '-' * 72
+      puts "#### #{author} - #{gem_name}"
+      cd "./benchmark/compare_with_othergems/#{author}" do
+        sh 'bundle install --quiet'
+        sh 'bundle exec ruby -v ./generate.rb'
+      end
+    end
+  end
 end
 
+desc 'Generate many sample data for snapshot tests'
 task :update_fixed_examples do
   sh 'rm ./test/many_data/fixtures/dumped_fixed_examples_*.bin'
-  sh 'bundle exec ruby ./scripts/generate_many_examples.rb'
+  ruby './scripts/generate_many_examples.rb'
 end
