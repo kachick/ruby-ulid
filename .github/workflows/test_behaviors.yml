@@ -4,31 +4,23 @@ on:
   push:
     branches:
       - main
-    paths-ignore:
-      - 'docs/**'
-      - 'benchmark/**'
-      - 'bin/**'
-      - 'scripts/**'
-      - 'sig/**'
-      - 'Steepfile'
-      - '**.md'
-      - 'LICENSE'
-      - 'logo.png'
-      - '.yardopts'
-      - '.rubocop.yml'
+    paths:
+      - 'lib/**'
+      - 'test/**'
+      - 'spec/**'
+      - '.rspec'
+      - '**.gemspec'
+      - 'Gemfile'
+      - 'Rakefile'
   pull_request:
-    paths-ignore:
-      - 'docs/**'
-      - 'benchmark/**'
-      - 'bin/**'
-      - 'scripts/**'
-      - 'sig/**'
-      - 'Steepfile'
-      - '**.md'
-      - 'LICENSE'
-      - 'logo.png'
-      - '.yardopts'
-      - '.rubocop.yml'
+    paths:
+      - 'lib/**'
+      - 'test/**'
+      - 'spec/**'
+      - '.rspec'
+      - '**.gemspec'
+      - 'Gemfile'
+      - 'Rakefile'
 jobs:
   test:
     strategy:
