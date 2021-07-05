@@ -4,7 +4,7 @@
 require 'benchmark/ips'
 require 'ulid'
 
-raise "Bug to setup: #{ULID.methods(false)}" unless (ULID::VERSION == '0.1.5') && ULID::MonotonicGenerator
+raise "Bug to setup: #{ULID.methods(false)}" unless (ULID::VERSION == '0.1.6') && ULID::MonotonicGenerator
 
 products = []
 

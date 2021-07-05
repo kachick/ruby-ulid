@@ -23,7 +23,7 @@ $ ./bin/setup
 $ ./bin/console
 # Starting up IRB with loading developing ULID library
 irb(main):001:0> ULID::VERSION
-=> "0.1.5"
+=> "0.1.6"
 ```
 
 ```ruby

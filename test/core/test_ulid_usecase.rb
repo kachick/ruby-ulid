@@ -115,7 +115,7 @@ class TestULIDUseCase < Test::Unit::TestCase
   end
 
   def test_marshal_and_unmarshal
-    # * Keep basic compatibilities for dumped data in different patch versions since `0.1.5`
+    # * Keep basic compatibilities for dumped data in different patch versions since `0.1.6`
     # * Might be changed the behavior in different major/minor versions
     # * Might be changed the behavior in different `Marshal::MAJOR_VERSION` and `Marshal::MINOR_VERSION`
     ulid = ULID.parse('01F6K1RX8VBEA52C9V6CVQ63YK')
