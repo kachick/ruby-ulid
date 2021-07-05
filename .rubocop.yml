@@ -814,6 +814,9 @@ Naming/MethodName:
 
 Naming/FileName:
   Enabled: true
+  Exclude:
+    - 'lib/ruby-ulid.rb'
+    - '**.md'
 
 Naming/ConstantName:
   Enabled: true
