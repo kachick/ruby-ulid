@@ -10,8 +10,9 @@ Also providing [ruby/rbs](https://github.com/ruby/rbs) signature files.
 
 ![ULIDlogo](https://raw.githubusercontent.com/kachick/ruby-ulid/main/logo.png)
 
-![Build Status](https://github.com/kachick/ruby-ulid/actions/workflows/test_behaviors.yml/badge.svg?branch=main)
+[![Build Status](https://github.com/kachick/ruby-ulid/actions/workflows/test_behaviors.yml/badge.svg?branch=main)](https://github.com/kachick/ruby-ulid/actions/workflows/test_behaviors.yml/?branch=main)
 [![Gem Version](https://badge.fury.io/rb/ruby-ulid.png)](http://badge.fury.io/rb/ruby-ulid)
+[![Open in Visual Studio Code](https://open.vscode.dev/badges/open-in-vscode.svg)](https://open.vscode.dev/kachick/ruby-ulid)
 
 ## Universally Unique Lexicographically Sortable Identifier
 
