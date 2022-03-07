@@ -11,7 +11,7 @@ group :development, :test do
 end
 
 group :development do
-  gem 'rbs', '>= 1.2.1', '< 2.0', require: false
+  gem 'rbs', '>= 1.2.1', '< 3.0', require: false
   gem 'steep', require: false
   gem 'benchmark-ips', '>= 2.9.1', '< 3', require: false
   gem 'yard', '>= 0.9.26', '< 2', require: false
