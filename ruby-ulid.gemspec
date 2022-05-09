@@ -22,7 +22,8 @@ Gem::Specification.new do |gem|
     'documentation_uri' => 'https://kachick.github.io/ruby-ulid/',
     'homepage_uri'      => repository_url,
     'source_code_uri'   => repository_url,
-    'bug_tracker_uri'   => "#{repository_url}/issues"
+    'bug_tracker_uri'   => "#{repository_url}/issues",
+    'rubygems_mfa_required' => 'true'
   }
 
   gem.required_ruby_version = Gem::Requirement.new('>= 2.6.0')

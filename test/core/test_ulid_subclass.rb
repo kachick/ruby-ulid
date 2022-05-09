@@ -9,7 +9,7 @@ class TestULIDSubClass < Test::Unit::TestCase
   end
 
   def setup
-    @actual_timezone = ENV['TZ']
+    @actual_timezone = ENV.fetch('TZ')
     ENV['TZ'] = 'EST' # Just chosen from not UTC and JST
   end
 
