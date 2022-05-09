@@ -7,7 +7,7 @@ class TestULIDClass < Test::Unit::TestCase
   include ULIDAssertions
 
   def setup
-    @actual_timezone = ENV.fetch('TZ')
+    @actual_timezone = ENV.fetch('TZ', nil)
     ENV['TZ'] = 'EST' # Just chosen from not UTC and JST
   end
 
