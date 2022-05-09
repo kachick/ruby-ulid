@@ -5,7 +5,7 @@ require_relative '../helper'
 
 class TestULIDInstance < Test::Unit::TestCase
   def setup
-    @actual_timezone = ENV.fetch('TZ')
+    @actual_timezone = ENV.fetch('TZ', nil)
     ENV['TZ'] = 'EST' # Just chosen from not UTC and JST
   end
 
