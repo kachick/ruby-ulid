@@ -26,7 +26,7 @@ Gem::Specification.new do |gem|
     'rubygems_mfa_required' => 'true'
   }
 
-  gem.required_ruby_version = Gem::Requirement.new('>= 2.6.0')
+  gem.required_ruby_version = Gem::Requirement.new('>= 2.7.0')
 
   # common
 

@@ -246,24 +246,22 @@ class TestULIDClass < Test::Unit::TestCase
       ULID.range(exclude_end_and_nil_end)
     )
 
-    if RUBY_VERSION >= '2.7'
-      assert_equal(
-        ULID.min..ULID.max(ULID.floor(time_has_more_value_than_milliseconds2)),
-        ULID.range(nil..time_has_more_value_than_milliseconds2)
-      )
-      assert_equal(
-        ULID.min...ULID.min(ULID.floor(time_has_more_value_than_milliseconds2)),
-        ULID.range(nil...time_has_more_value_than_milliseconds2)
-      )
-      assert_equal(
-        ULID.min..ULID.max,
-        ULID.range(nil..nil)
-      )
-      assert_equal(
-        ULID.min..ULID.max, # Intentional to return `include_end` for `exclude_end` Range.
-        ULID.range(nil...nil)
-      )
-    end
+    assert_equal(
+      ULID.min..ULID.max(ULID.floor(time_has_more_value_than_milliseconds2)),
+      ULID.range(nil..time_has_more_value_than_milliseconds2)
+    )
+    assert_equal(
+      ULID.min...ULID.min(ULID.floor(time_has_more_value_than_milliseconds2)),
+      ULID.range(nil...time_has_more_value_than_milliseconds2)
+    )
+    assert_equal(
+      ULID.min..ULID.max,
+      ULID.range(nil..nil)
+    )
+    assert_equal(
+      ULID.min..ULID.max, # Intentional to return `include_end` for `exclude_end` Range.
+      ULID.range(nil...nil)
+    )
 
     assert_equal(
       range = ULID.min(ULID.floor(time_has_more_value_than_milliseconds1))..ULID.max(ULID.floor(time_has_more_value_than_milliseconds1)),
@@ -281,9 +279,7 @@ class TestULIDClass < Test::Unit::TestCase
     assert_same(range, ULID.range(range))
     assert_equal(range.begin..ULID.max, ULID.range(range.begin..nil))
 
-    if RUBY_VERSION >= '2.7'
-      assert_equal(ULID.min..range.end, ULID.range(nil..range.end))
-    end
+    assert_equal(ULID.min..range.end, ULID.range(nil..range.end))
 
     [nil, 42, 1..42, time_has_more_value_than_milliseconds1, ULID.sample.to_s, ULID.sample,
     BasicObject.new, Object.new, range.begin.to_s..range.end.to_s].each do |evil|

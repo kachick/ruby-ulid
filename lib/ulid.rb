@@ -208,11 +208,7 @@ class ULID
   def self.floor(time)
     raise ArgumentError, 'ULID.floor takes only `Time` instance' unless Time === time
 
-    if RUBY_VERSION >= '2.7'
-      time.floor(3)
-    else
-      Time.at(0, milliseconds_from_time(time), :millisecond)
-    end
+    time.floor(3)
   end
 
   # @api private
@@ -406,13 +402,7 @@ class ULID
 
   # @return [Time]
   def to_time
-    @time ||= begin
-      if RUBY_VERSION >= '2.7'
-        Time.at(0, @milliseconds, :millisecond, in: 'UTC').freeze
-      else
-        Time.at(0, @milliseconds, :millisecond).utc.freeze
-      end
-    end
+    @time ||= Time.at(0, @milliseconds, :millisecond, in: 'UTC').freeze
   end
 
   # @return [Array(Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer)]

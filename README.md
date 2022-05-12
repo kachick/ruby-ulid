@@ -38,7 +38,7 @@ Instead, herein is proposed ULID:
 
 ### Install
 
-Require Ruby 2.6 or later
+Require Ruby 2.7 or later
 
 This command will install the latest version into your environment
 
@@ -171,8 +171,7 @@ exclude_end = ULID.range(time1...time2) #=> The end of `Range[ULID]` will be the
 
 # Below patterns are acceptable
 pinpointing = ULID.range(time1..time1) #=> This will match only for all IDs in `time1`
-# until_the_end = ULID.range(..time1) #=> This will match only for all IDs upto `time1` (The `nil` starting `Range` can be used since Ruby 2.7)
-until_the_end = ULID.range(ULID.min.to_time..time1) #=> This is same as above for Ruby 2.6
+until_the_end = ULID.range(..time1) #=> This will match only for all IDs upto `time1`
 until_the_ulid_limit = ULID.range(time1..) # This will match only for all IDs from `time1` to max value of the ULID limit
 
 # So you can use the generated range objects as below

@@ -198,12 +198,9 @@ class TestULIDMonotonicGeneratorThreadSafety < Test::Unit::TestCase
     omit("ULID::MonotonicGenerator#pred can't be guaranteed the returned value is Thread-safety when separately called with #generate") do
       assert_equal(1, prevs.count(nil)) # Basically passed, but can't be guaranteed
 
-      # This branch does not mean to omit Ruby 2.6. Just to use Enumerable#tally for debug
-      if RUBY_VERSION >= '2.7'
-        weirds = prevs.tally.select { |_ulid, count| count > 1 }
-        assert do
-          weirds.empty?
-        end
+      weirds = prevs.tally.select { |_ulid, count| count > 1 }
+      assert do
+        weirds.empty?
       end
 
       assert_equal(thread_count, prevs.uniq.size)
@@ -259,12 +256,9 @@ class TestULIDMonotonicGeneratorThreadSafety < Test::Unit::TestCase
 
     assert_equal(1, prevs.count(nil)) # Basically passed, but can't be guaranteed
 
-    # This branch does not mean to omit Ruby 2.6. Just to use Enumerable#tally for debug
-    if RUBY_VERSION >= '2.7'
-      weirds = prevs.tally.select { |_ulid, count| count > 1 }
-      assert do
-        weirds.empty?
-      end
+    weirds = prevs.tally.select { |_ulid, count| count > 1 }
+    assert do
+      weirds.empty?
     end
 
     assert_equal(thread_count, prevs.uniq.size)
