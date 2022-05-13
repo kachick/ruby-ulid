@@ -401,7 +401,7 @@ So you can replace the code as below
 +ULID.generate.to_s
 ```
 
-NOTE: It had crucial issue for handling precision, in version before `1.3.0`, when you extract timestamps from old generated ULIDs, it might be not accurate value.
+NOTE: In version before `1.3.0`, timestamps might not be correct value.
 
 1. [Sort order does not respect millisecond ordering](https://github.com/rafaelsales/ulid/issues/22)
 1. [Fixed in this PR](https://github.com/rafaelsales/ulid/pull/23)
@@ -425,11 +425,12 @@ Major methods can be replaced as below.
 +ULID.max(time).to_s
 ```
 
-NOTE: It is still having precision issue similar as `ulid gem` in the both generator and parser. I sent PRs.
+NOTE: In version before `1.0.2`, timestamps might not be correct value.
 
 1. [Parsed time object has more than milliseconds](https://github.com/abachman/ulid-ruby/issues/3)
 1. [Fix to handle timestamp precision in parser](https://github.com/abachman/ulid-ruby/pull/5)
 1. [Fix to handle timestamp precision in generator](https://github.com/abachman/ulid-ruby/pull/4)
+1. [Released in 1.0.2](https://github.com/abachman/ulid-ruby/compare/v1.0.0...v1.0.2)
 
 ### Compare performance with them
 
