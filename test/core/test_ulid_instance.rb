@@ -139,6 +139,11 @@ class TestULIDInstance < Test::Unit::TestCase
     uniq_hashes = ulids.map(&:hash).uniq
     assert_instance_of(Integer, uniq_hashes.first)
     assert_equal(ulids.size, uniq_hashes.size)
+
+    # They should have enough randomness similar as builtin objects. So do not depends int
+    assert do
+      (uniq_hashes & ulids.map(&:to_i)).empty?
+    end
   end
 
   def test_hash_key
