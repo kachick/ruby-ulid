@@ -17,6 +17,14 @@ $ ./bin/setup
 # Executing first time might take longtime, because development mode dependent active_support via steep
 ```
 
+Author is using vscode for development. For your information, the rubocop vscode integration shows wrong errors for Rakefile and ruby-ulid.gemspec as below
+
+```text
+The name of this source file (`Rakefile'`) should use snake_case.
+```
+
+`bundle exec rubocop` does not show this messsage. It looks fixed in https://github.com/rubyide/vscode-ruby/pull/647. However it is not released yet at 2022-05-26. (https://github.com/rubyide/vscode-ruby/commit/dc81c809c82003d26af9c4dc7c89fa8f8a26cbf5 "rebornix.ruby" maintainance is inactive now)
+
 ## Feel the latest version with REPL
 
 ```console

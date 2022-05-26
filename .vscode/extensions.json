@@ -1,0 +1,10 @@
+{
+  "recommendations": [
+    "editorconfig.editorconfig",
+    "redhat.vscode-yaml",
+    "streetsidesoftware.code-spell-checker",
+    "koichisasada.vscode-rdbg",
+    "soutaro.rbs-syntax",
+    "rebornix.ruby"
+  ]
+}
