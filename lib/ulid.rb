@@ -370,7 +370,11 @@ class ULID
   def to_i
     @integer
   end
-  alias_method :hash, :to_i
+
+  # @return [Integer]
+  def hash
+    @integer.hash
+  end
 
   # @return [Integer, nil]
   def <=>(other)

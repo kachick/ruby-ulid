@@ -132,6 +132,20 @@ class TestULIDInstance < Test::Unit::TestCase
     assert_equal(1777027686520646174104517696511196507, ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV').to_i)
   end
 
+  def test_hash
+    ulids = 1000.times.map do
+      ULID.generate
+    end
+    uniq_hashes = ulids.map(&:hash).uniq
+    assert_instance_of(Integer, uniq_hashes.first)
+    assert_equal(ulids.size, uniq_hashes.size)
+
+    # They should have enough randomness similar as builtin objects. So do not depends int
+    assert do
+      (uniq_hashes & ulids.map(&:to_i)).empty?
+    end
+  end
+
   def test_hash_key
     ulid1_1 = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
     ulid1_2 = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
