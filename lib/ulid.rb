@@ -373,7 +373,7 @@ class ULID
 
   # @return [Integer]
   def hash
-    @integer.hash
+    [ULID, @integer].hash
   end
 
   # @return [Integer, nil]
