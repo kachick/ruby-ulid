@@ -2,5 +2,5 @@
 
 source 'https://rubygems.org'
 
-gem 'ruby-ulid', '0.2.0'
+gem 'ruby-ulid', '0.2.1'
 gem 'benchmark-ips', '~> 2.10.0'
