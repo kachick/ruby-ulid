@@ -55,8 +55,8 @@ unless examples.size == 4000
   raise ScriptError, 'This script should have a bug! (or interpreter bug...?)'
 end
 
-puts 'The generated samples are below '
-p examples.shuffle.take(20)
+puts 'The generated samples are below'
+p examples.sample(20)
 
 filename = "dumped_fixed_examples_#{Time.now.strftime('%Y-%m-%d_%H-%M')}.bin"
 output_path = "#{File.expand_path('.')}/test/many_data/fixtures/#{filename}"
