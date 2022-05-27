@@ -20,6 +20,7 @@ group :development do
   gem 'rubocop-rake', '~> 0.6.0', require: false
   gem 'rubocop-performance', '~> 1.14.0', require: false
   gem 'rubocop-rubycw', '~> 0.1.6', require: false
+  gem 'rubocop-thread_safety', '~> 0.4.4', require: false
   gem 'rubocop-md', '~> 1.0.1', require: false
 end
 

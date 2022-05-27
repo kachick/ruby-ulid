@@ -2,6 +2,7 @@ require:
   - rubocop-rake
   - rubocop-performance
   - rubocop-rubycw
+  - rubocop-thread_safety
   - rubocop-md
 
 AllCops:
