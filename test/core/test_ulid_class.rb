@@ -265,18 +265,25 @@ class TestULIDClass < Test::Unit::TestCase
 
     assert_equal(
       range = ULID.min(ULID.floor(time_has_more_value_than_milliseconds1))..ULID.max(ULID.floor(time_has_more_value_than_milliseconds1)),
-      ULID.range(time_has_more_value_than_milliseconds1..time_has_more_value_than_milliseconds1)
+      from_time = ULID.range(time_has_more_value_than_milliseconds1..time_has_more_value_than_milliseconds1)
     )
     assert_equal(true, range.cover?(ULID.generate(moment: time_has_more_value_than_milliseconds1)))
     assert_equal(false, range.cover?(ULID.generate(moment: time_has_more_value_than_milliseconds2)))
     assert_equal(true, range.cover?(range.begin))
     assert_equal(true, range.cover?(range.end))
+    assert_false(range.begin.frozen?)
+    assert_false(range.end.frozen?)
+    assert_true(from_time.begin.frozen?)
+    assert_true(from_time.end.frozen?)
 
     assert_raises(ArgumentError) do
       ULID.range
     end
 
-    assert_same(range, ULID.range(range))
+    assert_not_same(range, ULID.range(range))
+    assert_equal(range, ULID.range(range))
+    assert_false(range.begin.frozen?)
+    assert_false(range.end.frozen?)
     assert_equal(range.begin..ULID.max, ULID.range(range.begin..nil))
 
     assert_equal(ULID.min..range.end, ULID.range(nil..range.end))
@@ -618,7 +625,8 @@ class TestULIDClass < Test::Unit::TestCase
       assert_match(/larger than ULID limit.+or negative/, err.message)
     end
 
-    [nil, BasicObject.new, '42', 4.2].each do |evil|
+    assert_instance_of(ULID, ULID.sample(nil))
+    [false, BasicObject.new, '42', 4.2].each do |evil|
       err = assert_raises(ArgumentError) do
         ULID.sample(evil)
       end

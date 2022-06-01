@@ -13,7 +13,7 @@ class ULID
     undef_method :instance_variable_set
 
     def initialize
-      super()
+      super
       @prev = nil
     end
 
@@ -30,23 +30,25 @@ class ULID
     #   Basically will not happen. Just means this feature prefers error rather than invalid value.
     def generate(moment: ULID.current_milliseconds)
       synchronize do
-        unless @prev
-          @prev = ULID.generate(moment: moment)
-          return @prev
+        prev_ulid = @prev
+        unless prev_ulid
+          ret = ULID.generate(moment: moment)
+          @prev = ret
+          return ret
         end
 
         milliseconds = ULID.milliseconds_from_moment(moment)
 
         ulid = (
-          if @prev.milliseconds < milliseconds
+          if prev_ulid.milliseconds < milliseconds
             ULID.generate(moment: milliseconds)
           else
-            ULID.from_milliseconds_and_entropy(milliseconds: @prev.milliseconds, entropy: @prev.entropy.succ)
+            ULID.from_milliseconds_and_entropy(milliseconds: prev_ulid.milliseconds, entropy: prev_ulid.entropy.succ)
           end
         )
 
-        unless ulid > @prev
-          base_message = "monotonicity broken from unexpected reasons # generated: #{ulid.inspect}, prev: #{@prev.inspect}"
+        unless ulid > prev_ulid
+          base_message = "monotonicity broken from unexpected reasons # generated: #{ulid.inspect}, prev: #{prev_ulid.inspect}"
           additional_information = (
             if Thread.list == [Thread.main]
               '# NOTE: looks single thread only exist'
