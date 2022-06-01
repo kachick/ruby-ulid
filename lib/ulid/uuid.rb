@@ -32,8 +32,11 @@ class ULID
   def to_uuidv4
     # This code referenced https://github.com/ruby/ruby/blob/121fa24a3451b45c41ac0a661b64e9fc8600e589/lib/securerandom.rb#L221-L241
     array = octets.pack('C*').unpack('NnnnnN')
-    array[2] = (array[2] & 0x0fff) | 0x4000
-    array[3] = (array[3] & 0x3fff) | 0x8000
+    ref2, ref3 = array[2], array[3]
+    raise unless Integer === ref2 && Integer === ref3
+
+    array[2] = (ref2 & 0x0fff) | 0x4000
+    array[3] = (ref3 & 0x3fff) | 0x8000
     ('%08x-%04x-%04x-%04x-%04x%08x' % array).freeze
   end
 end

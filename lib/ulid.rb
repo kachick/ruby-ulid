@@ -25,10 +25,12 @@ class ULID
 
   TIMESTAMP_ENCODED_LENGTH = 10
   RANDOMNESS_ENCODED_LENGTH = 16
-  ENCODED_LENGTH = TIMESTAMP_ENCODED_LENGTH + RANDOMNESS_ENCODED_LENGTH
+  ENCODED_LENGTH = 26
+
   TIMESTAMP_OCTETS_LENGTH = 6
   RANDOMNESS_OCTETS_LENGTH = 10
-  OCTETS_LENGTH = TIMESTAMP_OCTETS_LENGTH + RANDOMNESS_OCTETS_LENGTH
+  OCTETS_LENGTH = 16
+
   MAX_MILLISECONDS = 281474976710655
   MAX_ENTROPY = 1208925819614629174706175
   MAX_INTEGER = 340282366920938463463374607431768211455
@@ -92,7 +94,7 @@ class ULID
   #   * Do not ensure the uniqueness
   #   * Do not take random generator for the arguments
   #   * Raising error instead of truncating elements for the given number
-  def self.sample(*args, period: nil)
+  def self.sample(number=nil, period: nil)
     int_generator = (
       if period
         ulid_range = range(period)
@@ -109,24 +111,21 @@ class ULID
       end
     )
 
-    case args.size
-    when 0
+    case number
+    when nil
       from_integer(int_generator.call)
-    when 1
-      number = args.first
-      raise ArgumentError, 'accepts no argument or integer only' unless Integer === number
-
+    when Integer
       if number > MAX_INTEGER || number.negative?
         raise ArgumentError, "given number `#{number}` is larger than ULID limit `#{MAX_INTEGER}` or negative"
       end
 
-      if period && (number > possibilities)
+      if period && possibilities && (number > possibilities)
         raise ArgumentError, "given number `#{number}` is larger than given possibilities `#{possibilities}`"
       end
 
       Array.new(number) { from_integer(int_generator.call) }
     else
-      raise ArgumentError, "wrong number of arguments (given #{args.size}, expected 0..1)"
+      raise ArgumentError, 'accepts no argument or integer only'
     end
   end
 
@@ -137,10 +136,12 @@ class ULID
   def self.scan(string)
     string = String.try_convert(string)
     raise ArgumentError, 'ULID.scan takes only strings' unless string
-    return to_enum(__callee__, string) unless block_given?
+    return to_enum(:scan, string) unless block_given?
 
     string.scan(SCANNING_PATTERN) do |matched|
-      yield parse(matched)
+      if String === matched
+        yield parse(matched)
+      end
     end
     self
   end
@@ -158,6 +159,8 @@ class ULID
     n32encoded_timestamp = n32encoded.slice(0, TIMESTAMP_ENCODED_LENGTH)
     n32encoded_randomness = n32encoded.slice(TIMESTAMP_ENCODED_LENGTH, RANDOMNESS_ENCODED_LENGTH)
 
+    raise unless n32encoded_timestamp && n32encoded_randomness
+
     milliseconds = n32encoded_timestamp.to_i(32)
     entropy = n32encoded_randomness.to_i(32)
 
@@ -171,34 +174,40 @@ class ULID
     raise ArgumentError, 'ULID.range takes only `Range[Time]`, `Range[nil]` or `Range[ULID]`' unless Range === period
 
     begin_element, end_element, exclude_end = period.begin, period.end, period.exclude_end?
-    return period if self === begin_element && self === end_element
+    new_begin, new_end = false, false
 
-    case begin_element
-    when Time
-      begin_ulid = min(begin_element)
-    when nil
-      begin_ulid = MIN
-    when self
-      begin_ulid = begin_element
-    else
-      raise ArgumentError, "ULID.range takes only `Range[Time]`, `Range[nil]` or `Range[ULID]`, given: #{period.inspect}"
-    end
+    begin_ulid = (
+      case begin_element
+      when Time
+        new_begin = true
+        min(begin_element)
+      when nil
+        MIN
+      when self
+        begin_element
+      else
+        raise ArgumentError, "ULID.range takes only `Range[Time]`, `Range[nil]` or `Range[ULID]`, given: #{period.inspect}"
+      end
+    )
 
-    case end_element
-    when Time
-      end_ulid = exclude_end ? min(end_element) : max(end_element)
-    when nil
-      # The end should be max and include end, because nil end means to cover endless ULIDs until the limit
-      end_ulid = MAX
-      exclude_end = false
-    when self
-      end_ulid = end_element
-    else
-      raise ArgumentError, "ULID.range takes only `Range[Time]`, `Range[nil]` or `Range[ULID]`, given: #{period.inspect}"
-    end
+    end_ulid = (
+      case end_element
+      when Time
+        new_end = true
+        exclude_end ? min(end_element) : max(end_element)
+      when nil
+        exclude_end = false
+        # The end should be max and include end, because nil end means to cover endless ULIDs until the limit
+        MAX
+      when self
+        end_element
+      else
+        raise ArgumentError, "ULID.range takes only `Range[Time]`, `Range[nil]` or `Range[ULID]`, given: #{period.inspect}"
+      end
+    )
 
-    begin_ulid.freeze
-    end_ulid.freeze
+    begin_ulid.freeze if new_begin
+    end_ulid.freeze if new_end
 
     Range.new(begin_ulid, end_ulid, exclude_end)
   end
@@ -420,22 +429,22 @@ class ULID
 
   # @return [Array(Integer, Integer, Integer, Integer, Integer, Integer)]
   def timestamp_octets
-    octets.slice(0, TIMESTAMP_OCTETS_LENGTH)
+    octets.slice(0, TIMESTAMP_OCTETS_LENGTH) || raise(UnexpectedError)
   end
 
   # @return [Array(Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer)]
   def randomness_octets
-    octets.slice(TIMESTAMP_OCTETS_LENGTH, RANDOMNESS_OCTETS_LENGTH)
+    octets.slice(TIMESTAMP_OCTETS_LENGTH, RANDOMNESS_OCTETS_LENGTH) || raise(UnexpectedError)
   end
 
   # @return [String]
   def timestamp
-    @timestamp ||= to_s.slice(0, TIMESTAMP_ENCODED_LENGTH).freeze
+    @timestamp ||= (to_s.slice(0, TIMESTAMP_ENCODED_LENGTH).freeze || raise(UnexpectedError))
   end
 
   # @return [String]
   def randomness
-    @randomness ||= to_s.slice(TIMESTAMP_ENCODED_LENGTH, RANDOMNESS_ENCODED_LENGTH).freeze
+    @randomness ||= (to_s.slice(TIMESTAMP_ENCODED_LENGTH, RANDOMNESS_ENCODED_LENGTH).freeze || raise(UnexpectedError))
   end
 
   # @note Providing for rough operations. The keys and values is not fixed.
