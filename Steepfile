@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-target :lib do
-  signature 'sig'
+target(:lib) do
+  signature('sig')
 
-  check 'lib'
+  check('lib')
 
-  library 'securerandom', 'monitor'
+  library('securerandom', 'monitor')
 end

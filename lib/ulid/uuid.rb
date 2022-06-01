@@ -10,18 +10,18 @@
 class ULID
   # Imported from https://stackoverflow.com/a/38191104/1212807, thank you!
   UUIDV4_PATTERN = /\A[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}\z/i.freeze
-  private_constant :UUIDV4_PATTERN
+  private_constant(:UUIDV4_PATTERN)
 
   # @param [String, #to_str] uuid
   # @return [ULID]
   # @raise [ParserError] if the given format is not correct for UUIDv4 specs
   def self.from_uuidv4(uuid)
     uuid = String.try_convert(uuid)
-    raise ArgumentError, 'ULID.from_uuidv4 takes only strings' unless uuid
+    raise(ArgumentError, 'ULID.from_uuidv4 takes only strings') unless uuid
 
     prefix_trimmed = uuid.delete_prefix('urn:uuid:')
     unless UUIDV4_PATTERN.match?(prefix_trimmed)
-      raise ParserError, "given `#{uuid}` does not match to `#{UUIDV4_PATTERN.inspect}`"
+      raise(ParserError, "given `#{uuid}` does not match to `#{UUIDV4_PATTERN.inspect}`")
     end
 
     normalized = prefix_trimmed.gsub(/[^0-9A-Fa-f]/, '')

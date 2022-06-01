@@ -1,8 +1,8 @@
 # coding: utf-8
 # frozen_string_literal: true
 
-require 'benchmark/ips'
-require_relative '../lib/ulid'
+require('benchmark/ips')
+require_relative('../lib/ulid')
 
 monotonic_generator = ULID::MonotonicGenerator.new
 fixed_integer = SecureRandom.random_number(ULID::MAX_INTEGER)

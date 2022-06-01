@@ -1,8 +1,8 @@
 # coding: utf-8
 # frozen_string_literal: true
 
-require 'benchmark/ips'
-require_relative '../lib/ulid'
+require('benchmark/ips')
+require_relative('../lib/ulid')
 
 frozen_ulid_objects = ULID.sample(10000).map(&:freeze)
 ulid_strings = frozen_ulid_objects.map(&:to_s)
@@ -27,9 +27,9 @@ end
 # I'll check to be sure sorting result is correct.
 
 unless ulid_strings == non_cached_ulid_objects.map(&:to_s)
-  raise 'Crucial Bug exists!'
+  raise('Crucial Bug exists!')
 end
 
 unless ulid_strings == frozen_ulid_objects.map(&:to_s)
-  raise 'Crucial Bug exists!'
+  raise('Crucial Bug exists!')
 end

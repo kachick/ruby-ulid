@@ -1,9 +1,9 @@
 # coding: utf-8
 # frozen_string_literal: true
 
-require_relative '../helper'
-require_relative '../../lib/ulid/uuid'
-require_relative 'fixtures/example'
+require_relative('../helper')
+require_relative('../../lib/ulid/uuid')
+require_relative('fixtures/example')
 
 # https://github.com/kachick/ruby-ulid/issues/89
 class TestFixedManyData < Test::Unit::TestCase
@@ -68,7 +68,7 @@ class TestFixedManyData < Test::Unit::TestCase
       end
       assert_example(ulid, example)
     end
-    puts "All #{EXAMPLES.size} patterns `reversible`, but #{weird_uuid_by_ulid.size}/#{EXAMPLES.size} patterns are not mapping to same ULID... might relate to https://github.com/kachick/ruby-ulid/issues/76 ?"
-    puts 'Samples are below', weird_uuid_by_ulid.to_a.sample(5).to_h
+    puts("All #{EXAMPLES.size} patterns `reversible`, but #{weird_uuid_by_ulid.size}/#{EXAMPLES.size} patterns are not mapping to same ULID... might relate to https://github.com/kachick/ruby-ulid/issues/76 ?")
+    puts('Samples are below', weird_uuid_by_ulid.to_a.sample(5).to_h)
   end
 end

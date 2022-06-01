@@ -1,11 +1,11 @@
 # coding: utf-8
 # frozen_string_literal: true
 
-require_relative '../helper'
+require_relative('../helper')
 
 class TestULIDMonotonicGeneratorThreadSafety < Test::Unit::TestCase
-  include ULIDHelpers
-  include ULIDAssertions
+  include(ULIDHelpers)
+  include(ULIDAssertions)
 
   def test_thread_safe_generate_without_arguments
     generator = ULID::MonotonicGenerator.new
@@ -167,7 +167,7 @@ class TestULIDMonotonicGeneratorThreadSafety < Test::Unit::TestCase
       else
         # Intentional comment!
         # binding.irb
-        raise 'Should not reach here!'
+        raise('Should not reach here!')
       end
     end
 

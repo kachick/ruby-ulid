@@ -1,7 +1,7 @@
 # coding: utf-8
 # frozen_string_literal: true
 
-require_relative '../helper'
+require_relative('../helper')
 
 class TestULIDUseCase < Test::Unit::TestCase
   def test_monotonic_generator_with_no_moment_depends_on_current_time

@@ -1,14 +1,14 @@
 # coding: us-ascii
 # frozen_string_literal: true
 
-require 'warning'
+require('warning')
 
 # How to use => https://test-unit.github.io/test-unit/en/
-require 'test/unit'
+require('test/unit')
 
-require 'irb'
-require 'power_assert/colorize'
-require 'irb/power_assert'
+require('irb')
+require('power_assert/colorize')
+require('irb/power_assert')
 
 Warning[:deprecated] = true
 Warning[:experimental] = true
@@ -17,7 +17,7 @@ Warning.process do |_warning|
   :raise
 end
 
-require_relative '../lib/ulid'
+require_relative('../lib/ulid')
 
 class Test::Unit::TestCase
   module ULIDHelpers

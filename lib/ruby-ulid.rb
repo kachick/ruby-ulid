@@ -3,4 +3,4 @@
 
 # Copyright (C) 2021 Kenichi Kamiya
 
-require_relative 'ulid'
+require_relative('ulid')

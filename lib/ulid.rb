@@ -3,7 +3,7 @@
 
 # Copyright (C) 2021 Kenichi Kamiya
 
-require 'securerandom'
+require('securerandom')
 
 # @see https://github.com/ulid/spec
 # @!attribute [r] milliseconds
@@ -11,7 +11,7 @@ require 'securerandom'
 # @!attribute [r] entropy
 #   @return [Integer]
 class ULID
-  include Comparable
+  include(Comparable)
 
   class Error < StandardError; end
   class OverflowError < Error; end
@@ -49,7 +49,7 @@ class ULID
   # @see https://bugs.ruby-lang.org/issues/15958
   TIME_FORMAT_IN_INSPECT = '%Y-%m-%d %H:%M:%S.%3N %Z'
 
-  private_class_method :new
+  private_class_method(:new)
 
   # @param [Integer, Time] moment
   # @param [Integer] entropy
@@ -62,7 +62,7 @@ class ULID
   # @param [Time] time
   # @return [ULID]
   def self.at(time)
-    raise ArgumentError, 'ULID.at takes only `Time` instance' unless Time === time
+    raise(ArgumentError, 'ULID.at takes only `Time` instance') unless Time === time
 
     from_milliseconds_and_entropy(milliseconds: milliseconds_from_time(time), entropy: reasonable_entropy)
   end
@@ -101,7 +101,7 @@ class ULID
         min, max, exclude_end = ulid_range.begin.to_i, ulid_range.end.to_i, ulid_range.exclude_end?
 
         possibilities = (max - min) + (exclude_end ? 0 : 1)
-        raise ArgumentError, "given range `#{ulid_range.inspect}` does not have possibilities" unless possibilities.positive?
+        raise(ArgumentError, "given range `#{ulid_range.inspect}` does not have possibilities") unless possibilities.positive?
 
         -> {
           SecureRandom.random_number(possibilities) + min
@@ -116,16 +116,16 @@ class ULID
       from_integer(int_generator.call)
     when Integer
       if number > MAX_INTEGER || number.negative?
-        raise ArgumentError, "given number `#{number}` is larger than ULID limit `#{MAX_INTEGER}` or negative"
+        raise(ArgumentError, "given number `#{number}` is larger than ULID limit `#{MAX_INTEGER}` or negative")
       end
 
       if period && possibilities && (number > possibilities)
-        raise ArgumentError, "given number `#{number}` is larger than given possibilities `#{possibilities}`"
+        raise(ArgumentError, "given number `#{number}` is larger than given possibilities `#{possibilities}`")
       end
 
       Array.new(number) { from_integer(int_generator.call) }
     else
-      raise ArgumentError, 'accepts no argument or integer only'
+      raise(ArgumentError, 'accepts no argument or integer only')
     end
   end
 
@@ -135,12 +135,12 @@ class ULID
   # @yieldreturn [self]
   def self.scan(string)
     string = String.try_convert(string)
-    raise ArgumentError, 'ULID.scan takes only strings' unless string
+    raise(ArgumentError, 'ULID.scan takes only strings') unless string
     return to_enum(:scan, string) unless block_given?
 
     string.scan(SCANNING_PATTERN) do |matched|
       if String === matched
-        yield parse(matched)
+        yield(parse(matched))
       end
     end
     self
@@ -151,15 +151,15 @@ class ULID
   # @raise [OverflowError] if the given integer is larger than the ULID limit
   # @raise [ArgumentError] if the given integer is negative number
   def self.from_integer(integer)
-    raise ArgumentError, 'ULID.from_integer takes only `Integer`' unless Integer === integer
-    raise OverflowError, "integer overflow: given #{integer}, max: #{MAX_INTEGER}" unless integer <= MAX_INTEGER
-    raise ArgumentError, "integer should not be negative: given: #{integer}" if integer.negative?
+    raise(ArgumentError, 'ULID.from_integer takes only `Integer`') unless Integer === integer
+    raise(OverflowError, "integer overflow: given #{integer}, max: #{MAX_INTEGER}") unless integer <= MAX_INTEGER
+    raise(ArgumentError, "integer should not be negative: given: #{integer}") if integer.negative?
 
     n32encoded = integer.to_s(32).rjust(ENCODED_LENGTH, '0')
     n32encoded_timestamp = n32encoded.slice(0, TIMESTAMP_ENCODED_LENGTH)
     n32encoded_randomness = n32encoded.slice(TIMESTAMP_ENCODED_LENGTH, RANDOMNESS_ENCODED_LENGTH)
 
-    raise UnexpectedError unless n32encoded_timestamp && n32encoded_randomness
+    raise(UnexpectedError) unless n32encoded_timestamp && n32encoded_randomness
 
     milliseconds = n32encoded_timestamp.to_i(32)
     entropy = n32encoded_randomness.to_i(32)
@@ -171,7 +171,7 @@ class ULID
   # @return [Range<ULID>]
   # @raise [ArgumentError] if the given period is not a `Range[Time]`, `Range[nil]` or `Range[ULID]`
   def self.range(period)
-    raise ArgumentError, 'ULID.range takes only `Range[Time]`, `Range[nil]` or `Range[ULID]`' unless Range === period
+    raise(ArgumentError, 'ULID.range takes only `Range[Time]`, `Range[nil]` or `Range[ULID]`') unless Range === period
 
     begin_element, end_element, exclude_end = period.begin, period.end, period.exclude_end?
     new_begin, new_end = false, false
@@ -186,7 +186,7 @@ class ULID
       when self
         begin_element
       else
-        raise ArgumentError, "ULID.range takes only `Range[Time]`, `Range[nil]` or `Range[ULID]`, given: #{period.inspect}"
+        raise(ArgumentError, "ULID.range takes only `Range[Time]`, `Range[nil]` or `Range[ULID]`, given: #{period.inspect}")
       end
     )
 
@@ -202,7 +202,7 @@ class ULID
       when self
         end_element
       else
-        raise ArgumentError, "ULID.range takes only `Range[Time]`, `Range[nil]` or `Range[ULID]`, given: #{period.inspect}"
+        raise(ArgumentError, "ULID.range takes only `Range[Time]`, `Range[nil]` or `Range[ULID]`, given: #{period.inspect}")
       end
     )
 
@@ -215,7 +215,7 @@ class ULID
   # @param [Time] time
   # @return [Time]
   def self.floor(time)
-    raise ArgumentError, 'ULID.floor takes only `Time` instance' unless Time === time
+    raise(ArgumentError, 'ULID.floor takes only `Time` instance') unless Time === time
 
     time.floor(3)
   end
@@ -229,9 +229,9 @@ class ULID
   # @api private
   # @param [Time] time
   # @return [Integer]
-  private_class_method def self.milliseconds_from_time(time)
+  private_class_method(def self.milliseconds_from_time(time)
     (time.to_r * 1000).to_i
-  end
+  end)
 
   # @api private
   # @param [Time, Integer] moment
@@ -243,24 +243,24 @@ class ULID
     when Time
       milliseconds_from_time(moment)
     else
-      raise ArgumentError, '`moment` should be a `Time` or `Integer as milliseconds`'
+      raise(ArgumentError, '`moment` should be a `Time` or `Integer as milliseconds`')
     end
   end
 
   # @return [Integer]
-  private_class_method def self.reasonable_entropy
+  private_class_method(def self.reasonable_entropy
     SecureRandom.random_number(MAX_ENTROPY)
-  end
+  end)
 
   # @param [String, #to_str] string
   # @return [ULID]
   # @raise [ParserError] if the given format is not correct for ULID specs
   def self.parse(string)
     string = String.try_convert(string)
-    raise ArgumentError, 'ULID.parse takes only strings' unless string
+    raise(ArgumentError, 'ULID.parse takes only strings') unless string
 
     unless STRICT_PATTERN_WITH_CROCKFORD_BASE32_SUBSET.match?(string)
-      raise ParserError, "given `#{string}` does not match to `#{STRICT_PATTERN_WITH_CROCKFORD_BASE32_SUBSET.inspect}`"
+      raise(ParserError, "given `#{string}` does not match to `#{STRICT_PATTERN_WITH_CROCKFORD_BASE32_SUBSET.inspect}`")
     end
 
     from_integer(CrockfordBase32.decode(string))
@@ -271,7 +271,7 @@ class ULID
   # @raise [ParserError] if the given format is not correct for ULID specs, even if ignored `orthographical variants of the format`
   def self.normalize(string)
     string = String.try_convert(string)
-    raise ArgumentError, 'ULID.normalize takes only strings' unless string
+    raise(ArgumentError, 'ULID.normalize takes only strings') unless string
 
     normalized_in_crockford = CrockfordBase32.normalize(string)
     # Ensure the ULID correctness, because CrockfordBase32 does not always mean to satisfy ULID format
@@ -307,14 +307,14 @@ class ULID
       else
         object_class_name = safe_get_class_name(object)
         converted_class_name = safe_get_class_name(converted)
-        raise TypeError, "can't convert #{object_class_name} to ULID (#{object_class_name}#to_ulid gives #{converted_class_name})"
+        raise(TypeError, "can't convert #{object_class_name} to ULID (#{object_class_name}#to_ulid gives #{converted_class_name})")
       end
     end
   end
 
   # @param [BasicObject] object
   # @return [String]
-  private_class_method def self.safe_get_class_name(object)
+  private_class_method(def self.safe_get_class_name(object)
     fallback = 'UnknownObject'
 
     # This class getter implementation used https://github.com/rspec/rspec-support/blob/4ad8392d0787a66f9c351d9cf6c7618e18b3d0f2/lib/rspec/support.rb#L83-L89 as a reference, thank you!
@@ -336,7 +336,7 @@ class ULID
     else
       name || fallback
     end
-  end
+  end)
 
   # @api private
   # @param [Integer] milliseconds
@@ -345,10 +345,10 @@ class ULID
   # @raise [OverflowError] if the given value is larger than the ULID limit
   # @raise [ArgumentError] if the given milliseconds and/or entropy is negative number
   def self.from_milliseconds_and_entropy(milliseconds:, entropy:)
-    raise ArgumentError, 'milliseconds and entropy should be an `Integer`' unless Integer === milliseconds && Integer === entropy
-    raise OverflowError, "timestamp overflow: given #{milliseconds}, max: #{MAX_MILLISECONDS}" unless milliseconds <= MAX_MILLISECONDS
-    raise OverflowError, "entropy overflow: given #{entropy}, max: #{MAX_ENTROPY}" unless entropy <= MAX_ENTROPY
-    raise ArgumentError, 'milliseconds and entropy should not be negative' if milliseconds.negative? || entropy.negative?
+    raise(ArgumentError, 'milliseconds and entropy should be an `Integer`') unless Integer === milliseconds && Integer === entropy
+    raise(OverflowError, "timestamp overflow: given #{milliseconds}, max: #{MAX_MILLISECONDS}") unless milliseconds <= MAX_MILLISECONDS
+    raise(OverflowError, "entropy overflow: given #{entropy}, max: #{MAX_ENTROPY}") unless entropy <= MAX_ENTROPY
+    raise(ArgumentError, 'milliseconds and entropy should not be negative') if milliseconds.negative? || entropy.negative?
 
     n32encoded_timestamp = milliseconds.to_s(32).rjust(TIMESTAMP_ENCODED_LENGTH, '0')
     n32encoded_randomness = entropy.to_s(32).rjust(RANDOMNESS_ENCODED_LENGTH, '0')
@@ -357,7 +357,7 @@ class ULID
     new(milliseconds: milliseconds, entropy: entropy, integer: integer)
   end
 
-  attr_reader :milliseconds, :entropy
+  attr_reader(:milliseconds, :entropy)
 
   # @api private
   # @param [Integer] milliseconds
@@ -400,7 +400,7 @@ class ULID
   def eql?(other)
     equal?(other) || (ULID === other && @integer == other.to_i)
   end
-  alias_method :==, :eql?
+  alias_method(:==, :eql?)
 
   # @return [Boolean]
   def ===(other)
@@ -471,7 +471,7 @@ class ULID
       ULID.from_integer(succ_int)
     end
   end
-  alias_method :next, :succ
+  alias_method(:next, :succ)
 
   # @return [ULID, nil] when called on ULID as `00000000000000000000000000`, returns `nil` instead of ULID
   def pred
@@ -523,7 +523,7 @@ class ULID
     self
   end
 
-  undef_method :instance_variable_set
+  undef_method(:instance_variable_set)
 
   private
 
@@ -535,13 +535,13 @@ class ULID
   end
 end
 
-require_relative 'ulid/version'
-require_relative 'ulid/crockford_base32'
-require_relative 'ulid/monotonic_generator'
+require_relative('ulid/version')
+require_relative('ulid/crockford_base32')
+require_relative('ulid/monotonic_generator')
 
 class ULID
   MIN = parse('00000000000000000000000000').freeze
   MAX = parse('7ZZZZZZZZZZZZZZZZZZZZZZZZZ').freeze
 
-  private_constant :TIME_FORMAT_IN_INSPECT, :MIN, :MAX, :RANDOM_INTEGER_GENERATOR
+  private_constant(:TIME_FORMAT_IN_INSPECT, :MIN, :MAX, :RANDOM_INTEGER_GENERATOR)
 end
