@@ -159,7 +159,7 @@ class ULID
     n32encoded_timestamp = n32encoded.slice(0, TIMESTAMP_ENCODED_LENGTH)
     n32encoded_randomness = n32encoded.slice(TIMESTAMP_ENCODED_LENGTH, RANDOMNESS_ENCODED_LENGTH)
 
-    raise unless n32encoded_timestamp && n32encoded_randomness
+    raise UnexpectedError unless n32encoded_timestamp && n32encoded_randomness
 
     milliseconds = n32encoded_timestamp.to_i(32)
     entropy = n32encoded_randomness.to_i(32)
@@ -324,6 +324,7 @@ class ULID
         object.class
       rescue NoMethodError
         singleton_class = class << object; self; end
+        # @type var singleton_class: Class
         singleton_class.ancestors.detect { |ancestor| !ancestor.equal?(singleton_class) }
       end
     )

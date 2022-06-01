@@ -36,7 +36,7 @@ class ULID < Object
   end
 
   module CrockfordBase32
-    class SetupError < ScriptError
+    class SetupError < UnexpectedError
     end
 
     N32_CHAR_BY_CROCKFORD_BASE32_CHAR: Hash[String, String]

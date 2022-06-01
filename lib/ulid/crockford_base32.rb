@@ -14,7 +14,7 @@ class ULID
   #   * https://github.com/kachick/ruby-ulid/issues/57
   #   * https://github.com/kachick/ruby-ulid/issues/78
   module CrockfordBase32
-    class SetupError < ScriptError; end
+    class SetupError < UnexpectedError; end
 
     n32_chars = [*'0'..'9', *'A'..'V'].map(&:freeze).freeze
     raise SetupError, 'obvious bug exists in the mapping algorithm' unless n32_chars.size == 32
