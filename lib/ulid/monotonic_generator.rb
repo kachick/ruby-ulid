@@ -5,12 +5,12 @@
 
 class ULID
   class MonotonicGenerator
-    include MonitorMixin
+    include(MonitorMixin)
 
     # @return [ULID, nil]
-    attr_reader :prev
+    attr_reader(:prev)
 
-    undef_method :instance_variable_set
+    undef_method(:instance_variable_set)
 
     def initialize
       super
@@ -21,7 +21,7 @@ class ULID
     def inspect
       "ULID::MonotonicGenerator(prev: #{@prev.inspect})"
     end
-    alias_method :to_s, :inspect
+    alias_method(:to_s, :inspect)
 
     # @param [Time, Integer] moment
     # @return [ULID]
@@ -57,7 +57,7 @@ class ULID
             end
           )
 
-          raise UnexpectedError, base_message + additional_information
+          raise(UnexpectedError, base_message + additional_information)
         end
 
         @prev = ulid
@@ -65,12 +65,12 @@ class ULID
       end
     end
 
-    undef_method :freeze
+    undef_method(:freeze)
 
     # @raise [TypeError] always raises exception and does not freeze self
     # @return [void]
     def freeze
-      raise TypeError, "cannot freeze #{self.class}"
+      raise(TypeError, "cannot freeze #{self.class}")
     end
   end
 end

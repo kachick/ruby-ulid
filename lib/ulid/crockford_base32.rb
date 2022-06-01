@@ -17,7 +17,7 @@ class ULID
     class SetupError < UnexpectedError; end
 
     n32_chars = [*'0'..'9', *'A'..'V'].map(&:freeze).freeze
-    raise SetupError, 'obvious bug exists in the mapping algorithm' unless n32_chars.size == 32
+    raise(SetupError, 'obvious bug exists in the mapping algorithm') unless n32_chars.size == 32
 
     n32_char_by_number = {}
     n32_chars.each_with_index do |char, index|
@@ -48,7 +48,7 @@ class ULID
         map[encoding_char] = char_32
       end
     end.freeze
-    raise SetupError, 'obvious bug exists in the mapping algorithm' unless N32_CHAR_BY_CROCKFORD_BASE32_CHAR.keys == crockford_base32_mappings.keys
+    raise(SetupError, 'obvious bug exists in the mapping algorithm') unless N32_CHAR_BY_CROCKFORD_BASE32_CHAR.keys == crockford_base32_mappings.keys
 
     CROCKFORD_BASE32_CHAR_PATTERN = /[#{N32_CHAR_BY_CROCKFORD_BASE32_CHAR.keys.join}]/.freeze
 

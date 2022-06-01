@@ -1,10 +1,10 @@
 # coding: utf-8
 # frozen_string_literal: true
 
-require_relative '../helper'
+require_relative('../helper')
 
 class TestULIDClass < Test::Unit::TestCase
-  include ULIDAssertions
+  include(ULIDAssertions)
 
   def setup
     @actual_timezone = ENV.fetch('TZ', nil)
@@ -676,7 +676,7 @@ class TestULIDClass < Test::Unit::TestCase
     error = Exception.new
     (class << accidental; self; end).class_eval do
       define_method(:to_ulid) do
-        ::Kernel.raise error
+        ::Kernel.raise(error)
       end
     end
     err = assert_raises(Exception) do

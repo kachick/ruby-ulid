@@ -1,10 +1,10 @@
 # coding: utf-8
 # frozen_string_literal: true
 
-require_relative '../helper'
+require_relative('../helper')
 
 class TestULIDMonotonicGeneratorWithSingleThread < Test::Unit::TestCase
-  include ULIDAssertions
+  include(ULIDAssertions)
 
   def test_prev_with_many_data
     generator = ULID::MonotonicGenerator.new

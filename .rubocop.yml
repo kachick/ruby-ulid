@@ -365,14 +365,13 @@ Style/LineEndConcatenation:
 Style/MethodCallWithArgsParentheses:
   Enabled: true
   EnforcedStyle: 'require_parentheses'
-  IgnoreMacros: true
-  AllowParenthesesInMultilineCall: false
+  IgnoreMacros: false
+  AllowParenthesesInMultilineCall: true
   AllowParenthesesInChaining: true
   AllowParenthesesInCamelCaseMethod: true
   AllowParenthesesInStringInterpolation: true
-  IgnoredMethods: ['raise', 'puts', 'yield', 'require', 'require_relative', 'load']
   Exclude:
-    - '*.gemspec'
+    - '*.md'
 
 Style/MethodCallWithoutArgsParentheses:
   Enabled: true

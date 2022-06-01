@@ -1,10 +1,10 @@
 # coding: utf-8
 # frozen_string_literal: true
 
-require_relative '../helper'
+require_relative('../helper')
 
 class TestManyData < Test::Unit::TestCase
-  include ULIDAssertions
+  include(ULIDAssertions)
 
   def test_generate
     ulids = 1000.times.map do |n|

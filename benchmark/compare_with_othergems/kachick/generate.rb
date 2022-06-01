@@ -1,10 +1,10 @@
 # coding: utf-8
 # frozen_string_literal: true
 
-require 'benchmark/ips'
-require 'ulid'
+require('benchmark/ips')
+require('ulid')
 
-raise "Bug to setup: #{ULID.methods(false)}" unless (ULID::VERSION == '0.1.6') && ULID::MonotonicGenerator
+raise("Bug to setup: #{ULID.methods(false)}") unless (ULID::VERSION == '0.1.6') && ULID::MonotonicGenerator
 
 products = []
 
@@ -20,7 +20,7 @@ end
 STRICT_PATTERN_WITH_CROCKFORD_BASE32_SUBSET = /\A(?<timestamp>[0-7][0123456789ABCDEFGHJKMNPQRSTVWXYZ]{9})(?<randomness>[0123456789ABCDEFGHJKMNPQRSTVWXYZ]{16})\z/.freeze
 
 unless (products.size > 42) && (products.uniq === products) && products.all?(STRICT_PATTERN_WITH_CROCKFORD_BASE32_SUBSET) && products.all?(String)
-  raise 'Some bugs in the gem or this benchmark exists!'
+  raise('Some bugs in the gem or this benchmark exists!')
 end
 
-p "`ruby-ulid gem (this one) - #{ULID::VERSION}` generated products: #{products.size} - sample: #{products.sample(5)}"
+p("`ruby-ulid gem (this one) - #{ULID::VERSION}` generated products: #{products.size} - sample: #{products.sample(5)}")

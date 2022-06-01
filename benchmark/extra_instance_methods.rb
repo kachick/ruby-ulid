@@ -1,8 +1,8 @@
 # coding: utf-8
 # frozen_string_literal: true
 
-require 'benchmark/ips'
-require_relative '../lib/ulid'
+require('benchmark/ips')
+require_relative('../lib/ulid')
 
 Benchmark.ips do |x|
   x.report('ULID#octets') { ULID.sample.octets }
