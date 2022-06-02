@@ -1,0 +1,31 @@
+name: Auto merge dependabot PRs if passed other jobs
+on: pull_request
+
+permissions:
+  contents: write
+  pull-requests: write
+  # checks: read # For private repositories
+  # actions: read # For private repositories
+
+jobs:
+  auto-merge-dependabot-prs:
+    runs-on: ubuntu-latest
+    if: ${{ github.actor == 'dependabot[bot]' }}
+    steps:
+      - name: Dependabot metadata
+        id: metadata
+        uses: dependabot/fetch-metadata@v1.3.1
+        with:
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+      - name: Wait other jobs are passed or failed
+        if: ${{steps.metadata.outputs.update-type != 'version-update:semver-major'}}
+        uses: kachick/wait-other-jobs@v1
+        timeout-minutes: 30
+        with:
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+      - name: Approve and merge
+        if: ${{steps.metadata.outputs.update-type != 'version-update:semver-major'}}
+        run: gh pr review --approve "$PR_URL" && gh pr merge --auto --merge "$PR_URL"
+        env:
+          PR_URL: ${{github.event.pull_request.html_url}}
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
