@@ -473,7 +473,6 @@ I have checked the behavior with [ruby/rbs@2.5.0](https://github.com/ruby/rbs) &
 * <img src="./assets/ulid-rbs-ok-at-time.png?raw=true" alt="Example of rbs ok 1" height=200>
 * <img src="./assets/ulid-rbs-ng-at-int.png?raw=true" alt="Example of rbs ng pattern" height=200>
 
-
 ## References
 
 - [Repository](https://github.com/kachick/ruby-ulid)
@@ -482,5 +481,5 @@ I have checked the behavior with [ruby/rbs@2.5.0](https://github.com/ruby/rbs) &
 
 ## Note
 
-- Another choices for sortable and randomness IDs [UUIDv6, UUIDv7, UUIDv8 might be the one. (But they are still in draft state)](https://www.ietf.org/archive/id/draft-peabody-dispatch-new-uuid-format-01.html).  
+- [UUIDv6, UUIDv7, UUIDv8](https://www.ietf.org/archive/id/draft-peabody-dispatch-new-uuid-format-01.html) is another choice for sortable and randomness ID.  
   However they are stayed in draft state. ref: [ruby-ulid#37](https://github.com/kachick/ruby-ulid/issues/37)
