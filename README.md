@@ -467,11 +467,11 @@ Then `bundle install`.
 
 I have checked the behavior with [ruby/rbs@2.5.0](https://github.com/ruby/rbs) && [soutaro/steep@1.0.0](https://github.com/soutaro/steep) &&  [soutaro/steep-vscode](https://github.com/soutaro/steep-vscode).
 
-* <img src="./assets/ulid-rbs-overview.png?raw=true" alt="Example of rbs ok 1" height=200>
-* <img src="./assets/ulid-rbs-mix.png?raw=true" alt="Example of rbs ng pattern" height=200>
-* <img src="./assets/ulid-rbs-ng-to_str.png?raw=true" alt="Example of rbs ng pattern" height=200>
-* <img src="./assets/ulid-rbs-ok-at-time.png?raw=true" alt="Example of rbs ok 1" height=200>
-* <img src="./assets/ulid-rbs-ng-at-int.png?raw=true" alt="Example of rbs ng pattern" height=200>
+* ![rbs overview](./assets/ulid-rbs-overview.png?raw=true.png)
+* ![rbs mix](./assets/ulid-rbs-mix.png?raw=true.png)
+* ![rbs ng-to_str](./assets/ulid-rbs-ng-to_str.png?raw=true.png)
+* ![rbs ok-at-time](./assets/ulid-rbs-ok-at-time.png?raw=true.png)
+* ![rbs ng-at-int](./assets/ulid-rbs-ng-at-int.png?raw=true.png)
 
 ## References
 

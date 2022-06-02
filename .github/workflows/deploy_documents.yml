@@ -28,6 +28,7 @@ jobs:
           BRANCH_NAME="documents-$DATE"
           git checkout -b "$BRANCH_NAME"
           bundle exec yard --output-dir docs
+          cp -rf ./assets ./docs
           git add docs
           git commit -m 'Update YARD documents ref: #28' docs
           git push origin "$BRANCH_NAME":gh-pages --force
