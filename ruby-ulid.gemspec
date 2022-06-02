@@ -9,9 +9,7 @@ repository_url = "https://github.com/kachick/#{lib_name}"
 Gem::Specification.new do |gem|
   gem.summary       = %q{ULID manipulation library}
   gem.description   = <<-'DESCRIPTION'
-    The ULID(Universally Unique Lexicographically Sortable Identifier) has useful specs for applications (e.g. `Database key`), especially possess all `uniqueness`, `randomness`, `extractable timestamps` and `sortable` features.
-    This gem aims to provide the generator, monotonic generator, parser and handy manipulation features around the ULID.
-    Also providing `ruby/rbs` signature files.
+    generator, monotonic generator, parser and handy features for ULID manipulation (rbs signatures included)
   DESCRIPTION
   gem.homepage      = repository_url
   gem.license       = 'MIT'

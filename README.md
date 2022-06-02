@@ -1,18 +1,18 @@
 # ruby-ulid
 
+[![Build Status](https://github.com/kachick/ruby-ulid/actions/workflows/test_behaviors.yml/badge.svg?branch=main)](https://github.com/kachick/ruby-ulid/actions/workflows/test_behaviors.yml/?branch=main)
+[![Gem Version](https://badge.fury.io/rb/ruby-ulid.svg)](http://badge.fury.io/rb/ruby-ulid)
+
 ## Overview
 
-The `ULID` spec is defined on [ulid/spec](https://github.com/ulid/spec). It has useful specs for applications (e.g. `Database key`), especially possess all `uniqueness`, `randomness`, `extractable timestamps` and `sortable` features.
-This gem aims to provide the generator, monotonic generator, parser and handy manipulation features around the ULID.
-Also providing [ruby/rbs](https://github.com/ruby/rbs) signature files.
+[ulid/spec](https://github.com/ulid/spec) is useful.
+Especially possess all `uniqueness`, `randomness`, `extractable timestamps` and `sortable` features.  
+This gem aims to provide the generator, monotonic generator, parser and handy manipulation features around ULID.  
+Also providing [ruby/rbs](https://github.com/ruby/rbs) signatures.
 
 ---
 
-![ULIDlogo](https://raw.githubusercontent.com/kachick/ruby-ulid/main/logo.png)
-
-[![Build Status](https://github.com/kachick/ruby-ulid/actions/workflows/test_behaviors.yml/badge.svg?branch=main)](https://github.com/kachick/ruby-ulid/actions/workflows/test_behaviors.yml/?branch=main)
-[![Gem Version](https://badge.fury.io/rb/ruby-ulid.svg)](http://badge.fury.io/rb/ruby-ulid)
-[![Visual Studio Code](https://img.shields.io/badge/Visual%20Studio%20Code-0078d7.svg?style=for-the-badge&logo=visual-studio-code&logoColor=white)](https://github.dev/kachick/ruby-ulid)
+![ULIDlogo](./assets/logo.png)
 
 ## Universally Unique Lexicographically Sortable Identifier
 
@@ -47,10 +47,10 @@ $ gem install ruby-ulid
 Should be installed!
 ```
 
-Add this line to your application/library's `Gemfile` is needed in basic use-case
+Add this line to your Gemfile`.
 
 ```ruby
-gem 'ruby-ulid', '~> 0.2.2'
+gem('ruby-ulid', '~> 0.2.2')
 ```
 
 ### Generator and Parser
@@ -438,6 +438,42 @@ See [Benchmark](https://github.com/kachick/ruby-ulid/wiki/Benchmark).
 
 The results are not something to be proud of.
 
+## How to use rbs
+
+`Gemfile`
+
+```ruby
+group(:development) do
+  gem('rbs', require: false)
+  gem('steep', require: false)
+end
+```
+
+`Steepfile`
+
+```ruby
+# frozen_string_literal: true
+
+target(:app) do
+  signature('sig')
+
+  check('lib')
+
+  library('ruby-ulid')
+end
+```
+
+Then `bundle install`.
+
+I have checked the behavior with [ruby/rbs@2.5.0](https://github.com/ruby/rbs) && [soutaro/steep@1.0.0](https://github.com/soutaro/steep) &&  [soutaro/steep-vscode](https://github.com/soutaro/steep-vscode).
+
+* <img src="./assets/ulid-rbs-overview.png?raw=true" alt="Example of rbs ok 1" height=200>
+* <img src="./assets/ulid-rbs-mix.png?raw=true" alt="Example of rbs ng pattern" height=200>
+* <img src="./assets/ulid-rbs-ng-to_str.png?raw=true" alt="Example of rbs ng pattern" height=200>
+* <img src="./assets/ulid-rbs-ok-at-time.png?raw=true" alt="Example of rbs ok 1" height=200>
+* <img src="./assets/ulid-rbs-ng-at-int.png?raw=true" alt="Example of rbs ng pattern" height=200>
+
+
 ## References
 
 - [Repository](https://github.com/kachick/ruby-ulid)
@@ -446,4 +482,5 @@ The results are not something to be proud of.
 
 ## Note
 
-- Another choices for sortable and randomness IDs, [UUIDv6, UUIDv7, UUIDv8 might be the one. (But they are still in draft state)](https://www.ietf.org/archive/id/draft-peabody-dispatch-new-uuid-format-01.html), I will track them in [ruby-ulid#37](https://github.com/kachick/ruby-ulid/issues/37)
+- Another choices for sortable and randomness IDs [UUIDv6, UUIDv7, UUIDv8 might be the one. (But they are still in draft state)](https://www.ietf.org/archive/id/draft-peabody-dispatch-new-uuid-format-01.html).  
+  However they are stayed in draft state. ref: [ruby-ulid#37](https://github.com/kachick/ruby-ulid/issues/37)
