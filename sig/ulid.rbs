@@ -409,7 +409,9 @@ class ULID < Object
   # ulid.to_i #=> 1957909092946624190749577070267409738
   # ```
   def to_i: -> Integer
-  alias hash to_i
+
+  # Returns integer for making as a hash key use-case
+  def hash: -> Integer
 
   # Basically same as String based sort.
   #
