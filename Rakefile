@@ -47,7 +47,7 @@ Rake::TestTask.new(:test_longtime) do |tt|
 end
 
 desc('Signature check, it means `rbs` and `YARD` syntax correctness')
-multitask(validate_signatures: [:'signature:validate_yard', :'signature:validate_rbs', :'signature:check_false_positive'])
+multitask(validate_signatures: [:'signature:validate_yard', :'signature:validate_rbs', :'signature:check_rbs_false_positive'])
 
 desc('Simulate CI results in local machine as possible')
 multitask(simulate_ci: [:test_all, :validate_signatures, :rubocop])
@@ -60,12 +60,12 @@ namespace(:signature) do
 
   desc('Check `rbs` definition with `steep`, but it faults from some reasons ref: #26')
   task(:save_rbs_errors) do
-    sh('bundle exec steep check --severity-level=warning --save-expectations')
+    sh('bundle exec steep check --severity-level=warning --log-level=fatal --save-expectations')
   end
 
   desc('Check `rbs` definition with `steep`, should be passed at least considering steep_expectations.yml')
-  task(:check_false_positive) do
-    sh('bundle exec steep check --severity-level=warning --with-expectations')
+  task(:check_rbs_false_positive) do
+    sh('bundle exec steep check --severity-level=warning --log-level=fatal --with-expectations')
   end
 
   desc('Generate YARD docs for the syntax check')
