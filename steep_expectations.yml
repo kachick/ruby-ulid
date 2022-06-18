@@ -13,30 +13,30 @@
     code: Ruby::ElseOnExhaustiveCase
   - range:
       start:
-        line: 233
+        line: 234
         character: 23
       end:
-        line: 233
+        line: 234
         character: 27
     severity: ERROR
     message: Type `::Numeric` does not have method `to_i`
     code: Ruby::NoMethod
   - range:
       start:
-        line: 246
+        line: 247
         character: 6
       end:
-        line: 246
+        line: 247
         character: 86
     severity: WARNING
     message: The branch is unreachable because the condition is exhaustive
     code: Ruby::ElseOnExhaustiveCase
   - range:
       start:
-        line: 326
+        line: 327
         character: 8
       end:
-        line: 326
+        line: 327
         character: 52
     severity: ERROR
     message: |-
@@ -47,10 +47,10 @@
     code: Ruby::UnexpectedError
   - range:
       start:
-        line: 326
+        line: 327
         character: 26
       end:
-        line: 326
+        line: 327
         character: 52
     severity: ERROR
     message: sclass receiver must be instance type or singleton type, but type given
