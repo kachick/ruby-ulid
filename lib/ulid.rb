@@ -357,6 +357,7 @@ class ULID
     new(milliseconds: milliseconds, entropy: entropy, integer: integer)
   end
 
+  # @dynamic milliseconds, entropy
   attr_reader(:milliseconds, :entropy)
 
   # @api private
@@ -400,6 +401,7 @@ class ULID
   def eql?(other)
     equal?(other) || (ULID === other && @integer == other.to_i)
   end
+  # @dynamic ==
   alias_method(:==, :eql?)
 
   # @return [Boolean]
@@ -471,6 +473,7 @@ class ULID
       ULID.from_integer(succ_int)
     end
   end
+  # @dynamic next
   alias_method(:next, :succ)
 
   # @return [ULID, nil] when called on ULID as `00000000000000000000000000`, returns `nil` instead of ULID

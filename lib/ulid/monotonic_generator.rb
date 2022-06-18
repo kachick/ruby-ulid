@@ -7,6 +7,7 @@ class ULID
   class MonotonicGenerator
     include(MonitorMixin)
 
+    # @dynamic prev
     # @return [ULID, nil]
     attr_reader(:prev)
 
@@ -21,6 +22,7 @@ class ULID
     def inspect
       "ULID::MonotonicGenerator(prev: #{@prev.inspect})"
     end
+    # @dynamic to_s
     alias_method(:to_s, :inspect)
 
     # @param [Time, Integer] moment
