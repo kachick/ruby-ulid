@@ -230,6 +230,7 @@ class ULID
   # @param [Time] time
   # @return [Integer]
   private_class_method(def self.milliseconds_from_time(time)
+    # Incorrect rbs sig error happens. See https://github.com/ruby/rbs/pull/1012
     (time.to_r * 1000).to_i
   end)
 
