@@ -126,6 +126,9 @@ class TestULIDInstance < Test::Unit::TestCase
     assert_equal(true, ulid.inspect.frozen?)
     assert_not_equal(ulid.to_s, ulid.inspect)
     assert_equal(Encoding::US_ASCII, ulid.inspect.encoding)
+
+    # It should keep whole of milliseconds
+    assert_equal('ULID(1972-11-26 02:28:08.460 UTC: 002N9NS44C894T5XHJBNDGP6KK)', ULID.parse('002N9NS44C894T5XHJBNDGP6KK').inspect)
   end
 
   def test_to_i
