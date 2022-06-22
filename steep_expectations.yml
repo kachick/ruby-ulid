@@ -3,26 +3,6 @@
   diagnostics:
   - range:
       start:
-        line: 128
-        character: 6
-      end:
-        line: 128
-        character: 65
-    severity: WARNING
-    message: The branch is unreachable because the condition is exhaustive
-    code: Ruby::ElseOnExhaustiveCase
-  - range:
-      start:
-        line: 246
-        character: 6
-      end:
-        line: 246
-        character: 86
-    severity: WARNING
-    message: The branch is unreachable because the condition is exhaustive
-    code: Ruby::ElseOnExhaustiveCase
-  - range:
-      start:
         line: 328
         character: 26
       end:
