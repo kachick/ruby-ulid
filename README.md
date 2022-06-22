@@ -440,32 +440,9 @@ The results are not something to be proud of.
 
 ## How to use rbs
 
-`Gemfile`
+See structure at [examples/rbs_sandbox](examples/rbs_sandbox)
 
-```ruby
-group(:development) do
-  gem('rbs', require: false)
-  gem('steep', require: false)
-end
-```
-
-`Steepfile`
-
-```ruby
-# frozen_string_literal: true
-
-target(:app) do
-  signature('sig')
-
-  check('lib')
-
-  library('ruby-ulid')
-end
-```
-
-Then `bundle install`.
-
-I have checked the behavior with [ruby/rbs@2.5.0](https://github.com/ruby/rbs) && [soutaro/steep@1.0.0](https://github.com/soutaro/steep) &&  [soutaro/steep-vscode](https://github.com/soutaro/steep-vscode).
+I have checked the behavior with [ruby/rbs@2.6.0](https://github.com/ruby/rbs) && [soutaro/steep@1.0.1](https://github.com/soutaro/steep) &&  [soutaro/steep-vscode](https://github.com/soutaro/steep-vscode).
 
 * ![rbs overview](./assets/ulid-rbs-overview.png?raw=true.png)
 * ![rbs mix](./assets/ulid-rbs-mix.png?raw=true.png)

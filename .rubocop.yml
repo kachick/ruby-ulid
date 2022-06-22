@@ -372,6 +372,7 @@ Style/MethodCallWithArgsParentheses:
   AllowParenthesesInStringInterpolation: true
   Exclude:
     - '*.md'
+    - 'examples/**/*'
 
 Style/MethodCallWithoutArgsParentheses:
   Enabled: true

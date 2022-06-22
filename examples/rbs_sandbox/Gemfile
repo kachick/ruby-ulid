@@ -1,0 +1,10 @@
+# frozen_string_literal: true
+
+source('https://rubygems.org')
+
+gem('ruby-ulid')
+
+group(:development) do
+  gem('rbs', require: false)
+  gem('steep', require: false)
+end
