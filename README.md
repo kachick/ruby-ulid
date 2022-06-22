@@ -47,7 +47,7 @@ $ gem install ruby-ulid
 Should be installed!
 ```
 
-Add this line to your Gemfile`.
+Add this line in your Gemfile.
 
 ```ruby
 gem('ruby-ulid', '~> 0.2.2')
