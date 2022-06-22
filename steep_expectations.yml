@@ -1,14 +1,1 @@
----
-- file: lib/ulid.rb
-  diagnostics:
-  - range:
-      start:
-        line: 328
-        character: 26
-      end:
-        line: 328
-        character: 52
-    severity: ERROR
-    message: sclass receiver must be instance type or singleton type, but type given
-      `untyped`
-    code: Ruby::UnsupportedSyntax
+--- []
