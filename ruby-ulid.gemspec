@@ -9,7 +9,7 @@ repository_url = "https://github.com/kachick/#{lib_name}"
 Gem::Specification.new do |gem|
   gem.summary       = %q{ULID manipulation library}
   gem.description   = <<-'DESCRIPTION'
-    generator, monotonic generator, parser and handy features for ULID manipulation (rbs signatures included)
+    generator, monotonic generator, parser and manipulations for ULID (ruby/rbs signatures included)
   DESCRIPTION
   gem.homepage      = repository_url
   gem.license       = 'MIT'
@@ -24,7 +24,7 @@ Gem::Specification.new do |gem|
     'rubygems_mfa_required' => 'true'
   }
 
-  gem.required_ruby_version = Gem::Requirement.new('>= 2.7.0')
+  gem.required_ruby_version = Gem::Requirement.new('>= 2.7.2')
 
   # common
 
