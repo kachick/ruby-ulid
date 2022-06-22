@@ -13,44 +13,20 @@
     code: Ruby::ElseOnExhaustiveCase
   - range:
       start:
-        line: 234
-        character: 23
-      end:
-        line: 234
-        character: 27
-    severity: ERROR
-    message: Type `::Numeric` does not have method `to_i`
-    code: Ruby::NoMethod
-  - range:
-      start:
-        line: 247
+        line: 246
         character: 6
       end:
-        line: 247
+        line: 246
         character: 86
     severity: WARNING
     message: The branch is unreachable because the condition is exhaustive
     code: Ruby::ElseOnExhaustiveCase
   - range:
       start:
-        line: 327
-        character: 8
-      end:
-        line: 327
-        character: 52
-    severity: ERROR
-    message: |-
-      UnexpectedError: undefined method `constr' for nil:NilClass
-
-                    constr = rhs_result.constr.update_lvar_env do |lvar_env|
-                                       ^^^^^^^
-    code: Ruby::UnexpectedError
-  - range:
-      start:
-        line: 327
+        line: 328
         character: 26
       end:
-        line: 327
+        line: 328
         character: 52
     severity: ERROR
     message: sclass receiver must be instance type or singleton type, but type given

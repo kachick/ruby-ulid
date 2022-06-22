@@ -12,8 +12,8 @@ end
 
 group(:development) do
   gem('debug', '~> 1.5.0', require: false)
-  gem('rbs', '~> 2.5.1', require: false)
-  gem('steep', '~> 1.0.0', require: false)
+  gem('rbs', '~> 2.6.0', require: false)
+  gem('steep', require: false, git: 'https://github.com/kachick/steep', ref: 'ef34620bf3add10c0d526293d9de8e0000a6f1c8')
   gem('benchmark-ips', '~> 2.10.0', require: false)
   gem('yard', '~> 0.9.28', require: false)
   gem('rubocop', '~> 1.30.1', require: false)

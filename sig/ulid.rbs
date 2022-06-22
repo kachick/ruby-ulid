@@ -318,7 +318,7 @@ class ULID < Object
   # #  ULID(2021-04-28 15:05:06.808 UTC: 01F4CG68ZRST94T056KRZ5K9S4)]
   # ```
   def self.sample: (?period: period) -> ULID
-                 | (Integer number, ?period: period) -> Array[ULID]
+                 | (Integer number, ?period: period?) -> Array[ULID]
   def self.valid?: (untyped) -> bool
 
   # Returns normalized string

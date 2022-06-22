@@ -230,7 +230,6 @@ class ULID
   # @param [Time] time
   # @return [Integer]
   private_class_method(def self.milliseconds_from_time(time)
-    # Incorrect rbs sig error happens. See https://github.com/ruby/rbs/pull/1012
     (time.to_r * 1000).to_i
   end)
 
@@ -324,9 +323,10 @@ class ULID
       begin
         object.class
       rescue NoMethodError
+        # steep can't correctly handle singeton class assign. See https://github.com/soutaro/steep/pull/586
+        # @type var singleton_class: Class | nil
         singleton_class = class << object; self; end
-        # @type var singleton_class: Class
-        singleton_class.ancestors.detect { |ancestor| !ancestor.equal?(singleton_class) }
+        singleton_class ? singleton_class.ancestors.detect { |ancestor| !ancestor.equal?(singleton_class) } : fallback
       end
     )
 
