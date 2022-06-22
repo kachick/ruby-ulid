@@ -29,7 +29,8 @@
         line: 326
         character: 52
     severity: ERROR
-    message: 'UnexpectedError: undefined method `constr'' for nil:NilClass'
+    message: |-
+      UnexpectedError: undefined method `constr' for nil:NilClass
     code: Ruby::UnexpectedError
   - range:
       start:
