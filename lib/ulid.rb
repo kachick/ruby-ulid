@@ -323,10 +323,12 @@ class ULID
       begin
         object.class
       rescue NoMethodError
-        # steep can't correctly handle singeton class assign. See https://github.com/soutaro/steep/pull/586
-        # @type var singleton_class: Class | nil
+        # steep can't correctly handle singeton class assign. See https://github.com/soutaro/steep/pull/586 for further detail
+        # So this annotation is hack for the type infer.
+        # @type var object: BasicObject
+        # @type var singleton_class: untyped
         singleton_class = class << object; self; end
-        singleton_class ? singleton_class.ancestors.detect { |ancestor| !ancestor.equal?(singleton_class) } : fallback
+        (Class === singleton_class) ? singleton_class.ancestors.detect { |ancestor| !ancestor.equal?(singleton_class) } : fallback
       end
     )
 

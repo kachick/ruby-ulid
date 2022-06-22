@@ -58,14 +58,14 @@ namespace(:signature) do
     sh('bundle exec rbs -rsecurerandom -rmonitor -I sig validate')
   end
 
-  desc('Check `rbs` definition with `steep`, but it faults from some reasons ref: #26')
+  desc('Check `rbs` definition with `steep` and save alerts into ignoring list :<')
   task(:save_rbs_errors) do
-    sh('bundle exec steep check --severity-level=warning --log-level=fatal --save-expectations')
+    sh('bundle exec steep check --severity-level=error --log-level=fatal --save-expectations')
   end
 
   desc('Check `rbs` definition with `steep`, should be passed at least considering steep_expectations.yml')
   task(:check_rbs_false_positive) do
-    sh('bundle exec steep check --severity-level=warning --log-level=fatal --with-expectations')
+    sh('bundle exec steep check --severity-level=error --log-level=fatal --with-expectations')
   end
 
   desc('Generate YARD docs for the syntax check')
