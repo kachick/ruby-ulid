@@ -28,18 +28,14 @@ class Test::Unit::TestCase
   end
 
   module ULIDAssertions
-    def assert_acceptable_randomized_string(ulid)
-      assert do
-        (0..4).cover?(ULID::TIMESTAMP_ENCODED_LENGTH - ulid.timestamp.squeeze.size)
-      end
-
-      assert do
-        (0..5).cover?(ULID::RANDOMNESS_ENCODED_LENGTH - ulid.randomness.squeeze.size)
-      end
-
-      assert do
+    def assert_acceptable_randomized_string(ulids)
+      awesome_randomized_ulids = ulids.select { |ulid|
+        (0..3).cover?(ULID::TIMESTAMP_ENCODED_LENGTH - ulid.timestamp.squeeze.size) ||
+        (0..3).cover?(ULID::RANDOMNESS_ENCODED_LENGTH - ulid.randomness.squeeze.size) ||
         '000' != ulid.randomness.slice(-3, 3)
-      end
+      }
+
+      assert_in_epsilon(awesome_randomized_ulids.size, ulids.size, 100/100r)
     end
   end
 end

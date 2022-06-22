@@ -568,9 +568,7 @@ class TestULIDClass < Test::Unit::TestCase
     assert_equal(true, ULID.sample(42).size == 42)
     assert_nil(ULID.sample(42).uniq!)
 
-    ULID.sample(42).each do |ulid|
-      assert_acceptable_randomized_string(ulid)
-    end
+    assert_acceptable_randomized_string(ULID.sample(42))
 
     time1 = Time.at(1620365807)
     time2 = Time.at(1624065807)
@@ -584,9 +582,7 @@ class TestULIDClass < Test::Unit::TestCase
     assert_nil(ULID.sample(42, period: time1..time2).uniq!)
     assert_equal(42, ULID.sample(42, period: time1..time2).uniq(&:to_time).size)
     assert(ULID.sample(42, period: time1..time2).all? { |ulid| ULID.range(time1..time2).cover?(ulid) })
-    ULID.sample(42, period: time1..time2).each do |ulid|
-      assert_acceptable_randomized_string(ulid)
-    end
+    assert_acceptable_randomized_string(ULID.sample(42, period: time1..time2))
 
     assert_instance_of(ULID, ULID.sample(period: time1..time1))
     assert_equal([], ULID.sample(0, period: time1..time1))
@@ -597,9 +593,7 @@ class TestULIDClass < Test::Unit::TestCase
     assert_equal(42, ULID.sample(42, period: time1..time1).size)
     assert_nil(ULID.sample(42, period: time1..time1).uniq!)
     assert_equal(1, ULID.sample(42, period: time1..time1).uniq(&:to_time).size)
-    ULID.sample(42, period: time1..time1).each do |ulid|
-      assert_acceptable_randomized_string(ulid)
-    end
+    assert_acceptable_randomized_string(ULID.sample(42, period: time1..time1))
 
     ulid = ULID.sample
     err = assert_raises(ArgumentError) do

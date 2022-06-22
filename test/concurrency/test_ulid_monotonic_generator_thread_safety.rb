@@ -158,7 +158,6 @@ class TestULIDMonotonicGeneratorThreadSafety < Test::Unit::TestCase
         assert do
           (pred.entropy - succ.entropy).abs > 420000
         end
-        assert_acceptable_randomized_string(pred)
       when pred.to_time == succ.to_time
         # This is a crucial spec.
         assert do
@@ -170,6 +169,7 @@ class TestULIDMonotonicGeneratorThreadSafety < Test::Unit::TestCase
         raise('Should not reach here!')
       end
     end
+    assert_acceptable_randomized_string(ulids)
 
     assert do
       (bumped_timestamp_count <= uniq_times.size) && (bumped_timestamp_count >= (uniq_times.size - 1))
