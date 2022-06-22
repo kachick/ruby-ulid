@@ -325,7 +325,7 @@ class ULID
       begin
         object.class
       rescue NoMethodError
-        # steep can't correctly handle singeton class assign. See https://github.com/soutaro/steep/pull/586 for further detail
+        # steep can't correctly handle singleton class assign. See https://github.com/soutaro/steep/pull/586 for further detail
         # So this annotation is hack for the type infer.
         # @type var object: BasicObject
         # @type var singleton_class: untyped
