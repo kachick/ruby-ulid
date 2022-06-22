@@ -45,10 +45,6 @@ class ULID
   # This can't contain `\b` for considering UTF-8 (e.g. Japanese), so intentional `false negative` definition.
   SCANNING_PATTERN = /[0-7][#{CROCKFORD_BASE32_ENCODING_STRING}]{#{TIMESTAMP_ENCODED_LENGTH - 1}}[#{CROCKFORD_BASE32_ENCODING_STRING}]{#{RANDOMNESS_ENCODED_LENGTH}}/i.freeze
 
-  # Same as Time#inspect since Ruby 2.7, just to keep backward compatibility
-  # @see https://bugs.ruby-lang.org/issues/15958
-  TIME_FORMAT_IN_INSPECT = '%Y-%m-%d %H:%M:%S.%3N %Z'
-
   private_class_method(:new)
 
   # @param [Integer, Time] moment
@@ -397,7 +393,7 @@ class ULID
 
   # @return [String]
   def inspect
-    @inspect ||= "ULID(#{to_time.strftime(TIME_FORMAT_IN_INSPECT)}: #{to_s})".freeze
+    @inspect ||= "ULID(#{to_time.inspect}: #{to_s})".freeze
   end
 
   # @return [Boolean]
@@ -549,5 +545,5 @@ class ULID
   MIN = parse('00000000000000000000000000').freeze
   MAX = parse('7ZZZZZZZZZZZZZZZZZZZZZZZZZ').freeze
 
-  private_constant(:TIME_FORMAT_IN_INSPECT, :MIN, :MAX, :RANDOM_INTEGER_GENERATOR)
+  private_constant(:MIN, :MAX, :RANDOM_INTEGER_GENERATOR)
 end
