@@ -34,7 +34,7 @@ class TestULIDMonotonicGeneratorThreadSafety < Test::Unit::TestCase
 
     ulids_by_the_time = ulids.group_by(&:to_time)
 
-    # I don't know thw `42` is reasonable or not :yum:
+    # I don't know `42` is reasonable or not :yum:
     assert(ulids_by_the_time.size > 42)
 
     assert do
