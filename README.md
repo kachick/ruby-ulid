@@ -440,7 +440,7 @@ The results are not something to be proud of.
 
 ## How to use rbs
 
-See structure at [examples/rbs_sandbox](examples/rbs_sandbox)
+See structure at [examples/rbs_sandbox](https://github.com/kachick/ruby-ulid/tree/main/examples/rbs_sandbox)
 
 I have checked the behavior with [ruby/rbs@2.6.0](https://github.com/ruby/rbs) && [soutaro/steep@1.0.1](https://github.com/soutaro/steep) &&  [soutaro/steep-vscode](https://github.com/soutaro/steep-vscode).
 
