@@ -22,7 +22,6 @@ require_relative('../lib/ulid')
 class Test::Unit::TestCase
   module ULIDHelpers
     def sleeping_time
-      # NOTE: `SecureRandom.random_number(0.42..1.42)` made `SIGSEGV` on `ruby 3.0.1p64 (2021-04-05 revision 0fb782ee38) [x86_64-darwin20]`
       SecureRandom.random_number(0.12..0.42)
     end
   end
