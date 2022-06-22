@@ -34,7 +34,7 @@ class Test::Unit::TestCase
         '000' != ulid.randomness.slice(-3, 3)
       }
 
-      assert_in_epsilon(awesome_randomized_ulids.size, ulids.size, 100/100r)
+      assert_in_epsilon(awesome_randomized_ulids.size, ulids.size, (5/100r).to_f)
     end
   end
 end
