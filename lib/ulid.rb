@@ -323,9 +323,10 @@ class ULID
       begin
         object.class
       rescue NoMethodError
+        # steep can't correctly handle singeton class assign. See https://github.com/soutaro/steep/pull/586
+        # @type var singleton_class: Class | nil
         singleton_class = class << object; self; end
-        # @type var singleton_class: Class
-        singleton_class.ancestors.detect { |ancestor| !ancestor.equal?(singleton_class) }
+        singleton_class ? singleton_class.ancestors.detect { |ancestor| !ancestor.equal?(singleton_class) } : fallback
       end
     )
 
