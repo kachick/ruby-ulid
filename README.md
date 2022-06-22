@@ -50,7 +50,7 @@ Should be installed!
 Add this line in your Gemfile.
 
 ```ruby
-gem('ruby-ulid', '~> 0.2.2')
+gem('ruby-ulid', '~> 0.3.0')
 ```
 
 ### Generator and Parser
