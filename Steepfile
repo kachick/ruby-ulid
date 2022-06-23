@@ -6,4 +6,6 @@ target(:lib) do
   check('lib')
 
   library('securerandom', 'monitor')
+
+  configure_code_diagnostics(Steep::Diagnostic::Ruby::ElseOnExhaustiveCase => :information)
 end
