@@ -3,7 +3,7 @@
 
 require_relative('../helper')
 
-class TestRactorSharable < Test::Unit::TestCase
+class TestRactorShareable < Test::Unit::TestCase
   ULID_CLASS = ULID
   ULID_FROZEN_INSTANCE = ULID.parse('01F4GNAV5ZR6FJQ5SFQC7WDSY3').freeze
   ULID_INSTANCE = ULID.parse(ULID_FROZEN_INSTANCE.to_s)
@@ -14,7 +14,7 @@ class TestRactorSharable < Test::Unit::TestCase
     Warning[:experimental] = false
   end
 
-  def test_sharerable
+  def test_shareable
     return unless RUBY_VERSION >= '3.0'
 
     assert_true(Ractor.shareable?(ULID_CLASS))
