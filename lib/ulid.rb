@@ -1,5 +1,6 @@
 # coding: us-ascii
 # frozen_string_literal: true
+# shareable_constant_value: experimental_everything
 
 # Copyright (C) 2021 Kenichi Kamiya
 
@@ -83,7 +84,7 @@ class ULID
 
   RANDOM_INTEGER_GENERATOR = -> {
     SecureRandom.random_number(MAX_INTEGER)
-  }
+  }.freeze
 
   # @param [Range<Time>, Range<nil>, Range[ULID], nil] period
   # @overload sample(number, period: nil)

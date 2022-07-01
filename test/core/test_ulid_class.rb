@@ -19,6 +19,10 @@ class TestULIDClass < Test::Unit::TestCase
     end
   end
 
+  def test_frozen
+    assert_false(ULID.frozen?)
+  end
+
   def test_constant_version
     assert do
       ULID::VERSION.instance_of?(String)
