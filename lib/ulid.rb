@@ -1,6 +1,6 @@
 # coding: us-ascii
 # frozen_string_literal: true
-# shareable_constant_value: experimental_everything
+# shareable_constant_value: literal
 
 # Copyright (C) 2021 Kenichi Kamiya
 
@@ -82,9 +82,11 @@ class ULID
     MAX_MILLISECONDS.equal?(moment) ? MAX : generate(moment: moment, entropy: MAX_ENTROPY)
   end
 
-  RANDOM_INTEGER_GENERATOR = -> {
+  random_integer_generator = -> {
     SecureRandom.random_number(MAX_INTEGER)
   }.freeze
+
+  RANDOM_INTEGER_GENERATOR = (RUBY_VERSION >= '3.0') ? Ractor.make_shareable(random_integer_generator) : random_integer_generator
 
   # @param [Range<Time>, Range<nil>, Range[ULID], nil] period
   # @overload sample(number, period: nil)
@@ -547,10 +549,6 @@ end
 require_relative('ulid/version')
 require_relative('ulid/crockford_base32')
 require_relative('ulid/monotonic_generator')
+require_relative('ulid/ractor_unshareable_constants')
 
-class ULID
-  MIN = parse('00000000000000000000000000').freeze
-  MAX = parse('7ZZZZZZZZZZZZZZZZZZZZZZZZZ').freeze
-
-  private_constant(:TIME_FORMAT_IN_INSPECT, :MIN, :MAX, :RANDOM_INTEGER_GENERATOR, :CROCKFORD_BASE32_ENCODING_STRING)
-end
+ULID.private_constant(:TIME_FORMAT_IN_INSPECT, :MIN, :MAX, :RANDOM_INTEGER_GENERATOR, :CROCKFORD_BASE32_ENCODING_STRING)

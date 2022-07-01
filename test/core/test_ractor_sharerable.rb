@@ -19,12 +19,17 @@ class TestRactorSharable < Test::Unit::TestCase
 
     assert_true(Ractor.shareable?(ULID_CLASS))
     assert_false(ULID_CLASS.frozen?)
-    assert_true(Ractor.shareable?(ULID_FROZEN_INSTANCE))
     assert_false(Ractor.shareable?(ULID_INSTANCE))
     assert_false(Ractor.shareable?(MONOTONIC_GENERATOR))
 
+    if RUBY_VERSION >= '3.1'
+      assert_true(Ractor.shareable?(ULID_FROZEN_INSTANCE))
+      assert_equal('01F4GNAV5ZR6FJQ5SFQC7WDSY3', Ractor.new { ULID_FROZEN_INSTANCE.to_s }.take)
+    else
+      assert_false(Ractor.shareable?(ULID_FROZEN_INSTANCE))
+    end
+
     assert_instance_of(ULID, Ractor.new { ULID_CLASS.generate }.take)
-    assert_equal('01F4GNAV5ZR6FJQ5SFQC7WDSY3', Ractor.new { ULID_FROZEN_INSTANCE.to_s }.take)
 
     # FIX ME: Suppress error reports as `#<Thread:0x00007f63ca3d54e8 run> terminated with exception (report_on_exception is true)`...
     #         However I think It can't be suppressed with `report_on_exception=` of inner thread
