@@ -31,19 +31,31 @@ class TestRactorSharable < Test::Unit::TestCase
 
     assert_instance_of(ULID, Ractor.new { ULID_CLASS.generate }.take)
 
-    # FIX ME: Suppress error reports as `#<Thread:0x00007f63ca3d54e8 run> terminated with exception (report_on_exception is true)`...
-    #         However I think It can't be suppressed with `report_on_exception=` of inner thread
-    assert_raise(Ractor::RemoteError) do
+    assert_instance_of(
+      Ractor::IsolationError,
       Ractor.new do
-        ULID_INSTANCE.to_s
+        begin
+          ULID_INSTANCE
+        rescue Exception => err
+          err
+        else
+          'should not reach here'
+        end
       end.take
-    end
+    )
 
-    assert_raise(Ractor::RemoteError) do
+    assert_instance_of(
+      Ractor::IsolationError,
       Ractor.new do
-        MONOTONIC_GENERATOR.generate
+        begin
+          MONOTONIC_GENERATOR
+        rescue Exception => err
+          err
+        else
+          'should not reach here'
+        end
       end.take
-    end
+    )
   end
 
   def teardown
