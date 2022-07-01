@@ -551,4 +551,7 @@ require_relative('ulid/crockford_base32')
 require_relative('ulid/monotonic_generator')
 require_relative('ulid/ractor_unshareable_constants')
 
-ULID.private_constant(:TIME_FORMAT_IN_INSPECT, :MIN, :MAX, :RANDOM_INTEGER_GENERATOR, :CROCKFORD_BASE32_ENCODING_STRING)
+class ULID
+  # Do not write as `ULID.private_constant` for avoiding YARD warnings `[warn]: in YARD::Handlers::Ruby::PrivateConstantHandler: Undocumentable private constants:`
+  private_constant(:TIME_FORMAT_IN_INSPECT, :MIN, :MAX, :RANDOM_INTEGER_GENERATOR, :CROCKFORD_BASE32_ENCODING_STRING)
+end
