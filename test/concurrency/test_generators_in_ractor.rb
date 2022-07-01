@@ -17,9 +17,15 @@ class TestGeneratorsInRactor < Test::Unit::TestCase
   end
 
   def test_generators_works_even_in_multiple_ractors
-    42.times.map do
-      # Write here~
+    ractors = 10.times.map do
+      Ractor.new do
+        [*(Array.new(500) { ULID.generate }), *ULID.sample(500)]
+      end
     end
+    ulids = ractors.flat_map(&:take)
+    assert_equal(10000, ulids.size)
+    assert_equal(ulids, ulids.uniq)
+    assert_acceptable_randomized_string(ulids)
   end
 
   def test_monotonic_generator_works_in_single_ractor
