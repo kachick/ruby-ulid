@@ -9,5 +9,8 @@
       "useBundler": true // enable rubocop via bundler
     },
   },
-  "ruby.format": "rubocop" // use rubocop for formatting
+  "ruby.format": "rubocop",
+  "cSpell.words": [
+    "unshareable"
+  ] // use rubocop for formatting
 }

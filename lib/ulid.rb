@@ -1,5 +1,6 @@
 # coding: us-ascii
 # frozen_string_literal: true
+# shareable_constant_value: experimental_everything
 
 # Copyright (C) 2021 Kenichi Kamiya
 
@@ -83,7 +84,7 @@ class ULID
 
   RANDOM_INTEGER_GENERATOR = -> {
     SecureRandom.random_number(MAX_INTEGER)
-  }
+  }.freeze
 
   # @param [Range<Time>, Range<nil>, Range[ULID], nil] period
   # @overload sample(number, period: nil)
@@ -546,10 +547,9 @@ end
 require_relative('ulid/version')
 require_relative('ulid/crockford_base32')
 require_relative('ulid/monotonic_generator')
+require_relative('ulid/ractor_unshareable_constants')
 
 class ULID
-  MIN = parse('00000000000000000000000000').freeze
-  MAX = parse('7ZZZZZZZZZZZZZZZZZZZZZZZZZ').freeze
-
+  # Do not write as `ULID.private_constant` for avoiding YARD warnings `[warn]: in YARD::Handlers::Ruby::PrivateConstantHandler: Undocumentable private constants:`
   private_constant(:TIME_FORMAT_IN_INSPECT, :MIN, :MAX, :RANDOM_INTEGER_GENERATOR, :CROCKFORD_BASE32_ENCODING_STRING)
 end

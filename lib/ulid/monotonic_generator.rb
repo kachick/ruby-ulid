@@ -1,10 +1,13 @@
 # coding: us-ascii
 # frozen_string_literal: true
+# shareable_constant_value: literal
 
 # Copyright (C) 2021 Kenichi Kamiya
 
 class ULID
   class MonotonicGenerator
+    # @note When use https://github.com/ko1/ractor-tvar might realize Ractor based thread safe monotonic generator.
+    #       However it is a C extention, I'm pending to use it for now.
     include(MonitorMixin)
 
     # @dynamic prev
