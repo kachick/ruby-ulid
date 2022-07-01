@@ -1,6 +1,8 @@
 # coding: utf-8
 # frozen_string_literal: true
 
+return unless RUBY_VERSION >= '3.0'
+
 require_relative('../helper')
 
 class TestRactorShareable < Test::Unit::TestCase
@@ -15,8 +17,6 @@ class TestRactorShareable < Test::Unit::TestCase
   end
 
   def test_shareable
-    return unless RUBY_VERSION >= '3.0'
-
     assert_true(Ractor.shareable?(ULID_CLASS))
     assert_false(ULID_CLASS.frozen?)
     assert_false(Ractor.shareable?(ULID_INSTANCE))
