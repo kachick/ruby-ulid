@@ -67,18 +67,23 @@ class TestULIDInstance < Test::Unit::TestCase
   end
 
   def test_eqq
-    assert_equal(true, ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV') === ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV'))
-    assert_equal(false, ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV') === ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV').next)
-    assert_equal(true, ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV') === '01ARZ3NDEKTSV4RRFFQ69G5FAV')
-    ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV').tap { |ulid| assert_true(ulid === [ulid.timestamp, ulid.randomness].join('-')) }
-    assert_equal(true, ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV') === '01ARZ3NDEKTSV4RRFFQ69G5FAV'.downcase)
-    assert_equal(false, ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV') === ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV').next.to_s)
-    assert_equal(false, ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV') === '')
-    assert_equal(false, ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV') === nil)
-    assert_equal(false, ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV') === BasicObject.new)
+    typical_string = '01G6Z7Q4RSH97E6QHAC7VK19G2'
+    ulid = ULID.parse(typical_string).freeze
+
+    assert_true(ULID.parse(ulid.to_s) === ulid)
+    assert_false(ulid === ulid.pred)
+    assert_false(ulid === ulid.next)
+    assert_true(ulid === ulid.to_s)
+    assert_true(ulid === [ulid.timestamp, ulid.randomness].join('-'))
+    assert_true(ulid === ulid.to_s.downcase)
+    assert_false(ulid === ulid.pred.to_s)
+    assert_false(ulid === ulid.next.to_s)
+    assert_false(ulid === '')
+    assert_false(ulid === nil)
+    assert_false(ulid === BasicObject.new)
 
     grepped = [
-      typical_string = '01ARZ3NDEKTSV4RRFFQ69G5FAV',
+      typical_string,
       downcased_string = typical_string.downcase,
       typical_object = ULID.parse(typical_string),
       ULID.parse(typical_string).next,
