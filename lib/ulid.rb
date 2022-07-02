@@ -18,12 +18,12 @@ class ULID
   class OverflowError < Error; end
   class ParserError < Error; end
   class UnexpectedError < Error; end
-  SafeSuccess = _ = Struct.new(:result, keyword_init: true) do
+  SafeSuccess = _ = Struct.new(:result, keyword_init: true) do # rubocop:disable Naming/ConstantName
     def success?
       true
     end
   end
-  SafeError = _ = Struct.new(:error, keyword_init: true) do
+  SafeError = _ = Struct.new(:error, keyword_init: true) do # rubocop:disable Naming/ConstantName
     def success?
       false
     end
