@@ -70,12 +70,22 @@ class TestULIDInstance < Test::Unit::TestCase
     typical_string = '01G6Z7Q4RSH97E6QHAC7VK19G2'
     ulid = ULID.parse(typical_string).freeze
 
-    assert_true(ULID.parse(ulid.to_s) === ulid)
+    assert_true(ulid === ULID.parse(ulid.to_s))
+    assert_true(ulid === ulid.to_s)
+    assert_true(ulid === ulid.to_s.downcase)
+    assert_true(ulid === [ulid.timestamp, ulid.randomness].join('-'))
+
     assert_false(ulid === ulid.pred)
     assert_false(ulid === ulid.next)
-    assert_true(ulid === ulid.to_s)
-    assert_true(ulid === [ulid.timestamp, ulid.randomness].join('-'))
-    assert_true(ulid === ulid.to_s.downcase)
+    assert_false(ulid === ulid.to_time)
+    assert_false(ulid === ulid.to_i)
+    assert_false(ulid === ulid.timestamp)
+    assert_false(ulid === ulid.randomness)
+    assert_false(ulid === ulid.milliseconds)
+    assert_false(ulid === ulid.entropy)
+    assert_false(ulid === ulid.octets)
+    assert_false(ulid === ulid.timestamp_octets)
+    assert_false(ulid === ulid.randomness_octets)
     assert_false(ulid === ulid.pred.to_s)
     assert_false(ulid === ulid.next.to_s)
     assert_false(ulid === '')
