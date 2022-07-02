@@ -50,7 +50,7 @@ Should be installed!
 Add this line in your Gemfile.
 
 ```ruby
-gem('ruby-ulid', '~> 0.3.0')
+gem('ruby-ulid', '~> 0.4.0')
 ```
 
 ### How to use
