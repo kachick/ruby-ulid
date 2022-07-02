@@ -402,6 +402,8 @@ class TestULIDClass < Test::Unit::TestCase
     assert_equal(expectation, yielded)
     assert_equal(2, expectation.count(ULID.parse('01F4GNBXW1AM2KWW52PVT3ZY9X')))
 
+    assert_equal([], ULID.scan("\nfoo01ARZ3NDEKTSV4RRFFQ69G5FAVbar\n").to_a)
+
     assert_raises(ArgumentError) do
       ULID.scan
     end
@@ -444,7 +446,7 @@ class TestULIDClass < Test::Unit::TestCase
     assert_equal(Encoding::US_ASCII, ULID::SCANNING_PATTERN.encoding)
     assert_equal(true, ULID::SCANNING_PATTERN.frozen?)
     assert_equal(true, ULID::SCANNING_PATTERN.match?('01ARZ3NDEKTSV4RRFFQ69G5FAV'))
-    assert_equal(true, ULID::SCANNING_PATTERN.match?("\nfoo01ARZ3NDEKTSV4RRFFQ69G5FAVbar\n")) # false negative
+    assert_false(ULID::SCANNING_PATTERN.match?("\nfoo01ARZ3NDEKTSV4RRFFQ69G5FAVbar\n")) # Changed since 0.4.0~
     assert_equal(false, ULID::SCANNING_PATTERN.match?(''))
     assert_equal(true, ULID::SCANNING_PATTERN.match?('01ARZ3NDEKTSV4RRFFQ69G5FAV'.downcase))
     assert_equal(true, ULID::SCANNING_PATTERN.match?('00000000000000000000000000'))

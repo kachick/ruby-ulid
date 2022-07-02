@@ -35,6 +35,23 @@ class ULID < Object
   class UnexpectedError < Error
   end
 
+  # I don't know we can call this as `Maybe`
+  class SafeSuccess[T]
+    def initialize: (result: T) -> void
+    def success?: () -> true
+    attr_accessor result: T
+  end
+
+  class SafeError
+    def initialize: (error: Exception) -> void
+    def success?: () -> false
+    attr_accessor error: Exception
+    # Hack for rbs and steep
+    def result: () -> nil
+  end
+
+  type safe[T] = SafeSuccess[T] | SafeError
+
   module CrockfordBase32
     class SetupError < UnexpectedError
     end
@@ -213,6 +230,8 @@ class ULID < Object
   # ```
   def self.parse: (_ToStr string) -> ULID
 
+  def self.safe_parse: (_ToStr string) -> safe[ULID]
+
   # ```ruby
   # # Currently experimental feature, so needed to load the extension.
   # require 'ulid/uuid'
@@ -331,6 +350,8 @@ class ULID < Object
   #
   # See also [ulid/spec#57](https://github.com/ulid/spec/pull/57) and [ulid/spec#3](https://github.com/ulid/spec/issues/3)
   def self.normalize: (_ToStr string) -> String
+
+  def self.safe_normalize: (_ToStr string) -> safe[String]
 
   # Returns `true` if it is normalized string
   #

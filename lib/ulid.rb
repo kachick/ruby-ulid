@@ -18,6 +18,20 @@ class ULID
   class OverflowError < Error; end
   class ParserError < Error; end
   class UnexpectedError < Error; end
+  SafeSuccess = _ = Struct.new(:result, keyword_init: true) do
+    def success?
+      true
+    end
+  end
+  SafeError = _ = Struct.new(:error, keyword_init: true) do
+    def success?
+      false
+    end
+
+    def result
+      nil
+    end
+  end
 
   # Excluded I, L, O, U, -.
   # This is the encoding patterns.
@@ -270,6 +284,14 @@ class ULID
   end
 
   # @param [String, #to_str] string
+  # @return [SafeSuccess[ULID], SafeError]
+  def self.safe_parse(string)
+    SafeSuccess.new(result: parse(string))
+  rescue Exception => err
+    SafeError.new(error: err)
+  end
+
+  # @param [String, #to_str] string
   # @return [String]
   # @raise [ParserError] if the given format is not correct for ULID specs, even if ignored `orthographical variants of the format`
   def self.normalize(string)
@@ -281,13 +303,18 @@ class ULID
     parse(normalized_in_crockford).to_s
   end
 
+  # @param [String, #to_str] string
+  # @return [SafeSuccess[String], SafeError]
+  def self.safe_normalize(string)
+    SafeSuccess.new(result: normalize(string))
+  rescue Exception => err
+    SafeError.new(error: err)
+  end
+
   # @return [Boolean]
   def self.normalized?(object)
-    normalized = normalize(object)
-  rescue Exception
-    false
-  else
-    normalized == object
+    safe = safe_normalize(object)
+    safe.success? && (safe.result == object)
   end
 
   # @return [Boolean]
@@ -416,7 +443,8 @@ class ULID
     when ULID
       @integer == other.to_i
     when String
-      to_s == self.class.normalize(other)
+      safe_normalized = self.class.safe_normalize(other)
+      safe_normalized.success? && (to_s == safe_normalized.result)
     else
       false
     end
