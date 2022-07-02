@@ -8,7 +8,7 @@
 [ulid/spec](https://github.com/ulid/spec) is useful.
 Especially possess all `uniqueness`, `randomness`, `extractable timestamps` and `sortable` features.  
 This gem aims to provide the generator, monotonic generator, parser and handy manipulation features around ULID.  
-Also providing [ruby/rbs](https://github.com/ruby/rbs) signatures.
+Also providing [RBS](https://github.com/ruby/rbs) signatures.
 
 ---
 
