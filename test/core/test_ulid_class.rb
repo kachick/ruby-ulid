@@ -11,6 +11,34 @@ class TestULIDClass < Test::Unit::TestCase
     ENV['TZ'] = 'EST' # Just chosen from not UTC and JST
   end
 
+  def test_exposed_methods
+    exposed_methods = ULID.singleton_methods(false).freeze
+
+    # I'm afraid so `safe` naming in Ruby conflicts as YAML.safe_load :<
+    assert_equal([], exposed_methods.grep(/safe/).to_a)
+
+    assert_equal([], exposed_methods - [
+        :scan,
+        :sample,
+        :try_convert,
+        :valid?,
+        :current_milliseconds,
+        :from_milliseconds_and_entropy,
+        :max,
+        :min,
+        :milliseconds_from_moment,
+        :generate,
+        :from_integer,
+        :normalize,
+        :floor,
+        :range,
+        :at,
+        :normalized?,
+        :parse
+      ]
+    )
+  end
+
   def test_ensure_testing_environment
     assert_equal(Encoding::UTF_8, ''.encoding)
     assert_equal('EST', Time.now.zone)

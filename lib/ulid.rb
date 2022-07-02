@@ -18,12 +18,12 @@ class ULID
   class OverflowError < Error; end
   class ParserError < Error; end
   class UnexpectedError < Error; end
-  SafeSuccess = _ = Struct.new(:result, keyword_init: true) do # rubocop:disable Naming/ConstantName
+  ResultOk = _ = Struct.new(:result, keyword_init: true) do # rubocop:disable Naming/ConstantName
     def success?
       true
     end
   end
-  SafeError = _ = Struct.new(:error, keyword_init: true) do # rubocop:disable Naming/ConstantName
+  ResultErr = _ = Struct.new(:error, keyword_init: true) do # rubocop:disable Naming/ConstantName
     def success?
       false
     end
@@ -246,9 +246,9 @@ class ULID
   # @api private
   # @param [Time] time
   # @return [Integer]
-  private_class_method(def self.milliseconds_from_time(time)
+  private_class_method def self.milliseconds_from_time(time)
     (time.to_r * 1000).to_i
-  end)
+  end
 
   # @api private
   # @param [Time, Integer] moment
@@ -265,9 +265,9 @@ class ULID
   end
 
   # @return [Integer]
-  private_class_method(def self.reasonable_entropy
+  private_class_method def self.reasonable_entropy
     SecureRandom.random_number(MAX_ENTROPY)
-  end)
+  end
 
   # @param [String, #to_str] string
   # @return [ULID]
@@ -284,11 +284,11 @@ class ULID
   end
 
   # @param [String, #to_str] string
-  # @return [SafeSuccess[ULID], SafeError]
-  def self.safe_parse(string)
-    SafeSuccess.new(result: parse(string))
+  # @return [ResultOk[ULID], ResultErr]
+  private_class_method def self.safe_parse(string)
+    ResultOk.new(result: parse(string))
   rescue Exception => err
-    SafeError.new(error: err)
+    ResultErr.new(error: err)
   end
 
   # @param [String, #to_str] string
@@ -304,11 +304,11 @@ class ULID
   end
 
   # @param [String, #to_str] string
-  # @return [SafeSuccess[String], SafeError]
-  def self.safe_normalize(string)
-    SafeSuccess.new(result: normalize(string))
+  # @return [ResultOk[String], ResultErr]
+  private_class_method def self.safe_normalize(string)
+    ResultOk.new(result: normalize(string))
   rescue Exception => err
-    SafeError.new(error: err)
+    ResultErr.new(error: err)
   end
 
   # @return [Boolean]
@@ -344,7 +344,7 @@ class ULID
 
   # @param [BasicObject] object
   # @return [String]
-  private_class_method(def self.safe_get_class_name(object)
+  private_class_method def self.safe_get_class_name(object)
     fallback = 'UnknownObject'
 
     # This class getter implementation used https://github.com/rspec/rspec-support/blob/4ad8392d0787a66f9c351d9cf6c7618e18b3d0f2/lib/rspec/support.rb#L83-L89 as a reference, thank you!
@@ -369,7 +369,7 @@ class ULID
     else
       name || fallback
     end
-  end)
+  end
 
   # @api private
   # @param [Integer] milliseconds
@@ -443,7 +443,7 @@ class ULID
     when ULID
       @integer == other.to_i
     when String
-      safe_normalized = self.class.safe_normalize(other)
+      safe_normalized = self.class.__send__(:safe_normalize, other)
       safe_normalized.success? && (to_s == safe_normalized.result)
     else
       false
@@ -579,5 +579,5 @@ require_relative('ulid/ractor_unshareable_constants')
 
 class ULID
   # Do not write as `ULID.private_constant` for avoiding YARD warnings `[warn]: in YARD::Handlers::Ruby::PrivateConstantHandler: Undocumentable private constants:`
-  private_constant(:TIME_FORMAT_IN_INSPECT, :MIN, :MAX, :RANDOM_INTEGER_GENERATOR, :CROCKFORD_BASE32_ENCODING_STRING)
+  private_constant(:TIME_FORMAT_IN_INSPECT, :MIN, :MAX, :RANDOM_INTEGER_GENERATOR, :CROCKFORD_BASE32_ENCODING_STRING, :ResultOk, :ResultErr)
 end
