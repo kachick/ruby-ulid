@@ -401,9 +401,9 @@ ULID.max == reversed_max #=> false
 
 See [wiki page for gem migration](https://github.com/kachick/ruby-ulid/wiki/Gem-migration).
 
-## How to use rbs
+## RBS
 
-See structure at [examples/rbs_sandbox](https://github.com/kachick/ruby-ulid/tree/main/examples/rbs_sandbox)
+Try at [examples/rbs_sandbox](https://github.com/kachick/ruby-ulid/tree/main/examples/rbs_sandbox).
 
 I have checked the behavior with [ruby/rbs@2.6.0](https://github.com/ruby/rbs) + [soutaro/steep@1.0.1](https://github.com/soutaro/steep) +  [soutaro/steep-vscode](https://github.com/soutaro/steep-vscode).
 
