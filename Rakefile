@@ -81,7 +81,7 @@ end
 
 task(:list_todo) do
   sh("bundle exec yard list --query '@todo'")
-  sh("grep -ni 'FIX ME' lib/**/*.rb test/**/*.rb")
+  sh("grep -Eni 'FIX ?ME' lib/**/*.rb test/**/*.rb")
 end
 
 FileList['benchmark/*.rb'].each do |path|
