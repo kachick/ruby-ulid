@@ -15,9 +15,11 @@ class TestULIDClass < Test::Unit::TestCase
     exposed_methods = ULID.singleton_methods(false).freeze
 
     # I'm afraid so `safe` naming in Ruby conflicts as YAML.safe_load :<
+    # https://www.docswell.com/s/pink_bangbi/K67RV5-2022-01-06-201330
     assert_equal([], exposed_methods.grep(/safe/).to_a)
 
-    assert_equal([], exposed_methods - [
+    assert_equal(
+      [
         :scan,
         :sample,
         :try_convert,
@@ -35,7 +37,8 @@ class TestULIDClass < Test::Unit::TestCase
         :at,
         :normalized?,
         :parse
-      ]
+      ].sort,
+      exposed_methods.sort
     )
   end
 
