@@ -436,7 +436,8 @@ class ULID < Object
   # ULID.parse('4NNB20D9C1ME2NGMTX51ERZJX0') == ULID.parse('4nnb20d9c1me2ngmtx51erzjx0')
   # #=> true
   # ```
-  def eql?: (untyped other) -> bool
+  def eql?: (ULID other) -> bool
+          | (untyped other) -> false
   alias == eql?
 
   # Return `true` for same value of ULID, variant formats of strings, same Time in ULID precision(msec).
