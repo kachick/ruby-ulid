@@ -438,7 +438,25 @@ class ULID < Object
   # ```
   def eql?: (untyped other) -> bool
   alias == eql?
-  def ===: (untyped other) -> bool
+
+  # Return `true` for same value of ULID, variant formats of strings, same Time in ULID precision(msec).
+  # Do not consider integer, octets and partial strings, then returns `false`.
+  #
+  # ```ruby
+  # ulid = ULID.parse('01G6Z7Q4RSH97E6QHAC7VK19G2')
+  # ulid === ULID.parse(ulid.to_s)
+  # #=> true
+  # ulid === ulid.to_s.downcase
+  # #=> true
+  # ulid === ulid.to_time
+  # #=> true
+  # ulid === ulid.to_i
+  # #=> false
+  # ulid === ulid.next
+  # #=> false
+  # ```
+  def ===: (ULID | String | Time other) -> bool
+         | (untyped other) -> false
 
   # ```ruby
   # ulid = ULID.generate

@@ -477,7 +477,7 @@ class TestULIDClass < Test::Unit::TestCase
     assert_equal(Encoding::US_ASCII, ULID::SCANNING_PATTERN.encoding)
     assert_equal(true, ULID::SCANNING_PATTERN.frozen?)
     assert_equal(true, ULID::SCANNING_PATTERN.match?('01ARZ3NDEKTSV4RRFFQ69G5FAV'))
-    assert_false(ULID::SCANNING_PATTERN.match?("\nfoo01ARZ3NDEKTSV4RRFFQ69G5FAVbar\n")) # Changed since 0.4.0~
+    assert_false(ULID::SCANNING_PATTERN.match?("\nfoo01ARZ3NDEKTSV4RRFFQ69G5FAVbar\n")) # Since 0.4.0
     assert_equal(false, ULID::SCANNING_PATTERN.match?(''))
     assert_equal(true, ULID::SCANNING_PATTERN.match?('01ARZ3NDEKTSV4RRFFQ69G5FAV'.downcase))
     assert_equal(true, ULID::SCANNING_PATTERN.match?('00000000000000000000000000'))

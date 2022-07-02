@@ -410,19 +410,26 @@ class ULID
   # @dynamic ==
   alias_method(:==, :eql?)
 
+  # Return `true` for same value of ULID, variant formats of strings, same Time in ULID precision(msec).
+  # Do not consider integer, octets and partial strings, then returns `false`.
+  #
   # @return [Boolean]
+  # @see .normalize
+  # @see .floor
   def ===(other)
     case other
     when ULID
       @integer == other.to_i
     when String
       begin
-        normalized = self.class.normalize(other)
+        normalized = ULID.normalize(other)
       rescue Exception
         false
       else
         to_s == normalized
       end
+    when Time
+      to_time == ULID.floor(other)
     else
       false
     end
