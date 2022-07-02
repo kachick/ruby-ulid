@@ -447,6 +447,16 @@ class TestULIDClass < Test::Unit::TestCase
     end
   end
 
+  def test_scan_non_ascii
+    assert_equal(
+      [
+        ULID.parse('01F4GNAV5ZR6FJQ5SFQC7WDSY3'),
+        ULID.parse('01F4GNBXW1AM2KWW52PVT3ZY9X'),
+      ],
+      ULID.scan('　01F4GNAV5ZR6FJQ5SFQC7WDSY3　01F4GNCNC3CH0BCRZBPPDEKBKS区切りではない　01F4GNBXW1AM2KWW52PVT3ZY9X').to_a
+    )
+  end
+
   def test_constant_regexp
     assert_equal(true, ULID::PATTERN_WITH_CROCKFORD_BASE32_SUBSET.casefold?)
     assert_equal(Encoding::US_ASCII, ULID::PATTERN_WITH_CROCKFORD_BASE32_SUBSET.encoding)
@@ -478,6 +488,8 @@ class TestULIDClass < Test::Unit::TestCase
     assert_equal(true, ULID::SCANNING_PATTERN.frozen?)
     assert_equal(true, ULID::SCANNING_PATTERN.match?('01ARZ3NDEKTSV4RRFFQ69G5FAV'))
     assert_false(ULID::SCANNING_PATTERN.match?("\nfoo01ARZ3NDEKTSV4RRFFQ69G5FAVbar\n")) # Since 0.4.0
+    assert_true(ULID::SCANNING_PATTERN.match?(" 01ARZ3NDEKTSV4RRFFQ69G5FAV "))
+    assert_true(ULID::SCANNING_PATTERN.match?("　01ARZ3NDEKTSV4RRFFQ69G5FAV　")) # Intentional using non ASCII whitespace
     assert_equal(false, ULID::SCANNING_PATTERN.match?(''))
     assert_equal(true, ULID::SCANNING_PATTERN.match?('01ARZ3NDEKTSV4RRFFQ69G5FAV'.downcase))
     assert_equal(true, ULID::SCANNING_PATTERN.match?('00000000000000000000000000'))

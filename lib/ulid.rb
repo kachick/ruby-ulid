@@ -43,7 +43,6 @@ class ULID
   STRICT_PATTERN_WITH_CROCKFORD_BASE32_SUBSET = /\A#{PATTERN_WITH_CROCKFORD_BASE32_SUBSET.source}\z/i.freeze
 
   # Optimized for `ULID.scan`, might be changed the definition with gathered `ULID.scan` spec changed.
-  # @todo Ensure behavior of `\b` for considering UTF-8 (e.g. Japanese).
   SCANNING_PATTERN = /\b[0-7][#{CROCKFORD_BASE32_ENCODING_STRING}]{#{TIMESTAMP_ENCODED_LENGTH - 1}}[#{CROCKFORD_BASE32_ENCODING_STRING}]{#{RANDOMNESS_ENCODED_LENGTH}}\b/i.freeze
 
   # Similar as Time#inspect since Ruby 2.7, however it is NOT same.
