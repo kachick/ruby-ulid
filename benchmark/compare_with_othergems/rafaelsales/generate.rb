@@ -4,7 +4,7 @@
 require('benchmark/ips')
 require('ulid')
 
-raise("Bug to setup: #{ULID.methods(false)}") unless (ULID::VERSION == '1.3.0') && ULID::Generator
+raise("Bug to setup: #{ULID.methods(false)}") unless ULID.const_defined?(:Generator)
 
 products = []
 
