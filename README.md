@@ -7,8 +7,7 @@
 
 [ulid/spec](https://github.com/ulid/spec) is useful.
 Especially possess all `uniqueness`, `randomness`, `extractable timestamps` and `sortable` features.  
-This gem aims to provide the generator, monotonic generator, parser and handy manipulation features around ULID.  
-Also providing [RBS](https://github.com/ruby/rbs) signatures.
+This gem aims to provide the generator, optional monotonicity, parser and other manipulation features around ULID with included [RBS](https://github.com/ruby/rbs).
 
 ---
 
@@ -58,8 +57,8 @@ gem('ruby-ulid', '~> 0.4.0')
 ```ruby
 require 'ulid'
 
-defined? ULID
-# => "constant"
+ULID::VERSION
+# => "0.4.0"
 ```
 
 ### Basic Generator
@@ -72,7 +71,7 @@ ulid = ULID.generate #=> ULID(2021-04-27 17:27:22.826 UTC: 01F4A5Y1YAQCYAYCTC7GR
 
 ### Parser
 
-You can get the objects from exists encoded ULIDs.
+Get the objects from exists encoded ULIDs.
 
 ```ruby
 ulid = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV') #=> ULID(2016-07-30 23:54:10.259 UTC: 01ARZ3NDEKTSV4RRFFQ69G5FAV)
@@ -80,7 +79,7 @@ ulid = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV') #=> ULID(2016-07-30 23:54:10.259
 
 ### ULID object
 
-You can extract timestamps and binary formats.
+Extract timestamps and binary formats.
 
 ```ruby
 ulid = ULID.parse('01F4A5Y1YAQCYAYCTC7GRMJ9AA') #=> ULID(2021-04-27 17:27:22.826 UTC: 01F4A5Y1YAQCYAYCTC7GRMJ9AA)
@@ -120,7 +119,7 @@ end
 ulids.sort == ulids #=> true
 ```
 
-The basic generator prefers `randomness`, it does not guarantee `sortable` for same milliseconds ULIDs.
+Basic generator prefers `randomness`, it does not guarantee `sortable` for same milliseconds ULIDs.
 
 ```ruby
 ulids = 10000.times.map do
@@ -202,7 +201,7 @@ time = Time.at(946684800, Rational('123456.789')).utc #=> 2000-01-01 00:00:00.12
 ULID.floor(time) #=> 2000-01-01 00:00:00.123 UTC
 ```
 
-### Some methods to help manipulations
+### Tools
 
 #### Scanner for string (e.g. `JSON`)
 
@@ -365,7 +364,7 @@ ULID.normalized?('-olarz3-noekisv4rrff-q6ig5fav--') #=> false
 ULID.normalized?('01ARZ3N0EK1SV4RRFFQ61G5FAV') #=> true
 ```
 
-#### UUIDv4 converter for migration use-cases
+#### UUIDv4 converter (experimental)
 
 `ULID.from_uuidv4` and `ULID#to_uuidv4` is the converter.
 The imported timestamp is meaningless. So ULID's benefit will lost.
@@ -398,56 +397,9 @@ ULID.min == reversed_min #=> false
 ULID.max == reversed_max #=> false
 ```
 
-## How to migrate from other gems
+## Migration from other gems
 
-As far as I know, major prior arts are below
-
-### [ulid gem](https://rubygems.org/gems/ulid) - [rafaelsales/ulid](https://github.com/rafaelsales/ulid)
-
-It is just providing basic `String` generator only.
-So you can replace the code as below
-
-```diff
--ULID.generate
-+ULID.generate.to_s
-```
-
-NOTE: In version before `1.3.0`, timestamps might not be correct value.
-
-1. [Sort order does not respect millisecond ordering](https://github.com/rafaelsales/ulid/issues/22)
-1. [Fixed in this PR](https://github.com/rafaelsales/ulid/pull/23)
-1. [Released in 1.3.0](https://github.com/rafaelsales/ulid/compare/1.2.0...v1.3.0)
-
-### [ulid-ruby gem](https://rubygems.org/gems/ulid-ruby) - [abachman/ulid-ruby](https://github.com/abachman/ulid-ruby)
-
-It is providing basic generator(except monotonic generator) and parser.
-Major methods can be replaced as below.
-
-```diff
--ULID.generate
-+ULID.generate.to_s
--ULID.at(time)
-+ULID.at(time).to_s
--ULID.time(string)
-+ULID.parse(string).to_time
--ULID.min_ulid_at(time)
-+ULID.min(time).to_s
--ULID.max_ulid_at(time)
-+ULID.max(time).to_s
-```
-
-NOTE: In version before `1.0.2`, timestamps might not be correct value.
-
-1. [Parsed time object has more than milliseconds](https://github.com/abachman/ulid-ruby/issues/3)
-1. [Fix to handle timestamp precision in parser](https://github.com/abachman/ulid-ruby/pull/5)
-1. [Fix to handle timestamp precision in generator](https://github.com/abachman/ulid-ruby/pull/4)
-1. [Released in 1.0.2](https://github.com/abachman/ulid-ruby/compare/v1.0.0...v1.0.2)
-
-### Compare performance with them
-
-See [Benchmark](https://github.com/kachick/ruby-ulid/wiki/Benchmark).
-
-The results are not something to be proud of.
+See [wiki page for gem migration](https://github.com/kachick/ruby-ulid/wiki/Gem-migration).
 
 ## How to use rbs
 
@@ -458,8 +410,6 @@ I have checked the behavior with [ruby/rbs@2.6.0](https://github.com/ruby/rbs) +
 * ![rbs overview](./assets/ulid-rbs-overview.png?raw=true.png)
 * ![rbs mix](./assets/ulid-rbs-mix.png?raw=true.png)
 * ![rbs ng-to_str](./assets/ulid-rbs-ng-to_str.png?raw=true.png)
-* ![rbs ok-at-time](./assets/ulid-rbs-ok-at-time.png?raw=true.png)
-* ![rbs ng-at-int](./assets/ulid-rbs-ng-at-int.png?raw=true.png)
 
 ## References
 
