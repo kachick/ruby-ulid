@@ -198,7 +198,7 @@ Style/Dir:
   Enabled: true
 
 Style/DisableCopsWithinSourceCodeDirective:
-  Enabled: false
+  Enabled: true
 
 Style/DocumentDynamicEvalDefinition:
   Enabled: false
