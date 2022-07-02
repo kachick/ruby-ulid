@@ -9,7 +9,7 @@ repository_url = "https://github.com/kachick/#{lib_name}"
 Gem::Specification.new do |gem|
   gem.summary       = %q{ULID manipulation library}
   gem.description   = <<-'DESCRIPTION'
-    generator, monotonic generator, parser and manipulations for ULID (ruby/rbs signatures included)
+    generator, monotonic generator, parser and manipulations for ULID (RBS included)
   DESCRIPTION
   gem.homepage      = repository_url
   gem.license       = 'MIT'

@@ -8,7 +8,7 @@
 [ulid/spec](https://github.com/ulid/spec) is useful.
 Especially possess all `uniqueness`, `randomness`, `extractable timestamps` and `sortable` features.  
 This gem aims to provide the generator, monotonic generator, parser and handy manipulation features around ULID.  
-Also providing [ruby/rbs](https://github.com/ruby/rbs) signatures.
+Also providing [RBS](https://github.com/ruby/rbs) signatures.
 
 ---
 
@@ -53,15 +53,37 @@ Add this line in your Gemfile.
 gem('ruby-ulid', '~> 0.3.0')
 ```
 
-### Generator and Parser
-
-The generated `ULID` is an object not just a string.
-It means easily get the timestamps and binary formats.
+### How to use
 
 ```ruby
 require 'ulid'
 
+defined? ULID
+# => "constant"
+```
+
+### Basic Generator
+
+The generated `ULID` is an object not just a string.
+
+```ruby
 ulid = ULID.generate #=> ULID(2021-04-27 17:27:22.826 UTC: 01F4A5Y1YAQCYAYCTC7GRMJ9AA)
+```
+
+### Parser
+
+You can get the objects from exists encoded ULIDs.
+
+```ruby
+ulid = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV') #=> ULID(2016-07-30 23:54:10.259 UTC: 01ARZ3NDEKTSV4RRFFQ69G5FAV)
+```
+
+### ULID object
+
+You can extract timestamps and binary formats.
+
+```ruby
+ulid = ULID.parse('01F4A5Y1YAQCYAYCTC7GRMJ9AA') #=> ULID(2021-04-27 17:27:22.826 UTC: 01F4A5Y1YAQCYAYCTC7GRMJ9AA)
 ulid.to_time #=> 2021-04-27 17:27:22.826 UTC
 ulid.milliseconds #=> 1619544442826
 ulid.to_s #=> "01F4A5Y1YAQCYAYCTC7GRMJ9AA"
@@ -71,16 +93,9 @@ ulid.to_i #=> 1957909092946624190749577070267409738
 ulid.octets #=> [1, 121, 20, 95, 7, 202, 187, 60, 175, 51, 76, 60, 49, 73, 37, 74]
 ```
 
-You can get the objects from exists encoded ULIDs
-
-```ruby
-ulid = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV') #=> ULID(2016-07-30 23:54:10.259 UTC: 01ARZ3NDEKTSV4RRFFQ69G5FAV)
-ulid.to_time #=> 2016-07-30 23:54:10.259 UTC
-```
-
 ### Sortable with the timestamp
 
-ULIDs are sortable when they are generated in different timestamp with milliseconds precision
+ULIDs are sortable when they are generated in different timestamp with milliseconds precision.
 
 ```ruby
 ulids = 1000.times.map do
@@ -91,7 +106,7 @@ ulids.uniq(&:to_time).size #=> 1000
 ulids.sort == ulids #=> true
 ```
 
-`ULID.generate` can take fixed `Time` instance. The shorthand is `ULID.at`
+`ULID.generate` can take fixed `Time` instance. The shorthand is `ULID.at`.
 
 ```ruby
 time = Time.at(946684800).utc #=> 2000-01-01 00:00:00 UTC
@@ -147,11 +162,11 @@ sample_ulids_by_the_time.take(5) #=>
 ulids.sort == ulids #=> true
 ```
 
-Same generator does not generate duplicated ULIDs even in multi threads environment. It is implemented with [Monitor](https://bugs.ruby-lang.org/issues/16255)
+Same generator does not generate duplicated ULIDs even in multi threads environment. It is implemented with [Monitor](https://bugs.ruby-lang.org/issues/16255).
 
 ### Filtering IDs with `Time`
 
-`ULID` can be element of the `Range`. If you generated the IDs in monotonic generator, ID based filtering is easy and reliable
+`ULID` can be element of the `Range`. If they were generated with monotonic generator, ID based filtering is easy and reliable.
 
 ```ruby
 include_end = ulid1..ulid2
@@ -187,7 +202,9 @@ time = Time.at(946684800, Rational('123456.789')).utc #=> 2000-01-01 00:00:00.12
 ULID.floor(time) #=> 2000-01-01 00:00:00.123 UTC
 ```
 
-### Scanner for string (e.g. `JSON`)
+### Some methods to help manipulations
+
+#### Scanner for string (e.g. `JSON`)
 
 For rough operations, `ULID.scan` might be useful.
 
@@ -230,7 +247,7 @@ ULID.scan(json).to_a
 ```
 
 `ULID#patterns` is a util for text based operations.
-The results and spec are not fixed. Should not be used except snippets/console operation
+The results and spec are not fixed. Should not be used except snippets/console operation.
 
 ```ruby
 ULID.parse('01F4GNBXW1AM2KWW52PVT3ZY9X').patterns
@@ -241,7 +258,7 @@ ULID.parse('01F4GNBXW1AM2KWW52PVT3ZY9X').patterns
 }
 ```
 
-### Some methods to help manipulations
+#### Get boundary ULIDs
 
 `ULID.min` and `ULID.max` return termination values for ULID spec.
 
@@ -256,10 +273,12 @@ ULID.min(time) #=> ULID(2000-01-01 00:00:00.123 UTC: 00VHNCZB3V0000000000000000)
 ULID.max(time) #=> ULID(2000-01-01 00:00:00.123 UTC: 00VHNCZB3VZZZZZZZZZZZZZZZZ)
 ```
 
+#### As element in Enumerable
+
 `ULID#next` and `ULID#succ` returns next(successor) ULID.
 Especially `ULID#succ` makes it possible `Range[ULID]#each`.
 
-NOTE: But basically `Range[ULID]#each` should not be used, incrementing 128 bits IDs are not reasonable operation in most case
+NOTE: However basically `Range[ULID]#each` should not be used. Iincrementing 128 bits IDs are not reasonable operation in most cases.
 
 ```ruby
 ULID.parse('01BX5ZZKBKZZZZZZZZZZZZZZZY').next.to_s #=> "01BX5ZZKBKZZZZZZZZZZZZZZZZ"
@@ -267,13 +286,15 @@ ULID.parse('01BX5ZZKBKZZZZZZZZZZZZZZZZ').next.to_s #=> "01BX5ZZKBM00000000000000
 ULID.parse('7ZZZZZZZZZZZZZZZZZZZZZZZZZ').next #=> nil
 ```
 
-`ULID#pred` returns predecessor ULID
+`ULID#pred` returns predecessor ULID.
 
 ```ruby
 ULID.parse('01BX5ZZKBK0000000000000001').pred.to_s #=> "01BX5ZZKBK0000000000000000"
 ULID.parse('01BX5ZZKBK0000000000000000').pred.to_s #=> "01BX5ZZKBJZZZZZZZZZZZZZZZZ"
 ULID.parse('00000000000000000000000000').pred #=> nil
 ```
+
+#### Test helpers
 
 `ULID.sample` returns random ULIDs.
 
@@ -300,33 +321,23 @@ ulid1 = ULID.parse('01F4A5Y1YAQCYAYCTC7GRMJ9AA') #=> ULID(2021-04-27 17:27:22.82
 ulid2 = ULID.parse('01F4PTVCSN9ZPFKYTY2DDJVRK4') #=> ULID(2021-05-02 15:23:48.917 UTC: 01F4PTVCSN9ZPFKYTY2DDJVRK4)
 ulids = ULID.sample(1000, period: ulid1..ulid2)
 ulids.uniq.size #=> 1000
-ulids.take(10)
+ulids.take(5)
 #=>
 #[ULID(2021-05-02 06:57:19.954 UTC: 01F4NXW02JNB8H0J0TK48JD39X),
 # ULID(2021-05-02 07:06:07.458 UTC: 01F4NYC372GVP7NS0YAYQGT4VZ),
 # ULID(2021-05-01 06:16:35.791 UTC: 01F4K94P6F6P68K0H64WRDSFKW),
 # ULID(2021-04-27 22:17:37.844 UTC: 01F4APHGSMFJZQTGXKZBFFBPJP),
-# ULID(2021-04-28 20:17:55.357 UTC: 01F4D231MXQJXAR8G2JZHEJNH3),
-# ULID(2021-04-30 07:18:54.307 UTC: 01F4GTA2332AS2VPHC4FMKC7R5),
-# ULID(2021-05-02 12:26:03.480 UTC: 01F4PGNXARG554Y3HYVBDW4T9S),
-# ULID(2021-04-29 09:52:15.107 UTC: 01F4EGP483ZX2747FQPWQNPPMW),
-# ULID(2021-04-29 03:18:24.152 UTC: 01F4DT4Z4RA0QV8WFQGRAG63EH),
-# ULID(2021-05-02 13:27:16.394 UTC: 01F4PM605ABF5SDVMEHBH8JJ9R)]
-ULID.sample(10, period: ulid1.to_time..ulid2.to_time)
+# ULID(2021-04-28 20:17:55.357 UTC: 01F4D231MXQJXAR8G2JZHEJNH3)]
+ULID.sample(5, period: ulid1.to_time..ulid2.to_time)
 #=>
 # [ULID(2021-04-29 06:44:41.513 UTC: 01F4E5YPD9XQ3MYXWK8ZJKY8SW),
 #  ULID(2021-05-01 00:35:06.629 UTC: 01F4JNKD85SVK1EAEYSJGF53A2),
 #  ULID(2021-05-02 12:45:28.408 UTC: 01F4PHSEYRG9BWBEWMRW1XE6WW),
 #  ULID(2021-05-01 03:06:09.130 UTC: 01F4JY7ZBABCBMX16XH2Q4JW4W),
-#  ULID(2021-04-29 21:38:58.109 UTC: 01F4FS45DX4049JEQK4W6TER6G),
-#  ULID(2021-04-29 17:14:14.116 UTC: 01F4F9ZDQ449BE8BBZFEHYQWG2),
-#  ULID(2021-04-30 16:18:08.205 UTC: 01F4HS5DPD1HWDVJNJ6YKJXKSK),
-#  ULID(2021-04-30 10:31:33.602 UTC: 01F4H5ATF2A1CSQF0XV5NKZ288),
-#  ULID(2021-04-28 16:49:06.484 UTC: 01F4CP4PDM214Q6H3KJP7DYJRR),
-#  ULID(2021-04-28 15:05:06.808 UTC: 01F4CG68ZRST94T056KRZ5K9S4)]
+#  ULID(2021-04-29 21:38:58.109 UTC: 01F4FS45DX4049JEQK4W6TER6G)]
 ```
 
-### ULID specification ambiguity around orthographical variants of the format
+#### Variants of format
 
 I'm afraid so, we should consider [Current ULID spec](https://github.com/ulid/spec/tree/d0c7170df4517939e70129b4d6462cc162f2d5bf#universally-unique-lexicographically-sortable-identifier) has `orthographical variants of the format` possibilities.
 
@@ -354,7 +365,7 @@ ULID.normalized?('-olarz3-noekisv4rrff-q6ig5fav--') #=> false
 ULID.normalized?('01ARZ3N0EK1SV4RRFFQ61G5FAV') #=> true
 ```
 
-### UUIDv4 converter for migration use-cases
+#### UUIDv4 converter for migration use-cases
 
 `ULID.from_uuidv4` and `ULID#to_uuidv4` is the converter.
 The imported timestamp is meaningless. So ULID's benefit will lost.

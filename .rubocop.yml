@@ -365,7 +365,8 @@ Style/LineEndConcatenation:
 Style/MethodCallWithArgsParentheses:
   Enabled: true
   EnforcedStyle: 'require_parentheses'
-  IgnoreMacros: false
+  IgnoreMacros:
+    - 'private_class_method'
   AllowParenthesesInMultilineCall: true
   AllowParenthesesInChaining: true
   AllowParenthesesInCamelCaseMethod: true

@@ -79,6 +79,11 @@ task(:yard) do
   sh('bundle exec yard --fail-on-warning')
 end
 
+task(:list_todo) do
+  sh("bundle exec yard list --query '@todo'")
+  sh('git', 'grep', '-Pni', 'FIX ?ME', '**/*.rb', '**/*.gemspec', '**/Gemfile')
+end
+
 FileList['benchmark/*.rb'].each do |path|
   desc("Rough benchmark for #{File.basename(path)}")
   task(path) do

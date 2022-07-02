@@ -11,6 +11,37 @@ class TestULIDClass < Test::Unit::TestCase
     ENV['TZ'] = 'EST' # Just chosen from not UTC and JST
   end
 
+  def test_exposed_methods
+    exposed_methods = ULID.singleton_methods(false).freeze
+
+    # I'm afraid so `safe` naming in Ruby conflicts as YAML.safe_load :<
+    # https://www.docswell.com/s/pink_bangbi/K67RV5-2022-01-06-201330
+    assert_equal([], exposed_methods.grep(/safe/).to_a)
+
+    assert_equal(
+      [
+        :scan,
+        :sample,
+        :try_convert,
+        :valid?,
+        :current_milliseconds,
+        :from_milliseconds_and_entropy,
+        :max,
+        :min,
+        :milliseconds_from_moment,
+        :generate,
+        :from_integer,
+        :normalize,
+        :floor,
+        :range,
+        :at,
+        :normalized?,
+        :parse
+      ].sort,
+      exposed_methods.sort
+    )
+  end
+
   def test_ensure_testing_environment
     assert_equal(Encoding::UTF_8, ''.encoding)
     assert_equal('EST', Time.now.zone)
@@ -402,6 +433,8 @@ class TestULIDClass < Test::Unit::TestCase
     assert_equal(expectation, yielded)
     assert_equal(2, expectation.count(ULID.parse('01F4GNBXW1AM2KWW52PVT3ZY9X')))
 
+    assert_equal([], ULID.scan("\nfoo01ARZ3NDEKTSV4RRFFQ69G5FAVbar\n").to_a)
+
     assert_raises(ArgumentError) do
       ULID.scan
     end
@@ -412,6 +445,16 @@ class TestULIDClass < Test::Unit::TestCase
       end
       assert_equal('ULID.scan takes only strings', err.message)
     end
+  end
+
+  def test_scan_non_ascii
+    assert_equal(
+      [
+        ULID.parse('01F4GNAV5ZR6FJQ5SFQC7WDSY3'),
+        ULID.parse('01F4GNBXW1AM2KWW52PVT3ZY9X')
+      ],
+      ULID.scan('　01F4GNAV5ZR6FJQ5SFQC7WDSY3　01F4GNCNC3CH0BCRZBPPDEKBKS区切りではない　01F4GNBXW1AM2KWW52PVT3ZY9X').to_a
+    )
   end
 
   def test_constant_regexp
@@ -444,7 +487,9 @@ class TestULIDClass < Test::Unit::TestCase
     assert_equal(Encoding::US_ASCII, ULID::SCANNING_PATTERN.encoding)
     assert_equal(true, ULID::SCANNING_PATTERN.frozen?)
     assert_equal(true, ULID::SCANNING_PATTERN.match?('01ARZ3NDEKTSV4RRFFQ69G5FAV'))
-    assert_equal(true, ULID::SCANNING_PATTERN.match?("\nfoo01ARZ3NDEKTSV4RRFFQ69G5FAVbar\n")) # false negative
+    assert_false(ULID::SCANNING_PATTERN.match?("\nfoo01ARZ3NDEKTSV4RRFFQ69G5FAVbar\n")) # Since 0.4.0
+    assert_true(ULID::SCANNING_PATTERN.match?(' 01ARZ3NDEKTSV4RRFFQ69G5FAV '))
+    assert_true(ULID::SCANNING_PATTERN.match?('　01ARZ3NDEKTSV4RRFFQ69G5FAV　')) # Intentional using non ASCII whitespace
     assert_equal(false, ULID::SCANNING_PATTERN.match?(''))
     assert_equal(true, ULID::SCANNING_PATTERN.match?('01ARZ3NDEKTSV4RRFFQ69G5FAV'.downcase))
     assert_equal(true, ULID::SCANNING_PATTERN.match?('00000000000000000000000000'))

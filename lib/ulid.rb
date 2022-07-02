@@ -43,8 +43,7 @@ class ULID
   STRICT_PATTERN_WITH_CROCKFORD_BASE32_SUBSET = /\A#{PATTERN_WITH_CROCKFORD_BASE32_SUBSET.source}\z/i.freeze
 
   # Optimized for `ULID.scan`, might be changed the definition with gathered `ULID.scan` spec changed.
-  # This can't contain `\b` for considering UTF-8 (e.g. Japanese), so intentional `false negative` definition.
-  SCANNING_PATTERN = /[0-7][#{CROCKFORD_BASE32_ENCODING_STRING}]{#{TIMESTAMP_ENCODED_LENGTH - 1}}[#{CROCKFORD_BASE32_ENCODING_STRING}]{#{RANDOMNESS_ENCODED_LENGTH}}/i.freeze
+  SCANNING_PATTERN = /\b[0-7][#{CROCKFORD_BASE32_ENCODING_STRING}]{#{TIMESTAMP_ENCODED_LENGTH - 1}}[#{CROCKFORD_BASE32_ENCODING_STRING}]{#{RANDOMNESS_ENCODED_LENGTH}}\b/i.freeze
 
   # Similar as Time#inspect since Ruby 2.7, however it is NOT same.
   # Time#inspect trancates needless digits. Keeping full milliseconds with "%3N" will fit for ULID.
@@ -232,9 +231,9 @@ class ULID
   # @api private
   # @param [Time] time
   # @return [Integer]
-  private_class_method(def self.milliseconds_from_time(time)
+  private_class_method def self.milliseconds_from_time(time)
     (time.to_r * 1000).to_i
-  end)
+  end
 
   # @api private
   # @param [Time, Integer] moment
@@ -251,9 +250,9 @@ class ULID
   end
 
   # @return [Integer]
-  private_class_method(def self.reasonable_entropy
+  private_class_method def self.reasonable_entropy
     SecureRandom.random_number(MAX_ENTROPY)
-  end)
+  end
 
   # @param [String, #to_str] string
   # @return [ULID]
@@ -317,7 +316,7 @@ class ULID
 
   # @param [BasicObject] object
   # @return [String]
-  private_class_method(def self.safe_get_class_name(object)
+  private_class_method def self.safe_get_class_name(object)
     fallback = 'UnknownObject'
 
     # This class getter implementation used https://github.com/rspec/rspec-support/blob/4ad8392d0787a66f9c351d9cf6c7618e18b3d0f2/lib/rspec/support.rb#L83-L89 as a reference, thank you!
@@ -342,7 +341,7 @@ class ULID
     else
       name || fallback
     end
-  end)
+  end
 
   # @api private
   # @param [Integer] milliseconds
@@ -410,13 +409,26 @@ class ULID
   # @dynamic ==
   alias_method(:==, :eql?)
 
+  # Return `true` for same value of ULID, variant formats of strings, same Time in ULID precision(msec).
+  # Do not consider integer, octets and partial strings, then returns `false`.
+  #
   # @return [Boolean]
+  # @see .normalize
+  # @see .floor
   def ===(other)
     case other
     when ULID
       @integer == other.to_i
     when String
-      to_s == other.upcase
+      begin
+        normalized = ULID.normalize(other)
+      rescue Exception
+        false
+      else
+        to_s == normalized
+      end
+    when Time
+      to_time == ULID.floor(other)
     else
       false
     end
