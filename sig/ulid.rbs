@@ -35,25 +35,6 @@ class ULID < Object
   class UnexpectedError < Error
   end
 
-  class ResultOk[T]
-    def initialize: (result: T) -> void
-    def success?: () -> true
-    attr_accessor result: T
-  end
-
-  class ResultErr[E < Exception]
-    def initialize: (error: E) -> void
-    def success?: () -> false
-    attr_accessor error: E
-    # Hack for rbs and steep
-    def result: () -> nil
-  end
-
-  # Inspired from below
-  #   https://doc.rust-lang.org/std/result/enum.Result.html
-  #   https://github.com/colinhacks/zod/blob/20a45a20a344c48fc8cd1b630adcb822d439e70d/README.md?plain=1#L381-L383
-  type result[T, E < Exception] = ResultOk[T] | ResultErr[E]
-
   module CrockfordBase32
     class SetupError < UnexpectedError
     end
@@ -232,8 +213,6 @@ class ULID < Object
   # ```
   def self.parse: (_ToStr string) -> ULID
 
-  def self.safe_parse: (_ToStr string) -> result[ULID, Exception]
-
   # ```ruby
   # # Currently experimental feature, so needed to load the extension.
   # require 'ulid/uuid'
@@ -352,8 +331,6 @@ class ULID < Object
   #
   # See also [ulid/spec#57](https://github.com/ulid/spec/pull/57) and [ulid/spec#3](https://github.com/ulid/spec/issues/3)
   def self.normalize: (_ToStr string) -> String
-
-  def self.safe_normalize: (_ToStr string) -> result[String, Exception]
 
   # Returns `true` if it is normalized string
   #

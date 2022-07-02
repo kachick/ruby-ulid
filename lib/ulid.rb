@@ -18,20 +18,6 @@ class ULID
   class OverflowError < Error; end
   class ParserError < Error; end
   class UnexpectedError < Error; end
-  ResultOk = _ = Struct.new(:result, keyword_init: true) do # rubocop:disable Naming/ConstantName
-    def success?
-      true
-    end
-  end
-  ResultErr = _ = Struct.new(:error, keyword_init: true) do # rubocop:disable Naming/ConstantName
-    def success?
-      false
-    end
-
-    def result
-      nil
-    end
-  end
 
   # Excluded I, L, O, U, -.
   # This is the encoding patterns.
@@ -284,14 +270,6 @@ class ULID
   end
 
   # @param [String, #to_str] string
-  # @return [ResultOk[ULID], ResultErr]
-  private_class_method def self.safe_parse(string)
-    ResultOk.new(result: parse(string))
-  rescue Exception => err
-    ResultErr.new(error: err)
-  end
-
-  # @param [String, #to_str] string
   # @return [String]
   # @raise [ParserError] if the given format is not correct for ULID specs, even if ignored `orthographical variants of the format`
   def self.normalize(string)
@@ -303,18 +281,13 @@ class ULID
     parse(normalized_in_crockford).to_s
   end
 
-  # @param [String, #to_str] string
-  # @return [ResultOk[String], ResultErr]
-  private_class_method def self.safe_normalize(string)
-    ResultOk.new(result: normalize(string))
-  rescue Exception => err
-    ResultErr.new(error: err)
-  end
-
   # @return [Boolean]
   def self.normalized?(object)
-    safe = safe_normalize(object)
-    safe.success? && (safe.result == object)
+    normalized = normalize(object)
+  rescue Exception
+    false
+  else
+    normalized == object
   end
 
   # @return [Boolean]
@@ -443,8 +416,13 @@ class ULID
     when ULID
       @integer == other.to_i
     when String
-      safe_normalized = self.class.__send__(:safe_normalize, other)
-      safe_normalized.success? && (to_s == safe_normalized.result)
+      begin
+        normalized = self.class.normalize(other)
+      rescue Exception
+        false
+      else
+        to_s == normalized
+      end
     else
       false
     end
@@ -579,5 +557,5 @@ require_relative('ulid/ractor_unshareable_constants')
 
 class ULID
   # Do not write as `ULID.private_constant` for avoiding YARD warnings `[warn]: in YARD::Handlers::Ruby::PrivateConstantHandler: Undocumentable private constants:`
-  private_constant(:TIME_FORMAT_IN_INSPECT, :MIN, :MAX, :RANDOM_INTEGER_GENERATOR, :CROCKFORD_BASE32_ENCODING_STRING, :ResultOk, :ResultErr)
+  private_constant(:TIME_FORMAT_IN_INSPECT, :MIN, :MAX, :RANDOM_INTEGER_GENERATOR, :CROCKFORD_BASE32_ENCODING_STRING)
 end
