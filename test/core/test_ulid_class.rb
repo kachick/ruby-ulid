@@ -37,7 +37,8 @@ class TestULIDClass < Test::Unit::TestCase
         :at,
         :normalized?,
         :parse,
-        :valid_as_variants?
+        :valid_as_variant_format?,
+        :parse_variant_format
       ].sort,
       exposed_methods.sort
     )
@@ -106,6 +107,44 @@ class TestULIDClass < Test::Unit::TestCase
     end
   end
 
+  def test_parse_variant_format
+    string = +'01G70Y0Y7G-ZLXWDIREXERGSDoD'
+    dup_string = string.dup
+    parsed = ULID.parse_variant_format(string)
+
+    # Ensure the string is not modified in parser
+    assert_false(string.frozen?)
+    assert_equal(dup_string, string)
+
+    assert_instance_of(ULID, parsed)
+    assert_equal('01G70Y0Y7GZ1XWD1REXERGSD0D', parsed.to_s)
+    assert_equal(ULID.parse_variant_format(string), ULID.parse_variant_format('01G70Y0Y7GZ1XWD1REXERGSD0D'))
+
+    [
+      '',
+      "01ARZ3NDEKTSV4RRFFQ69G5FAV\n",
+      '01ARZ3NDEKTSV4RRFFQ69G5FAU',
+      '01ARZ3NDEKTSV4RRFFQ69G5FA',
+      '01G70Y0Y7G_ZLXWDIREXERGSDoD'
+    ].each do |invalid|
+      err = assert_raises(ULID::ParserError) do
+        ULID.parse_variant_format(invalid)
+      end
+      assert_match(/does not match to/, err.message)
+    end
+
+    assert_raises(ArgumentError) do
+      ULID.parse_variant_format
+    end
+
+    [nil, 42, string.to_sym, BasicObject.new, Object.new, parsed].each do |evil|
+      err = assert_raises(ArgumentError) do
+        ULID.parse_variant_format(evil)
+      end
+      assert_equal('ULID.parse_variant_format takes only strings', err.message)
+    end
+  end
+
   def test_new
     err = assert_raises(NoMethodError) do
       ULID.new(milliseconds: 0, entropy: 42)
@@ -137,7 +176,7 @@ class TestULIDClass < Test::Unit::TestCase
   end
 
   def test_valid?
-    assert_warning('ULID.valid? is deprecated. Use ULID.valid_as_variants? or ULID.normalized? instead.') do
+    assert_warning('ULID.valid? is deprecated. Use ULID.valid_as_variant_format? or ULID.normalized? instead.') do
       assert_equal(false, ULID.valid?(nil))
       assert_equal(false, ULID.valid?(''))
       assert_equal(false, ULID.valid?(BasicObject.new))
@@ -254,16 +293,16 @@ class TestULIDClass < Test::Unit::TestCase
     end
   end
 
-  def test_valid_as_variants?
-    assert_true(ULID.valid_as_variants?('01G70Y0Y7G-Z1XWDAREXERGSDDD'))
+  def test_valid_as_variant_format?
+    assert_true(ULID.valid_as_variant_format?('01G70Y0Y7G-Z1XWDAREXERGSDDD'))
 
     nasty = '-olarz3-noekisv4rrff-q6ig5fav--'
-    assert_true(ULID.valid_as_variants?(nasty))
-    assert_true(ULID.valid_as_variants?(ULID.normalize(nasty)))
+    assert_true(ULID.valid_as_variant_format?(nasty))
+    assert_true(ULID.valid_as_variant_format?(ULID.normalize(nasty)))
 
     normalized = '01ARZ3NDEKTSV4RRFFQ69G5FAV'
-    assert_true(ULID.valid_as_variants?(normalized))
-    assert_true(ULID.valid_as_variants?(normalized.downcase))
+    assert_true(ULID.valid_as_variant_format?(normalized))
+    assert_true(ULID.valid_as_variant_format?(normalized.downcase))
 
     [
       '',
@@ -272,20 +311,20 @@ class TestULIDClass < Test::Unit::TestCase
       '01ARZ3NDEKTSV4RRFFQ69G5FA',
       '80000000000000000000000000'
     ].each do |invalid|
-      assert_false(ULID.valid_as_variants?(invalid))
+      assert_false(ULID.valid_as_variant_format?(invalid))
     end
 
     ULID.sample(1000).each do |sample|
-      assert_true(ULID.valid_as_variants?(sample.to_s))
-      assert_true(ULID.valid_as_variants?(sample.to_s.downcase))
+      assert_true(ULID.valid_as_variant_format?(sample.to_s))
+      assert_true(ULID.valid_as_variant_format?(sample.to_s.downcase))
     end
 
     assert_raises(ArgumentError) do
-      ULID.valid_as_variants?
+      ULID.valid_as_variant_format?
     end
 
     [nil, 42, normalized.to_sym, BasicObject.new, Object.new, ULID.parse(normalized)].each do |evil|
-      assert_false(ULID.valid_as_variants?(evil))
+      assert_false(ULID.valid_as_variant_format?(evil))
     end
   end
 

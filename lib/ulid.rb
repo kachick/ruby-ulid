@@ -269,15 +269,25 @@ class ULID
   end
 
   # @param [String, #to_str] string
+  # @return [ULID]
+  # @raise [ParserError] if the given format is not correct for ULID specs
+  def self.parse_variant_format(string)
+    string = String.try_convert(string)
+    raise(ArgumentError, 'ULID.parse_variant_format takes only strings') unless string
+
+    normalized_in_crockford = CrockfordBase32.normalize(string)
+    parse(normalized_in_crockford)
+  end
+
+  # @param [String, #to_str] string
   # @return [String]
   # @raise [ParserError] if the given format is not correct for ULID specs, even if ignored `orthographical variants of the format`
   def self.normalize(string)
     string = String.try_convert(string)
     raise(ArgumentError, 'ULID.normalize takes only strings') unless string
 
-    normalized_in_crockford = CrockfordBase32.normalize(string)
     # Ensure the ULID correctness, because CrockfordBase32 does not always mean to satisfy ULID format
-    parse(normalized_in_crockford).to_s
+    parse_variant_format(string).to_s
   end
 
   # @param [String, #to_str] string
@@ -292,7 +302,7 @@ class ULID
 
   # @param [String, #to_str] string
   # @return [Boolean]
-  def self.valid_as_variants?(string)
+  def self.valid_as_variant_format?(string)
     normalize(string)
   rescue Exception
     false
@@ -300,7 +310,7 @@ class ULID
     true
   end
 
-  # @deprecated Use [.valid_as_variants?] or [.normalized?] instead
+  # @deprecated Use [.valid_as_variant_format?] or [.normalized?] instead
   #
   # Returns `true` if it is normalized string.
   # Basically the difference of normalized? is to accept downcase or not. This returns true for downcased ULIDs.
@@ -308,7 +318,7 @@ class ULID
   # @return [Boolean]
   def self.valid?(string)
     warn_kwargs = (RUBY_VERSION >= '3.0') ? { category: :deprecated } : {}
-    Warning.warn('ULID.valid? is deprecated. Use ULID.valid_as_variants? or ULID.normalized? instead.', **warn_kwargs)
+    Warning.warn('ULID.valid? is deprecated. Use ULID.valid_as_variant_format? or ULID.normalized? instead.', **warn_kwargs)
     string = String.try_convert(string)
     string ? STRICT_PATTERN_WITH_CROCKFORD_BASE32_SUBSET.match?(string) : false
   end
