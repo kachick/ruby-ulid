@@ -340,29 +340,29 @@ ULID.sample(5, period: ulid1.to_time..ulid2.to_time)
 
 I'm afraid so, we should consider [Current ULID spec](https://github.com/ulid/spec/tree/d0c7170df4517939e70129b4d6462cc162f2d5bf#universally-unique-lexicographically-sortable-identifier) has `orthographical variants of the format` possibilities.
 
+>Case insensitive
+
+I can understand it might be considered in actual use-case. So `ULID.parse` accepts upcase and downcase.
+However it is a controversial point, discussing in [ulid/spec#3](https://github.com/ulid/spec/issues/3).
+
 >Uses Crockford's base32 for better efficiency and readability (5 bits per character)
 
 The original `Crockford's base32` maps `I`, `L` to `1`, `O` to `0`.
 And accepts freestyle inserting `Hyphens (-)`.
 To consider this patterns or not is different in each implementations.
 
-Current parser/validator/matcher basically aims to cover `subset of Crockford's base32`.
-I have suggested it would be clarified in [ulid/spec#57](https://github.com/ulid/spec/pull/57).
+I have suggested to clarify `subset of Crockford's base32` in [ulid/spec#57](https://github.com/ulid/spec/pull/57).
 
->Case insensitive
+This gem provides some methods to handle the nasty possibilities.
 
-I can understand it might be considered in actual use-case.
-But it is a controversial point, discussing in [ulid/spec#3](https://github.com/ulid/spec/issues/3).
-
-Be that as it may, this gem provides API for handling the nasty possibilities.
-
-`ULID.normalize`, `ULID.normalized?`, `ULID.valid_as_variants?`
+`ULID.normalize`, `ULID.normalized?`, `ULID.valid_as_variant_format?` and `ULID.parse_variant_format`
 
 ```ruby
 ULID.normalize('01g70y0y7g-z1xwdarexergsddd') #=> "01G70Y0Y7GZ1XWDAREXERGSDDD"
 ULID.normalized?('01g70y0y7g-z1xwdarexergsddd') #=> false
 ULID.normalized?('01G70Y0Y7GZ1XWDAREXERGSDDD') #=> true
-ULID.valid_as_variants?('01g70y0y7g-z1xwdarexergsddd') #=> true
+ULID.valid_as_variant_format?('01g70y0y7g-z1xwdarexergsddd') #=> true
+ULID.parse_variant_format('01G70Y0Y7G-ZLXWDIREXERGSDoD') #=> ULID(2022-07-03 02:25:22.672 UTC: 01G70Y0Y7GZ1XWD1REXERGSD0D)
 ```
 
 #### UUIDv4 converter (experimental)

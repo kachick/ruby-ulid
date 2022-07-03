@@ -213,6 +213,21 @@ class ULID < Object
   # ```
   def self.parse: (_ToStr string) -> ULID
 
+  # Get ULID instance from unnormalized String that encoded in Crockford's base32.
+  #
+  # http://www.crockford.com/base32.html
+  #
+  # * Ignore Hyphens (-)
+  # * Mapping 0 O o => 0, 1 I i L l => 1
+  #
+  # ```ruby
+  # ulid = ULID.parse_variant_format('01G70Y0Y7G-ZLXWDIREXERGSDoD')
+  # #=> ULID(2022-07-03 02:25:22.672 UTC: 01G70Y0Y7GZ1XWD1REXERGSD0D)
+  # ```
+  #
+  # See also [ulid/spec#57](https://github.com/ulid/spec/pull/57) and [ulid/spec#3](https://github.com/ulid/spec/issues/3)
+  def self.parse_variant_format: (_ToStr string) -> ULID
+
   # ```ruby
   # # Currently experimental feature, so needed to load the extension.
   # require 'ulid/uuid'
@@ -337,16 +352,16 @@ class ULID < Object
   # Returns `true` if it is valid in ULID format variants
   #
   # ```ruby
-  # ULID.valid_as_variants?(ULID.generate.to_s.downcase) #=> true
-  # ULID.valid_as_variants?('01G70Y0Y7G-Z1XWDAREXERGSDDD') #=> true
-  # ULID.valid_as_variants?('01G70Y0Y7G_Z1XWDAREXERGSDDD') #=> false
+  # ULID.valid_as_variant_format?(ULID.generate.to_s.downcase) #=> true
+  # ULID.valid_as_variant_format?('01G70Y0Y7G-Z1XWDAREXERGSDDD') #=> true
+  # ULID.valid_as_variant_format?('01G70Y0Y7G_Z1XWDAREXERGSDDD') #=> false
   # ```
   #
   # See also [ulid/spec#57](https://github.com/ulid/spec/pull/57) and [ulid/spec#3](https://github.com/ulid/spec/issues/3)
-  def self.valid_as_variants?: (_ToStr string) -> bool
+  def self.valid_as_variant_format?: (_ToStr string) -> bool
                              | (untyped) -> false
 
-  # DEPRECATED Use valid_as_variants? instead
+  # DEPRECATED Use valid_as_variant_format? instead
   #
   # Returns `true` if it is normalized string.
   # Basically the difference of normalized? is to accept downcase or not. This returns true for downcased ULIDs.
