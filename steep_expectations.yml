@@ -1,1 +1,13 @@
---- []
+---
+- file: lib/ulid.rb
+  diagnostics:
+  - range:
+      start:
+        line: 311
+        character: 12
+      end:
+        line: 311
+        character: 16
+    severity: ERROR
+    message: Type `singleton(::Warning)` does not have method `warn`
+    code: Ruby::NoMethod

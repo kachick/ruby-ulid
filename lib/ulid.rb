@@ -280,18 +280,36 @@ class ULID
     parse(normalized_in_crockford).to_s
   end
 
+  # @param [String, #to_str] string
   # @return [Boolean]
-  def self.normalized?(object)
-    normalized = normalize(object)
+  def self.normalized?(string)
+    normalized = normalize(string)
   rescue Exception
     false
   else
-    normalized == object
+    normalized == string
   end
 
+  # @param [String, #to_str] string
   # @return [Boolean]
-  def self.valid?(object)
-    string = String.try_convert(object)
+  def self.valid_as_variants?(string)
+    normalize(string)
+  rescue Exception
+    false
+  else
+    true
+  end
+
+  # @deprecated Use [.valid_as_variants?] or [.normalized?] instead
+  #
+  # Returns `true` if it is normalized string.
+  # Basically the difference of normalized? is to accept downcase or not. This returns true for downcased ULIDs.
+  #
+  # @return [Boolean]
+  def self.valid?(string)
+    warn_kwargs = (RUBY_VERSION >= '3.0') ? { category: :deprecated } : {}
+    Warning.warn('ULID.valid? is deprecated. Use ULID.valid_as_variants? or ULID.normalized? instead.', **warn_kwargs)
+    string = String.try_convert(string)
     string ? STRICT_PATTERN_WITH_CROCKFORD_BASE32_SUBSET.match?(string) : false
   end
 

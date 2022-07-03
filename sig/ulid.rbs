@@ -309,14 +309,13 @@ class ULID < Object
   # ```
   def self.sample: (?period: period) -> ULID
                  | (Integer number, ?period: period?) -> Array[ULID]
-  def self.valid?: (untyped) -> bool
 
   # Returns normalized string
   #
   # ```ruby
+  # ULID.normalize('01G70Y0Y7G-Z1XWDAREXERGSDDD') #=> "01G70Y0Y7GZ1XWDAREXERGSDDD"
   # ULID.normalize('-olarz3-noekisv4rrff-q6ig5fav--') #=> "01ARZ3N0EK1SV4RRFFQ61G5FAV"
-  # ULID.normalized?('-olarz3-noekisv4rrff-q6ig5fav--') #=> false
-  # ULID.normalized?('01ARZ3N0EK1SV4RRFFQ61G5FAV') #=> true
+  # ULID.normalize('01G70Y0Y7G_Z1XWDAREXERGSDDD') #=> ULID::ParserError
   # ```
   #
   # See also [ulid/spec#57](https://github.com/ulid/spec/pull/57) and [ulid/spec#3](https://github.com/ulid/spec/issues/3)
@@ -325,13 +324,40 @@ class ULID < Object
   # Returns `true` if it is normalized string
   #
   # ```ruby
-  # ULID.normalize('-olarz3-noekisv4rrff-q6ig5fav--') #=> "01ARZ3N0EK1SV4RRFFQ61G5FAV"
-  # ULID.normalized?('-olarz3-noekisv4rrff-q6ig5fav--') #=> false
-  # ULID.normalized?('01ARZ3N0EK1SV4RRFFQ61G5FAV') #=> true
+  # ULID.normalized?('01G70Y0Y7GZ1XWDAREXERGSDDD') #=> true
+  # ULID.normalized?('01G70Y0Y7G-Z1XWDAREXERGSDDD') #=> false
+  # ULID.normalized?(ULID.generate.to_s.downcase) #=> false
+  # ULID.normalized?('01G70Y0Y7G_Z1XWDAREXERGSDDD') #=> false (Not raising ULID::ParserError)
   # ```
   #
   # See also [ulid/spec#57](https://github.com/ulid/spec/pull/57) and [ulid/spec#3](https://github.com/ulid/spec/issues/3)
-  def self.normalized?: (untyped) -> bool
+  def self.normalized?: (_ToStr string) -> bool
+                      | (untyped) -> false
+
+  # Returns `true` if it is valid in ULID format variants
+  #
+  # ```ruby
+  # ULID.valid_as_variants?(ULID.generate.to_s.downcase) #=> true
+  # ULID.valid_as_variants?('01G70Y0Y7G-Z1XWDAREXERGSDDD') #=> true
+  # ULID.valid_as_variants?('01G70Y0Y7G_Z1XWDAREXERGSDDD') #=> false
+  # ```
+  #
+  # See also [ulid/spec#57](https://github.com/ulid/spec/pull/57) and [ulid/spec#3](https://github.com/ulid/spec/issues/3)
+  def self.valid_as_variants?: (_ToStr string) -> bool
+                             | (untyped) -> false
+
+  # DEPRECATED Use valid_as_variants? instead
+  #
+  # Returns `true` if it is normalized string.
+  # Basically the difference of normalized? is to accept downcase or not. This returns true for downcased ULIDs.
+  #
+  # ```ruby
+  # ULID.valid?(ULID.generate.to_s.downcase) #=> true
+  # ```
+  #
+  # See also [ulid/spec#57](https://github.com/ulid/spec/pull/57) and [ulid/spec#3](https://github.com/ulid/spec/issues/3)
+  def self.valid?: (_ToStr string) -> bool
+                 | (untyped) -> false
 
   # Returns parsed ULIDs from given String for rough operations.
   #

@@ -36,7 +36,8 @@ class TestULIDClass < Test::Unit::TestCase
         :range,
         :at,
         :normalized?,
-        :parse
+        :parse,
+        :valid_as_variants?
       ].sort,
       exposed_methods.sort
     )
@@ -136,19 +137,23 @@ class TestULIDClass < Test::Unit::TestCase
   end
 
   def test_valid?
-    assert_equal(false, ULID.valid?(nil))
-    assert_equal(false, ULID.valid?(''))
-    assert_equal(false, ULID.valid?(BasicObject.new))
-    assert_equal(false, ULID.valid?(Object.new))
-    assert_equal(false, ULID.valid?(42))
-    assert_equal(false, ULID.valid?(:'01ARZ3NDEKTSV4RRFFQ69G5FAV'))
-    assert_equal(false, ULID.valid?(ULID.sample))
-    assert_equal(false, ULID.valid?("01ARZ3NDEKTSV4RRFFQ69G5FAV\n"))
-    assert_equal(false, ULID.valid?('01ARZ3NDEKTSV4RRFFQ69G5FAU'))
-    assert_equal(true, ULID.valid?('01ARZ3NDEKTSV4RRFFQ69G5FAV'))
-    assert_equal(true, ULID.valid?('01ARZ3NDEKTSV4RRFFQ69G5FAV'.downcase))
-    assert_equal(true, ULID.valid?('7ZZZZZZZZZZZZZZZZZZZZZZZZZ'))
-    assert_equal(false, ULID.valid?('80000000000000000000000000'))
+    assert_warning('ULID.valid? is deprecated. Use ULID.valid_as_variants? or ULID.normalized? instead.') do
+      assert_equal(false, ULID.valid?(nil))
+      assert_equal(false, ULID.valid?(''))
+      assert_equal(false, ULID.valid?(BasicObject.new))
+      assert_equal(false, ULID.valid?(Object.new))
+      assert_equal(false, ULID.valid?(42))
+      assert_equal(false, ULID.valid?(:'01ARZ3NDEKTSV4RRFFQ69G5FAV'))
+      assert_equal(false, ULID.valid?(ULID.sample))
+      assert_equal(false, ULID.valid?("01ARZ3NDEKTSV4RRFFQ69G5FAV\n"))
+      assert_equal(false, ULID.valid?('01ARZ3NDEKTSV4RRFFQ69G5FAU'))
+      assert_equal(true, ULID.valid?('01ARZ3NDEKTSV4RRFFQ69G5FAV'))
+      assert_equal(true, ULID.valid?('01ARZ3NDEKTSV4RRFFQ69G5FAV'.downcase))
+      assert_equal(true, ULID.valid?('7ZZZZZZZZZZZZZZZZZZZZZZZZZ'))
+      assert_equal(false, ULID.valid?('80000000000000000000000000'))
+
+      assert_false(ULID.valid?('01G70Y0Y7G-Z1XWDAREXERGSDDD'))
+    end
 
     assert_raises(ArgumentError) do
       ULID.valid?
@@ -215,6 +220,8 @@ class TestULIDClass < Test::Unit::TestCase
   end
 
   def test_normalized?
+    assert_false(ULID.normalized?('01G70Y0Y7G-Z1XWDAREXERGSDDD'))
+
     nasty = '-olarz3-noekisv4rrff-q6ig5fav--'
     assert_equal(false, ULID.normalized?(nasty))
     assert_equal(true, ULID.normalized?(ULID.normalize(nasty)))
@@ -244,6 +251,41 @@ class TestULIDClass < Test::Unit::TestCase
 
     [nil, 42, normalized.to_sym, BasicObject.new, Object.new, ULID.parse(normalized)].each do |evil|
       assert_equal(false, ULID.normalized?(evil))
+    end
+  end
+
+  def test_valid_as_variants?
+    assert_true(ULID.valid_as_variants?('01G70Y0Y7G-Z1XWDAREXERGSDDD'))
+
+    nasty = '-olarz3-noekisv4rrff-q6ig5fav--'
+    assert_true(ULID.valid_as_variants?(nasty))
+    assert_true(ULID.valid_as_variants?(ULID.normalize(nasty)))
+
+    normalized = '01ARZ3NDEKTSV4RRFFQ69G5FAV'
+    assert_true(ULID.valid_as_variants?(normalized))
+    assert_true(ULID.valid_as_variants?(normalized.downcase))
+
+    [
+      '',
+      "01ARZ3NDEKTSV4RRFFQ69G5FAV\n",
+      '01ARZ3NDEKTSV4RRFFQ69G5FAU',
+      '01ARZ3NDEKTSV4RRFFQ69G5FA',
+      '80000000000000000000000000'
+    ].each do |invalid|
+      assert_false(ULID.valid_as_variants?(invalid))
+    end
+
+    ULID.sample(1000).each do |sample|
+      assert_true(ULID.valid_as_variants?(sample.to_s))
+      assert_true(ULID.valid_as_variants?(sample.to_s.downcase))
+    end
+
+    assert_raises(ArgumentError) do
+      ULID.valid_as_variants?
+    end
+
+    [nil, 42, normalized.to_sym, BasicObject.new, Object.new, ULID.parse(normalized)].each do |evil|
+      assert_false(ULID.valid_as_variants?(evil))
     end
   end
 

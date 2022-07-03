@@ -346,7 +346,7 @@ The original `Crockford's base32` maps `I`, `L` to `1`, `O` to `0`.
 And accepts freestyle inserting `Hyphens (-)`.
 To consider this patterns or not is different in each implementations.
 
-Current parser/validator/matcher aims to cover `subset of Crockford's base32`.
+Current parser/validator/matcher basically aims to cover `subset of Crockford's base32`.
 I have suggested it would be clarified in [ulid/spec#57](https://github.com/ulid/spec/pull/57).
 
 >Case insensitive
@@ -356,12 +356,13 @@ But it is a controversial point, discussing in [ulid/spec#3](https://github.com/
 
 Be that as it may, this gem provides API for handling the nasty possibilities.
 
-`ULID.normalize` and `ULID.normalized?`
+`ULID.normalize`, `ULID.normalized?`, `ULID.valid_as_variants?`
 
 ```ruby
-ULID.normalize('-olarz3-noekisv4rrff-q6ig5fav--') #=> "01ARZ3N0EK1SV4RRFFQ61G5FAV"
-ULID.normalized?('-olarz3-noekisv4rrff-q6ig5fav--') #=> false
-ULID.normalized?('01ARZ3N0EK1SV4RRFFQ61G5FAV') #=> true
+ULID.normalize('01g70y0y7g-z1xwdarexergsddd') #=> "01G70Y0Y7GZ1XWDAREXERGSDDD"
+ULID.normalized?('01g70y0y7g-z1xwdarexergsddd') #=> false
+ULID.normalized?('01G70Y0Y7GZ1XWDAREXERGSDDD') #=> true
+ULID.valid_as_variants?('01g70y0y7g-z1xwdarexergsddd') #=> true
 ```
 
 #### UUIDv4 converter (experimental)
