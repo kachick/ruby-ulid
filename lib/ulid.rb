@@ -303,7 +303,7 @@ class ULID
   # @param [String, #to_str] string
   # @return [Boolean]
   def self.valid_as_variant_format?(string)
-    normalize(string)
+    parse_variant_format(string)
   rescue Exception
     false
   else
