@@ -449,7 +449,7 @@ class ULID
       @integer == other.to_i
     when String
       begin
-        self == ULID.parse_variant_format(other)
+        to_i == ULID.parse_variant_format(other).to_i
       rescue Exception
         false
       end
