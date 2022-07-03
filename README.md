@@ -49,7 +49,7 @@ Should be installed!
 Add this line in your Gemfile.
 
 ```ruby
-gem('ruby-ulid', '~> 0.4.0')
+gem('ruby-ulid', '~> 0.5.0')
 ```
 
 ### How to use
@@ -58,7 +58,7 @@ gem('ruby-ulid', '~> 0.4.0')
 require 'ulid'
 
 ULID::VERSION
-# => "0.4.0"
+# => "0.5.0"
 ```
 
 ### Basic Generator
