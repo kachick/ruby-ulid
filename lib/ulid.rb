@@ -449,11 +449,9 @@ class ULID
       @integer == other.to_i
     when String
       begin
-        normalized = ULID.normalize(other)
+        self == ULID.parse_variant_format(other)
       rescue Exception
         false
-      else
-        to_s == normalized
       end
     when Time
       to_time == ULID.floor(other)
