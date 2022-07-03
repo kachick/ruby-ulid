@@ -277,7 +277,7 @@ ULID.max(time) #=> ULID(2000-01-01 00:00:00.123 UTC: 00VHNCZB3VZZZZZZZZZZZZZZZZ)
 `ULID#next` and `ULID#succ` returns next(successor) ULID.
 Especially `ULID#succ` makes it possible `Range[ULID]#each`.
 
-NOTE: However basically `Range[ULID]#each` should not be used. Iincrementing 128 bits IDs are not reasonable operation in most cases.
+NOTE: However basically `Range[ULID]#each` should not be used. Incrementing 128 bits IDs are not reasonable operation in most cases.
 
 ```ruby
 ULID.parse('01BX5ZZKBKZZZZZZZZZZZZZZZY').next.to_s #=> "01BX5ZZKBKZZZZZZZZZZZZZZZZ"
