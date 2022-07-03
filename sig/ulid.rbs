@@ -411,7 +411,12 @@ class ULID < Object
   # #=> true
   # ```
   #
-  # To be precise, this sorting unaffected with `case sensitive or not` and might handle [ulid/spec#57](https://github.com/ulid/spec/pull/57) in future. So preferable than `lexicographically sortable` in actual case.
+  # To be precise, this sorting unaffected with `case sensitive or not` and might handle [ulid/spec#57](https://github.com/ulid/spec/pull/57) in future.
+  # So preferable than `lexicographically sortable` in actual case.
+  #
+  # This returns -1 | 0 | 1 for ULIDs. However defined as returning Integer. It is caused on ruby/rbs current definition.
+  #   https://github.com/ruby/ruby/blob/cd34f56d450f2310cceaf4c5f34d23eddfda58e8/numeric.c#L4646-L4660
+  #   https://github.com/ruby/rbs/blob/14abbbae8885a09a2ed82de2ef31d67a9c0a108d/core/integer.rbs#L461-L462
   #
   def <=>: (ULID other) -> Integer
          | (untyped other) -> nil

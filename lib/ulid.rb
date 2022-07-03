@@ -392,7 +392,7 @@ class ULID
     [ULID, @integer].hash
   end
 
-  # @return [Integer, nil]
+  # @return [-1, 0, 1, nil]
   def <=>(other)
     (ULID === other) ? (@integer <=> other.to_i) : nil
   end

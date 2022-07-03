@@ -123,6 +123,11 @@ class TestULIDInstance < Test::Unit::TestCase
 
   def test_cmp
     ulid = ULID.sample
+    assert_equal(1, ulid <=> ulid.pred)
+    assert_equal(1, ulid <=> ulid.pred.pred.pred)
+    assert_equal(0, ulid <=> ULID.parse(ulid.to_s))
+    assert_equal(-1, ulid <=> ulid.next)
+    assert_equal(-1, ulid <=> ulid.next.next.next)
     [nil, BasicObject.new, '01ARZ3NDEKTSV4RRFFQ69G5FAV', 42, Time.now].each do |not_comparable|
       assert_nil(ulid <=> not_comparable)
     end
