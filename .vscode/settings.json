@@ -11,6 +11,7 @@
   },
   "ruby.format": "rubocop",
   "cSpell.words": [
+    "kwargs",
     "Undocumentable",
     "unshareable"
   ] // use rubocop for formatting

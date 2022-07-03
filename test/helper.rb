@@ -1,20 +1,27 @@
 # coding: us-ascii
 # frozen_string_literal: true
 
+# How to use: https://github.com/jeremyevans/ruby-warning
 require('warning')
 
-# How to use => https://test-unit.github.io/test-unit/en/
+# How to use: https://test-unit.github.io/test-unit/en/
 require('test/unit')
 
 require('irb')
 require('power_assert/colorize')
 require('irb/power_assert')
 
+require 'stringio'
+
 Warning[:deprecated] = true
 Warning[:experimental] = true
 
-Warning.process do |_warning|
-  :raise
+Warning.process do |warning_message|
+  if /ULID.valid\? is deprecated/.match?(warning_message)
+    :default
+  else
+    :raise
+  end
 end
 
 require_relative('../lib/ulid')
@@ -35,6 +42,19 @@ class Test::Unit::TestCase
       }
 
       assert_in_epsilon(awesome_randomized_ulids.size, ulids.size, (5/100r).to_f)
+    end
+  end
+
+  def assert_warning(pattern, &block)
+    org_stderr = $stderr
+    $stderr = fake_io = StringIO.new(+'', 'r+')
+
+    begin
+      block.call
+      fake_io.rewind
+      assert_match(pattern, fake_io.read)
+    ensure
+      $stderr = org_stderr
     end
   end
 end

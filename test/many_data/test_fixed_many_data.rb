@@ -25,7 +25,7 @@ class TestFixedManyData < Test::Unit::TestCase
     assert_equal(example.octets, ulid.octets)
 
     assert do
-      ULID.valid?(example.string)
+      ULID.normalized?(example.string)
     end
   end
 
