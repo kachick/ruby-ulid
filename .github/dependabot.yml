@@ -13,6 +13,9 @@ updates:
       time: "08:00"
       timezone: "Asia/Tokyo"
     versioning-strategy: increase
+    ignore:
+      - dependency-name: "rubocop"
+        versions: ["1.31.2"]
   - package-ecosystem: "bundler"
     directory: "/benchmark/compare_with_othergems/kachick"
     schedule:
