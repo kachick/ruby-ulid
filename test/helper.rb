@@ -16,12 +16,8 @@ require 'stringio'
 Warning[:deprecated] = true
 Warning[:experimental] = true
 
-Warning.process do |warning_message|
-  if /ULID.valid\? is deprecated/.match?(warning_message)
-    :default
-  else
-    :raise
-  end
+Warning.process do |_warning_message|
+  :raise
 end
 
 require_relative('../lib/ulid')
@@ -49,12 +45,14 @@ class Test::Unit::TestCase
     org_stderr = $stderr
     $stderr = fake_io = StringIO.new(+'', 'r+')
 
-    begin
-      block.call
-      fake_io.rewind
-      assert_match(pattern, fake_io.read)
-    ensure
-      $stderr = org_stderr
+    Warning.clear do
+      begin
+        block.call
+        fake_io.rewind
+        assert_match(pattern, fake_io.read)
+      ensure
+        $stderr = org_stderr
+      end
     end
   end
 end
