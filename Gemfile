@@ -15,6 +15,7 @@ group(:development) do
   gem('rbs', '~> 2.6.0', require: false)
   gem('steep', '~> 1.0.1', require: false)
   gem('benchmark-ips', '~> 2.10.0', require: false)
+  gem('stackprof')
   gem('yard', '~> 0.9.28', require: false)
   gem('rubocop', '~> 1.31.1', '!= 1.31.2', require: false)
   gem('rubocop-rake', '~> 0.6.0', require: false)
