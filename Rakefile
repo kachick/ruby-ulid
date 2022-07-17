@@ -108,6 +108,7 @@ end
 
 task(:stackprof) do
   sh('bundle exec ruby ./scripts/prof.rb')
+  sh('bundle exec stackprof tmp/stackprof-wall-*.dump --text --limit 1')
   sh('bundle exec stackprof tmp/stackprof-cpu-*.dump --text --limit 1')
 end
 
