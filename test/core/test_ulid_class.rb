@@ -30,7 +30,7 @@ class TestULIDClass < Test::Unit::TestCase
         :min,
         :milliseconds_from_moment,
         :generate,
-        :gen,
+        :encode,
         :from_integer,
         :normalize,
         :floor,
@@ -603,12 +603,12 @@ class TestULIDClass < Test::Unit::TestCase
     end
   end
 
-  def test_gen
-    assert_instance_of(String, ULID.gen)
-    assert_not_equal(ULID.gen, ULID.gen)
+  def test_encode
+    assert_instance_of(String, ULID.encode)
+    assert_not_equal(ULID.encode, ULID.encode)
 
     time = Time.at(946684800, Rational('123456.789')).utc
-    gen = ULID.gen(moment: time)
+    gen = ULID.encode(moment: time)
     ulid = ULID.parse(gen)
     assert_equal(ulid.to_s, gen)
     assert_not_same(ulid.to_s, gen)
@@ -618,14 +618,14 @@ class TestULIDClass < Test::Unit::TestCase
     assert_equal(true, ulid.to_time < time)
     assert_equal(ULID.floor(time), ulid.to_time)
     milliseconds = 42
-    assert_equal(Time.at(0, milliseconds, :millisecond), ULID.parse(ULID.gen(moment: milliseconds)).to_time)
+    assert_equal(Time.at(0, milliseconds, :millisecond), ULID.parse(ULID.encode(moment: milliseconds)).to_time)
 
     entropy = 42
-    assert_equal(entropy, ULID.parse(ULID.gen(entropy: entropy)).entropy)
+    assert_equal(entropy, ULID.parse(ULID.encode(entropy: entropy)).entropy)
 
     [nil, 4.2, 42/24r, '42', ulid, ulid.to_s, BasicObject.new, Object.new].each do |evil|
       err = assert_raises(ArgumentError) do
-        ULID.gen(moment: evil)
+        ULID.encode(moment: evil)
       end
       assert_equal('`moment` should be a `Time` or `Integer as milliseconds`', err.message)
     end

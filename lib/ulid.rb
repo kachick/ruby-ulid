@@ -63,7 +63,7 @@ class ULID
   # @param [Integer, Time] moment
   # @param [Integer] entropy
   # @return [String]
-  def self.gen(moment: current_milliseconds, entropy: reasonable_entropy)
+  def self.encode(moment: current_milliseconds, entropy: reasonable_entropy)
     n32_encoded = encode_n32(milliseconds: milliseconds_from_moment(moment), entropy: entropy)
     CrockfordBase32.from_n32(n32_encoded).upcase.freeze
   end

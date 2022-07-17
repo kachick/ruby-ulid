@@ -6,6 +6,6 @@ require_relative('../lib/ulid')
 
 Benchmark.ips do |x|
   x.report('ULID.generate.to_s') { ULID.generate.to_s }
-  x.report('ULID.gen') { ULID.gen }
+  x.report('ULID.encode') { ULID.encode }
   x.compare!
 end

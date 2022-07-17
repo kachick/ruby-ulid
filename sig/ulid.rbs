@@ -148,10 +148,12 @@ class ULID < Object
   #
   def self.generate: (?moment: moment, ?entropy: Integer) -> ULID
 
-  # Retuns a encoded String that normalized and avoided needless object creation
+  # Retuns encoded and normalzied String.
+  # It has same arguments signatures as `.generate`. So can be used for just ID creation usecases without needless object creation.
   #
-  def self.gen: (?moment: moment, ?entropy: Integer) -> String
+  def self.encode: (?moment: moment, ?entropy: Integer) -> String
 
+  # A private API. Should not be used in your code.
   def self.encode_n32: (milliseconds: Integer, entropy: Integer) -> String
 
   # Shorthand of `ULID.generate(moment: Time)`
