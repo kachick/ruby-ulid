@@ -9,8 +9,8 @@ raise("Bug to setup: #{ULID.methods(false)}") unless ULID.const_defined?(:Monoto
 products = []
 
 Benchmark.ips do |x|
-  x.report('ULID.generate.to_s') do
-    products << ULID.generate.to_s
+  x.report('ULID.gen') do
+    products << ULID.gen
   end
 end
 

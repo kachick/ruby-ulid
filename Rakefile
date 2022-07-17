@@ -94,7 +94,7 @@ end
 # This can't be used `bundle exec rake`. Use `rake` instead
 desc(%q{Compare generating String performance with other gems})
 task(:benchmark_with_other_gems) do
-  [{ rafaelsales: 'ulid'}, {abachman: 'ulid-ruby'}, {kachick: 'ruby-ulid(This one)'}].each do |gem_name_by_author|
+  [{kachick: 'ruby-ulid(This one)'}, { rafaelsales: 'ulid'}, {abachman: 'ulid-ruby'}].each do |gem_name_by_author|
     gem_name_by_author.each_pair do |author, gem_name|
       puts('-' * 72)
       puts("#### #{author} - #{gem_name}")

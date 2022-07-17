@@ -80,7 +80,7 @@ class ULID
     # @return [String]
     def self.encode(integer)
       n32encoded = integer.to_s(32)
-      n32encoded.upcase.gsub(N32_CHAR_PATTERN, CROCKFORD_BASE32_CHAR_BY_N32_CHAR).rjust(ENCODED_LENGTH, '0')
+      from_n32(n32encoded).rjust(ENCODED_LENGTH, '0')
     end
 
     # @api private
@@ -88,6 +88,13 @@ class ULID
     # @return [String]
     def self.normalize(string)
       string.gsub(VARIANT_PATTERN, STANDARD_BY_VARIANT)
+    end
+
+    # @api private
+    # @param [n32encoded] String
+    # @return [String]
+    def self.from_n32(n32encoded)
+      n32encoded.upcase.gsub(N32_CHAR_PATTERN, CROCKFORD_BASE32_CHAR_BY_N32_CHAR)
     end
   end
 end

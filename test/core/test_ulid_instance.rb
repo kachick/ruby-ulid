@@ -144,11 +144,20 @@ class TestULIDInstance < Test::Unit::TestCase
     assert_equal(ulids.map(&:to_s).sort, ulids.sort.map(&:to_s))
   end
 
+  def test_encode
+    ulid = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
+    assert_equal('01ARZ3NDEKTSV4RRFFQ69G5FAV', ulid.encode)
+    assert_same(ulid.encode, ulid.encode)
+    assert_true(ulid.encode.frozen?)
+    assert_same(ulid.to_s, ulid.encode)
+  end
+
   def test_to_s
     ulid = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
     assert_equal('01ARZ3NDEKTSV4RRFFQ69G5FAV', ulid.to_s)
     assert_same(ulid.to_s, ulid.to_s)
-    assert_equal(true, ulid.to_s.frozen?)
+    assert_true(ulid.to_s.frozen?)
+    assert_same(ulid.encode, ulid.to_s)
   end
 
   def test_inspect
@@ -244,10 +253,10 @@ class TestULIDInstance < Test::Unit::TestCase
     assert_equal(int, ulid.instance_variable_get(:@integer))
 
     assert_raises(NoMethodError) do
-      ulid.instance_variable_set(:@string, str.downcase)
+      ulid.instance_variable_set(:@encoded, str.downcase)
     end
     assert_same(str, ulid.to_s)
-    assert_same(str, ulid.instance_variable_get(:@string))
+    assert_same(str, ulid.instance_variable_get(:@encoded))
   end
 
   def test_to_ulid

@@ -3,10 +3,10 @@
   diagnostics:
   - range:
       start:
-        line: 321
+        line: 345
         character: 12
       end:
-        line: 321
+        line: 345
         character: 16
     severity: ERROR
     message: Type `singleton(::Warning)` does not have method `warn`

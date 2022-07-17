@@ -54,6 +54,9 @@ class ULID < Object
 
     # A private API. Should not be used in your code.
     def self.normalize: (String string) -> String
+
+    # A private API. Should not be used in your code.
+    def self.from_n32: (String n32encoded) -> String
   end
 
   class MonotonicGenerator
@@ -102,8 +105,8 @@ class ULID < Object
   type randomness_octets = [Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer] | Array[Integer]
   type period = Range[Time] | Range[nil] | Range[ULID]
 
-  @string: String?
   @integer: Integer
+  @encoded: String
   @timestamp: String?
   @randomness: String?
   @inspect: String?
@@ -144,6 +147,12 @@ class ULID < Object
   # If you want to keep sortable even if in same timestamp, See also [ULID::MonotonicGenerator](https://github.com/kachick/ruby-ulid#how-to-keep-sortable-even-if-in-same-timestamp)
   #
   def self.generate: (?moment: moment, ?entropy: Integer) -> ULID
+
+  # Retuns a encoded String that normalized and avoided needless object creation
+  #
+  def self.gen: (?moment: moment, ?entropy: Integer) -> String
+
+  def self.encode_n32: (milliseconds: Integer, entropy: Integer) -> String
 
   # Shorthand of `ULID.generate(moment: Time)`
   # See also [ULID.generate](https://kachick.github.io/ruby-ulid/ULID.html#generate-class_method)
@@ -430,9 +439,12 @@ class ULID < Object
   # ```ruby
   # ulid = ULID.generate
   # #=> ULID(2021-04-27 17:27:22.826 UTC: 01F4A5Y1YAQCYAYCTC7GRMJ9AA)
-  # ulid.to_s #=> "01F4A5Y1YAQCYAYCTC7GRMJ9AA"
+  # ulid.encode #=> "01F4A5Y1YAQCYAYCTC7GRMJ9AA"
+  # ulid.encode.frozen? #=> true
+  # ulid.encode.equal?(ulid.to_s) #=> true
   # ```
-  def to_s: -> String
+  def encode: -> String
+  alias to_s encode
 
   # ```ruby
   # ulid = ULID.generate
@@ -582,9 +594,6 @@ class ULID < Object
   private
 
   # A private API. Should not be used in your code.
-  def self.new: (milliseconds: Integer, entropy: Integer, integer: Integer) -> ULID
-
-  # A private API. Should not be used in your code.
   def self.reasonable_entropy: -> Integer
 
   # A private API. Should not be used in your code.
@@ -594,7 +603,7 @@ class ULID < Object
   def self.safe_get_class_name: (untyped object) -> String
 
   # A private API. Should not be used in your code.
-  def initialize: (milliseconds: Integer, entropy: Integer, integer: Integer) -> void
+  def initialize: (milliseconds: Integer, entropy: Integer, integer: Integer, encoded: String) -> void
 
   # A private API. Should not be used in your code.
   def cache_all_instance_variables: -> void
