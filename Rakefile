@@ -106,6 +106,12 @@ task(:benchmark_with_other_gems) do
   end
 end
 
+task(:stackprof) do
+  sh('bundle exec ruby ./scripts/prof.rb')
+  sh('bundle exec stackprof tmp/stackprof-wall-*.dump --text --limit 1')
+  sh('bundle exec stackprof tmp/stackprof-cpu-*.dump --text --limit 1')
+end
+
 desc('Generate many sample data for snapshot tests')
 task(:update_fixed_examples) do
   sh('rm ./test/many_data/fixtures/dumped_fixed_examples_*.bin')

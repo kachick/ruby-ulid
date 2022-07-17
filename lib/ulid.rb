@@ -60,6 +60,14 @@ class ULID
     from_milliseconds_and_entropy(milliseconds: milliseconds_from_moment(moment), entropy: entropy)
   end
 
+  # @param [Integer, Time] moment
+  # @param [Integer] entropy
+  # @return [String]
+  def self.encode(moment: current_milliseconds, entropy: reasonable_entropy)
+    n32_encoded = encode_n32(milliseconds: milliseconds_from_moment(moment), entropy: entropy)
+    CrockfordBase32.from_n32(n32_encoded).upcase.freeze
+  end
+
   # Short hand of `ULID.generate(moment: time)`
   # @param [Time] time
   # @return [ULID]
@@ -166,7 +174,12 @@ class ULID
     milliseconds = n32encoded_timestamp.to_i(32)
     entropy = n32encoded_randomness.to_i(32)
 
-    new(milliseconds: milliseconds, entropy: entropy, integer: integer)
+    new(
+      milliseconds: milliseconds,
+      entropy: entropy,
+      integer: integer,
+      encoded: CrockfordBase32.from_n32("#{n32encoded_timestamp}#{n32encoded_randomness}").freeze
+    )
   end
 
   # @param [Range<Time>, Range<nil>, Range[ULID]] period
@@ -252,6 +265,17 @@ class ULID
   # @return [Integer]
   private_class_method def self.reasonable_entropy
     SecureRandom.random_number(MAX_ENTROPY)
+  end
+
+  private_class_method def self.encode_n32(milliseconds:, entropy:)
+    raise(ArgumentError, 'milliseconds and entropy should be an `Integer`') unless Integer === milliseconds && Integer === entropy
+    raise(OverflowError, "timestamp overflow: given #{milliseconds}, max: #{MAX_MILLISECONDS}") unless milliseconds <= MAX_MILLISECONDS
+    raise(OverflowError, "entropy overflow: given #{entropy}, max: #{MAX_ENTROPY}") unless entropy <= MAX_ENTROPY
+    raise(ArgumentError, 'milliseconds and entropy should not be negative') if milliseconds.negative? || entropy.negative?
+
+    n32encoded_timestamp = milliseconds.to_s(32).rjust(TIMESTAMP_ENCODED_LENGTH, '0')
+    n32encoded_randomness = entropy.to_s(32).rjust(RANDOMNESS_ENCODED_LENGTH, '0')
+    "#{n32encoded_timestamp}#{n32encoded_randomness}"
   end
 
   # @param [String, #to_str] string
@@ -378,16 +402,13 @@ class ULID
   # @raise [OverflowError] if the given value is larger than the ULID limit
   # @raise [ArgumentError] if the given milliseconds and/or entropy is negative number
   def self.from_milliseconds_and_entropy(milliseconds:, entropy:)
-    raise(ArgumentError, 'milliseconds and entropy should be an `Integer`') unless Integer === milliseconds && Integer === entropy
-    raise(OverflowError, "timestamp overflow: given #{milliseconds}, max: #{MAX_MILLISECONDS}") unless milliseconds <= MAX_MILLISECONDS
-    raise(OverflowError, "entropy overflow: given #{entropy}, max: #{MAX_ENTROPY}") unless entropy <= MAX_ENTROPY
-    raise(ArgumentError, 'milliseconds and entropy should not be negative') if milliseconds.negative? || entropy.negative?
-
-    n32encoded_timestamp = milliseconds.to_s(32).rjust(TIMESTAMP_ENCODED_LENGTH, '0')
-    n32encoded_randomness = entropy.to_s(32).rjust(RANDOMNESS_ENCODED_LENGTH, '0')
-    integer = (n32encoded_timestamp + n32encoded_randomness).to_i(32)
-
-    new(milliseconds: milliseconds, entropy: entropy, integer: integer)
+    n32_encoded = encode_n32(milliseconds: milliseconds, entropy: entropy)
+    new(
+      milliseconds: milliseconds,
+      entropy: entropy,
+      integer: n32_encoded.to_i(32),
+      encoded: CrockfordBase32.from_n32(n32_encoded).upcase.freeze
+    )
   end
 
   # @dynamic milliseconds, entropy
@@ -397,18 +418,21 @@ class ULID
   # @param [Integer] milliseconds
   # @param [Integer] entropy
   # @param [Integer] integer
+  # @param [String] encoded
   # @return [void]
-  def initialize(milliseconds:, entropy:, integer:)
+  def initialize(milliseconds:, entropy:, integer:, encoded:)
     # All arguments check should be done with each constructors, not here
     @integer = integer
+    @encoded = encoded
     @milliseconds = milliseconds
     @entropy = entropy
   end
 
   # @return [String]
-  def to_s
-    @string ||= CrockfordBase32.encode(@integer).freeze
+  def encode
+    @encoded
   end
+  alias_method(:to_s, :encode)
 
   # @return [Integer]
   def to_i
@@ -427,7 +451,7 @@ class ULID
 
   # @return [String]
   def inspect
-    @inspect ||= "ULID(#{to_time.strftime(TIME_FORMAT_IN_INSPECT)}: #{to_s})".freeze
+    @inspect ||= "ULID(#{to_time.strftime(TIME_FORMAT_IN_INSPECT)}: #{@encoded})".freeze
   end
 
   # @return [Boolean]
@@ -486,12 +510,12 @@ class ULID
 
   # @return [String]
   def timestamp
-    @timestamp ||= (to_s.slice(0, TIMESTAMP_ENCODED_LENGTH).freeze || raise(UnexpectedError))
+    @timestamp ||= (@encoded.slice(0, TIMESTAMP_ENCODED_LENGTH).freeze || raise(UnexpectedError))
   end
 
   # @return [String]
   def randomness
-    @randomness ||= (to_s.slice(TIMESTAMP_ENCODED_LENGTH, RANDOMNESS_ENCODED_LENGTH).freeze || raise(UnexpectedError))
+    @randomness ||= (@encoded.slice(TIMESTAMP_ENCODED_LENGTH, RANDOMNESS_ENCODED_LENGTH).freeze || raise(UnexpectedError))
   end
 
   # @note Providing for rough operations. The keys and values is not fixed.
@@ -552,7 +576,7 @@ class ULID
   # @return [void]
   def marshal_load(integer)
     unmarshaled = ULID.from_integer(integer)
-    initialize(integer: unmarshaled.to_i, milliseconds: unmarshaled.milliseconds, entropy: unmarshaled.entropy)
+    initialize(integer: unmarshaled.to_i, milliseconds: unmarshaled.milliseconds, entropy: unmarshaled.entropy, encoded: unmarshaled.to_s)
   end
 
   # @return [self]

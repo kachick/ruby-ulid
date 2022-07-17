@@ -53,8 +53,8 @@ class ULID
 
     CROCKFORD_BASE32_CHAR_PATTERN = /[#{N32_CHAR_BY_CROCKFORD_BASE32_CHAR.keys.join}]/.freeze
 
-    CROCKFORD_BASE32_CHAR_BY_N32_CHAR = N32_CHAR_BY_CROCKFORD_BASE32_CHAR.invert.freeze
-    N32_CHAR_PATTERN = /[#{CROCKFORD_BASE32_CHAR_BY_N32_CHAR.keys.join}]/.freeze
+    ORDERED_CROCKFORD_BASE32_CHARS = N32_CHAR_BY_CROCKFORD_BASE32_CHAR.keys.join.freeze
+    ORDERED_N32_CHARS = N32_CHAR_BY_CROCKFORD_BASE32_CHAR.values.join.freeze
 
     STANDARD_BY_VARIANT = {
       'L' => '1',
@@ -80,7 +80,7 @@ class ULID
     # @return [String]
     def self.encode(integer)
       n32encoded = integer.to_s(32)
-      n32encoded.upcase.gsub(N32_CHAR_PATTERN, CROCKFORD_BASE32_CHAR_BY_N32_CHAR).rjust(ENCODED_LENGTH, '0')
+      from_n32(n32encoded).rjust(ENCODED_LENGTH, '0')
     end
 
     # @api private
@@ -88,6 +88,14 @@ class ULID
     # @return [String]
     def self.normalize(string)
       string.gsub(VARIANT_PATTERN, STANDARD_BY_VARIANT)
+    end
+
+    # @api private
+    # @param [String] n32encoded
+    # @return [String]
+    def self.from_n32(n32encoded)
+      # `tr` is almost 2x Faster than `gsub(regex, hash)` in Ruby 3.1
+      n32encoded.upcase.tr(ORDERED_N32_CHARS, ORDERED_CROCKFORD_BASE32_CHARS)
     end
   end
 end

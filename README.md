@@ -61,35 +61,49 @@ ULID::VERSION
 # => "0.5.0"
 ```
 
-### Basic Generator
+### Generator and Parser
 
-The generated `ULID` is an object not just a string.
+`ULID.generate` returns `ULID` instance. It is not just a string.
 
 ```ruby
 ulid = ULID.generate #=> ULID(2021-04-27 17:27:22.826 UTC: 01F4A5Y1YAQCYAYCTC7GRMJ9AA)
 ```
 
-### Parser
-
-Get the objects from exists encoded ULIDs.
-
-```ruby
-ulid = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV') #=> ULID(2016-07-30 23:54:10.259 UTC: 01ARZ3NDEKTSV4RRFFQ69G5FAV)
-```
-
-### ULID object
-
-Extract timestamps and binary formats.
+`ULID.parse` returns `ULID` instance from exists encoded ULIDs.
 
 ```ruby
 ulid = ULID.parse('01F4A5Y1YAQCYAYCTC7GRMJ9AA') #=> ULID(2021-04-27 17:27:22.826 UTC: 01F4A5Y1YAQCYAYCTC7GRMJ9AA)
+```
+
+It can extract timestamps and binary formats.
+
+```ruby
 ulid.to_time #=> 2021-04-27 17:27:22.826 UTC
 ulid.milliseconds #=> 1619544442826
+ulid.encode #=> "01F4A5Y1YAQCYAYCTC7GRMJ9AA"
 ulid.to_s #=> "01F4A5Y1YAQCYAYCTC7GRMJ9AA"
 ulid.timestamp #=> "01F4A5Y1YA"
 ulid.randomness #=> "QCYAYCTC7GRMJ9AA"
 ulid.to_i #=> 1957909092946624190749577070267409738
 ulid.octets #=> [1, 121, 20, 95, 7, 202, 187, 60, 175, 51, 76, 60, 49, 73, 37, 74]
+```
+
+`ULID.generate` can take fixed `Time` instance. `ULID.at` is the shorthand.
+
+```ruby
+time = Time.at(946684800).utc #=> 2000-01-01 00:00:00 UTC
+ULID.generate(moment: time) #=> ULID(2000-01-01 00:00:00.000 UTC: 00VHNCZB00N018DCPJA4H9379P)
+ULID.generate(moment: time) #=> ULID(2000-01-01 00:00:00.000 UTC: 00VHNCZB006WQT3JTMN0T14EBP)
+ULID.at(time) #=> ULID(2000-01-01 00:00:00.000 UTC: 00VHNCZB002W5BGWWKN76N22H6)
+```
+
+Also `ULID.encode` can be used if you just want to get ID.  
+It returns [normalized](#variants-of-format) String without object creation (No huge pros in the speed for now).  
+It can take same arguments as `ULID.generate`.
+
+```ruby
+ULID.encode #=> "01G86M42Q6SJ9XQM2ZRM6JRDSF"
+ULID.encode(moment: Time.at(946684800).utc) #=> "00VHNCZB00SYG7RCEXZC9DA4E1"
 ```
 
 ### Sortable with the timestamp
@@ -102,6 +116,12 @@ ulids = 1000.times.map do
   ULID.generate
 end
 ulids.uniq(&:to_time).size #=> 1000
+ulids.sort == ulids #=> true
+
+time = Time.at(946684800).utc #=> 2000-01-01 00:00:00 UTC
+ulids = 1000.times.map do |n|
+  ULID.at(time + n)
+end
 ulids.sort == ulids #=> true
 ```
 

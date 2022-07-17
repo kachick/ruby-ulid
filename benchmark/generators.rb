@@ -13,6 +13,7 @@ encoded = sample.to_s
 
 Benchmark.ips do |x|
   x.report('ULID.generate') { ULID.generate }
+  x.report('ULID.encode') { ULID.encode }
   x.report('ULID::MonotonicGenerator#generate') { monotonic_generator.generate }
   x.report('ULID.parse') { ULID.parse(encoded) }
   x.report('ULID.from_integer') { ULID.from_integer(fixed_integer) }

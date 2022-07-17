@@ -70,6 +70,10 @@ class ULID
       end
     end
 
+    # @todo Consider to provide this
+    # def encode
+    # end
+
     undef_method(:freeze)
 
     # @raise [TypeError] always raises exception and does not freeze self
