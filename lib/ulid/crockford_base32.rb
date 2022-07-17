@@ -91,7 +91,7 @@ class ULID
     end
 
     # @api private
-    # @param [n32encoded] String
+    # @param [String] n32encoded
     # @return [String]
     def self.from_n32(n32encoded)
       n32encoded.upcase.gsub(N32_CHAR_PATTERN, CROCKFORD_BASE32_CHAR_BY_N32_CHAR)

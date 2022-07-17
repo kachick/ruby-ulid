@@ -70,7 +70,7 @@ class ULID
       end
     end
 
-    # @TODO Consider to provide this
+    # @todo Consider to provide this
     # def encode
     # end
 
