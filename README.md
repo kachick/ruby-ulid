@@ -61,6 +61,8 @@ ULID::VERSION
 # => "0.5.0"
 ```
 
+NOTE: This README includes info about development version. If you would see released version's one. [Look at the ref](https://github.com/kachick/ruby-ulid/tree/v0.5.0).
+
 ### Generator and Parser
 
 `ULID.generate` returns `ULID` instance. It is not just a string.
@@ -75,7 +77,7 @@ ulid = ULID.generate #=> ULID(2021-04-27 17:27:22.826 UTC: 01F4A5Y1YAQCYAYCTC7GR
 ulid = ULID.parse('01F4A5Y1YAQCYAYCTC7GRMJ9AA') #=> ULID(2021-04-27 17:27:22.826 UTC: 01F4A5Y1YAQCYAYCTC7GRMJ9AA)
 ```
 
-It can extract timestamps and binary formats.
+It is helpful to inspect.
 
 ```ruby
 ulid.to_time #=> 2021-04-27 17:27:22.826 UTC
@@ -97,8 +99,8 @@ ULID.generate(moment: time) #=> ULID(2000-01-01 00:00:00.000 UTC: 00VHNCZB006WQT
 ULID.at(time) #=> ULID(2000-01-01 00:00:00.000 UTC: 00VHNCZB002W5BGWWKN76N22H6)
 ```
 
-Also `ULID.encode` can be used if you just want to get ID.  
-It returns [normalized](#variants-of-format) String without object creation (No huge pros in the speed for now).  
+Also `ULID.encode` can be used if you just want to get strings.  
+It returns [normalized](#variants-of-format) String without ULID object creation.  
 It can take same arguments as `ULID.generate`.
 
 ```ruby
@@ -116,26 +118,6 @@ ulids = 1000.times.map do
   ULID.generate
 end
 ulids.uniq(&:to_time).size #=> 1000
-ulids.sort == ulids #=> true
-
-time = Time.at(946684800).utc #=> 2000-01-01 00:00:00 UTC
-ulids = 1000.times.map do |n|
-  ULID.at(time + n)
-end
-ulids.sort == ulids #=> true
-```
-
-`ULID.generate` can take fixed `Time` instance. The shorthand is `ULID.at`.
-
-```ruby
-time = Time.at(946684800).utc #=> 2000-01-01 00:00:00 UTC
-ULID.generate(moment: time) #=> ULID(2000-01-01 00:00:00.000 UTC: 00VHNCZB00N018DCPJA4H9379P)
-ULID.generate(moment: time) #=> ULID(2000-01-01 00:00:00.000 UTC: 00VHNCZB006WQT3JTMN0T14EBP)
-ULID.at(time) #=> ULID(2000-01-01 00:00:00.000 UTC: 00VHNCZB002W5BGWWKN76N22H6)
-
-ulids = 1000.times.map do |n|
-  ULID.at(time + n)
-end
 ulids.sort == ulids #=> true
 ```
 
@@ -181,7 +163,7 @@ sample_ulids_by_the_time.take(5) #=>
 ulids.sort == ulids #=> true
 ```
 
-Same generator does not generate duplicated ULIDs even in multi threads environment. It is implemented with [Monitor](https://bugs.ruby-lang.org/issues/16255).
+Same instance of `ULID::MonotonicGenerator` does not generate duplicated ULIDs even in multi threads environment. It is implemented with [Monitor](https://bugs.ruby-lang.org/issues/16255).
 
 ### Filtering IDs with `Time`
 
