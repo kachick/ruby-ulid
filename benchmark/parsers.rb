@@ -4,7 +4,6 @@
 require('benchmark/ips')
 require_relative('../lib/ulid')
 
-monotonic_generator = ULID::MonotonicGenerator.new
 fixed_integer = SecureRandom.random_number(ULID::MAX_INTEGER)
 sample = ULID.sample.freeze
 encoded = sample.to_s
