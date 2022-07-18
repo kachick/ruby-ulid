@@ -19,23 +19,44 @@ class ULID
   module CrockfordBase32
     class SetupError < UnexpectedError; end
 
-    # Excluded I, L, O, U, -.
-    # This is the encoding patterns.
-    # The decoding issue is written in ULID::CrockfordBase32
-    ENCODING_STRING = '0123456789ABCDEFGHJKMNPQRSTVWXYZ'
-    raise(SetupError, 'obvious bug exists to define CrockfordBase32 encoding') unless ENCODING_STRING.size == 32
+    # Excluded I, L, O, U, - from Base32
+    base32_to_crockford = {
+      '0' => '0',
+      '1' => '1',
+      '2' => '2',
+      '3' => '3',
+      '4' => '4',
+      '5' => '5',
+      '6' => '6',
+      '7' => '7',
+      '8' => '8',
+      '9' => '9',
+      'A' => 'A',
+      'B' => 'B',
+      'C' => 'C',
+      'D' => 'D',
+      'E' => 'E',
+      'F' => 'F',
+      'G' => 'G',
+      'H' => 'H',
+      'I' => 'J',
+      'J' => 'K',
+      'K' => 'M',
+      'L' => 'N',
+      'M' => 'P',
+      'N' => 'Q',
+      'O' => 'R',
+      'P' => 'S',
+      'Q' => 'T',
+      'R' => 'V',
+      'S' => 'W',
+      'T' => 'X',
+      'U' => 'Y',
+      'V' => 'Z'
+    }.freeze
 
-    ORDERED_CROCKFORD_BASE32_CHARS = ENCODING_STRING.chars.map(&:freeze).freeze
-    CROCKFORD_BASE32_CHAR_PATTERN = /[#{ENCODING_STRING}]/.freeze
-
-    # @todo Inline the definition to combined HashMap with ORDERED_CROCKFORD_BASE32_CHARS to improve readability
-    ORDERED_N32_CHARS = [*'0'..'9', *'A'..'V'].map(&:freeze).freeze
-    raise(SetupError, 'obvious bug exists to define the Base32 encoding') unless ORDERED_N32_CHARS.size == ORDERED_CROCKFORD_BASE32_CHARS.size
-
-    N32_CHAR_BY_CROCKFORD_BASE32_CHAR = ORDERED_CROCKFORD_BASE32_CHARS.zip(ORDERED_N32_CHARS).to_h.freeze
-
-    CROCKFORD_BASE32_TR_PATTERN = ORDERED_CROCKFORD_BASE32_CHARS.join.freeze
-    N32_TR_PATTERN = N32_CHAR_BY_CROCKFORD_BASE32_CHAR.values.join.freeze
+    BASE32_TR_PATTERN = base32_to_crockford.keys.join.freeze
+    ENCODING_STRING = CROCKFORD_BASE32_TR_PATTERN = base32_to_crockford.values.freeze.join.freeze
 
     normarized_by_variant = {
       'L' => '1',
@@ -54,7 +75,7 @@ class ULID
     # @param [String] string
     # @return [Integer]
     def self.decode(string)
-      n32encoded = string.upcase.tr(CROCKFORD_BASE32_TR_PATTERN, N32_TR_PATTERN)
+      n32encoded = string.upcase.tr(CROCKFORD_BASE32_TR_PATTERN, BASE32_TR_PATTERN)
       n32encoded.to_i(32)
     end
 
@@ -77,7 +98,7 @@ class ULID
     # @param [String] n32encoded
     # @return [String]
     def self.from_n32(n32encoded)
-      n32encoded.upcase.tr(N32_TR_PATTERN, CROCKFORD_BASE32_TR_PATTERN)
+      n32encoded.upcase.tr(BASE32_TR_PATTERN, CROCKFORD_BASE32_TR_PATTERN)
     end
   end
 end
