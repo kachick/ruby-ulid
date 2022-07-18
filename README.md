@@ -49,7 +49,7 @@ Should be installed!
 Add this line in your Gemfile.
 
 ```ruby
-gem('ruby-ulid', '~> 0.6.0')
+gem('ruby-ulid', '~> 0.6.1')
 ```
 
 ### How to use
@@ -58,10 +58,10 @@ gem('ruby-ulid', '~> 0.6.0')
 require 'ulid'
 
 ULID::VERSION
-# => "0.6.0"
+# => "0.6.1"
 ```
 
-NOTE: This README includes info about development version. If you would see released version's one. [Look at the ref](https://github.com/kachick/ruby-ulid/tree/v0.6.0).
+NOTE: This README includes info about development version. If you would see released version's one. [Look at the ref](https://github.com/kachick/ruby-ulid/tree/v0.6.1).
 
 ### Generator and Parser
 
