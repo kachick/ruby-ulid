@@ -53,7 +53,7 @@ class ULID
     BASE32_TR_PATTERN = base32_to_crockford.keys.join.freeze
     ENCODING_STRING = CROCKFORD_TR_PATTERN = base32_to_crockford.values.join.freeze
 
-    normarized_by_variant = {
+    variant_to_normarized = {
       'L' => '1',
       'l' => '1',
       'I' => '1',
@@ -61,8 +61,8 @@ class ULID
       'O' => '0',
       'o' => '0'
     }.freeze
-    VARIANT_TR_PATTERN = normarized_by_variant.keys.join.freeze
-    NORMALIZED_TR_PATTERN = normarized_by_variant.values.join.freeze
+    VARIANT_TR_PATTERN = variant_to_normarized.keys.join.freeze
+    NORMALIZED_TR_PATTERN = variant_to_normarized.values.join.freeze
 
     # @note Avoid to depend regex as possible. `tr(string, string)` is almost 2x Faster than `gsub(regex, hash)` in Ruby 3.1
 
