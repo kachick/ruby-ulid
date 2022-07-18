@@ -4,6 +4,8 @@
 
 # Copyright (C) 2021 Kenichi Kamiya
 
+require_relative('errors')
+
 class ULID
   # @see https://www.crockford.com/base32.html
   #
@@ -17,61 +19,42 @@ class ULID
   module CrockfordBase32
     class SetupError < UnexpectedError; end
 
-    n32_chars = [*'0'..'9', *'A'..'V'].map(&:freeze).freeze
-    raise(SetupError, 'obvious bug exists in the mapping algorithm') unless n32_chars.size == 32
+    # Excluded I, L, O, U, -.
+    # This is the encoding patterns.
+    # The decoding issue is written in ULID::CrockfordBase32
+    ENCODING_STRING = '0123456789ABCDEFGHJKMNPQRSTVWXYZ'
+    raise(SetupError, 'obvious bug exists to define CrockfordBase32 encoding') unless ENCODING_STRING.size == 32
 
-    n32_char_by_number = {}
-    n32_chars.each_with_index do |char, index|
-      n32_char_by_number[index] = char
-    end
-    n32_char_by_number.freeze
+    ORDERED_CROCKFORD_BASE32_CHARS = ENCODING_STRING.chars.map(&:freeze).freeze
+    CROCKFORD_BASE32_CHAR_PATTERN = /[#{ENCODING_STRING}]/.freeze
 
-    crockford_base32_mappings = {
-      'J' => 18,
-      'K' => 19,
-      'M' => 20,
-      'N' => 21,
-      'P' => 22,
-      'Q' => 23,
-      'R' => 24,
-      'S' => 25,
-      'T' => 26,
-      'V' => 27,
-      'W' => 28,
-      'X' => 29,
-      'Y' => 30,
-      'Z' => 31
-    }.freeze
+    # @todo Inline the definition to combined HashMap with ORDERED_CROCKFORD_BASE32_CHARS to improve readability
+    ORDERED_N32_CHARS = [*'0'..'9', *'A'..'V'].map(&:freeze).freeze
+    raise(SetupError, 'obvious bug exists to define the Base32 encoding') unless ORDERED_N32_CHARS.size == ORDERED_CROCKFORD_BASE32_CHARS.size
 
-    N32_CHAR_BY_CROCKFORD_BASE32_CHAR = CROCKFORD_BASE32_ENCODING_STRING.chars.map(&:freeze).each_with_object({}) do |encoding_char, map|
-      if n = crockford_base32_mappings[encoding_char]
-        char_32 = n32_char_by_number.fetch(n)
-        map[encoding_char] = char_32
-      end
-    end.freeze
-    raise(SetupError, 'obvious bug exists in the mapping algorithm') unless N32_CHAR_BY_CROCKFORD_BASE32_CHAR.keys == crockford_base32_mappings.keys
+    N32_CHAR_BY_CROCKFORD_BASE32_CHAR = ORDERED_CROCKFORD_BASE32_CHARS.zip(ORDERED_N32_CHARS).to_h.freeze
 
-    CROCKFORD_BASE32_CHAR_PATTERN = /[#{N32_CHAR_BY_CROCKFORD_BASE32_CHAR.keys.join}]/.freeze
+    CROCKFORD_BASE32_TR_PATTERN = ORDERED_CROCKFORD_BASE32_CHARS.join.freeze
+    N32_TR_PATTERN = N32_CHAR_BY_CROCKFORD_BASE32_CHAR.values.join.freeze
 
-    ORDERED_CROCKFORD_BASE32_CHARS = N32_CHAR_BY_CROCKFORD_BASE32_CHAR.keys.join.freeze
-    ORDERED_N32_CHARS = N32_CHAR_BY_CROCKFORD_BASE32_CHAR.values.join.freeze
-
-    STANDARD_BY_VARIANT = {
+    normarized_by_variant = {
       'L' => '1',
       'l' => '1',
       'I' => '1',
       'i' => '1',
       'O' => '0',
-      'o' => '0',
-      '-' => ''
+      'o' => '0'
     }.freeze
-    VARIANT_PATTERN = /[#{STANDARD_BY_VARIANT.keys.join}]/.freeze
+    VARIANT_TR_PATTERN = normarized_by_variant.keys.join.freeze
+    NORMALIZED_TR_PATTERN = normarized_by_variant.values.join.freeze
+
+    # @note Avoid to depend regex as possible. `tr(string, string)` is almost 2x Faster than `gsub(regex, hash)` in Ruby 3.1
 
     # @api private
     # @param [String] string
     # @return [Integer]
     def self.decode(string)
-      n32encoded = string.upcase.gsub(CROCKFORD_BASE32_CHAR_PATTERN, N32_CHAR_BY_CROCKFORD_BASE32_CHAR)
+      n32encoded = string.upcase.tr(CROCKFORD_BASE32_TR_PATTERN, N32_TR_PATTERN)
       n32encoded.to_i(32)
     end
 
@@ -87,15 +70,14 @@ class ULID
     # @param [String] string
     # @return [String]
     def self.normalize(string)
-      string.gsub(VARIANT_PATTERN, STANDARD_BY_VARIANT)
+      string.delete('-').tr(VARIANT_TR_PATTERN, NORMALIZED_TR_PATTERN)
     end
 
     # @api private
     # @param [String] n32encoded
     # @return [String]
     def self.from_n32(n32encoded)
-      # `tr` is almost 2x Faster than `gsub(regex, hash)` in Ruby 3.1
-      n32encoded.upcase.tr(ORDERED_N32_CHARS, ORDERED_CROCKFORD_BASE32_CHARS)
+      n32encoded.upcase.tr(N32_TR_PATTERN, CROCKFORD_BASE32_TR_PATTERN)
     end
   end
 end

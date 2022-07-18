@@ -1,6 +1,5 @@
 class ULID < Object
   VERSION: String
-  CROCKFORD_BASE32_ENCODING_STRING: String
   TIMESTAMP_ENCODED_LENGTH: 10
   RANDOMNESS_ENCODED_LENGTH: 16
   ENCODED_LENGTH: 26
@@ -39,13 +38,16 @@ class ULID < Object
     class SetupError < UnexpectedError
     end
 
+    ENCODING_STRING: String
+    ORDERED_CROCKFORD_BASE32_CHARS: Array[String]
+    ORDERED_N32_CHARS: Array[String]
     N32_CHAR_BY_CROCKFORD_BASE32_CHAR: Hash[String, String]
     CROCKFORD_BASE32_CHAR_PATTERN: Regexp
     CROCKFORD_BASE32_CHAR_BY_N32_CHAR: Hash[String, String]
-    ORDERED_CROCKFORD_BASE32_CHARS: String
-    ORDERED_N32_CHARS: String
-    STANDARD_BY_VARIANT: Hash[String, String]
-    VARIANT_PATTERN: Regexp
+    CROCKFORD_BASE32_TR_PATTERN: String
+    N32_TR_PATTERN: String
+    VARIANT_TR_PATTERN: String
+    NORMALIZED_TR_PATTERN: String
 
     # A private API. Should not be used in your code.
     def self.encode: (Integer integer) -> String
@@ -155,6 +157,8 @@ class ULID < Object
   # Retuns encoded and normalzied String.
   # It has same arguments signatures as `.generate`. So can be used for just ID creation usecases without needless object creation.
   #
+  # NOTE: Difference of ULID#encode, returned String is NOT frozen.
+  #
   def self.encode: (?moment: moment, ?entropy: Integer) -> String
 
   # A private API. Should not be used in your code.
@@ -220,13 +224,24 @@ class ULID < Object
   # ```
   def self.floor: (Time time) -> Time
 
-  # Get ULID instance from encoded String.
+  # Return ULID instance from encoded String.
   #
   # ```ruby
   # ulid = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
   # #=> ULID(2016-07-30 23:54:10.259 UTC: 01ARZ3NDEKTSV4RRFFQ69G5FAV)
   # ```
   def self.parse: (_ToStr string) -> ULID
+
+  # Return Time instance from encoded String.
+  # See also `ULID.encode` for similar purpose.
+  #
+  # NOTE: Difference of ULID#to_time, returned Time is NOT frozen.
+  #
+  # ```ruby
+  # time = ULID.decode_time('01ARZ3NDEKTSV4RRFFQ69G5FAV')
+  # #=> 2016-07-30 23:54:10.259 UTC
+  # ```
+  def self.decode_time: (_ToStr string, ?in: String | Integer | nil) -> Time
 
   # Get ULID instance from unnormalized String that encoded in Crockford's base32.
   #

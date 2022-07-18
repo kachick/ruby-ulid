@@ -99,14 +99,32 @@ ULID.generate(moment: time) #=> ULID(2000-01-01 00:00:00.000 UTC: 00VHNCZB006WQT
 ULID.at(time) #=> ULID(2000-01-01 00:00:00.000 UTC: 00VHNCZB002W5BGWWKN76N22H6)
 ```
 
-Also `ULID.encode` can be used if you just want to get strings.  
-It returns [normalized](#variants-of-format) String without ULID object creation.  
+Also `ULID.encode` and `ULID.decode_time` can be used to get primitive values for most usecases.  
+
+`ULID.encode` returns [normalized](#variants-of-format) String without ULID object creation.  
 It can take same arguments as `ULID.generate`.
 
 ```ruby
 ULID.encode #=> "01G86M42Q6SJ9XQM2ZRM6JRDSF"
 ULID.encode(moment: Time.at(946684800).utc) #=> "00VHNCZB00SYG7RCEXZC9DA4E1"
 ```
+
+`ULID.decode_time` returns Time. It can take `in` keyarg as same as `Time.at`.
+
+```ruby
+ULID.decode_time('00VHNCZB00SYG7RCEXZC9DA4E1') #=> 2000-01-01 00:00:00 UTC
+ULID.decode_time('00VHNCZB00SYG7RCEXZC9DA4E1', in: '+09:00') #=> 2000-01-01 09:00:00 +0900
+```
+
+This project does not prioritize the speed. However it actually works faster than others! :zap:
+
+Snapshot on 0.6.0.pre is below
+
+* Generator is 1.4x faster than - [ulid gem](https://github.com/rafaelsales/ulid)
+* Generator is 1.7x faster than - [ulid-ruby gem](https://github.com/abachman/ulid-ruby)
+* Parser is 2.6x faster than - [ulid-ruby gem](https://github.com/abachman/ulid-ruby)
+
+You can see further detail at [Benchmark](https://github.com/kachick/ruby-ulid/wiki/Benchmark).
 
 ### Sortable with the timestamp
 
