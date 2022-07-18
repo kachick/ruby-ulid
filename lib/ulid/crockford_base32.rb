@@ -4,8 +4,6 @@
 
 # Copyright (C) 2021 Kenichi Kamiya
 
-require_relative('errors')
-
 class ULID
   # @see https://www.crockford.com/base32.html
   #
@@ -17,8 +15,6 @@ class ULID
   #   * https://github.com/kachick/ruby-ulid/issues/57
   #   * https://github.com/kachick/ruby-ulid/issues/78
   module CrockfordBase32
-    class SetupError < UnexpectedError; end
-
     # Excluded I, L, O, U, - from Base32
     base32_to_crockford = {
       '0' => '0',
@@ -54,7 +50,6 @@ class ULID
       'U' => 'Y',
       'V' => 'Z'
     }.freeze
-
     BASE32_TR_PATTERN = base32_to_crockford.keys.join.freeze
     ENCODING_STRING = CROCKFORD_BASE32_TR_PATTERN = base32_to_crockford.values.freeze.join.freeze
 
