@@ -15,8 +15,7 @@ class ULID
   #   * https://github.com/kachick/ruby-ulid/issues/57
   #   * https://github.com/kachick/ruby-ulid/issues/78
   module CrockfordBase32
-    # Excluded I, L, O, U, - from Base32
-    base32_to_crockford = {
+    same_definitions = {
       '0' => '0',
       '1' => '1',
       '2' => '2',
@@ -34,7 +33,11 @@ class ULID
       'E' => 'E',
       'F' => 'F',
       'G' => 'G',
-      'H' => 'H',
+      'H' => 'H'
+    }.freeze
+
+    # Excluded I, L, O, U, - from Base32
+    base32_to_crockford = {
       'I' => 'J',
       'J' => 'K',
       'K' => 'M',
@@ -51,7 +54,8 @@ class ULID
       'V' => 'Z'
     }.freeze
     BASE32_TR_PATTERN = base32_to_crockford.keys.join.freeze
-    ENCODING_STRING = CROCKFORD_TR_PATTERN = base32_to_crockford.values.join.freeze
+    CROCKFORD_TR_PATTERN = base32_to_crockford.values.join.freeze
+    ENCODING_STRING = "#{same_definitions.values.join}#{CROCKFORD_TR_PATTERN}".freeze
 
     variant_to_normarized = {
       'L' => '1',
