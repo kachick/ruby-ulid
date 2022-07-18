@@ -6,6 +6,11 @@
 
 require('securerandom')
 
+require_relative('ulid/version')
+require_relative('ulid/errors')
+require_relative('ulid/crockford_base32')
+require_relative('ulid/monotonic_generator')
+
 # @see https://github.com/ulid/spec
 # @!attribute [r] milliseconds
 #   @return [Integer]
@@ -13,16 +18,6 @@ require('securerandom')
 #   @return [Integer]
 class ULID
   include(Comparable)
-
-  class Error < StandardError; end
-  class OverflowError < Error; end
-  class ParserError < Error; end
-  class UnexpectedError < Error; end
-
-  # Excluded I, L, O, U, -.
-  # This is the encoding patterns.
-  # The decoding issue is written in ULID::CrockfordBase32
-  CROCKFORD_BASE32_ENCODING_STRING = '0123456789ABCDEFGHJKMNPQRSTVWXYZ'
 
   TIMESTAMP_ENCODED_LENGTH = 10
   RANDOMNESS_ENCODED_LENGTH = 16
@@ -38,12 +33,12 @@ class ULID
 
   # @see https://github.com/ulid/spec/pull/57
   # Currently not used as a constant, but kept as a reference for now.
-  PATTERN_WITH_CROCKFORD_BASE32_SUBSET = /(?<timestamp>[0-7][#{CROCKFORD_BASE32_ENCODING_STRING}]{#{TIMESTAMP_ENCODED_LENGTH - 1}})(?<randomness>[#{CROCKFORD_BASE32_ENCODING_STRING}]{#{RANDOMNESS_ENCODED_LENGTH}})/i.freeze
+  PATTERN_WITH_CROCKFORD_BASE32_SUBSET = /(?<timestamp>[0-7][#{CrockfordBase32::ENCODING_STRING}]{#{TIMESTAMP_ENCODED_LENGTH - 1}})(?<randomness>[#{CrockfordBase32::ENCODING_STRING}]{#{RANDOMNESS_ENCODED_LENGTH}})/i.freeze
 
   STRICT_PATTERN_WITH_CROCKFORD_BASE32_SUBSET = /\A#{PATTERN_WITH_CROCKFORD_BASE32_SUBSET.source}\z/i.freeze
 
   # Optimized for `ULID.scan`, might be changed the definition with gathered `ULID.scan` spec changed.
-  SCANNING_PATTERN = /\b[0-7][#{CROCKFORD_BASE32_ENCODING_STRING}]{#{TIMESTAMP_ENCODED_LENGTH - 1}}[#{CROCKFORD_BASE32_ENCODING_STRING}]{#{RANDOMNESS_ENCODED_LENGTH}}\b/i.freeze
+  SCANNING_PATTERN = /\b[0-7][#{CrockfordBase32::ENCODING_STRING}]{#{TIMESTAMP_ENCODED_LENGTH - 1}}[#{CrockfordBase32::ENCODING_STRING}]{#{RANDOMNESS_ENCODED_LENGTH}}\b/i.freeze
 
   # Similar as Time#inspect since Ruby 2.7, however it is NOT same.
   # Time#inspect trancates needless digits. Keeping full milliseconds with "%3N" will fit for ULID.
@@ -603,12 +598,9 @@ class ULID
   end
 end
 
-require_relative('ulid/version')
-require_relative('ulid/crockford_base32')
-require_relative('ulid/monotonic_generator')
 require_relative('ulid/ractor_unshareable_constants')
 
 class ULID
   # Do not write as `ULID.private_constant` for avoiding YARD warnings `[warn]: in YARD::Handlers::Ruby::PrivateConstantHandler: Undocumentable private constants:`
-  private_constant(:TIME_FORMAT_IN_INSPECT, :MIN, :MAX, :RANDOM_INTEGER_GENERATOR, :CROCKFORD_BASE32_ENCODING_STRING)
+  private_constant(:TIME_FORMAT_IN_INSPECT, :MIN, :MAX, :RANDOM_INTEGER_GENERATOR)
 end
