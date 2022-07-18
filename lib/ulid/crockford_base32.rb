@@ -51,7 +51,7 @@ class ULID
       'V' => 'Z'
     }.freeze
     BASE32_TR_PATTERN = base32_to_crockford.keys.join.freeze
-    ENCODING_STRING = CROCKFORD_BASE32_TR_PATTERN = base32_to_crockford.values.freeze.join.freeze
+    ENCODING_STRING = CROCKFORD_TR_PATTERN = base32_to_crockford.values.join.freeze
 
     normarized_by_variant = {
       'L' => '1',
@@ -70,7 +70,7 @@ class ULID
     # @param [String] string
     # @return [Integer]
     def self.decode(string)
-      n32encoded = string.upcase.tr(CROCKFORD_BASE32_TR_PATTERN, BASE32_TR_PATTERN)
+      n32encoded = string.upcase.tr(CROCKFORD_TR_PATTERN, BASE32_TR_PATTERN)
       n32encoded.to_i(32)
     end
 
@@ -93,7 +93,7 @@ class ULID
     # @param [String] n32encoded
     # @return [String]
     def self.from_n32(n32encoded)
-      n32encoded.upcase.tr(BASE32_TR_PATTERN, CROCKFORD_BASE32_TR_PATTERN)
+      n32encoded.upcase.tr(BASE32_TR_PATTERN, CROCKFORD_TR_PATTERN)
     end
   end
 end
