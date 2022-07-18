@@ -82,6 +82,9 @@ class ULID < Object
     # The `Thread-safety` is implemented with [Monitor](https://bugs.ruby-lang.org/issues/16255)
     def generate: (?moment: moment) -> ULID
 
+    # Just providing similar api as `ULID.generate` and `ULID.encode` relation. No performance benefit exists in monotonic generator's one.
+    def encode: (?moment: moment) -> String
+
     # Returned value is `basically not` Thread-safety
     # If you want to keep Thread-safety, keep to call {#generate} only in same {#synchronize} block
     #

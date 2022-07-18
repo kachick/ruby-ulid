@@ -606,6 +606,7 @@ class TestULIDClass < Test::Unit::TestCase
   def test_encode
     assert_instance_of(String, ULID.encode)
     assert_not_equal(ULID.encode, ULID.encode)
+    assert_true(ULID.normalized?(ULID.encode))
 
     time = Time.at(946684800, Rational('123456.789')).utc
     gen = ULID.encode(moment: time)

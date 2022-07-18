@@ -70,9 +70,11 @@ class ULID
       end
     end
 
-    # @todo Consider to provide this
-    # def encode
-    # end
+    # @param [Time, Integer] moment
+    # @return [String]
+    def encode(moment: ULID.current_milliseconds)
+      generate(moment: moment).encode
+    end
 
     undef_method(:freeze)
 

@@ -14,10 +14,21 @@ class TestULIDMonotonicGenerator < Test::Unit::TestCase
 
   def test_interface
     assert_instance_of(ULID::MonotonicGenerator, @generator)
-    assert_not_equal(@generator.generate, @generator.generate)
     first = @generator.generate
+    assert_instance_of(ULID, first)
     second = @generator.generate
-    assert_equal(true, second > first)
+    assert_not_equal(second, first)
+    assert_true(second > first)
+    third_string = @generator.encode
+    assert_instance_of(String, third_string)
+    assert_true(ULID.normalized?(third_string))
+    fourth_string = @generator.encode
+    assert_not_equal(fourth_string, third_string)
+    assert_true(fourth_string > third_string)
+    assert_equal(
+      [first.encode, second.encode, third_string, fourth_string],
+      [first.encode, second.encode, third_string, fourth_string].shuffle.sort
+    )
   end
 
   def test_generate_with_negative_moment
