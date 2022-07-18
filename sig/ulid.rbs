@@ -157,6 +157,8 @@ class ULID < Object
   # Retuns encoded and normalzied String.
   # It has same arguments signatures as `.generate`. So can be used for just ID creation usecases without needless object creation.
   #
+  # NOTE: Difference of ULID#encode, returned String is NOT frozen.
+  #
   def self.encode: (?moment: moment, ?entropy: Integer) -> String
 
   # A private API. Should not be used in your code.
@@ -222,13 +224,24 @@ class ULID < Object
   # ```
   def self.floor: (Time time) -> Time
 
-  # Get ULID instance from encoded String.
+  # Return ULID instance from encoded String.
   #
   # ```ruby
   # ulid = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
   # #=> ULID(2016-07-30 23:54:10.259 UTC: 01ARZ3NDEKTSV4RRFFQ69G5FAV)
   # ```
   def self.parse: (_ToStr string) -> ULID
+
+  # Return Time instance from encoded String.
+  # See also `ULID.encode` for similar purpose.
+  #
+  # NOTE: Difference of ULID#to_time, returned Time is NOT frozen.
+  #
+  # ```ruby
+  # time = ULID.decode_time('01ARZ3NDEKTSV4RRFFQ69G5FAV')
+  # #=> 2016-07-30 23:54:10.259 UTC
+  # ```
+  def self.decode_time: (_ToStr string, ?in: String | Integer | nil) -> Time
 
   # Get ULID instance from unnormalized String that encoded in Crockford's base32.
   #

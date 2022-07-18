@@ -10,6 +10,7 @@ encoded = sample.to_s
 
 Benchmark.ips do |x|
   x.report('ULID.parse') { ULID.parse(encoded) }
+  x.report('ULID.decode_time') { ULID.decode_time(encoded) }
   x.report('ULID.from_integer') { ULID.from_integer(fixed_integer) }
   x.compare!
 end

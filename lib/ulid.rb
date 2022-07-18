@@ -55,12 +55,14 @@ class ULID
     from_milliseconds_and_entropy(milliseconds: milliseconds_from_moment(moment), entropy: entropy)
   end
 
+  # Almost same as [.generate] except directly returning String without needless object creation
+  #
   # @param [Integer, Time] moment
   # @param [Integer] entropy
   # @return [String]
   def self.encode(moment: current_milliseconds, entropy: reasonable_entropy)
     n32_encoded = encode_n32(milliseconds: milliseconds_from_moment(moment), entropy: entropy)
-    CrockfordBase32.from_n32(n32_encoded).upcase.freeze
+    CrockfordBase32.from_n32(n32_encoded)
   end
 
   # Short hand of `ULID.generate(moment: time)`
@@ -296,6 +298,25 @@ class ULID
 
     normalized_in_crockford = CrockfordBase32.normalize(string)
     parse(normalized_in_crockford)
+  end
+
+  # Almost same as `ULID.parse(string).to_time` except directly returning Time instance without needless object creation
+  #
+  # @param [String, #to_str] string
+  # @return [Time]
+  # @raise [ParserError] if the given format is not correct for ULID specs
+  def self.decode_time(string, in: 'UTC')
+    in_for_time_at = binding.local_variable_get(:in) # Needed because `in` is a reserved word.
+    string = String.try_convert(string)
+    raise(ArgumentError, 'ULID.decode_time takes only strings') unless string
+
+    unless STRICT_PATTERN_WITH_CROCKFORD_BASE32_SUBSET.match?(string)
+      raise(ParserError, "given `#{string}` does not match to `#{STRICT_PATTERN_WITH_CROCKFORD_BASE32_SUBSET.inspect}`")
+    end
+
+    timestamp = string.slice(0, TIMESTAMP_ENCODED_LENGTH).freeze || raise(UnexpectedError)
+
+    Time.at(0, CrockfordBase32.decode(timestamp), :millisecond, in: in_for_time_at)
   end
 
   # @param [String, #to_str] string

@@ -38,6 +38,7 @@ class TestULIDClass < Test::Unit::TestCase
         :at,
         :normalized?,
         :parse,
+        :decode_time,
         :valid_as_variant_format?,
         :parse_variant_format
       ].sort,
@@ -77,7 +78,7 @@ class TestULIDClass < Test::Unit::TestCase
     parsed = ULID.parse(string)
 
     # Ensure the string is not modified in parser
-    assert_equal(false, string.frozen?)
+    assert_false(string.frozen?)
     assert_equal(dup_string, string)
 
     assert_instance_of(ULID, parsed)
@@ -143,6 +144,51 @@ class TestULIDClass < Test::Unit::TestCase
         ULID.parse_variant_format(evil)
       end
       assert_equal('ULID.parse_variant_format takes only strings', err.message)
+    end
+  end
+
+  def test_decode_time
+    string = +'01ARZ3NDEKTSV4RRFFQ69G5FAV'
+    dup_string = string.dup
+    parsed = ULID.parse(string)
+    decoded_time = ULID.decode_time(string)
+
+    # Ensure the string is not modified in parser
+    assert_false(string.frozen?)
+    assert_equal(dup_string, string)
+
+    assert_instance_of(Time, decoded_time)
+    assert_equal(parsed.to_time, decoded_time)
+    assert_equal(decoded_time, ULID.decode_time(string.downcase))
+    assert_true(decoded_time.utc?)
+    assert_false(decoded_time.frozen?)
+
+    with_in = ULID.decode_time(string, in: '+09:00')
+
+    assert_false(with_in.utc?)
+    assert_equal(32400, with_in.utc_offset)
+
+    [
+      '',
+      "01ARZ3NDEKTSV4RRFFQ69G5FAV\n",
+      '01ARZ3NDEKTSV4RRFFQ69G5FAU',
+      '01ARZ3NDEKTSV4RRFFQ69G5FA'
+    ].each do |invalid|
+      err = assert_raises(ULID::ParserError) do
+        ULID.decode_time(invalid)
+      end
+      assert_match(/does not match to/, err.message)
+    end
+
+    assert_raises(ArgumentError) do
+      ULID.decode_time
+    end
+
+    [nil, 42, string.to_sym, BasicObject.new, Object.new, parsed].each do |evil|
+      err = assert_raises(ArgumentError) do
+        ULID.decode_time(evil)
+      end
+      assert_equal('ULID.decode_time takes only strings', err.message)
     end
   end
 
@@ -613,8 +659,7 @@ class TestULIDClass < Test::Unit::TestCase
     ulid = ULID.parse(gen)
     assert_equal(ulid.to_s, gen)
     assert_not_same(ulid.to_s, gen)
-    assert_equal(gen.frozen?, ulid.to_s.frozen?)
-    assert_true(gen.frozen?)
+    assert_false(gen.frozen?)
     assert_not_equal(time, ulid.to_time)
     assert_equal(true, ulid.to_time < time)
     assert_equal(ULID.floor(time), ulid.to_time)
