@@ -12,7 +12,12 @@ end
 
 group(:development) do
   gem('debug', '~> 1.6.1', require: false)
-  gem('rbs', '~> 2.6.0', require: false)
+  gem(
+    'rbs',
+    # To apply https://github.com/ruby/rbs/pull/1056
+    github: 'ruby/rbs',
+    require: false
+  )
   gem('steep', '~> 1.0.1', require: false)
   gem('benchmark-ips', '~> 2.10.0', require: false)
   gem('stackprof')
