@@ -101,6 +101,7 @@ task(:benchmark_with_other_gems) do
       cd("./benchmark/compare_with_othergems/#{author}") do
         sh('bundle install --quiet')
         sh('bundle exec ruby -v ./generate.rb')
+        sh('bundle exec ruby -v ./parser.rb')
       end
     end
   end
