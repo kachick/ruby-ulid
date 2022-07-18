@@ -49,7 +49,7 @@ Should be installed!
 Add this line in your Gemfile.
 
 ```ruby
-gem('ruby-ulid', '~> 0.5.0')
+gem('ruby-ulid', '~> 0.6.0')
 ```
 
 ### How to use
@@ -58,10 +58,10 @@ gem('ruby-ulid', '~> 0.5.0')
 require 'ulid'
 
 ULID::VERSION
-# => "0.5.0"
+# => "0.6.0"
 ```
 
-NOTE: This README includes info about development version. If you would see released version's one. [Look at the ref](https://github.com/kachick/ruby-ulid/tree/v0.5.0).
+NOTE: This README includes info about development version. If you would see released version's one. [Look at the ref](https://github.com/kachick/ruby-ulid/tree/v0.6.0).
 
 ### Generator and Parser
 
@@ -118,7 +118,7 @@ ULID.decode_time('00VHNCZB00SYG7RCEXZC9DA4E1', in: '+09:00') #=> 2000-01-01 09:0
 
 This project does not prioritize the speed. However it actually works faster than others! :zap:
 
-Snapshot on 0.6.0.pre is below
+Snapshot on 0.6.0 is below
 
 * Generator is 1.4x faster than - [ulid gem](https://github.com/rafaelsales/ulid)
 * Generator is 1.7x faster than - [ulid-ruby gem](https://github.com/abachman/ulid-ruby)
