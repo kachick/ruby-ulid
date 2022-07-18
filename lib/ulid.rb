@@ -175,7 +175,7 @@ class ULID
       milliseconds: milliseconds,
       entropy: entropy,
       integer: integer,
-      encoded: CrockfordBase32.from_n32("#{n32encoded_timestamp}#{n32encoded_randomness}").freeze
+      encoded: CrockfordBase32.from_n32(n32encoded).freeze
     )
   end
 
