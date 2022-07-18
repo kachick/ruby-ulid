@@ -116,6 +116,16 @@ ULID.decode_time('00VHNCZB00SYG7RCEXZC9DA4E1') #=> 2000-01-01 00:00:00 UTC
 ULID.decode_time('00VHNCZB00SYG7RCEXZC9DA4E1', in: '+09:00') #=> 2000-01-01 09:00:00 +0900
 ```
 
+This project does not prioritize the speed. However it actually works faster than others! :zap:
+
+Snapshot on 0.6.0.pre is below
+
+* Generator is 1.4x faster than - [ulid gem](https://github.com/rafaelsales/ulid)
+* Generator is 1.7x faster than - [ulid-ruby gem](https://github.com/abachman/ulid-ruby)
+* Parser is 2.6x faster than - [ulid-ruby gem](https://github.com/abachman/ulid-ruby)
+
+You can see further detail at [Benchmark](https://github.com/kachick/ruby-ulid/wiki/Benchmark).
+
 ### Sortable with the timestamp
 
 ULIDs are sortable when they are generated in different timestamp with milliseconds precision.
