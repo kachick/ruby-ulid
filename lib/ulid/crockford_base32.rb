@@ -15,8 +15,10 @@ class ULID
   #   * https://github.com/kachick/ruby-ulid/issues/57
   #   * https://github.com/kachick/ruby-ulid/issues/78
   module CrockfordBase32
-    # Excluded I, L, O, U, - from Base32
-    base32_to_crockford = {
+    class SetupError < UnexpectedError
+    end
+
+    number_has_same_definition = {
       '0' => '0',
       '1' => '1',
       '2' => '2',
@@ -26,7 +28,10 @@ class ULID
       '6' => '6',
       '7' => '7',
       '8' => '8',
-      '9' => '9',
+      '9' => '9'
+    }.freeze
+
+    upcase_base32_to_crockford = {
       'A' => 'A',
       'B' => 'B',
       'C' => 'C',
@@ -50,8 +55,31 @@ class ULID
       'U' => 'Y',
       'V' => 'Z'
     }.freeze
-    BASE32_TR_PATTERN = base32_to_crockford.keys.join.freeze
-    ENCODING_STRING = CROCKFORD_TR_PATTERN = base32_to_crockford.values.join.freeze
+    upcase_crockford_to_base32 = upcase_base32_to_crockford.invert.freeze
+
+    # Excluded I, L, O, U, - from Base32
+    base32_to_crockford = {
+      **number_has_same_definition,
+      **upcase_base32_to_crockford,
+      **upcase_base32_to_crockford.transform_keys(&:downcase)
+    }.freeze
+    TR_PATTERN_FROM_BASE32 = base32_to_crockford.keys.join.freeze
+    TR_PATTERN_TO_CROCKFORD = base32_to_crockford.values.join.freeze
+
+    crockford_to_base32 = {
+      **number_has_same_definition,
+      **upcase_crockford_to_base32,
+      **upcase_crockford_to_base32.transform_keys(&:downcase)
+    }.freeze
+    TR_PATTERN_FROM_CROCKFORD = crockford_to_base32.keys.join.freeze
+    TR_PATTERN_TO_BASE32 = crockford_to_base32.values.join.freeze
+
+    # Do not include same char both downcase and upcase
+    ENCODING_STRING = { **number_has_same_definition, **upcase_base32_to_crockford }.values.join.freeze
+
+    unless (base32_to_crockford.size == crockford_to_base32.size) && (base32_to_crockford.size == 32 + (32 - number_has_same_definition.size))
+      raise(SetupError, 'obvious bug exists in mapping algorithm')
+    end
 
     variant_to_normarized = {
       'L' => '1',
@@ -70,7 +98,7 @@ class ULID
     # @param [String] string
     # @return [Integer]
     def self.decode(string)
-      n32encoded = string.upcase.tr(CROCKFORD_TR_PATTERN, BASE32_TR_PATTERN)
+      n32encoded = string.tr(TR_PATTERN_FROM_CROCKFORD, TR_PATTERN_TO_BASE32)
       n32encoded.to_i(32)
     end
 
@@ -93,7 +121,7 @@ class ULID
     # @param [String] n32encoded
     # @return [String]
     def self.from_n32(n32encoded)
-      n32encoded.upcase.tr(BASE32_TR_PATTERN, CROCKFORD_TR_PATTERN)
+      n32encoded.tr(TR_PATTERN_FROM_BASE32, TR_PATTERN_TO_CROCKFORD)
     end
   end
 end
