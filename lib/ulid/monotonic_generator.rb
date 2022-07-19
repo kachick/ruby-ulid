@@ -4,6 +4,9 @@
 
 # Copyright (C) 2021 Kenichi Kamiya
 
+require_relative('errors')
+require_relative('utils')
+
 class ULID
   class MonotonicGenerator
     # @note When use https://github.com/ko1/ractor-tvar might realize Ractor based thread safe monotonic generator.
@@ -31,7 +34,7 @@ class ULID
     # @raise [OverflowError] if the entropy part is larger than the ULID limit in same milliseconds
     # @raise [UnexpectedError] if the generated ULID is an invalid value in monotonicity spec.
     #   Basically will not happen. Just means this feature prefers error rather than invalid value.
-    def generate(moment: ULID.current_milliseconds)
+    def generate(moment: Utils.current_milliseconds)
       synchronize do
         prev_ulid = @prev
         unless prev_ulid
@@ -40,13 +43,13 @@ class ULID
           return ret
         end
 
-        milliseconds = ULID.milliseconds_from_moment(moment)
+        milliseconds = Utils.milliseconds_from_moment(moment)
 
         ulid = (
           if prev_ulid.milliseconds < milliseconds
             ULID.generate(moment: milliseconds)
           else
-            ULID.from_milliseconds_and_entropy(milliseconds: prev_ulid.milliseconds, entropy: prev_ulid.entropy.succ)
+            ULID.generate(moment: prev_ulid.milliseconds, entropy: prev_ulid.entropy.succ)
           end
         )
 
@@ -70,7 +73,7 @@ class ULID
 
     # @param [Time, Integer] moment
     # @return [String]
-    def encode(moment: ULID.current_milliseconds)
+    def encode(moment: Utils.current_milliseconds)
       generate(moment: moment).encode
     end
 

@@ -9,6 +9,7 @@ require('securerandom')
 require_relative('ulid/version')
 require_relative('ulid/errors')
 require_relative('ulid/crockford_base32')
+require_relative('ulid/utils')
 require_relative('ulid/monotonic_generator')
 
 # @see https://github.com/ulid/spec
@@ -46,13 +47,25 @@ class ULID
   # @see https://github.com/ruby/ruby/blob/744d17ff6c33b09334508e8110007ea2a82252f5/time.c#L4026-L4078
   TIME_FORMAT_IN_INSPECT = '%Y-%m-%d %H:%M:%S.%3N %Z'
 
+  RANDOM_INTEGER_GENERATOR = -> {
+    SecureRandom.random_number(MAX_INTEGER)
+  }.freeze
+
+  private_constant(
+    :PATTERN_WITH_CROCKFORD_BASE32_SUBSET,
+    :STRICT_PATTERN_WITH_CROCKFORD_BASE32_SUBSET,
+    :SCANNING_PATTERN,
+    :TIME_FORMAT_IN_INSPECT,
+    :RANDOM_INTEGER_GENERATOR
+  )
+
   private_class_method(:new)
 
   # @param [Integer, Time] moment
   # @param [Integer] entropy
   # @return [ULID]
-  def self.generate(moment: current_milliseconds, entropy: reasonable_entropy)
-    from_milliseconds_and_entropy(milliseconds: milliseconds_from_moment(moment), entropy: entropy)
+  def self.generate(moment: Utils.current_milliseconds, entropy: Utils.reasonable_entropy)
+    from_milliseconds_and_entropy(milliseconds: Utils.milliseconds_from_moment(moment), entropy: entropy)
   end
 
   # Almost same as [.generate] except directly returning String without needless object creation
@@ -60,9 +73,9 @@ class ULID
   # @param [Integer, Time] moment
   # @param [Integer] entropy
   # @return [String]
-  def self.encode(moment: current_milliseconds, entropy: reasonable_entropy)
-    n32_encoded = encode_n32(milliseconds: milliseconds_from_moment(moment), entropy: entropy)
-    CrockfordBase32.from_n32(n32_encoded)
+  def self.encode(moment: Utils.current_milliseconds, entropy: Utils.reasonable_entropy)
+    base32_encoded = Utils.encode_base32(milliseconds: Utils.milliseconds_from_moment(moment), entropy: entropy)
+    CrockfordBase32.from_base32(base32_encoded)
   end
 
   # Short hand of `ULID.generate(moment: time)`
@@ -71,7 +84,7 @@ class ULID
   def self.at(time)
     raise(ArgumentError, 'ULID.at takes only `Time` instance') unless Time === time
 
-    from_milliseconds_and_entropy(milliseconds: milliseconds_from_time(time), entropy: reasonable_entropy)
+    from_milliseconds_and_entropy(milliseconds: Utils.milliseconds_from_time(time), entropy: Utils.reasonable_entropy)
   end
 
   # @param [Time, Integer] moment
@@ -85,10 +98,6 @@ class ULID
   def self.max(moment=MAX_MILLISECONDS)
     MAX_MILLISECONDS.equal?(moment) ? MAX : generate(moment: moment, entropy: MAX_ENTROPY)
   end
-
-  RANDOM_INTEGER_GENERATOR = -> {
-    SecureRandom.random_number(MAX_INTEGER)
-  }.freeze
 
   # @param [Range<Time>, Range<nil>, Range[ULID], nil] period
   # @overload sample(number, period: nil)
@@ -162,20 +171,20 @@ class ULID
     raise(OverflowError, "integer overflow: given #{integer}, max: #{MAX_INTEGER}") unless integer <= MAX_INTEGER
     raise(ArgumentError, "integer should not be negative: given: #{integer}") if integer.negative?
 
-    n32encoded = integer.to_s(32).rjust(ENCODED_LENGTH, '0')
-    n32encoded_timestamp = n32encoded.slice(0, TIMESTAMP_ENCODED_LENGTH)
-    n32encoded_randomness = n32encoded.slice(TIMESTAMP_ENCODED_LENGTH, RANDOMNESS_ENCODED_LENGTH)
+    base32encoded = integer.to_s(32).rjust(ENCODED_LENGTH, '0')
+    base32encoded_timestamp = base32encoded.slice(0, TIMESTAMP_ENCODED_LENGTH)
+    base32encoded_randomness = base32encoded.slice(TIMESTAMP_ENCODED_LENGTH, RANDOMNESS_ENCODED_LENGTH)
 
-    raise(UnexpectedError) unless n32encoded_timestamp && n32encoded_randomness
+    raise(UnexpectedError) unless base32encoded_timestamp && base32encoded_randomness
 
-    milliseconds = n32encoded_timestamp.to_i(32)
-    entropy = n32encoded_randomness.to_i(32)
+    milliseconds = base32encoded_timestamp.to_i(32)
+    entropy = base32encoded_randomness.to_i(32)
 
     new(
       milliseconds: milliseconds,
       entropy: entropy,
       integer: integer,
-      encoded: CrockfordBase32.from_n32(n32encoded).freeze
+      encoded: CrockfordBase32.from_base32(base32encoded).freeze
     )
   end
 
@@ -230,49 +239,6 @@ class ULID
     raise(ArgumentError, 'ULID.floor takes only `Time` instance') unless Time === time
 
     time.floor(3)
-  end
-
-  # @api private
-  # @return [Integer]
-  def self.current_milliseconds
-    milliseconds_from_time(Time.now)
-  end
-
-  # @api private
-  # @param [Time] time
-  # @return [Integer]
-  private_class_method def self.milliseconds_from_time(time)
-    (time.to_r * 1000).to_i
-  end
-
-  # @api private
-  # @param [Time, Integer] moment
-  # @return [Integer]
-  def self.milliseconds_from_moment(moment)
-    case moment
-    when Integer
-      moment
-    when Time
-      milliseconds_from_time(moment)
-    else
-      raise(ArgumentError, '`moment` should be a `Time` or `Integer as milliseconds`')
-    end
-  end
-
-  # @return [Integer]
-  private_class_method def self.reasonable_entropy
-    SecureRandom.random_number(MAX_ENTROPY)
-  end
-
-  private_class_method def self.encode_n32(milliseconds:, entropy:)
-    raise(ArgumentError, 'milliseconds and entropy should be an `Integer`') unless Integer === milliseconds && Integer === entropy
-    raise(OverflowError, "timestamp overflow: given #{milliseconds}, max: #{MAX_MILLISECONDS}") unless milliseconds <= MAX_MILLISECONDS
-    raise(OverflowError, "entropy overflow: given #{entropy}, max: #{MAX_ENTROPY}") unless entropy <= MAX_ENTROPY
-    raise(ArgumentError, 'milliseconds and entropy should not be negative') if milliseconds.negative? || entropy.negative?
-
-    n32encoded_timestamp = milliseconds.to_s(32).rjust(TIMESTAMP_ENCODED_LENGTH, '0')
-    n32encoded_randomness = entropy.to_s(32).rjust(RANDOMNESS_ENCODED_LENGTH, '0')
-    "#{n32encoded_timestamp}#{n32encoded_randomness}"
   end
 
   # @param [String, #to_str] string
@@ -375,73 +341,29 @@ class ULID
       if ULID === converted
         converted
       else
-        object_class_name = safe_get_class_name(object)
-        converted_class_name = safe_get_class_name(converted)
+        object_class_name = Utils.safe_get_class_name(object)
+        converted_class_name = Utils.safe_get_class_name(converted)
         raise(TypeError, "can't convert #{object_class_name} to ULID (#{object_class_name}#to_ulid gives #{converted_class_name})")
       end
     end
   end
 
-  # @param [BasicObject] object
-  # @return [String]
-  private_class_method def self.safe_get_class_name(object)
-    fallback = 'UnknownObject'
-
-    # This class getter implementation used https://github.com/rspec/rspec-support/blob/4ad8392d0787a66f9c351d9cf6c7618e18b3d0f2/lib/rspec/support.rb#L83-L89 as a reference, thank you!
-    # ref: https://twitter.com/_kachick/status/1400064896759304196
-    klass = (
-      begin
-        object.class
-      rescue NoMethodError
-        # steep can't correctly handle singleton class assign. See https://github.com/soutaro/steep/pull/586 for further detail
-        # So this annotation is hack for the type infer.
-        # @type var object: BasicObject
-        # @type var singleton_class: untyped
-        singleton_class = class << object; self; end
-        (Class === singleton_class) ? singleton_class.ancestors.detect { |ancestor| !ancestor.equal?(singleton_class) } : fallback
-      end
-    )
-
-    begin
-      name = String.try_convert(klass.name)
-    rescue Exception
-      fallback
-    else
-      name || fallback
-    end
-  end
-
-  # @api private
   # @param [Integer] milliseconds
   # @param [Integer] entropy
   # @return [ULID]
   # @raise [OverflowError] if the given value is larger than the ULID limit
   # @raise [ArgumentError] if the given milliseconds and/or entropy is negative number
-  def self.from_milliseconds_and_entropy(milliseconds:, entropy:)
-    n32_encoded = encode_n32(milliseconds: milliseconds, entropy: entropy)
+  private_class_method def self.from_milliseconds_and_entropy(milliseconds:, entropy:)
+    base32_encoded = Utils.encode_base32(milliseconds: milliseconds, entropy: entropy)
     new(
       milliseconds: milliseconds,
       entropy: entropy,
-      integer: n32_encoded.to_i(32),
-      encoded: CrockfordBase32.from_n32(n32_encoded).upcase.freeze
+      integer: base32_encoded.to_i(32),
+      encoded: CrockfordBase32.from_base32(base32_encoded).upcase.freeze
     )
   end
 
   attr_reader(:milliseconds, :entropy)
-
-  # @api private
-  # @param [Integer] milliseconds
-  # @param [Integer] entropy
-  # @param [Integer] integer
-  # @param [String] encoded
-  # @return [void]
-  def initialize(milliseconds:, entropy:, integer:, encoded:)
-    # All arguments check should be done with each constructors, not here
-    @integer = integer
-    @encoded = encoded
-    @milliseconds = milliseconds
-    @entropy = entropy
-  end
 
   # @return [String]
   def encode
@@ -611,6 +533,19 @@ class ULID
 
   private
 
+  # @param [Integer] milliseconds
+  # @param [Integer] entropy
+  # @param [Integer] integer
+  # @param [String] encoded
+  # @return [void]
+  def initialize(milliseconds:, entropy:, integer:, encoded:)
+    # All arguments check should be done with each constructors, not here
+    @integer = integer
+    @encoded = encoded
+    @milliseconds = milliseconds
+    @entropy = entropy
+  end
+
   # @return [void]
   def cache_all_instance_variables
     inspect
@@ -620,8 +555,3 @@ class ULID
 end
 
 require_relative('ulid/ractor_unshareable_constants')
-
-class ULID
-  # Do not write as `ULID.private_constant` for avoiding YARD warnings `[warn]: in YARD::Handlers::Ruby::PrivateConstantHandler: Undocumentable private constants:`
-  private_constant(:TIME_FORMAT_IN_INSPECT, :MIN, :MAX, :RANDOM_INTEGER_GENERATOR)
-end

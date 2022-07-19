@@ -34,10 +34,23 @@ class ULID < Object
   class UnexpectedError < Error
   end
 
-  module CrockfordBase32
-    class SetupError < UnexpectedError
-    end
+  # Private module
+  module Utils
+    def self.encode_base32: (milliseconds: Integer, entropy: Integer) -> String
 
+    def self.current_milliseconds: -> Integer
+
+    def self.milliseconds_from_moment: (moment moment) -> Integer
+
+    def self.reasonable_entropy: -> Integer
+
+    def self.milliseconds_from_time: (Time time) -> Integer
+
+    def self.safe_get_class_name: (untyped object) -> String
+  end
+
+  # Private module
+  module CrockfordBase32
     ENCODING_STRING: String
     CROCKFORD_TR_PATTERN: String
     BASE32_TR_PATTERN: String
@@ -54,7 +67,7 @@ class ULID < Object
     def self.normalize: (String string) -> String
 
     # A private API. Should not be used in your code.
-    def self.from_n32: (String n32encoded) -> String
+    def self.from_base32: (String base32encoded) -> String
   end
 
   class MonotonicGenerator
@@ -156,9 +169,6 @@ class ULID < Object
   #
   def self.encode: (?moment: moment, ?entropy: Integer) -> String
 
-  # A private API. Should not be used in your code.
-  def self.encode_n32: (milliseconds: Integer, entropy: Integer) -> String
-
   # Shorthand of `ULID.generate(moment: Time)`
   # See also [ULID.generate](https://kachick.github.io/ruby-ulid/ULID.html#generate-class_method)
   #
@@ -172,12 +182,6 @@ class ULID < Object
   # ulids.sort == ulids #=> true
   # ```
   def self.at: (Time time) -> ULID
-
-  # A private API. Should not be used in your code.
-  def self.current_milliseconds: -> Integer
-
-  # A private API. Should not be used in your code.
-  def self.milliseconds_from_moment: (moment moment) -> Integer
 
   # `ULID` can be element of the `Range`. If you generated the IDs in monotonic generator, ID based filtering is easy and reliable
   #
@@ -440,7 +444,7 @@ class ULID < Object
   # ```
   def self.scan:  (_ToStr string) -> Enumerator[self, singleton(ULID)]
                 | (_ToStr string) { (ULID ulid) -> void } -> singleton(ULID)
-  def self.from_milliseconds_and_entropy: (milliseconds: Integer, entropy: Integer) -> ULID
+
   def self.try_convert: (_ToULID) -> ULID
                       | (untyped) -> nil
 
@@ -609,14 +613,7 @@ class ULID < Object
 
   private
 
-  # A private API. Should not be used in your code.
-  def self.reasonable_entropy: -> Integer
-
-  # A private API. Should not be used in your code.
-  def self.milliseconds_from_time: (Time time) -> Integer
-
-  # A private API. Should not be used in your code.
-  def self.safe_get_class_name: (untyped object) -> String
+  def self.from_milliseconds_and_entropy: (milliseconds: Integer, entropy: Integer) -> ULID
 
   # A private API. Should not be used in your code.
   def initialize: (milliseconds: Integer, entropy: Integer, integer: Integer, encoded: String) -> void

@@ -6,6 +6,7 @@
 
 class ULID
   # @see https://www.crockford.com/base32.html
+  # @api private
   #
   # This module supporting only `subset of original crockford for actual use-case` in ULID context.
   # Original decoding spec allows other characters.
@@ -74,16 +75,16 @@ class ULID
     # @param [String] string
     # @return [Integer]
     def self.decode(string)
-      n32encoded = string.upcase.tr(CROCKFORD_TR_PATTERN, BASE32_TR_PATTERN)
-      n32encoded.to_i(32)
+      base32encoded = string.upcase.tr(CROCKFORD_TR_PATTERN, BASE32_TR_PATTERN)
+      base32encoded.to_i(32)
     end
 
     # @api private
     # @param [Integer] integer
     # @return [String]
     def self.encode(integer)
-      n32encoded = integer.to_s(32)
-      from_n32(n32encoded).rjust(ENCODED_LENGTH, '0')
+      base32encoded = integer.to_s(32)
+      from_base32(base32encoded).rjust(ENCODED_LENGTH, '0')
     end
 
     # @api private
@@ -94,10 +95,12 @@ class ULID
     end
 
     # @api private
-    # @param [String] n32encoded
+    # @param [String] base32encoded
     # @return [String]
-    def self.from_n32(n32encoded)
-      n32encoded.upcase.tr(BASE32_TR_PATTERN, CROCKFORD_TR_PATTERN)
+    def self.from_base32(base32encoded)
+      base32encoded.upcase.tr(BASE32_TR_PATTERN, CROCKFORD_TR_PATTERN)
     end
   end
+
+  private_constant(:CrockfordBase32)
 end
