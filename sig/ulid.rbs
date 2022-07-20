@@ -57,16 +57,12 @@ class ULID < Object
     VARIANT_TR_PATTERN: String
     NORMALIZED_TR_PATTERN: String
 
-    # A private API. Should not be used in your code.
     def self.encode: (Integer integer) -> String
 
-    # A private API. Should not be used in your code.
     def self.decode: (String string) -> Integer
 
-    # A private API. Should not be used in your code.
     def self.normalize: (String string) -> String
 
-    # A private API. Should not be used in your code.
     def self.from_base32: (String base32encoded) -> String
   end
 
@@ -84,9 +80,6 @@ class ULID < Object
     # end
     # ```
     attr_reader prev: ULID | nil
-
-    # A private API. Should not be used in your code.
-    def initialize: -> void
 
     # See [How to keep `Sortable` even if in same timestamp](https://github.com/kachick/ruby-ulid#how-to-keep-sortable-even-if-in-same-timestamp)
     # The `Thread-safety` is implemented with [Monitor](https://bugs.ruby-lang.org/issues/16255)
@@ -108,6 +101,10 @@ class ULID < Object
     def inspect: -> String
     alias to_s inspect
     def freeze: -> void
+
+    private
+
+    def initialize: -> void
   end
 
   interface _ToULID
@@ -595,10 +592,8 @@ class ULID < Object
   def pred: -> ULID?
   def freeze: -> self
 
-  # A private API. Should not be used in your code.
   def marshal_dump: -> Integer
 
-  # A private API. Should not be used in your code.
   def marshal_load: (Integer integer) -> void
 
   # Returns `self`
@@ -613,9 +608,7 @@ class ULID < Object
 
   private
 
-  # A private API. Should not be used in your code.
   def initialize: (milliseconds: Integer, entropy: Integer, integer: Integer, encoded: String) -> void
 
-  # A private API. Should not be used in your code.
   def cache_all_instance_variables: -> void
 end
