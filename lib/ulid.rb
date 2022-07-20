@@ -73,7 +73,7 @@ class ULID
       milliseconds: milliseconds,
       entropy: entropy,
       integer: base32_encoded.to_i(32),
-      encoded: CrockfordBase32.from_base32(base32_encoded).upcase.freeze
+      encoded: CrockfordBase32.from_base32(base32_encoded).freeze
     )
   end
 

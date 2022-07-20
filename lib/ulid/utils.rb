@@ -37,7 +37,7 @@ class ULID
       SecureRandom.random_number(MAX_ENTROPY)
     end
 
-    # @param [Integer, Time] moment
+    # @param [Integer] milliseconds
     # @param [Integer] entropy
     # @return [String]
     # @raise [OverflowError] if the given value is larger than the ULID limit
