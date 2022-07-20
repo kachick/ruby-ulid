@@ -110,13 +110,14 @@ class ULID < Object
       def to_s: () -> String
     end
 
-    type inspector = ^() -> String
+    # type inspector = ^() -> String
 
     private
 
     def initialize: -> void
 
-    def bump: [T < _ToS](moment: moment) { (milliseconds: milliseconds, entropy: Integer) -> [T, inspector] } -> T
+    # def bump: [T < _ToS](moment: moment) { (milliseconds: milliseconds, entropy: Integer) -> [T, inspector] } -> T
+    def bump: [T < _ToS](moment: moment) { (milliseconds: milliseconds, entropy: Integer) -> [T, ^(T) -> String] } -> T
 
     def rewind: (?prev_ulid: ULID?) -> void
   end
