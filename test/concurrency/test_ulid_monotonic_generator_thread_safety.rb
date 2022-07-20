@@ -90,7 +90,7 @@ class TestULIDMonotonicGeneratorThreadSafety < Test::Unit::TestCase
       @prev = initial_and_median
     end
 
-    # Given smaller than initial should not be happened... But addeed for ensuring https://github.com/kachick/ruby-ulid/issues/56
+    # Given smaller than initial should not be happened... But added for ensuring https://github.com/kachick/ruby-ulid/issues/56
     sample_1000_times_before_median = ULID.sample(1000, period: (initial_and_median.to_time - 999999)..initial_and_median.to_time).map(&:to_time)
     sample_2000_times_after_median = ULID.sample(2000, period: initial_and_median.to_time..(initial_and_median.to_time + 999999)).map(&:to_time)
 

@@ -588,8 +588,8 @@ class ULID
   # @param [Integer] integer
   # @return [void]
   def marshal_load(integer)
-    unmarshaled = ULID.from_integer(integer)
-    initialize(integer: unmarshaled.to_i, milliseconds: unmarshaled.milliseconds, entropy: unmarshaled.entropy, encoded: unmarshaled.to_s)
+    unmarshalled = ULID.from_integer(integer)
+    initialize(integer: unmarshalled.to_i, milliseconds: unmarshalled.milliseconds, entropy: unmarshalled.entropy, encoded: unmarshalled.to_s)
   end
 
   # @return [self]
