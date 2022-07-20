@@ -17,6 +17,41 @@ class TestULIDInstance < Test::Unit::TestCase
     end
   end
 
+  def test_exposed_methods
+    assert_equal(
+      [
+        :<=>,
+        :==,
+        :===,
+        :clone,
+        :dup,
+        :encode,
+        :entropy,
+        :eql?,
+        :freeze,
+        :hash,
+        :inspect,
+        :marshal_dump,
+        :marshal_load,
+        :milliseconds,
+        :next,
+        :octets,
+        :patterns,
+        :pred,
+        :randomness,
+        :randomness_octets, # dislike this name. However providing octets class sounds overdo...
+        :timestamp_octets, # dislike this too!
+        :succ,
+        :timestamp,
+        :to_i,
+        :to_s,
+        :to_time,
+        :to_ulid
+      ].sort,
+      ULID.sample.public_methods(false).sort
+    )
+  end
+
   def test_timestamp
     ulid = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
     assert_equal('01ARZ3NDEK', ulid.timestamp)

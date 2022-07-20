@@ -25,13 +25,13 @@ The name of this source file (`Rakefile'`) should use snake_case.
 
 `bundle exec rubocop` does not show this messsage. It looks fixed in https://github.com/rubyide/vscode-ruby/pull/647. However it is not released yet at 2022-05-26. (https://github.com/rubyide/vscode-ruby/commit/dc81c809c82003d26af9c4dc7c89fa8f8a26cbf5 "rebornix.ruby" maintainance is inactive now)
 
-## Feel the latest version with REPL
+## Touch the development version with REPL
 
 ```console
 $ ./bin/console
 # Starting up IRB with loading developing ULID library
 irb(main):001:0> ULID::VERSION
-=> "0.1.6"
+=> "0.7.0.pre"
 ```
 
 ```ruby
@@ -40,21 +40,16 @@ ulid = ULID.generate #=> ULID(2021-04-27 17:27:22.826 UTC: 01F4A5Y1YAQCYAYCTC7GR
 ls ULID
 
 # constants:
-#   CROCKFORD_BASE32_ENCODING_STRING             CrockfordBase32                       ENCODED_LENGTH
-#   Error                                        MAX_ENTROPY                           MAX_INTEGER
-#   MAX_MILLISECONDS                             MonotonicGenerator                    OCTETS_LENGTH
-#   OverflowError                                PATTERN_WITH_CROCKFORD_BASE32_SUBSET  ParserError
-#   RANDOMNESS_ENCODED_LENGTH                    RANDOMNESS_OCTETS_LENGTH              SCANNING_PATTERN
-#   STRICT_PATTERN_WITH_CROCKFORD_BASE32_SUBSET  TIMESTAMP_ENCODED_LENGTH              TIMESTAMP_OCTETS_LENGTH
-#   UnexpectedError                              VERSION
+#   ENCODED_LENGTH           Error                      MAX_ENTROPY               MAX_INTEGER
+#   MAX_MILLISECONDS         MonotonicGenerator         OCTETS_LENGTH             OverflowError
+#   ParserError              RANDOMNESS_ENCODED_LENGTH  RANDOMNESS_OCTETS_LENGTH  TIMESTAMP_ENCODED_LENGTH
+#   TIMESTAMP_OCTETS_LENGTH  UnexpectedError            VERSION
+# Module#methods: ...
+# Class#methods: ...
 # ULID.methods:
-#   at                        current_milliseconds  floor  from_integer  from_milliseconds_and_entropy  generate  max
-#   milliseconds_from_moment  min                   parse  range         sample                         scan      try_convert
-#   valid?
-# ULID#methods:
-#   <=>           ==    ===      clone     dup   entropy     eql?               freeze  hash       inspect
-#   milliseconds  next  octets   patterns  pred  randomness  randomness_octets  succ    timestamp  timestamp_octets
-#   to_i          to_s  to_time  to_ulid
+#   at         decode_time               encode  floor                 from_integer  generate  max   min
+#   normalize  normalized?               parse   parse_variant_format  range         sample    scan  try_convert
+#   valid?     valid_as_variant_format?
 # => nil
 ```
 

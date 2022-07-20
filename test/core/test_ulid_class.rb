@@ -11,6 +11,29 @@ class TestULIDClass < Test::Unit::TestCase
     ENV['TZ'] = 'EST' # Just chosen from not UTC and JST
   end
 
+  def test_exposed_constants
+    assert_equal(
+      [
+        :ENCODED_LENGTH,
+        :Error,
+        :MAX_ENTROPY,
+        :MAX_INTEGER,
+        :MAX_MILLISECONDS,
+        :MonotonicGenerator,
+        :OCTETS_LENGTH,
+        :OverflowError,
+        :ParserError,
+        :RANDOMNESS_ENCODED_LENGTH,
+        :RANDOMNESS_OCTETS_LENGTH,
+        :TIMESTAMP_ENCODED_LENGTH,
+        :TIMESTAMP_OCTETS_LENGTH,
+        :UnexpectedError,
+        :VERSION
+      ].sort,
+      ULID.constants.sort
+    )
+  end
+
   def test_exposed_methods
     exposed_methods = ULID.singleton_methods(false).freeze
 
@@ -23,12 +46,9 @@ class TestULIDClass < Test::Unit::TestCase
         :scan,
         :sample,
         :try_convert,
-        :valid?,
-        :current_milliseconds,
-        :from_milliseconds_and_entropy,
+        :valid?, # deprecated
         :max,
         :min,
-        :milliseconds_from_moment,
         :generate,
         :encode,
         :from_integer,
@@ -197,29 +217,6 @@ class TestULIDClass < Test::Unit::TestCase
       ULID.new(milliseconds: 0, entropy: 42)
     end
     assert_match(/private method `new' called/, err.message)
-  end
-
-  def test_from_milliseconds_and_entropy
-    err = assert_raises(ArgumentError) do
-      ULID.from_milliseconds_and_entropy(milliseconds: -1, entropy: 42)
-    end
-    assert_match('milliseconds and entropy should not be negative', err.message)
-
-    err = assert_raises(ArgumentError) do
-      ULID.from_milliseconds_and_entropy(milliseconds: 42, entropy: -1)
-    end
-    assert_match('milliseconds and entropy should not be negative', err.message)
-
-    [nil, BasicObject.new, '01ARZ3NDEKTSV4RRFFQ69G5FAV', '42', Time.now, ULID.sample, 4.2, Object.new].each do |evil|
-      err = assert_raises(ArgumentError) do
-        ULID.from_milliseconds_and_entropy(milliseconds: 42, entropy: evil)
-      end
-      assert_match('milliseconds and entropy should be an `Integer`', err.message)
-      err = assert_raises(ArgumentError) do
-        ULID.from_milliseconds_and_entropy(milliseconds: evil, entropy: 42)
-      end
-      assert_match('milliseconds and entropy should be an `Integer`', err.message)
-    end
   end
 
   def test_valid?
@@ -586,44 +583,47 @@ class TestULIDClass < Test::Unit::TestCase
   end
 
   def test_constant_regexp
-    assert_equal(true, ULID::PATTERN_WITH_CROCKFORD_BASE32_SUBSET.casefold?)
-    assert_equal(Encoding::US_ASCII, ULID::PATTERN_WITH_CROCKFORD_BASE32_SUBSET.encoding)
-    assert_equal(true, ULID::PATTERN_WITH_CROCKFORD_BASE32_SUBSET.frozen?)
-    assert_equal(true, ULID::PATTERN_WITH_CROCKFORD_BASE32_SUBSET.match?('01ARZ3NDEKTSV4RRFFQ69G5FAV'))
-    assert_equal(true, ULID::PATTERN_WITH_CROCKFORD_BASE32_SUBSET.match?("\nfoo01ARZ3NDEKTSV4RRFFQ69G5FAVbar\n")) # false negative
-    assert_equal(false, ULID::PATTERN_WITH_CROCKFORD_BASE32_SUBSET.match?(''))
-    assert_equal(true, ULID::PATTERN_WITH_CROCKFORD_BASE32_SUBSET.match?('01ARZ3NDEKTSV4RRFFQ69G5FAV'.downcase))
-    assert_equal(true, ULID::PATTERN_WITH_CROCKFORD_BASE32_SUBSET.match?('00000000000000000000000000'))
-    assert_equal(true, ULID::PATTERN_WITH_CROCKFORD_BASE32_SUBSET.match?('7ZZZZZZZZZZZZZZZZZZZZZZZZZ'))
-    assert_equal(false, ULID::PATTERN_WITH_CROCKFORD_BASE32_SUBSET.match?('80000000000000000000000000'))
-    assert_equal({'timestamp' => '01ARZ3NDEK', 'randomness' => 'TSV4RRFFQ69G5FAV'}, ULID::PATTERN_WITH_CROCKFORD_BASE32_SUBSET.match('01ARZ3NDEKTSV4RRFFQ69G5FAV').named_captures)
+    subset_pattern = ULID.const_get(:PATTERN_WITH_CROCKFORD_BASE32_SUBSET)
+    strict_pattern = ULID.const_get(:STRICT_PATTERN_WITH_CROCKFORD_BASE32_SUBSET)
+    scanning_pattern = ULID.const_get(:SCANNING_PATTERN)
+    assert_equal(true, subset_pattern.casefold?)
+    assert_equal(Encoding::US_ASCII, subset_pattern.encoding)
+    assert_equal(true, subset_pattern.frozen?)
+    assert_equal(true, subset_pattern.match?('01ARZ3NDEKTSV4RRFFQ69G5FAV'))
+    assert_equal(true, subset_pattern.match?("\nfoo01ARZ3NDEKTSV4RRFFQ69G5FAVbar\n")) # false negative
+    assert_equal(false, subset_pattern.match?(''))
+    assert_equal(true, subset_pattern.match?('01ARZ3NDEKTSV4RRFFQ69G5FAV'.downcase))
+    assert_equal(true, subset_pattern.match?('00000000000000000000000000'))
+    assert_equal(true, subset_pattern.match?('7ZZZZZZZZZZZZZZZZZZZZZZZZZ'))
+    assert_equal(false, subset_pattern.match?('80000000000000000000000000'))
+    assert_equal({'timestamp' => '01ARZ3NDEK', 'randomness' => 'TSV4RRFFQ69G5FAV'}, subset_pattern.match('01ARZ3NDEKTSV4RRFFQ69G5FAV').named_captures)
 
-    assert_equal(true, ULID::STRICT_PATTERN_WITH_CROCKFORD_BASE32_SUBSET.casefold?)
-    assert_equal(Encoding::US_ASCII, ULID::STRICT_PATTERN_WITH_CROCKFORD_BASE32_SUBSET.encoding)
-    assert_equal(true, ULID::STRICT_PATTERN_WITH_CROCKFORD_BASE32_SUBSET.frozen?)
-    assert_equal(true, ULID::STRICT_PATTERN_WITH_CROCKFORD_BASE32_SUBSET.match?('01ARZ3NDEKTSV4RRFFQ69G5FAV'))
-    assert_equal(false, ULID::STRICT_PATTERN_WITH_CROCKFORD_BASE32_SUBSET.match?("01ARZ3NDEKTSV4RRFFQ69G5FAV\n"))
-    assert_equal(false, ULID::STRICT_PATTERN_WITH_CROCKFORD_BASE32_SUBSET.match?("\nfoo01ARZ3NDEKTSV4RRFFQ69G5FAVbar\n"))
-    assert_equal(false, ULID::STRICT_PATTERN_WITH_CROCKFORD_BASE32_SUBSET.match?(''))
-    assert_equal(true, ULID::STRICT_PATTERN_WITH_CROCKFORD_BASE32_SUBSET.match?('01ARZ3NDEKTSV4RRFFQ69G5FAV'.downcase))
-    assert_equal(true, ULID::STRICT_PATTERN_WITH_CROCKFORD_BASE32_SUBSET.match?('00000000000000000000000000'))
-    assert_equal(true, ULID::STRICT_PATTERN_WITH_CROCKFORD_BASE32_SUBSET.match?('7ZZZZZZZZZZZZZZZZZZZZZZZZZ'))
-    assert_equal(false, ULID::STRICT_PATTERN_WITH_CROCKFORD_BASE32_SUBSET.match?('80000000000000000000000000'))
-    assert_equal({'timestamp' => '01ARZ3NDEK', 'randomness' => 'TSV4RRFFQ69G5FAV'}, ULID::STRICT_PATTERN_WITH_CROCKFORD_BASE32_SUBSET.match('01ARZ3NDEKTSV4RRFFQ69G5FAV').named_captures)
+    assert_equal(true, strict_pattern.casefold?)
+    assert_equal(Encoding::US_ASCII, strict_pattern.encoding)
+    assert_equal(true, strict_pattern.frozen?)
+    assert_equal(true, strict_pattern.match?('01ARZ3NDEKTSV4RRFFQ69G5FAV'))
+    assert_equal(false, strict_pattern.match?("01ARZ3NDEKTSV4RRFFQ69G5FAV\n"))
+    assert_equal(false, strict_pattern.match?("\nfoo01ARZ3NDEKTSV4RRFFQ69G5FAVbar\n"))
+    assert_equal(false, strict_pattern.match?(''))
+    assert_equal(true, strict_pattern.match?('01ARZ3NDEKTSV4RRFFQ69G5FAV'.downcase))
+    assert_equal(true, strict_pattern.match?('00000000000000000000000000'))
+    assert_equal(true, strict_pattern.match?('7ZZZZZZZZZZZZZZZZZZZZZZZZZ'))
+    assert_equal(false, strict_pattern.match?('80000000000000000000000000'))
+    assert_equal({'timestamp' => '01ARZ3NDEK', 'randomness' => 'TSV4RRFFQ69G5FAV'}, strict_pattern.match('01ARZ3NDEKTSV4RRFFQ69G5FAV').named_captures)
 
-    assert_equal(true, ULID::SCANNING_PATTERN.casefold?)
-    assert_equal(Encoding::US_ASCII, ULID::SCANNING_PATTERN.encoding)
-    assert_equal(true, ULID::SCANNING_PATTERN.frozen?)
-    assert_equal(true, ULID::SCANNING_PATTERN.match?('01ARZ3NDEKTSV4RRFFQ69G5FAV'))
-    assert_false(ULID::SCANNING_PATTERN.match?("\nfoo01ARZ3NDEKTSV4RRFFQ69G5FAVbar\n")) # Since 0.4.0
-    assert_true(ULID::SCANNING_PATTERN.match?(' 01ARZ3NDEKTSV4RRFFQ69G5FAV '))
-    assert_true(ULID::SCANNING_PATTERN.match?('　01ARZ3NDEKTSV4RRFFQ69G5FAV　')) # Intentional using non ASCII whitespace
-    assert_equal(false, ULID::SCANNING_PATTERN.match?(''))
-    assert_equal(true, ULID::SCANNING_PATTERN.match?('01ARZ3NDEKTSV4RRFFQ69G5FAV'.downcase))
-    assert_equal(true, ULID::SCANNING_PATTERN.match?('00000000000000000000000000'))
-    assert_equal(true, ULID::SCANNING_PATTERN.match?('7ZZZZZZZZZZZZZZZZZZZZZZZZZ'))
-    assert_equal(false, ULID::SCANNING_PATTERN.match?('80000000000000000000000000'))
-    assert_equal([], ULID::SCANNING_PATTERN.names)
+    assert_equal(true, scanning_pattern.casefold?)
+    assert_equal(Encoding::US_ASCII, scanning_pattern.encoding)
+    assert_equal(true, scanning_pattern.frozen?)
+    assert_equal(true, scanning_pattern.match?('01ARZ3NDEKTSV4RRFFQ69G5FAV'))
+    assert_false(scanning_pattern.match?("\nfoo01ARZ3NDEKTSV4RRFFQ69G5FAVbar\n")) # Since 0.4.0
+    assert_true(scanning_pattern.match?(' 01ARZ3NDEKTSV4RRFFQ69G5FAV '))
+    assert_true(scanning_pattern.match?('　01ARZ3NDEKTSV4RRFFQ69G5FAV　')) # Intentional using non ASCII whitespace
+    assert_equal(false, scanning_pattern.match?(''))
+    assert_equal(true, scanning_pattern.match?('01ARZ3NDEKTSV4RRFFQ69G5FAV'.downcase))
+    assert_equal(true, scanning_pattern.match?('00000000000000000000000000'))
+    assert_equal(true, scanning_pattern.match?('7ZZZZZZZZZZZZZZZZZZZZZZZZZ'))
+    assert_equal(false, scanning_pattern.match?('80000000000000000000000000'))
+    assert_equal([], scanning_pattern.names)
   end
 
   def test_generate
@@ -640,10 +640,56 @@ class TestULIDClass < Test::Unit::TestCase
 
     entropy = 42
     assert_equal(entropy, ULID.generate(entropy: entropy).entropy)
+  end
 
-    [nil, 4.2, 42/24r, '42', ulid, ulid.to_s, BasicObject.new, Object.new].each do |evil|
+  def test_generate_with_invalid_arguments
+    [-1].each do |negative|
+      err = assert_raises(ArgumentError) do
+        ULID.generate(moment: negative, entropy: 42)
+      end
+      assert_match('milliseconds and entropy should not be negative', err.message)
+
+      err = assert_raises(ArgumentError) do
+        ULID.generate(moment: 42, entropy: negative)
+      end
+      assert_match('milliseconds and entropy should not be negative', err.message)
+
+      err = assert_raises(ArgumentError) do
+        ULID.generate(moment: negative, entropy: negative)
+      end
+      assert_match('milliseconds and entropy should not be negative', err.message)
+    end
+
+    [ULID.sample.to_time].each do |invalid_for_entropy|
+      err = assert_raises(ArgumentError) do
+        ULID.generate(entropy: invalid_for_entropy)
+      end
+      assert_equal('milliseconds and entropy should be an `Integer`', err.message)
+    end
+
+    [nil, 4.2, 42/24r, '42', ULID.sample, ULID.sample.to_s, BasicObject.new, Object.new].each do |evil|
       err = assert_raises(ArgumentError) do
         ULID.generate(moment: evil)
+      end
+      assert_equal('`moment` should be a `Time` or `Integer as milliseconds`', err.message)
+
+      err = assert_raises(ArgumentError) do
+        ULID.generate(entropy: evil)
+      end
+      assert_equal('milliseconds and entropy should be an `Integer`', err.message)
+
+      err = assert_raises(ArgumentError) do
+        ULID.generate(moment: evil, entropy: 42)
+      end
+      assert_equal('`moment` should be a `Time` or `Integer as milliseconds`', err.message)
+
+      err = assert_raises(ArgumentError) do
+        ULID.generate(moment: 42, entropy: evil)
+      end
+      assert_equal('milliseconds and entropy should be an `Integer`', err.message)
+
+      err = assert_raises(ArgumentError) do
+        ULID.generate(moment: evil, entropy: evil)
       end
       assert_equal('`moment` should be a `Time` or `Integer as milliseconds`', err.message)
     end

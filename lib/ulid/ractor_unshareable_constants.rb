@@ -9,4 +9,6 @@ class ULID
 
   MIN = ractor_can_make_shareable_time ? Ractor.make_shareable(min) : min
   MAX = ractor_can_make_shareable_time ? Ractor.make_shareable(max) : max
+
+  private_constant(:MIN, :MAX)
 end
