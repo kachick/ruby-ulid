@@ -14,7 +14,8 @@ class ULID
     include(MonitorMixin)
 
     # @return [ULID, nil]
-    attr_reader(:prev)
+    attr_accessor(:prev)
+    private(:prev=)
 
     undef_method(:instance_variable_set)
 
@@ -71,6 +72,9 @@ class ULID
       end
     end
 
+    # Just providing similar api as `ULID.generate` and `ULID.encode` relation. No performance benefit exists in monotonic generator's one.
+    #
+    # @see https://github.com/kachick/ruby-ulid/pull/220
     # @param [Time, Integer] moment
     # @return [String]
     def encode(moment: Utils.current_milliseconds)

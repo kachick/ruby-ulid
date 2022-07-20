@@ -139,22 +139,28 @@ class TestULIDMonotonicGenerator < Test::Unit::TestCase
   def test_generate_raises_overflow_when_called_on_max_entropy
     max_ulid_in_a_milliseconds = ULID.max(Time.now)
 
-    @generator.instance_exec do
-      @prev = max_ulid_in_a_milliseconds.pred
-    end
+    @generator.__send__(:prev=, max_ulid_in_a_milliseconds.pred)
 
     assert_equal(max_ulid_in_a_milliseconds, @generator.generate(moment: max_ulid_in_a_milliseconds.milliseconds))
 
-    @generator.instance_exec do
-      @prev = nil
-    end
-
-    @generator.instance_exec do
-      @prev = max_ulid_in_a_milliseconds
-    end
+    @generator.__send__(:prev=, max_ulid_in_a_milliseconds)
 
     assert_raises(ULID::OverflowError) do
       @generator.generate(moment: max_ulid_in_a_milliseconds.milliseconds)
+    end
+  end
+
+  def test_encode_raises_overflow_when_called_on_max_entropy
+    max_ulid_in_a_milliseconds = ULID.max(Time.now)
+
+    @generator.__send__(:prev=, max_ulid_in_a_milliseconds.pred)
+
+    assert_equal(max_ulid_in_a_milliseconds.encode, @generator.encode(moment: max_ulid_in_a_milliseconds.milliseconds))
+
+    @generator.__send__(:prev=, max_ulid_in_a_milliseconds)
+
+    assert_raises(ULID::OverflowError) do
+      @generator.encode(moment: max_ulid_in_a_milliseconds.milliseconds)
     end
   end
 
