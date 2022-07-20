@@ -2,11 +2,11 @@
   "[ruby]": {
     "editor.formatOnSave": true
   },
-  "ruby.useBundler": true, //run non-lint commands with bundle exec
-  "ruby.useLanguageServer": true, // use the internal language server (see below)
+  "ruby.useBundler": true,
+  "ruby.useLanguageServer": true,
   "ruby.lint": {
     "rubocop": {
-      "useBundler": true // enable rubocop via bundler
+      "useBundler": true
     },
   },
   "ruby.format": "rubocop",
@@ -14,5 +14,5 @@
     "kwargs",
     "Undocumentable",
     "unshareable"
-  ] // use rubocop for formatting
+  ]
 }
