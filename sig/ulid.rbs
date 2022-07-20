@@ -69,9 +69,9 @@ class ULID < Object
   class MonotonicGenerator
     include MonitorMixin
 
-    attr_reader prev_milliseconds: milliseconds | nil
-    attr_reader prev_entropy: Integer | nil
-    attr_reader prev_encoded: String | nil
+    @prev_milliseconds: milliseconds?
+    @prev_entropy: Integer?
+    @prev_encoded: String?
 
     # Returned value is `basically not` Thread-safety
     # If you want to keep Thread-safety, keep to call {#generate} only in same {#synchronize} block
@@ -118,7 +118,7 @@ class ULID < Object
 
     def bump: [T < _ToS](moment: moment) { (milliseconds: milliseconds, entropy: Integer) -> [T, inspector] } -> T
 
-    def rewind: (?prev_ulid: ULID | nil) -> void
+    def rewind: (?prev_ulid: ULID?) -> void
   end
 
   interface _ToULID

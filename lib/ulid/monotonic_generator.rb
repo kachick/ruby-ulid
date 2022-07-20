@@ -25,8 +25,8 @@ class ULID
     # @return [String]
     def generate(moment: Utils.current_milliseconds)
       bump(moment: moment) do |milliseconds:, entropy:|
-        ret = ULID.generate(moment: milliseconds, entropy: entropy)
-        [ret, -> { ret.inspect }]
+        ulid = ULID.generate(moment: milliseconds, entropy: entropy)
+        [ulid, -> { ulid.inspect }]
       end
     end
 
@@ -34,8 +34,8 @@ class ULID
     # @return [String]
     def encode(moment: Utils.current_milliseconds)
       bump(moment: moment) do |milliseconds:, entropy:|
-        ret = ULID.encode(moment: milliseconds, entropy: entropy)
-        [ret, -> { ULID.parse(ret).inspect }]
+        encoded = ULID.encode(moment: milliseconds, entropy: entropy)
+        [encoded, -> { ULID.parse(encoded).inspect }]
       end
     end
 
@@ -53,9 +53,6 @@ class ULID
       msec && entropy && encoded && ULID.generate(moment: msec, entropy: entropy)
     end
 
-    # @api private
-    attr_reader(:prev_milliseconds, :prev_entropy, :prev_encoded)
-
     private
 
     def initialize
@@ -65,9 +62,15 @@ class ULID
       @prev_encoded = nil
     end
 
+    def rewind(prev_ulid: nil)
+      @prev_milliseconds = prev_ulid&.milliseconds
+      @prev_entropy = prev_ulid&.entropy
+      @prev_encoded = prev_ulid&.encode
+    end
+
     def bump(moment:)
       synchronize do
-        milliseconds = Utils.milliseconds_from_moment(moment)
+        current_msec = Utils.milliseconds_from_moment(moment)
 
         # Don't use reader methods
         prev_msec = @prev_milliseconds
@@ -76,15 +79,15 @@ class ULID
         current_entropy = Utils.reasonable_entropy
 
         unless prev_msec && prev_ent && prev_enc
-          result, = yield(milliseconds: milliseconds, entropy: current_entropy)
-          @prev_milliseconds = milliseconds
+          result, = yield(milliseconds: current_msec, entropy: current_entropy)
+          @prev_milliseconds = current_msec
           @prev_entropy = current_entropy
           @prev_encoded = result.to_s
           return result
         end
 
-        if milliseconds > prev_msec
-          determined_msec = milliseconds
+        if current_msec > prev_msec
+          determined_msec = current_msec
           determined_entropy = current_entropy
         else
           determined_msec = prev_msec
@@ -112,12 +115,6 @@ class ULID
         @prev_encoded = encoded
         result
       end
-    end
-
-    def rewind(prev_ulid: nil)
-      @prev_milliseconds = prev_ulid&.milliseconds
-      @prev_entropy = prev_ulid&.entropy
-      @prev_encoded = prev_ulid&.encode
     end
   end
 end
