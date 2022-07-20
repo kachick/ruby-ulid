@@ -19,8 +19,8 @@ class ULID < Object
   MAX: ULID
   include Comparable
 
-  # The `moment` is a `Time` or `Intger of the milliseconds`
-  type moment = Time | Integer
+  type milliseconds = Integer
+  type moment = Time | milliseconds
 
   class Error < StandardError
   end
@@ -36,15 +36,15 @@ class ULID < Object
 
   # Private module
   module Utils
-    def self.encode_base32: (milliseconds: Integer, entropy: Integer) -> String
+    def self.encode_base32: (milliseconds: milliseconds, entropy: Integer) -> String
 
-    def self.current_milliseconds: -> Integer
+    def self.current_milliseconds: -> milliseconds
 
-    def self.milliseconds_from_moment: (moment moment) -> Integer
+    def self.milliseconds_from_moment: (moment moment) -> milliseconds
 
     def self.reasonable_entropy: -> Integer
 
-    def self.milliseconds_from_time: (Time time) -> Integer
+    def self.milliseconds_from_time: (Time time) -> milliseconds
 
     def self.safe_get_class_name: (untyped object) -> String
   end
@@ -105,6 +105,8 @@ class ULID < Object
     private
 
     def initialize: -> void
+
+    def prev=: (ULID?) -> void
   end
 
   interface _ToULID
@@ -608,7 +610,7 @@ class ULID < Object
 
   private
 
-  def initialize: (milliseconds: Integer, entropy: Integer, integer: Integer, encoded: String) -> void
+  def initialize: (milliseconds: milliseconds, entropy: Integer, integer: Integer, encoded: String) -> void
 
   def cache_all_instance_variables: -> void
 end
