@@ -37,6 +37,11 @@ class ULID
       SecureRandom.random_number(MAX_ENTROPY)
     end
 
+    # @param [Integer, Time] moment
+    # @param [Integer] entropy
+    # @return [String]
+    # @raise [OverflowError] if the given value is larger than the ULID limit
+    # @raise [ArgumentError] if the given milliseconds and/or entropy is negative number
     def self.encode_base32(milliseconds:, entropy:)
       raise(ArgumentError, 'milliseconds and entropy should be an `Integer`') unless Integer === milliseconds && Integer === entropy
       raise(OverflowError, "timestamp overflow: given #{milliseconds}, max: #{MAX_MILLISECONDS}") unless milliseconds <= MAX_MILLISECONDS
