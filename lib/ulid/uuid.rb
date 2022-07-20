@@ -4,6 +4,8 @@
 
 # Copyright (C) 2021 Kenichi Kamiya
 
+require_relative('errors')
+
 # Extracted features around UUID from some reasons
 # ref:
 #  * https://github.com/kachick/ruby-ulid/issues/105
