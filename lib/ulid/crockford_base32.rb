@@ -6,7 +6,6 @@
 
 class ULID
   # @see https://www.crockford.com/base32.html
-  # @api private
   #
   # This module supporting only `subset of original crockford for actual use-case` in ULID context.
   # Original decoding spec allows other characters.
@@ -71,7 +70,6 @@ class ULID
 
     # @note Avoid to depend regex as possible. `tr(string, string)` is almost 2x Faster than `gsub(regex, hash)` in Ruby 3.1
 
-    # @api private
     # @param [String] string
     # @return [Integer]
     def self.decode(string)
@@ -79,7 +77,6 @@ class ULID
       base32encoded.to_i(32)
     end
 
-    # @api private
     # @param [Integer] integer
     # @return [String]
     def self.encode(integer)
@@ -87,14 +84,12 @@ class ULID
       from_base32(base32encoded).rjust(ENCODED_LENGTH, '0')
     end
 
-    # @api private
     # @param [String] string
     # @return [String]
     def self.normalize(string)
       string.delete('-').tr(VARIANT_TR_PATTERN, NORMALIZED_TR_PATTERN)
     end
 
-    # @api private
     # @param [String] base32encoded
     # @return [String]
     def self.from_base32(base32encoded)

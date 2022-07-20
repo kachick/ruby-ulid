@@ -500,13 +500,11 @@ class ULID
     super
   end
 
-  # @api private
   # @return [Integer]
   def marshal_dump
     @integer
   end
 
-  # @api private
   # @param [Integer] integer
   # @return [void]
   def marshal_load(integer)

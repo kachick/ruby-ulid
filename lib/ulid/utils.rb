@@ -7,7 +7,6 @@
 require('securerandom')
 
 class ULID
-  # @api private
   module Utils
     # @return [Integer]
     def self.current_milliseconds
