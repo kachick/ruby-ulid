@@ -269,6 +269,7 @@ class ULID
   # Almost same as `ULID.parse(string).to_time` except directly returning Time instance without needless object creation
   #
   # @param [String, #to_str] string
+  # @param [String, Integer, nil] in
   # @return [Time]
   # @raise [ParserError] if the given format is not correct for ULID specs
   def self.decode_time(string, in: 'UTC')
@@ -508,8 +509,8 @@ class ULID
   # @param [Integer] integer
   # @return [void]
   def marshal_load(integer)
-    unmarshaled = ULID.from_integer(integer)
-    initialize(integer: unmarshaled.to_i, milliseconds: unmarshaled.milliseconds, entropy: unmarshaled.entropy, encoded: unmarshaled.to_s)
+    unmarshalled = ULID.from_integer(integer)
+    initialize(integer: unmarshalled.to_i, milliseconds: unmarshalled.milliseconds, entropy: unmarshalled.entropy, encoded: unmarshalled.to_s)
   end
 
   # @return [self]
