@@ -64,8 +64,17 @@ class ULID
   # @param [Integer, Time] moment
   # @param [Integer] entropy
   # @return [ULID]
+  # @raise [OverflowError] if the given value is larger than the ULID limit
+  # @raise [ArgumentError] if the given milliseconds and/or entropy is negative number
   def self.generate(moment: Utils.current_milliseconds, entropy: Utils.reasonable_entropy)
-    from_milliseconds_and_entropy(milliseconds: Utils.milliseconds_from_moment(moment), entropy: entropy)
+    milliseconds = Utils.milliseconds_from_moment(moment)
+    base32_encoded = Utils.encode_base32(milliseconds: milliseconds, entropy: entropy)
+    new(
+      milliseconds: milliseconds,
+      entropy: entropy,
+      integer: base32_encoded.to_i(32),
+      encoded: CrockfordBase32.from_base32(base32_encoded).upcase.freeze
+    )
   end
 
   # Almost same as [.generate] except directly returning String without needless object creation
@@ -84,7 +93,7 @@ class ULID
   def self.at(time)
     raise(ArgumentError, 'ULID.at takes only `Time` instance') unless Time === time
 
-    from_milliseconds_and_entropy(milliseconds: Utils.milliseconds_from_time(time), entropy: Utils.reasonable_entropy)
+    generate(moment: time)
   end
 
   # @param [Time, Integer] moment
@@ -347,21 +356,6 @@ class ULID
         raise(TypeError, "can't convert #{object_class_name} to ULID (#{object_class_name}#to_ulid gives #{converted_class_name})")
       end
     end
-  end
-
-  # @param [Integer] milliseconds
-  # @param [Integer] entropy
-  # @return [ULID]
-  # @raise [OverflowError] if the given value is larger than the ULID limit
-  # @raise [ArgumentError] if the given milliseconds and/or entropy is negative number
-  private_class_method def self.from_milliseconds_and_entropy(milliseconds:, entropy:)
-    base32_encoded = Utils.encode_base32(milliseconds: milliseconds, entropy: entropy)
-    new(
-      milliseconds: milliseconds,
-      entropy: entropy,
-      integer: base32_encoded.to_i(32),
-      encoded: CrockfordBase32.from_base32(base32_encoded).upcase.freeze
-    )
   end
 
   attr_reader(:milliseconds, :entropy)

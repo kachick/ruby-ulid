@@ -219,32 +219,6 @@ class TestULIDClass < Test::Unit::TestCase
     assert_match(/private method `new' called/, err.message)
   end
 
-  def test_from_milliseconds_and_entropy
-    it_is_private_method = ULID.method(:from_milliseconds_and_entropy)
-    assert_instance_of(ULID, it_is_private_method.call(milliseconds: 42, entropy: 42))
-
-    err = assert_raises(ArgumentError) do
-      it_is_private_method.call(milliseconds: -1, entropy: 42)
-    end
-    assert_match('milliseconds and entropy should not be negative', err.message)
-
-    err = assert_raises(ArgumentError) do
-      it_is_private_method.call(milliseconds: 42, entropy: -1)
-    end
-    assert_match('milliseconds and entropy should not be negative', err.message)
-
-    [nil, BasicObject.new, '01ARZ3NDEKTSV4RRFFQ69G5FAV', '42', Time.now, ULID.sample, 4.2, Object.new].each do |evil|
-      err = assert_raises(ArgumentError) do
-        it_is_private_method.call(milliseconds: 42, entropy: evil)
-      end
-      assert_match('milliseconds and entropy should be an `Integer`', err.message)
-      err = assert_raises(ArgumentError) do
-        it_is_private_method.call(milliseconds: evil, entropy: 42)
-      end
-      assert_match('milliseconds and entropy should be an `Integer`', err.message)
-    end
-  end
-
   def test_valid?
     assert_warning('ULID.valid? is deprecated. Use ULID.valid_as_variant_format? or ULID.normalized? instead.') do
       assert_equal(false, ULID.valid?(nil))
@@ -666,10 +640,56 @@ class TestULIDClass < Test::Unit::TestCase
 
     entropy = 42
     assert_equal(entropy, ULID.generate(entropy: entropy).entropy)
+  end
 
-    [nil, 4.2, 42/24r, '42', ulid, ulid.to_s, BasicObject.new, Object.new].each do |evil|
+  def test_generate_with_invalid_arguments
+    [-1].each do |negative|
+      err = assert_raises(ArgumentError) do
+        ULID.generate(moment: negative, entropy: 42)
+      end
+      assert_match('milliseconds and entropy should not be negative', err.message)
+
+      err = assert_raises(ArgumentError) do
+        ULID.generate(moment: 42, entropy: negative)
+      end
+      assert_match('milliseconds and entropy should not be negative', err.message)
+
+      err = assert_raises(ArgumentError) do
+        ULID.generate(moment: negative, entropy: negative)
+      end
+      assert_match('milliseconds and entropy should not be negative', err.message)
+    end
+
+    [ULID.sample.to_time].each do |invalid_for_entropy|
+      err = assert_raises(ArgumentError) do
+        ULID.generate(entropy: invalid_for_entropy)
+      end
+      assert_equal('milliseconds and entropy should be an `Integer`', err.message)
+    end
+
+    [nil, 4.2, 42/24r, '42', ULID.sample, ULID.sample.to_s, BasicObject.new, Object.new].each do |evil|
       err = assert_raises(ArgumentError) do
         ULID.generate(moment: evil)
+      end
+      assert_equal('`moment` should be a `Time` or `Integer as milliseconds`', err.message)
+
+      err = assert_raises(ArgumentError) do
+        ULID.generate(entropy: evil)
+      end
+      assert_equal('milliseconds and entropy should be an `Integer`', err.message)
+
+      err = assert_raises(ArgumentError) do
+        ULID.generate(moment: evil, entropy: 42)
+      end
+      assert_equal('`moment` should be a `Time` or `Integer as milliseconds`', err.message)
+
+      err = assert_raises(ArgumentError) do
+        ULID.generate(moment: 42, entropy: evil)
+      end
+      assert_equal('milliseconds and entropy should be an `Integer`', err.message)
+
+      err = assert_raises(ArgumentError) do
+        ULID.generate(moment: evil, entropy: evil)
       end
       assert_equal('`moment` should be a `Time` or `Integer as milliseconds`', err.message)
     end

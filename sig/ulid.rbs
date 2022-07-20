@@ -613,8 +613,6 @@ class ULID < Object
 
   private
 
-  def self.from_milliseconds_and_entropy: (milliseconds: Integer, entropy: Integer) -> ULID
-
   # A private API. Should not be used in your code.
   def initialize: (milliseconds: Integer, entropy: Integer, integer: Integer, encoded: String) -> void
 
