@@ -303,6 +303,7 @@ class ULID
   # Almost same as `ULID.parse(string).to_time` except directly returning Time instance without needless object creation
   #
   # @param [String, #to_str] string
+  # @param [String, Integer, nil] in
   # @return [Time]
   # @raise [ParserError] if the given format is not correct for ULID specs
   def self.decode_time(string, in: 'UTC')
