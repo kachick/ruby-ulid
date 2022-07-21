@@ -47,8 +47,8 @@ Rake::TestTask.new(:test_longtime) do |tt|
 end
 
 desc('Signature check, it means `rbs` and `YARD` syntax correctness')
-multitask(rbs_all: [:'signature:validate_rbs', :'signature:check_rbs_false_positive'])
-multitask(signature_all: [:'signature:validate_yard', :rbs_all])
+multitask(rbs: [:'signature:validate_rbs', :'signature:check_rbs_false_positive'])
+multitask(signature_all: [:'signature:validate_yard', :rbs])
 
 desc('Simulate CI results in local machine as possible')
 multitask(simulate_ci: [:test_all, :signature_all, :rubocop])
