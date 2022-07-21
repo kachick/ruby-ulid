@@ -74,7 +74,7 @@ class TestULIDInstance < Test::Unit::TestCase
     ulid = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
     assert_instance_of(Hash, ulid.patterns)
     assert_not_same(ulid.patterns, ulid.patterns)
-    assert_equal(false, ulid.patterns.frozen?)
+    assert_false(ulid.patterns.frozen?)
     ulid.patterns.each_pair do |key, pattern|
       assert_equal(Encoding::US_ASCII, pattern.encoding)
       assert_instance_of(Symbol, key)
@@ -97,7 +97,7 @@ class TestULIDInstance < Test::Unit::TestCase
 
     ulid = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
     [nil, BasicObject.new, '01ARZ3NDEKTSV4RRFFQ69G5FAV', 42, Time.now].each do |not_comparable|
-      assert_equal(false, ulid == not_comparable)
+      assert_false(ulid == not_comparable)
     end
   end
 
@@ -316,21 +316,21 @@ class TestULIDInstance < Test::Unit::TestCase
     ulid = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
     assert_equal([1, 86, 62, 58, 181, 211, 214, 118, 76, 97, 239, 185, 147, 2, 189, 91], ulid.octets)
     assert_not_same(ulid.octets, ulid.octets)
-    assert_equal(false, ulid.octets.frozen?)
+    assert_false(ulid.octets.frozen?)
   end
 
   def test_timestamp_octets
     ulid = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
     assert_equal([1, 86, 62, 58, 181, 211], ulid.timestamp_octets)
     assert_not_same(ulid.timestamp_octets, ulid.timestamp_octets)
-    assert_equal(false, ulid.timestamp_octets.frozen?)
+    assert_false(ulid.timestamp_octets.frozen?)
   end
 
   def test_randomness_octets
     ulid = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
     assert_equal([214, 118, 76, 97, 239, 185, 147, 2, 189, 91], ulid.randomness_octets)
     assert_not_same(ulid.randomness_octets, ulid.randomness_octets)
-    assert_equal(false, ulid.randomness_octets.frozen?)
+    assert_false(ulid.randomness_octets.frozen?)
   end
 
   def test_next
@@ -359,7 +359,7 @@ class TestULIDInstance < Test::Unit::TestCase
 
   def test_freeze
     ulid = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
-    assert_equal(false, ulid.frozen?)
+    assert_false(ulid.frozen?)
     assert_same(ulid, ulid.freeze)
     assert_true(ulid.frozen?)
   end

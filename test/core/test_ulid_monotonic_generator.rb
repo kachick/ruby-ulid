@@ -169,7 +169,7 @@ class TestULIDMonotonicGenerator < Test::Unit::TestCase
       @generator.freeze
     end
 
-    assert_equal(false, @generator.frozen?)
+    assert_false(@generator.frozen?)
   end
 
   def test_prev

@@ -45,14 +45,14 @@ class TestULIDSubClass < Test::Unit::TestCase
     ulid1_sub = Subclass.parse(ulid1.to_s)
 
     # This is an exception for comparison. Because same checks different objects
-    assert_equal(false, ulid1.equal?(ulid1_sub))
-    assert_equal(false, ulid1_sub.equal?(ulid1))
+    assert_false(ulid1.equal?(ulid1_sub))
+    assert_false(ulid1_sub.equal?(ulid1))
 
     # This should return false. Because having different value
-    assert_equal(false, ulid2 == ulid1_sub)
-    assert_equal(false, ulid1_sub == ulid2)
-    assert_equal(false, ulid2.eql?(ulid1_sub))
-    assert_equal(false, ulid1_sub.eql?(ulid2))
+    assert_false(ulid2 == ulid1_sub)
+    assert_false(ulid1_sub == ulid2)
+    assert_false(ulid2.eql?(ulid1_sub))
+    assert_false(ulid1_sub.eql?(ulid2))
 
     assert_true(ulid1 == ulid1_sub)
     assert_true(ulid1_sub == ulid1)
