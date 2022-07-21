@@ -69,9 +69,9 @@ namespace(:signature) do
     sh('bundle exec steep check --severity-level=warning --log-level=fatal --with-expectations')
   end
 
-  desc('Generate YARD docs for the syntax check')
+  desc('Run YARD without docs generating for the syntax check')
   task(:validate_yard) do
-    sh("bundle exec yard --fail-on-warning #{'--no-progress' if ENV['CI']}")
+    sh("bundle exec yard stats --fail-on-warning")
   end
 end
 
