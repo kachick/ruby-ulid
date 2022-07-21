@@ -35,8 +35,9 @@ jobs:
         include:
           - os: 'macos-latest'
             ruby: '3.1'
-          - os: 'windows-latest'
-            ruby: '3.1'
+          # Windows CI takes longtime. It has been succeeded in #223, it is enough for now.
+          # - os: 'windows-latest'
+          #   ruby: '3.1'
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
