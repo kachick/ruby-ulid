@@ -15,8 +15,8 @@ class TestFrozenULID < Test::Unit::TestCase
   def test_instance_variables
     @ulid.instance_variables.each do |name|
       ivar = @ulid.instance_variable_get(name)
-      assert_equal(true, !!ivar, "#{name} is still falsy: #{ivar.inspect}")
-      assert_equal(true, ivar.frozen?, "#{name} is not frozen")
+      assert_true(!!ivar, "#{name} is still falsy: #{ivar.inspect}")
+      assert_true(ivar.frozen?, "#{name} is not frozen")
     end
   end
 
@@ -37,17 +37,17 @@ class TestFrozenULID < Test::Unit::TestCase
   end
 
   def test_next
-    assert_equal(true, @ulid < @ulid.next)
+    assert_true(@ulid < @ulid.next)
     assert_nil(@max.next)
   end
 
   def test_succ
-    assert_equal(true, @ulid < @ulid.succ)
+    assert_true(@ulid < @ulid.succ)
     assert_nil(@max.succ)
   end
 
   def test_pred
-    assert_equal(true, @ulid > @ulid.pred)
+    assert_true(@ulid > @ulid.pred)
     assert_nil(@min.pred)
   end
 

@@ -221,19 +221,19 @@ class TestULIDClass < Test::Unit::TestCase
 
   def test_valid?
     assert_warning('ULID.valid? is deprecated. Use ULID.valid_as_variant_format? or ULID.normalized? instead.') do
-      assert_equal(false, ULID.valid?(nil))
-      assert_equal(false, ULID.valid?(''))
-      assert_equal(false, ULID.valid?(BasicObject.new))
-      assert_equal(false, ULID.valid?(Object.new))
-      assert_equal(false, ULID.valid?(42))
-      assert_equal(false, ULID.valid?(:'01ARZ3NDEKTSV4RRFFQ69G5FAV'))
-      assert_equal(false, ULID.valid?(ULID.sample))
-      assert_equal(false, ULID.valid?("01ARZ3NDEKTSV4RRFFQ69G5FAV\n"))
-      assert_equal(false, ULID.valid?('01ARZ3NDEKTSV4RRFFQ69G5FAU'))
-      assert_equal(true, ULID.valid?('01ARZ3NDEKTSV4RRFFQ69G5FAV'))
-      assert_equal(true, ULID.valid?('01ARZ3NDEKTSV4RRFFQ69G5FAV'.downcase))
-      assert_equal(true, ULID.valid?('7ZZZZZZZZZZZZZZZZZZZZZZZZZ'))
-      assert_equal(false, ULID.valid?('80000000000000000000000000'))
+      assert_false(ULID.valid?(nil))
+      assert_false(ULID.valid?(''))
+      assert_false(ULID.valid?(BasicObject.new))
+      assert_false(ULID.valid?(Object.new))
+      assert_false(ULID.valid?(42))
+      assert_false(ULID.valid?(:'01ARZ3NDEKTSV4RRFFQ69G5FAV'))
+      assert_false(ULID.valid?(ULID.sample))
+      assert_false(ULID.valid?("01ARZ3NDEKTSV4RRFFQ69G5FAV\n"))
+      assert_false(ULID.valid?('01ARZ3NDEKTSV4RRFFQ69G5FAU'))
+      assert_true(ULID.valid?('01ARZ3NDEKTSV4RRFFQ69G5FAV'))
+      assert_true(ULID.valid?('01ARZ3NDEKTSV4RRFFQ69G5FAV'.downcase))
+      assert_true(ULID.valid?('7ZZZZZZZZZZZZZZZZZZZZZZZZZ'))
+      assert_false(ULID.valid?('80000000000000000000000000'))
 
       assert_false(ULID.valid?('01G70Y0Y7G-Z1XWDAREXERGSDDD'))
     end
@@ -261,7 +261,7 @@ class TestULIDClass < Test::Unit::TestCase
     end
 
     # Ensure the string is not modified in parser
-    assert_equal(false, downcased.frozen?)
+    assert_false(downcased.frozen?)
     assert_not_same(downcased, ULID.normalize(downcased))
     assert_equal(dup_downcased, downcased)
 
@@ -306,12 +306,12 @@ class TestULIDClass < Test::Unit::TestCase
     assert_false(ULID.normalized?('01G70Y0Y7G-Z1XWDAREXERGSDDD'))
 
     nasty = '-olarz3-noekisv4rrff-q6ig5fav--'
-    assert_equal(false, ULID.normalized?(nasty))
-    assert_equal(true, ULID.normalized?(ULID.normalize(nasty)))
+    assert_false(ULID.normalized?(nasty))
+    assert_true(ULID.normalized?(ULID.normalize(nasty)))
 
     normalized = '01ARZ3NDEKTSV4RRFFQ69G5FAV'
-    assert_equal(true, ULID.normalized?(normalized))
-    assert_equal(false, ULID.normalized?(normalized.downcase))
+    assert_true(ULID.normalized?(normalized))
+    assert_false(ULID.normalized?(normalized.downcase))
 
     [
       '',
@@ -320,12 +320,12 @@ class TestULIDClass < Test::Unit::TestCase
       '01ARZ3NDEKTSV4RRFFQ69G5FA',
       '80000000000000000000000000'
     ].each do |invalid|
-      assert_equal(false, ULID.normalized?(invalid))
+      assert_false(ULID.normalized?(invalid))
     end
 
     ULID.sample(1000).each do |sample|
-      assert_equal(true, ULID.normalized?(sample.to_s))
-      assert_equal(false, ULID.normalized?(sample.to_s.downcase))
+      assert_true(ULID.normalized?(sample.to_s))
+      assert_false(ULID.normalized?(sample.to_s.downcase))
     end
 
     assert_raises(ArgumentError) do
@@ -333,7 +333,7 @@ class TestULIDClass < Test::Unit::TestCase
     end
 
     [nil, 42, normalized.to_sym, BasicObject.new, Object.new, ULID.parse(normalized)].each do |evil|
-      assert_equal(false, ULID.normalized?(evil))
+      assert_false(ULID.normalized?(evil))
     end
   end
 
@@ -389,8 +389,8 @@ class TestULIDClass < Test::Unit::TestCase
     )
 
     # For optimization
-    assert_equal(true, ULID.range(include_end).begin.frozen?)
-    assert_equal(true, ULID.range(include_end).end.frozen?)
+    assert_true(ULID.range(include_end).begin.frozen?)
+    assert_true(ULID.range(include_end).end.frozen?)
 
     include_end_and_nil_end = time_has_more_value_than_milliseconds1..nil
     exclude_end_and_nil_end = time_has_more_value_than_milliseconds1...nil
@@ -427,10 +427,10 @@ class TestULIDClass < Test::Unit::TestCase
       range = ULID.min(ULID.floor(time_has_more_value_than_milliseconds1))..ULID.max(ULID.floor(time_has_more_value_than_milliseconds1)),
       from_time = ULID.range(time_has_more_value_than_milliseconds1..time_has_more_value_than_milliseconds1)
     )
-    assert_equal(true, range.cover?(ULID.generate(moment: time_has_more_value_than_milliseconds1)))
-    assert_equal(false, range.cover?(ULID.generate(moment: time_has_more_value_than_milliseconds2)))
-    assert_equal(true, range.cover?(range.begin))
-    assert_equal(true, range.cover?(range.end))
+    assert_true(range.cover?(ULID.generate(moment: time_has_more_value_than_milliseconds1)))
+    assert_false(range.cover?(ULID.generate(moment: time_has_more_value_than_milliseconds2)))
+    assert_true(range.cover?(range.begin))
+    assert_true(range.cover?(range.end))
     assert_false(range.begin.frozen?)
     assert_false(range.end.frozen?)
     assert_true(from_time.begin.frozen?)
@@ -461,27 +461,27 @@ class TestULIDClass < Test::Unit::TestCase
       range = ULID.min(ULID.floor(time_has_more_value_than_milliseconds1))...ULID.min(ULID.floor(time_has_more_value_than_milliseconds1)),
       ULID.range(time_has_more_value_than_milliseconds1...time_has_more_value_than_milliseconds1)
     )
-    assert_equal(false, range.cover?(ULID.generate(moment: time_has_more_value_than_milliseconds1)))
-    assert_equal(false, range.cover?(range.begin)) # Same as Range[Integer] `(1...1).cover?(1) #=> false`
-    assert_equal(false, range.cover?(range.end))
+    assert_false(range.cover?(ULID.generate(moment: time_has_more_value_than_milliseconds1)))
+    assert_false(range.cover?(range.begin)) # Same as Range[Integer] `(1...1).cover?(1) #=> false`
+    assert_false(range.cover?(range.end))
 
     assert_equal(
       range = ULID.min(ULID.floor(time_has_more_value_than_milliseconds2))..ULID.max(ULID.floor(time_has_more_value_than_milliseconds1)),
       ULID.range(time_has_more_value_than_milliseconds2..time_has_more_value_than_milliseconds1)
     )
-    assert_equal(false, range.cover?(ULID.generate(moment: time_has_more_value_than_milliseconds2)))
-    assert_equal(false, range.cover?(ULID.generate(moment: time_has_more_value_than_milliseconds1)))
-    assert_equal(false, range.cover?(range.begin)) # This is bit weird, but same as Range[Integer] `(3..1).cover?(3) #=> false`
-    assert_equal(false, range.cover?(range.end))
+    assert_false(range.cover?(ULID.generate(moment: time_has_more_value_than_milliseconds2)))
+    assert_false(range.cover?(ULID.generate(moment: time_has_more_value_than_milliseconds1)))
+    assert_false(range.cover?(range.begin)) # This is bit weird, but same as Range[Integer] `(3..1).cover?(3) #=> false`
+    assert_false(range.cover?(range.end))
 
     assert_equal(
       range = ULID.min(ULID.floor(time_has_more_value_than_milliseconds2))...ULID.min(ULID.floor(time_has_more_value_than_milliseconds1)),
       ULID.range(time_has_more_value_than_milliseconds2...time_has_more_value_than_milliseconds1)
     )
-    assert_equal(false, range.cover?(ULID.generate(moment: time_has_more_value_than_milliseconds2)))
-    assert_equal(false, range.cover?(ULID.generate(moment: time_has_more_value_than_milliseconds1)))
-    assert_equal(false, range.cover?(range.begin))
-    assert_equal(false, range.cover?(range.end))
+    assert_false(range.cover?(ULID.generate(moment: time_has_more_value_than_milliseconds2)))
+    assert_false(range.cover?(ULID.generate(moment: time_has_more_value_than_milliseconds1)))
+    assert_false(range.cover?(range.begin))
+    assert_false(range.cover?(range.end))
   end
 
   def test_floor
@@ -544,7 +544,7 @@ class TestULIDClass < Test::Unit::TestCase
       yielded << ulid
     end)
 
-    assert_equal(true, yielded.all? { |ulid| ulid.instance_of?(ULID) })
+    assert_true(yielded.all? { |ulid| ulid.instance_of?(ULID) })
     assert_equal(enum.to_a, yielded)
 
     expectation = [
@@ -586,43 +586,43 @@ class TestULIDClass < Test::Unit::TestCase
     subset_pattern = ULID.const_get(:PATTERN_WITH_CROCKFORD_BASE32_SUBSET)
     strict_pattern = ULID.const_get(:STRICT_PATTERN_WITH_CROCKFORD_BASE32_SUBSET)
     scanning_pattern = ULID.const_get(:SCANNING_PATTERN)
-    assert_equal(true, subset_pattern.casefold?)
+    assert_true(subset_pattern.casefold?)
     assert_equal(Encoding::US_ASCII, subset_pattern.encoding)
-    assert_equal(true, subset_pattern.frozen?)
-    assert_equal(true, subset_pattern.match?('01ARZ3NDEKTSV4RRFFQ69G5FAV'))
-    assert_equal(true, subset_pattern.match?("\nfoo01ARZ3NDEKTSV4RRFFQ69G5FAVbar\n")) # false negative
-    assert_equal(false, subset_pattern.match?(''))
-    assert_equal(true, subset_pattern.match?('01ARZ3NDEKTSV4RRFFQ69G5FAV'.downcase))
-    assert_equal(true, subset_pattern.match?('00000000000000000000000000'))
-    assert_equal(true, subset_pattern.match?('7ZZZZZZZZZZZZZZZZZZZZZZZZZ'))
-    assert_equal(false, subset_pattern.match?('80000000000000000000000000'))
+    assert_true(subset_pattern.frozen?)
+    assert_true(subset_pattern.match?('01ARZ3NDEKTSV4RRFFQ69G5FAV'))
+    assert_true(subset_pattern.match?("\nfoo01ARZ3NDEKTSV4RRFFQ69G5FAVbar\n")) # false negative
+    assert_false(subset_pattern.match?(''))
+    assert_true(subset_pattern.match?('01ARZ3NDEKTSV4RRFFQ69G5FAV'.downcase))
+    assert_true(subset_pattern.match?('00000000000000000000000000'))
+    assert_true(subset_pattern.match?('7ZZZZZZZZZZZZZZZZZZZZZZZZZ'))
+    assert_false(subset_pattern.match?('80000000000000000000000000'))
     assert_equal({'timestamp' => '01ARZ3NDEK', 'randomness' => 'TSV4RRFFQ69G5FAV'}, subset_pattern.match('01ARZ3NDEKTSV4RRFFQ69G5FAV').named_captures)
 
-    assert_equal(true, strict_pattern.casefold?)
+    assert_true(strict_pattern.casefold?)
     assert_equal(Encoding::US_ASCII, strict_pattern.encoding)
-    assert_equal(true, strict_pattern.frozen?)
-    assert_equal(true, strict_pattern.match?('01ARZ3NDEKTSV4RRFFQ69G5FAV'))
-    assert_equal(false, strict_pattern.match?("01ARZ3NDEKTSV4RRFFQ69G5FAV\n"))
-    assert_equal(false, strict_pattern.match?("\nfoo01ARZ3NDEKTSV4RRFFQ69G5FAVbar\n"))
-    assert_equal(false, strict_pattern.match?(''))
-    assert_equal(true, strict_pattern.match?('01ARZ3NDEKTSV4RRFFQ69G5FAV'.downcase))
-    assert_equal(true, strict_pattern.match?('00000000000000000000000000'))
-    assert_equal(true, strict_pattern.match?('7ZZZZZZZZZZZZZZZZZZZZZZZZZ'))
-    assert_equal(false, strict_pattern.match?('80000000000000000000000000'))
+    assert_true(strict_pattern.frozen?)
+    assert_true(strict_pattern.match?('01ARZ3NDEKTSV4RRFFQ69G5FAV'))
+    assert_false(strict_pattern.match?("01ARZ3NDEKTSV4RRFFQ69G5FAV\n"))
+    assert_false(strict_pattern.match?("\nfoo01ARZ3NDEKTSV4RRFFQ69G5FAVbar\n"))
+    assert_false(strict_pattern.match?(''))
+    assert_true(strict_pattern.match?('01ARZ3NDEKTSV4RRFFQ69G5FAV'.downcase))
+    assert_true(strict_pattern.match?('00000000000000000000000000'))
+    assert_true(strict_pattern.match?('7ZZZZZZZZZZZZZZZZZZZZZZZZZ'))
+    assert_false(strict_pattern.match?('80000000000000000000000000'))
     assert_equal({'timestamp' => '01ARZ3NDEK', 'randomness' => 'TSV4RRFFQ69G5FAV'}, strict_pattern.match('01ARZ3NDEKTSV4RRFFQ69G5FAV').named_captures)
 
-    assert_equal(true, scanning_pattern.casefold?)
+    assert_true(scanning_pattern.casefold?)
     assert_equal(Encoding::US_ASCII, scanning_pattern.encoding)
-    assert_equal(true, scanning_pattern.frozen?)
-    assert_equal(true, scanning_pattern.match?('01ARZ3NDEKTSV4RRFFQ69G5FAV'))
+    assert_true(scanning_pattern.frozen?)
+    assert_true(scanning_pattern.match?('01ARZ3NDEKTSV4RRFFQ69G5FAV'))
     assert_false(scanning_pattern.match?("\nfoo01ARZ3NDEKTSV4RRFFQ69G5FAVbar\n")) # Since 0.4.0
     assert_true(scanning_pattern.match?(' 01ARZ3NDEKTSV4RRFFQ69G5FAV '))
     assert_true(scanning_pattern.match?('　01ARZ3NDEKTSV4RRFFQ69G5FAV　')) # Intentional using non ASCII whitespace
-    assert_equal(false, scanning_pattern.match?(''))
-    assert_equal(true, scanning_pattern.match?('01ARZ3NDEKTSV4RRFFQ69G5FAV'.downcase))
-    assert_equal(true, scanning_pattern.match?('00000000000000000000000000'))
-    assert_equal(true, scanning_pattern.match?('7ZZZZZZZZZZZZZZZZZZZZZZZZZ'))
-    assert_equal(false, scanning_pattern.match?('80000000000000000000000000'))
+    assert_false(scanning_pattern.match?(''))
+    assert_true(scanning_pattern.match?('01ARZ3NDEKTSV4RRFFQ69G5FAV'.downcase))
+    assert_true(scanning_pattern.match?('00000000000000000000000000'))
+    assert_true(scanning_pattern.match?('7ZZZZZZZZZZZZZZZZZZZZZZZZZ'))
+    assert_false(scanning_pattern.match?('80000000000000000000000000'))
     assert_equal([], scanning_pattern.names)
   end
 
@@ -633,7 +633,7 @@ class TestULIDClass < Test::Unit::TestCase
     time = Time.at(946684800, Rational('123456.789')).utc
     ulid = ULID.generate(moment: time)
     assert_not_equal(time, ulid.to_time)
-    assert_equal(true, ulid.to_time < time)
+    assert_true(ulid.to_time < time)
     assert_equal(ULID.floor(time), ulid.to_time)
     milliseconds = 42
     assert_equal(Time.at(0, milliseconds, :millisecond), ULID.generate(moment: milliseconds).to_time)
@@ -707,7 +707,7 @@ class TestULIDClass < Test::Unit::TestCase
     assert_not_same(ulid.to_s, gen)
     assert_false(gen.frozen?)
     assert_not_equal(time, ulid.to_time)
-    assert_equal(true, ulid.to_time < time)
+    assert_true(ulid.to_time < time)
     assert_equal(ULID.floor(time), ulid.to_time)
     milliseconds = 42
     assert_equal(Time.at(0, milliseconds, :millisecond), ULID.parse(ULID.encode(moment: milliseconds)).to_time)
@@ -729,7 +729,7 @@ class TestULIDClass < Test::Unit::TestCase
     assert_not_equal(ULID.at(time), ULID.at(time))
     ulid = ULID.at(time)
     assert_not_equal(time, ulid.to_time)
-    assert_equal(true, ulid.to_time < time)
+    assert_true(ulid.to_time < time)
     assert_equal(ULID.floor(time), ulid.to_time)
 
     assert_raise(ArgumentError) do
@@ -783,11 +783,11 @@ class TestULIDClass < Test::Unit::TestCase
 
     assert_equal(ULID.min(milliseconds), ULID.min(milliseconds))
     assert_not_same(ULID.min(milliseconds), ULID.min(milliseconds))
-    assert_equal(false, ULID.min(milliseconds).frozen?)
+    assert_false(ULID.min(milliseconds).frozen?)
 
     # For optimization
     assert_same(ULID.min, ULID.min)
-    assert_equal(true, ULID.min.frozen?)
+    assert_true(ULID.min.frozen?)
   end
 
   def test_max
@@ -801,11 +801,11 @@ class TestULIDClass < Test::Unit::TestCase
 
     assert_equal(ULID.max(milliseconds), ULID.max(milliseconds))
     assert_not_same(ULID.max(milliseconds), ULID.max(milliseconds))
-    assert_equal(false, ULID.max(milliseconds).frozen?)
+    assert_false(ULID.max(milliseconds).frozen?)
 
     # For optimization
     assert_same(ULID.max, ULID.max)
-    assert_equal(true, ULID.max.frozen?)
+    assert_true(ULID.max.frozen?)
   end
 
   def test_sample
@@ -813,10 +813,10 @@ class TestULIDClass < Test::Unit::TestCase
     assert_not_equal(ULID.sample, ULID.sample)
     assert_equal([], ULID.sample(0))
     assert_instance_of(Array, ULID.sample(1))
-    assert_equal(true, ULID.sample(1).size == 1)
+    assert_true(ULID.sample(1).size == 1)
     assert_instance_of(ULID, ULID.sample(1)[0])
     assert_instance_of(Array, ULID.sample(42))
-    assert_equal(true, ULID.sample(42).size == 42)
+    assert_true(ULID.sample(42).size == 42)
     assert_nil(ULID.sample(42).uniq!)
 
     assert_acceptable_randomized_string(ULID.sample(42))
@@ -826,10 +826,10 @@ class TestULIDClass < Test::Unit::TestCase
     assert_instance_of(ULID, ULID.sample(period: time1..time2))
     assert_equal([], ULID.sample(0, period: time1..time2))
     assert_instance_of(Array, ULID.sample(1, period: time1..time2))
-    assert_equal(true, ULID.sample(1, period: time1..time2).size == 1)
+    assert_true(ULID.sample(1, period: time1..time2).size == 1)
     assert_instance_of(ULID, ULID.sample(1, period: time1..time2)[0])
     assert_instance_of(Array, ULID.sample(42, period: time1..time2))
-    assert_equal(true, ULID.sample(42, period: time1..time2).size == 42)
+    assert_true(ULID.sample(42, period: time1..time2).size == 42)
     assert_nil(ULID.sample(42, period: time1..time2).uniq!)
     assert_equal(42, ULID.sample(42, period: time1..time2).uniq(&:to_time).size)
     assert(ULID.sample(42, period: time1..time2).all? { |ulid| ULID.range(time1..time2).cover?(ulid) })
@@ -838,7 +838,7 @@ class TestULIDClass < Test::Unit::TestCase
     assert_instance_of(ULID, ULID.sample(period: time1..time1))
     assert_equal([], ULID.sample(0, period: time1..time1))
     assert_instance_of(Array, ULID.sample(1, period: time1..time1))
-    assert_equal(true, ULID.sample(1, period: time1..time1).size == 1)
+    assert_true(ULID.sample(1, period: time1..time1).size == 1)
     assert_instance_of(ULID, ULID.sample(1, period: time1..time1)[0])
     assert_instance_of(Array, ULID.sample(42, period: time1..time1))
     assert_equal(42, ULID.sample(42, period: time1..time1).size)
