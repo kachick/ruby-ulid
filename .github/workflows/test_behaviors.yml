@@ -27,10 +27,16 @@ jobs:
   test:
     strategy:
       fail-fast: false
+      # Suntax https://docs.github.com/en/actions/using-jobs/using-a-matrix-for-your-jobs
       matrix:
         os: [ubuntu-latest]
         # Due to https://github.com/actions/runner/issues/849, we have to use quotes for '3.0'
-        ruby: [2.7, '3.0', 3.1, head]
+        ruby: ['head', '3.1', '2.7', '3.0']
+        include:
+          - os: 'macos-latest'
+            ruby: '3.1'
+          - os: 'windows-latest'
+            ruby: '3.1'
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v3
