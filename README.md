@@ -6,8 +6,8 @@
 ## Overview
 
 [ulid/spec](https://github.com/ulid/spec) has some useful features.\
-Especially possess all `uniqueness`, `randomness`, `extractable timestamps` and `sortable` features.\
-This gem aims to provide the generator, optional monotonicity, parser and other manipulation features around ULID with included [RBS](https://github.com/ruby/rbs).
+Especially possess all `uniqueness`, `randomness`, `extractable timestamps` and `sortability`.\
+This gem aims to provide the generator, optional monotonicity, parser and other manipulation ways around ULID with included [RBS](https://github.com/ruby/rbs).
 
 ---
 
