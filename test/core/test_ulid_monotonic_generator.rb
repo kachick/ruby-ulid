@@ -66,7 +66,7 @@ class TestULIDMonotonicGenerator < Test::Unit::TestCase
       ulid = @generator.generate(moment: Time.at(sec))
       assert_equal(sec, ulid.to_time.to_r)
       if pred
-        assert_equal(true, 4200 < (pred.entropy - ulid.entropy).abs) # It is possible to fail Rough test.
+        assert_true(4200 < (pred.entropy - ulid.entropy).abs) # It is possible to fail Rough test.
       end
       pred = ulid
     end
@@ -78,7 +78,7 @@ class TestULIDMonotonicGenerator < Test::Unit::TestCase
       ulid = ULID.parse(@generator.encode(moment: Time.at(sec)))
       assert_equal(sec, ulid.to_time.to_r)
       if pred
-        assert_equal(true, 4200 < (pred.entropy - ulid.entropy).abs) # It is possible to fail Rough test.
+        assert_true(4200 < (pred.entropy - ulid.entropy).abs) # It is possible to fail Rough test.
       end
       pred = ulid
     end
@@ -90,7 +90,7 @@ class TestULIDMonotonicGenerator < Test::Unit::TestCase
       ulid = @generator.generate(moment: milliseconds)
       assert_equal(milliseconds, ulid.milliseconds)
       if pred
-        assert_equal(true, 4200 < (pred.entropy - ulid.entropy).abs) # It is possible to fail. Rough test.
+        assert_true(4200 < (pred.entropy - ulid.entropy).abs) # It is possible to fail. Rough test.
       end
       pred = ulid
     end
@@ -102,7 +102,7 @@ class TestULIDMonotonicGenerator < Test::Unit::TestCase
       ulid = ULID.parse(@generator.encode(moment: milliseconds))
       assert_equal(milliseconds, ulid.milliseconds)
       if pred
-        assert_equal(true, 4200 < (pred.entropy - ulid.entropy).abs) # It is possible to fail. Rough test.
+        assert_true(4200 < (pred.entropy - ulid.entropy).abs) # It is possible to fail. Rough test.
       end
       pred = ulid
     end

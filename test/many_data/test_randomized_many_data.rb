@@ -16,7 +16,7 @@ class TestManyData < Test::Unit::TestCase
     end
 
     assert_equal(1000, ulids.map(&:to_s).uniq.size)
-    assert_equal(true, (5..50).cover?(ulids.group_by(&:to_time).size))
+    assert_true((5..50).cover?(ulids.group_by(&:to_time).size))
     assert_not_equal(ulids, ulids.sort_by(&:to_s))
   end
 
@@ -30,7 +30,7 @@ class TestManyData < Test::Unit::TestCase
     end
 
     assert_equal(1000, ulid_strings.uniq.size)
-    assert_equal(true, (5..50).cover?(ulid_strings.map { |str| ULID.parse(str) }.group_by(&:to_time).size))
+    assert_true((5..50).cover?(ulid_strings.map { |str| ULID.parse(str) }.group_by(&:to_time).size))
     assert_not_equal(ulid_strings, ulid_strings.sort)
   end
 

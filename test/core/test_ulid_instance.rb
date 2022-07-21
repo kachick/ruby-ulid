@@ -57,7 +57,7 @@ class TestULIDInstance < Test::Unit::TestCase
     assert_equal('01ARZ3NDEK', ulid.timestamp)
     assert_instance_of(String, ulid.timestamp)
     assert_same(ulid.timestamp, ulid.timestamp)
-    assert_equal(true, ulid.timestamp.frozen?)
+    assert_true(ulid.timestamp.frozen?)
     assert_equal(Encoding::US_ASCII, ulid.timestamp.encoding)
   end
 
@@ -66,7 +66,7 @@ class TestULIDInstance < Test::Unit::TestCase
     assert_equal('TSV4RRFFQ69G5FAV', ulid.randomness)
     assert_instance_of(String, ulid.randomness)
     assert_same(ulid.randomness, ulid.randomness)
-    assert_equal(true, ulid.randomness.frozen?)
+    assert_true(ulid.randomness.frozen?)
     assert_equal(Encoding::US_ASCII, ulid.randomness.encoding)
   end
 
@@ -169,7 +169,7 @@ class TestULIDInstance < Test::Unit::TestCase
   end
 
   def test_sortable
-    assert_equal(true, ULID.parse('01BX5ZZKBKACTAV9WEVGEMMVRZ') > ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV'))
+    assert_true(ULID.parse('01BX5ZZKBKACTAV9WEVGEMMVRZ') > ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV'))
   end
 
   def test_lexicographically_sortable
@@ -199,7 +199,7 @@ class TestULIDInstance < Test::Unit::TestCase
     ulid = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
     assert_equal('ULID(2016-07-30 23:54:10.259 UTC: 01ARZ3NDEKTSV4RRFFQ69G5FAV)', ulid.inspect)
     assert_same(ulid.inspect, ulid.inspect)
-    assert_equal(true, ulid.inspect.frozen?)
+    assert_true(ulid.inspect.frozen?)
     assert_not_equal(ulid.to_s, ulid.inspect)
     assert_equal(Encoding::US_ASCII, ulid.inspect.encoding)
 
@@ -303,9 +303,9 @@ class TestULIDInstance < Test::Unit::TestCase
     ulid = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
     time = ulid.to_time
     assert_equal(Time.at(0, 1469922850259, :millisecond).utc, time)
-    assert_equal(true, time.utc?)
+    assert_true(time.utc?)
     assert_same(ulid.to_time, time)
-    assert_equal(true, time.frozen?)
+    assert_true(time.frozen?)
 
     assert_raises(FrozenError) do
       time.localtime(time.utc_offset.succ)
@@ -361,7 +361,7 @@ class TestULIDInstance < Test::Unit::TestCase
     ulid = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
     assert_equal(false, ulid.frozen?)
     assert_same(ulid, ulid.freeze)
-    assert_equal(true, ulid.frozen?)
+    assert_true(ulid.frozen?)
   end
 
   def teardown

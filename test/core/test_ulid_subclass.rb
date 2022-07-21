@@ -30,12 +30,12 @@ class TestULIDSubClass < Test::Unit::TestCase
     ].each do |instance|
       assert_not_instance_of(ULID, instance)
       assert_instance_of(Subclass, instance)
-      assert_equal(true, ULID === instance)
+      assert_true(ULID === instance)
       assert_boolean(ulid == instance)
       assert_boolean(ulid === instance)
       assert_boolean(ulid.eql?(instance))
       assert_boolean(ulid.equal?(instance))
-      assert_equal(true, [0, 1, -1].include?(ulid <=> instance))
+      assert_true([0, 1, -1].include?(ulid <=> instance))
     end
   end
 
@@ -54,10 +54,10 @@ class TestULIDSubClass < Test::Unit::TestCase
     assert_equal(false, ulid2.eql?(ulid1_sub))
     assert_equal(false, ulid1_sub.eql?(ulid2))
 
-    assert_equal(true, ulid1 == ulid1_sub)
-    assert_equal(true, ulid1_sub == ulid1)
-    assert_equal(true, ulid1.eql?(ulid1_sub))
-    assert_equal(true, ulid1_sub.eql?(ulid1))
+    assert_true(ulid1 == ulid1_sub)
+    assert_true(ulid1_sub == ulid1)
+    assert_true(ulid1.eql?(ulid1_sub))
+    assert_true(ulid1_sub.eql?(ulid1))
 
     assert_equal(ulid1.hash, ulid1_sub.hash)
     assert_not_equal(ulid2.hash, ulid1_sub.hash)

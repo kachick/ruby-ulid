@@ -25,12 +25,12 @@ class TestUUIDHandlers < Test::Unit::TestCase
     ].each do |instance|
       assert_not_instance_of(ULID, instance)
       assert_instance_of(Subclass, instance)
-      assert_equal(true, ULID === instance)
+      assert_true(ULID === instance)
       assert_boolean(ulid == instance)
       assert_boolean(ulid === instance)
       assert_boolean(ulid.eql?(instance))
       assert_boolean(ulid.equal?(instance))
-      assert_equal(true, [0, 1, -1].include?(ulid <=> instance))
+      assert_true([0, 1, -1].include?(ulid <=> instance))
     end
   end
 
@@ -43,7 +43,7 @@ class TestUUIDHandlers < Test::Unit::TestCase
     ulids = 1000.times.map do
       ULID.from_uuidv4(SecureRandom.uuid)
     end
-    assert_equal(true, ulids.uniq == ulids)
+    assert_true(ulids.uniq == ulids)
 
     # Ensure some invalid patterns (I'd like to add more examples)
     [
@@ -85,7 +85,7 @@ class TestUUIDHandlers < Test::Unit::TestCase
     assert_equal('0983d0a2-ff15-4d83-8f37-7dd945b5aa39', ulid.to_uuidv4)
     assert_equal(ulid.to_uuidv4, ulid.to_uuidv4)
     assert_not_same(ulid.to_uuidv4, ulid.to_uuidv4)
-    assert_equal(true, ulid.to_uuidv4.frozen?)
+    assert_true(ulid.to_uuidv4.frozen?)
     assert_equal(Encoding::US_ASCII, ulid.to_uuidv4.encoding)
   end
 
@@ -108,7 +108,7 @@ class TestUUIDHandlers < Test::Unit::TestCase
       SecureRandom.uuid
     end
 
-    assert_equal(true, uuids.uniq.size == 10000)
+    assert_true(uuids.uniq.size == 10000)
 
     ulids = uuids.map do |uuid|
       ULID.from_uuidv4(uuid)
