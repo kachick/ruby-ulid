@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  File: README
+  
+    &mdash; Documentation by YARD 0.9.28
+  
+</title>
+
+  <link rel="stylesheet" href="css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "README";
+  relpath = '';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="file_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="_index.html">Index</a> &raquo; 
+    <span class="title">File: README</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><div id='filecontents'>
+<h1 id="label-ruby-ulid">ruby-ulid</h1>
+
+<p><a href="https://github.com/kachick/ruby-ulid/actions/workflows/ci.yml?query=branch%3Amain"><img src="https://github.com/kachick/ruby-ulid/actions/workflows/ci.yml/badge.svg?branch=main"></a> <a href="http://badge.fury.io/rb/ruby-ulid"><img src="https://badge.fury.io/rb/ruby-ulid.svg"></a></p>
+
+<h2 id="label-Overview">Overview</h2>
+
+<p><a href="https://github.com/ulid/spec">ulid/spec</a> has some useful features.\ Especially possess all <code>uniqueness</code>, <code>randomness</code>, <code>extractable timestamps</code> and <code>sortability</code>.\ This gem aims to provide the generator, optional monotonicity, parser and other manipulation ways around ULID with included <a href="https://github.com/ruby/rbs">RBS</a>.</p>
+<hr>
+
+<p><img src="./assets/logo.png"></p>
+
+<h2 id="label-Universally+Unique+Lexicographically+Sortable+Identifier">Universally Unique Lexicographically Sortable Identifier</h2>
+
+<p>UUID can be suboptimal for many uses-cases because:</p>
+<ul><li>
+<p>It isn’t the most character efficient way of encoding 128 bits of randomness</p>
+</li><li>
+<p>UUID v1/v2 is impractical in many environments, as it requires access to a unique, stable MAC address</p>
+</li><li>
+<p>UUID v3/v5 requires a unique seed and produces randomly distributed IDs, which can cause fragmentation in many data structures</p>
+</li><li>
+<p>UUID v4 provides no other information than randomness which can cause fragmentation in many data structures</p>
+</li></ul>
+
+<p>Instead, herein is proposed ULID:</p>
+<ul><li>
+<p>128-bit compatibility with UUID</p>
+</li><li>
+<p>1.21e+24 unique ULIDs per millisecond</p>
+</li><li>
+<p>Lexicographically sortable!</p>
+</li><li>
+<p>Canonically encoded as a 26 character string, as opposed to the 36 character UUID</p>
+</li><li>
+<p>Uses <a href="https://www.crockford.com/base32.html">Crockford’s base32</a> for better efficiency and readability (5 bits per character)</p>
+</li><li>
+<p>Case insensitive</p>
+</li><li>
+<p>No special characters (URL safe)</p>
+</li><li>
+<p>Monotonic sort order (correctly detects and handles the same millisecond)</p>
+</li></ul>
+
+<h2 id="label-Usage">Usage</h2>
+
+<h3 id="label-Install">Install</h3>
+
+<p>Require Ruby 2.7 or later</p>
+
+<p>This command will install the latest version into your environment</p>
+
+<pre class="code ruby"><code class="ruby">$ gem install ruby-ulid
+Should be installed!
+</code></pre>
+
+<p>Add this line in your Gemfile.</p>
+
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_gem'>gem</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>ruby-ulid</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>~&gt; 0.6.1</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+</code></pre>
+
+<h3 id="label-How+to+use">How to use</h3>
+
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_require'>require</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>ulid</span><span class='tstring_end'>&#39;</span></span>
+
+<span class='const'><span class='object_link'><a href="ULID.html" title="ULID (class)">ULID</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="ULID.html#VERSION-constant" title="ULID::VERSION (constant)">VERSION</a></span></span>
+<span class='comment'># =&gt; &quot;0.6.1&quot;
+</span></code></pre>
+
+<p>NOTE: This README includes info about development version. If you would see released version’s one. <a href="https://github.com/kachick/ruby-ulid/tree/v0.6.1">Look at the ref</a>.</p>
+
+<h3 id="label-Generator+and+Parser">Generator and Parser</h3>
+
+<p><code>ULID.generate</code> returns <code>ULID</code> instance. It is not just a string.</p>
+
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_ulid'>ulid</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="ULID.html" title="ULID (class)">ULID</a></span></span><span class='period'>.</span><span class='id identifier rubyid_generate'><span class='object_link'><a href="ULID.html#generate-class_method" title="ULID.generate (method)">generate</a></span></span> <span class='comment'>#=&gt; ULID(2021-04-27 17:27:22.826 UTC: 01F4A5Y1YAQCYAYCTC7GRMJ9AA)
+</span></code></pre>
+
+<p><code>ULID.parse</code> returns <code>ULID</code> instance from exists encoded ULIDs.</p>
+
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_ulid'>ulid</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="ULID.html" title="ULID (class)">ULID</a></span></span><span class='period'>.</span><span class='id identifier rubyid_parse'><span class='object_link'><a href="ULID.html#parse-class_method" title="ULID.parse (method)">parse</a></span></span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>01F4A5Y1YAQCYAYCTC7GRMJ9AA</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='comment'>#=&gt; ULID(2021-04-27 17:27:22.826 UTC: 01F4A5Y1YAQCYAYCTC7GRMJ9AA)
+</span></code></pre>
+
+<p>It is helpful to inspect.</p>
+
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_ulid'>ulid</span><span class='period'>.</span><span class='id identifier rubyid_to_time'>to_time</span> <span class='comment'>#=&gt; 2021-04-27 17:27:22.826 UTC
+</span><span class='id identifier rubyid_ulid'>ulid</span><span class='period'>.</span><span class='id identifier rubyid_milliseconds'>milliseconds</span> <span class='comment'>#=&gt; 1619544442826
+</span><span class='id identifier rubyid_ulid'>ulid</span><span class='period'>.</span><span class='id identifier rubyid_encode'>encode</span> <span class='comment'>#=&gt; &quot;01F4A5Y1YAQCYAYCTC7GRMJ9AA&quot;
+</span><span class='id identifier rubyid_ulid'>ulid</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span> <span class='comment'>#=&gt; &quot;01F4A5Y1YAQCYAYCTC7GRMJ9AA&quot;
+</span><span class='id identifier rubyid_ulid'>ulid</span><span class='period'>.</span><span class='id identifier rubyid_timestamp'>timestamp</span> <span class='comment'>#=&gt; &quot;01F4A5Y1YA&quot;
+</span><span class='id identifier rubyid_ulid'>ulid</span><span class='period'>.</span><span class='id identifier rubyid_randomness'>randomness</span> <span class='comment'>#=&gt; &quot;QCYAYCTC7GRMJ9AA&quot;
+</span><span class='id identifier rubyid_ulid'>ulid</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span> <span class='comment'>#=&gt; 1957909092946624190749577070267409738
+</span><span class='id identifier rubyid_ulid'>ulid</span><span class='period'>.</span><span class='id identifier rubyid_octets'>octets</span> <span class='comment'>#=&gt; [1, 121, 20, 95, 7, 202, 187, 60, 175, 51, 76, 60, 49, 73, 37, 74]
+</span></code></pre>
+
+<p><code>ULID.generate</code> can take fixed <code>Time</code> instance. <code>ULID.at</code> is the shorthand.</p>
+
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_time'>time</span> <span class='op'>=</span> <span class='const'>Time</span><span class='period'>.</span><span class='id identifier rubyid_at'>at</span><span class='lparen'>(</span><span class='int'>946684800</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_utc'>utc</span> <span class='comment'>#=&gt; 2000-01-01 00:00:00 UTC
+</span><span class='const'><span class='object_link'><a href="ULID.html" title="ULID (class)">ULID</a></span></span><span class='period'>.</span><span class='id identifier rubyid_generate'><span class='object_link'><a href="ULID.html#generate-class_method" title="ULID.generate (method)">generate</a></span></span><span class='lparen'>(</span><span class='label'>moment:</span> <span class='id identifier rubyid_time'>time</span><span class='rparen'>)</span> <span class='comment'>#=&gt; ULID(2000-01-01 00:00:00.000 UTC: 00VHNCZB00N018DCPJA4H9379P)
+</span><span class='const'><span class='object_link'><a href="ULID.html" title="ULID (class)">ULID</a></span></span><span class='period'>.</span><span class='id identifier rubyid_generate'><span class='object_link'><a href="ULID.html#generate-class_method" title="ULID.generate (method)">generate</a></span></span><span class='lparen'>(</span><span class='label'>moment:</span> <span class='id identifier rubyid_time'>time</span><span class='rparen'>)</span> <span class='comment'>#=&gt; ULID(2000-01-01 00:00:00.000 UTC: 00VHNCZB006WQT3JTMN0T14EBP)
+</span><span class='const'><span class='object_link'><a href="ULID.html" title="ULID (class)">ULID</a></span></span><span class='period'>.</span><span class='id identifier rubyid_at'><span class='object_link'><a href="ULID.html#at-class_method" title="ULID.at (method)">at</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_time'>time</span><span class='rparen'>)</span> <span class='comment'>#=&gt; ULID(2000-01-01 00:00:00.000 UTC: 00VHNCZB002W5BGWWKN76N22H6)
+</span></code></pre>
+
+<p>Also <code>ULID.encode</code> and <code>ULID.decode_time</code> can be used to get primitive values for most usecases.</p>
+
+<p><code>ULID.encode</code> returns <a href="#variants-of-format">normalized</a> String without ULID object creation.\ It can take same arguments as <code>ULID.generate</code>.</p>
+
+<pre class="code ruby"><code class="ruby"><span class='const'><span class='object_link'><a href="ULID.html" title="ULID (class)">ULID</a></span></span><span class='period'>.</span><span class='id identifier rubyid_encode'><span class='object_link'><a href="ULID.html#encode-class_method" title="ULID.encode (method)">encode</a></span></span> <span class='comment'>#=&gt; &quot;01G86M42Q6SJ9XQM2ZRM6JRDSF&quot;
+</span><span class='const'><span class='object_link'><a href="ULID.html" title="ULID (class)">ULID</a></span></span><span class='period'>.</span><span class='id identifier rubyid_encode'><span class='object_link'><a href="ULID.html#encode-class_method" title="ULID.encode (method)">encode</a></span></span><span class='lparen'>(</span><span class='label'>moment:</span> <span class='const'>Time</span><span class='period'>.</span><span class='id identifier rubyid_at'>at</span><span class='lparen'>(</span><span class='int'>946684800</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_utc'>utc</span><span class='rparen'>)</span> <span class='comment'>#=&gt; &quot;00VHNCZB00SYG7RCEXZC9DA4E1&quot;
+</span></code></pre>
+
+<p><code>ULID.decode_time</code> returns Time. It can take <code>in</code> keyarg as same as <code>Time.at</code>.</p>
+
+<pre class="code ruby"><code class="ruby"><span class='const'><span class='object_link'><a href="ULID.html" title="ULID (class)">ULID</a></span></span><span class='period'>.</span><span class='id identifier rubyid_decode_time'><span class='object_link'><a href="ULID.html#decode_time-class_method" title="ULID.decode_time (method)">decode_time</a></span></span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>00VHNCZB00SYG7RCEXZC9DA4E1</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='comment'>#=&gt; 2000-01-01 00:00:00 UTC
+</span><span class='const'><span class='object_link'><a href="ULID.html" title="ULID (class)">ULID</a></span></span><span class='period'>.</span><span class='id identifier rubyid_decode_time'><span class='object_link'><a href="ULID.html#decode_time-class_method" title="ULID.decode_time (method)">decode_time</a></span></span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>00VHNCZB00SYG7RCEXZC9DA4E1</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='label'>in:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>+09:00</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='comment'>#=&gt; 2000-01-01 09:00:00 +0900
+</span></code></pre>
+
+<p>This project does not prioritize the speed. However it actually works faster than others! :zap:</p>
+
+<p>Snapshot on 0.6.1 is below</p>
+<ul><li>
+<p>Generator is 1.5x faster than - <a href="https://github.com/rafaelsales/ulid">ulid gem</a></p>
+</li><li>
+<p>Generator is 1.9x faster than - <a href="https://github.com/abachman/ulid-ruby">ulid-ruby gem</a></p>
+</li><li>
+<p>Parser is 2.7x faster than - <a href="https://github.com/abachman/ulid-ruby">ulid-ruby gem</a></p>
+</li></ul>
+
+<p>You can see further detail at <a href="https://github.com/kachick/ruby-ulid/wiki/Benchmark">Benchmark</a>.</p>
+
+<h3 id="label-Sortable+with+the+timestamp">Sortable with the timestamp</h3>
+
+<p>ULIDs are sortable when they are generated in different timestamp with milliseconds precision.</p>
+
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_ulids'>ulids</span> <span class='op'>=</span> <span class='int'>1000</span><span class='period'>.</span><span class='id identifier rubyid_times'>times</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='kw'>do</span>
+  <span class='id identifier rubyid_sleep'>sleep</span><span class='lparen'>(</span><span class='float'>0.001</span><span class='rparen'>)</span>
+  <span class='const'><span class='object_link'><a href="ULID.html" title="ULID (class)">ULID</a></span></span><span class='period'>.</span><span class='id identifier rubyid_generate'><span class='object_link'><a href="ULID.html#generate-class_method" title="ULID.generate (method)">generate</a></span></span>
+<span class='kw'>end</span>
+<span class='id identifier rubyid_ulids'>ulids</span><span class='period'>.</span><span class='id identifier rubyid_uniq'>uniq</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:to_time</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_size'>size</span> <span class='comment'>#=&gt; 1000
+</span><span class='id identifier rubyid_ulids'>ulids</span><span class='period'>.</span><span class='id identifier rubyid_sort'>sort</span> <span class='op'>==</span> <span class='id identifier rubyid_ulids'>ulids</span> <span class='comment'>#=&gt; true
+</span></code></pre>
+
+<p>Basic generator prefers <code>randomness</code>, it does not guarantee <code>sortable</code> for same milliseconds ULIDs.</p>
+
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_ulids'>ulids</span> <span class='op'>=</span> <span class='int'>10000</span><span class='period'>.</span><span class='id identifier rubyid_times'>times</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='kw'>do</span>
+  <span class='const'><span class='object_link'><a href="ULID.html" title="ULID (class)">ULID</a></span></span><span class='period'>.</span><span class='id identifier rubyid_generate'><span class='object_link'><a href="ULID.html#generate-class_method" title="ULID.generate (method)">generate</a></span></span>
+<span class='kw'>end</span>
+<span class='id identifier rubyid_ulids'>ulids</span><span class='period'>.</span><span class='id identifier rubyid_uniq'>uniq</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:to_time</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_size'>size</span> <span class='comment'>#=&gt; 35 (the size is not fixed, might be changed in environment)
+</span><span class='id identifier rubyid_ulids'>ulids</span><span class='period'>.</span><span class='id identifier rubyid_sort'>sort</span> <span class='op'>==</span> <span class='id identifier rubyid_ulids'>ulids</span> <span class='comment'>#=&gt; false
+</span></code></pre>
+
+<h3 id="label-How+to+keep+Sortable+even+if+in+same+timestamp">How to keep <code>Sortable</code> even if in same timestamp</h3>
+
+<p>If you want to prefer <code>sortable</code>, Use <code>MonotonicGenerator</code> instead. It is called as <a href="https://github.com/ulid/spec/tree/d0c7170df4517939e70129b4d6462cc162f2d5bf#monotonicity">Monotonicity</a> on the spec.\ (Though it starts with new random value when changed the timestamp)</p>
+
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_monotonic_generator'>monotonic_generator</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="ULID.html" title="ULID (class)">ULID</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="ULID/MonotonicGenerator.html" title="ULID::MonotonicGenerator (class)">MonotonicGenerator</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="ULID/MonotonicGenerator.html#initialize-instance_method" title="ULID::MonotonicGenerator#initialize (method)">new</a></span></span>
+<span class='id identifier rubyid_ulids'>ulids</span> <span class='op'>=</span> <span class='int'>10000</span><span class='period'>.</span><span class='id identifier rubyid_times'>times</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='kw'>do</span>
+  <span class='id identifier rubyid_monotonic_generator'>monotonic_generator</span><span class='period'>.</span><span class='id identifier rubyid_generate'>generate</span>
+<span class='kw'>end</span>
+<span class='id identifier rubyid_sample_ulids_by_the_time'>sample_ulids_by_the_time</span> <span class='op'>=</span> <span class='id identifier rubyid_ulids'>ulids</span><span class='period'>.</span><span class='id identifier rubyid_uniq'>uniq</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:to_time</span><span class='rparen'>)</span>
+<span class='id identifier rubyid_sample_ulids_by_the_time'>sample_ulids_by_the_time</span><span class='period'>.</span><span class='id identifier rubyid_size'>size</span> <span class='comment'>#=&gt; 32 (the size is not fixed, might be changed in environment)
+</span>
+<span class='comment'># In same milliseconds creation, it just increments the end of randomness part
+</span><span class='id identifier rubyid_ulids'>ulids</span><span class='period'>.</span><span class='id identifier rubyid_take'>take</span><span class='lparen'>(</span><span class='int'>5</span><span class='rparen'>)</span> <span class='comment'>#=&gt;
+</span><span class='comment'># [ULID(2021-05-02 15:23:48.917 UTC: 01F4PTVCSN9ZPFKYTY2DDJVRK4),
+</span><span class='comment'>#  ULID(2021-05-02 15:23:48.917 UTC: 01F4PTVCSN9ZPFKYTY2DDJVRK5),
+</span><span class='comment'>#  ULID(2021-05-02 15:23:48.917 UTC: 01F4PTVCSN9ZPFKYTY2DDJVRK6),
+</span><span class='comment'>#  ULID(2021-05-02 15:23:48.917 UTC: 01F4PTVCSN9ZPFKYTY2DDJVRK7),
+</span><span class='comment'>#  ULID(2021-05-02 15:23:48.917 UTC: 01F4PTVCSN9ZPFKYTY2DDJVRK8)]
+</span>
+<span class='comment'># When the milliseconds is updated, it starts with new randomness
+</span><span class='id identifier rubyid_sample_ulids_by_the_time'>sample_ulids_by_the_time</span><span class='period'>.</span><span class='id identifier rubyid_take'>take</span><span class='lparen'>(</span><span class='int'>5</span><span class='rparen'>)</span> <span class='comment'>#=&gt;
+</span><span class='comment'># [ULID(2021-05-02 15:23:48.917 UTC: 01F4PTVCSN9ZPFKYTY2DDJVRK4),
+</span><span class='comment'>#  ULID(2021-05-02 15:23:48.918 UTC: 01F4PTVCSPF2KXG4ABT7CK3204),
+</span><span class='comment'>#  ULID(2021-05-02 15:23:48.919 UTC: 01F4PTVCSQF1GERBPCQV6TCX2K),
+</span><span class='comment'>#  ULID(2021-05-02 15:23:48.920 UTC: 01F4PTVCSRBXN2H4P1EYWZ27AK),
+</span><span class='comment'>#  ULID(2021-05-02 15:23:48.921 UTC: 01F4PTVCSSK0ASBBZARV7013F8)]
+</span>
+<span class='id identifier rubyid_ulids'>ulids</span><span class='period'>.</span><span class='id identifier rubyid_sort'>sort</span> <span class='op'>==</span> <span class='id identifier rubyid_ulids'>ulids</span> <span class='comment'>#=&gt; true
+</span></code></pre>
+
+<p>Same instance of <code>ULID::MonotonicGenerator</code> does not generate duplicated ULIDs even in multi threads environment. It is implemented with <a href="https://bugs.ruby-lang.org/issues/16255">Monitor</a>.</p>
+
+<h3 id="label-Filtering+IDs+with+Time">Filtering IDs with <code>Time</code></h3>
+
+<p><code>ULID</code> can be element of the <code>Range</code>. If they were generated with monotonic generator, ID based filtering is easy and reliable.</p>
+
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_include_end'>include_end</span> <span class='op'>=</span> <span class='id identifier rubyid_ulid1'>ulid1</span><span class='op'>..</span><span class='id identifier rubyid_ulid2'>ulid2</span>
+<span class='id identifier rubyid_exclude_end'>exclude_end</span> <span class='op'>=</span> <span class='id identifier rubyid_ulid1'>ulid1</span><span class='op'>...</span><span class='id identifier rubyid_ulid2'>ulid2</span>
+
+<span class='id identifier rubyid_ulids'>ulids</span><span class='period'>.</span><span class='id identifier rubyid_grep'>grep</span><span class='lparen'>(</span><span class='id identifier rubyid_one_of_the_above'>one_of_the_above</span><span class='rparen'>)</span>
+<span class='id identifier rubyid_ulids'>ulids</span><span class='period'>.</span><span class='id identifier rubyid_grep_v'>grep_v</span><span class='lparen'>(</span><span class='id identifier rubyid_one_of_the_above'>one_of_the_above</span><span class='rparen'>)</span>
+</code></pre>
+
+<p>When want to filter ULIDs with <code>Time</code>, we should consider to handle the precision.\ So this gem provides <code>ULID.range</code> to generate reasonable <code>Range[ULID]</code> from <code>Range[Time]</code></p>
+
+<pre class="code ruby"><code class="ruby"><span class='comment'># Both of below, The begin of `Range[ULID]` will be the minimum in the floored milliseconds of the time1
+</span><span class='id identifier rubyid_include_end'>include_end</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="ULID.html" title="ULID (class)">ULID</a></span></span><span class='period'>.</span><span class='id identifier rubyid_range'><span class='object_link'><a href="ULID.html#range-class_method" title="ULID.range (method)">range</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_time1'>time1</span><span class='op'>..</span><span class='id identifier rubyid_time2'>time2</span><span class='rparen'>)</span> <span class='comment'>#=&gt; The end of `Range[ULID]` will be the maximum in the floored milliseconds of the time2
+</span><span class='id identifier rubyid_exclude_end'>exclude_end</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="ULID.html" title="ULID (class)">ULID</a></span></span><span class='period'>.</span><span class='id identifier rubyid_range'><span class='object_link'><a href="ULID.html#range-class_method" title="ULID.range (method)">range</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_time1'>time1</span><span class='op'>...</span><span class='id identifier rubyid_time2'>time2</span><span class='rparen'>)</span> <span class='comment'>#=&gt; The end of `Range[ULID]` will be the minimum in the floored milliseconds of the time2
+</span>
+<span class='comment'># Below patterns are acceptable
+</span><span class='id identifier rubyid_pinpointing'>pinpointing</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="ULID.html" title="ULID (class)">ULID</a></span></span><span class='period'>.</span><span class='id identifier rubyid_range'><span class='object_link'><a href="ULID.html#range-class_method" title="ULID.range (method)">range</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_time1'>time1</span><span class='op'>..</span><span class='id identifier rubyid_time1'>time1</span><span class='rparen'>)</span> <span class='comment'>#=&gt; This will match only for all IDs in `time1`
+</span><span class='id identifier rubyid_until_the_end'>until_the_end</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="ULID.html" title="ULID (class)">ULID</a></span></span><span class='period'>.</span><span class='id identifier rubyid_range'><span class='object_link'><a href="ULID.html#range-class_method" title="ULID.range (method)">range</a></span></span><span class='lparen'>(</span><span class='op'>..</span><span class='id identifier rubyid_time1'>time1</span><span class='rparen'>)</span> <span class='comment'>#=&gt; This will match only for all IDs upto `time1`
+</span><span class='id identifier rubyid_until_the_ulid_limit'>until_the_ulid_limit</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="ULID.html" title="ULID (class)">ULID</a></span></span><span class='period'>.</span><span class='id identifier rubyid_range'><span class='object_link'><a href="ULID.html#range-class_method" title="ULID.range (method)">range</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_time1'>time1</span><span class='op'>..</span><span class='rparen'>)</span> <span class='comment'># This will match only for all IDs from `time1` to max value of the ULID limit
+</span>
+<span class='comment'># So you can use the generated range objects as below
+</span><span class='id identifier rubyid_ulids'>ulids</span><span class='period'>.</span><span class='id identifier rubyid_grep'>grep</span><span class='lparen'>(</span><span class='id identifier rubyid_one_of_the_above'>one_of_the_above</span><span class='rparen'>)</span>
+<span class='id identifier rubyid_ulids'>ulids</span><span class='period'>.</span><span class='id identifier rubyid_grep_v'>grep_v</span><span class='lparen'>(</span><span class='id identifier rubyid_one_of_the_above'>one_of_the_above</span><span class='rparen'>)</span>
+<span class='comment'>#=&gt; I hope the results should be actually you want!
+</span></code></pre>
+
+<p>If you want to manually handle the Time objects, <code>ULID.floor</code> returns new <code>Time</code> with truncating excess precisions in ULID spec.</p>
+
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_time'>time</span> <span class='op'>=</span> <span class='const'>Time</span><span class='period'>.</span><span class='id identifier rubyid_at'>at</span><span class='lparen'>(</span><span class='int'>946684800</span><span class='comma'>,</span> <span class='const'>Rational</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>123456.789</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_utc'>utc</span> <span class='comment'>#=&gt; 2000-01-01 00:00:00.123456789 UTC
+</span><span class='const'><span class='object_link'><a href="ULID.html" title="ULID (class)">ULID</a></span></span><span class='period'>.</span><span class='id identifier rubyid_floor'><span class='object_link'><a href="ULID.html#floor-class_method" title="ULID.floor (method)">floor</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_time'>time</span><span class='rparen'>)</span> <span class='comment'>#=&gt; 2000-01-01 00:00:00.123 UTC
+</span></code></pre>
+
+<h3 id="label-Tools">Tools</h3>
+
+<h4 id="label-Scanner+for+string+-28e.g.+JSON-29">Scanner for string (e.g. <code>JSON</code>)</h4>
+
+<p>For rough operations, <code>ULID.scan</code> might be useful.</p>
+
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_json'>json</span> <span class='op'>=</span> <span class='heredoc_beg'>&lt;&lt;&#39;JSON&#39;</span>
+<span class='tstring_content'>{
+  &quot;id&quot;: &quot;01F4GNAV5ZR6FJQ5SFQC7WDSY3&quot;,
+  &quot;author&quot;: {
+    &quot;id&quot;: &quot;01F4GNBXW1AM2KWW52PVT3ZY9X&quot;,
+    &quot;name&quot;: &quot;kachick&quot;
+  },
+  &quot;title&quot;: &quot;My awesome blog post&quot;,
+  &quot;comments&quot;: [
+    {
+      &quot;id&quot;: &quot;01F4GNCNC3CH0BCRZBPPDEKBKS&quot;,
+      &quot;commenter&quot;: {
+        &quot;id&quot;: &quot;01F4GNBXW1AM2KWW52PVT3ZY9X&quot;,
+        &quot;name&quot;: &quot;kachick&quot;
+      }
+    },
+    {
+      &quot;id&quot;: &quot;01F4GNCXAMXQ1SGBH5XCR6ZH0M&quot;,
+      &quot;commenter&quot;: {
+        &quot;id&quot;: &quot;01F4GND4RYYSKNAADHQ9BNXAWJ&quot;,
+        &quot;name&quot;: &quot;pankona&quot;
+      }
+    }
+  ]
+}
+</span><span class='heredoc_end'>JSON
+</span>
+<span class='const'><span class='object_link'><a href="ULID.html" title="ULID (class)">ULID</a></span></span><span class='period'>.</span><span class='id identifier rubyid_scan'><span class='object_link'><a href="ULID.html#scan-class_method" title="ULID.scan (method)">scan</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_json'>json</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to_a'>to_a</span>
+<span class='comment'>#=&gt;
+</span><span class='comment'># [ULID(2021-04-30 05:51:57.119 UTC: 01F4GNAV5ZR6FJQ5SFQC7WDSY3),
+</span><span class='comment'>#  ULID(2021-04-30 05:52:32.641 UTC: 01F4GNBXW1AM2KWW52PVT3ZY9X),
+</span><span class='comment'>#  ULID(2021-04-30 05:52:56.707 UTC: 01F4GNCNC3CH0BCRZBPPDEKBKS),
+</span><span class='comment'>#  ULID(2021-04-30 05:52:32.641 UTC: 01F4GNBXW1AM2KWW52PVT3ZY9X),
+</span><span class='comment'>#  ULID(2021-04-30 05:53:04.852 UTC: 01F4GNCXAMXQ1SGBH5XCR6ZH0M),
+</span><span class='comment'>#  ULID(2021-04-30 05:53:12.478 UTC: 01F4GND4RYYSKNAADHQ9BNXAWJ)]
+</span></code></pre>
+
+<p><code>ULID#patterns</code> is a util for text based operations. The results and spec are not fixed. Should not be used except snippets/console operation.</p>
+
+<pre class="code ruby"><code class="ruby"><span class='const'><span class='object_link'><a href="ULID.html" title="ULID (class)">ULID</a></span></span><span class='period'>.</span><span class='id identifier rubyid_parse'><span class='object_link'><a href="ULID.html#parse-class_method" title="ULID.parse (method)">parse</a></span></span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>01F4GNBXW1AM2KWW52PVT3ZY9X</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_patterns'><span class='object_link'><a href="ULID.html#patterns-instance_method" title="ULID#patterns (method)">patterns</a></span></span>
+<span class='comment'>#=&gt; returns like a fallowing Hash
+</span><span class='lbrace'>{</span>
+  <span class='label'>named_captures:</span> <span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>(?&lt;timestamp&gt;01F4GNBXW1)(?&lt;randomness&gt;AM2KWW52PVT3ZY9X)</span><span class='regexp_end'>/i</span></span><span class='comma'>,</span>
+  <span class='label'>strict_named_captures:</span> <span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>\A(?&lt;timestamp&gt;01F4GNBXW1)(?&lt;randomness&gt;AM2KWW52PVT3ZY9X)\z</span><span class='regexp_end'>/i</span></span>
+<span class='rbrace'>}</span>
+</code></pre>
+
+<h4 id="label-Get+boundary+ULIDs">Get boundary ULIDs</h4>
+
+<p><code>ULID.min</code> and <code>ULID.max</code> return termination values for ULID spec.</p>
+
+<p>It can take <code>Time</code> instance as an optional argument. Then returns min/max ID that has limit of randomness part in the time.</p>
+
+<pre class="code ruby"><code class="ruby"><span class='const'><span class='object_link'><a href="ULID.html" title="ULID (class)">ULID</a></span></span><span class='period'>.</span><span class='id identifier rubyid_min'><span class='object_link'><a href="ULID.html#min-class_method" title="ULID.min (method)">min</a></span></span> <span class='comment'>#=&gt; ULID(1970-01-01 00:00:00.000 UTC: 00000000000000000000000000)
+</span><span class='const'><span class='object_link'><a href="ULID.html" title="ULID (class)">ULID</a></span></span><span class='period'>.</span><span class='id identifier rubyid_max'><span class='object_link'><a href="ULID.html#max-class_method" title="ULID.max (method)">max</a></span></span> <span class='comment'>#=&gt; ULID(10889-08-02 05:31:50.655 UTC: 7ZZZZZZZZZZZZZZZZZZZZZZZZZ)
+</span>
+<span class='id identifier rubyid_time'>time</span> <span class='op'>=</span> <span class='const'>Time</span><span class='period'>.</span><span class='id identifier rubyid_at'>at</span><span class='lparen'>(</span><span class='int'>946684800</span><span class='comma'>,</span> <span class='const'>Rational</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>123456.789</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_utc'>utc</span> <span class='comment'>#=&gt; 2000-01-01 00:00:00.123456789 UTC
+</span><span class='const'><span class='object_link'><a href="ULID.html" title="ULID (class)">ULID</a></span></span><span class='period'>.</span><span class='id identifier rubyid_min'><span class='object_link'><a href="ULID.html#min-class_method" title="ULID.min (method)">min</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_time'>time</span><span class='rparen'>)</span> <span class='comment'>#=&gt; ULID(2000-01-01 00:00:00.123 UTC: 00VHNCZB3V0000000000000000)
+</span><span class='const'><span class='object_link'><a href="ULID.html" title="ULID (class)">ULID</a></span></span><span class='period'>.</span><span class='id identifier rubyid_max'><span class='object_link'><a href="ULID.html#max-class_method" title="ULID.max (method)">max</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_time'>time</span><span class='rparen'>)</span> <span class='comment'>#=&gt; ULID(2000-01-01 00:00:00.123 UTC: 00VHNCZB3VZZZZZZZZZZZZZZZZ)
+</span></code></pre>
+
+<h4 id="label-As+element+in+Enumerable">As element in Enumerable</h4>
+
+<p><code>ULID#next</code> and <code>ULID#succ</code> returns next(successor) ULID.\ Especially <code>ULID#succ</code> makes it possible <code>Range[ULID]#each</code>.</p>
+
+<p>NOTE: However basically <code>Range[ULID]#each</code> should not be used. Incrementing 128 bits IDs are not reasonable operation in most cases.</p>
+
+<pre class="code ruby"><code class="ruby"><span class='const'><span class='object_link'><a href="ULID.html" title="ULID (class)">ULID</a></span></span><span class='period'>.</span><span class='id identifier rubyid_parse'><span class='object_link'><a href="ULID.html#parse-class_method" title="ULID.parse (method)">parse</a></span></span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>01BX5ZZKBKZZZZZZZZZZZZZZZY</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_next'>next</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span> <span class='comment'>#=&gt; &quot;01BX5ZZKBKZZZZZZZZZZZZZZZZ&quot;
+</span><span class='const'><span class='object_link'><a href="ULID.html" title="ULID (class)">ULID</a></span></span><span class='period'>.</span><span class='id identifier rubyid_parse'><span class='object_link'><a href="ULID.html#parse-class_method" title="ULID.parse (method)">parse</a></span></span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>01BX5ZZKBKZZZZZZZZZZZZZZZZ</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_next'>next</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span> <span class='comment'>#=&gt; &quot;01BX5ZZKBM0000000000000000&quot;
+</span><span class='const'><span class='object_link'><a href="ULID.html" title="ULID (class)">ULID</a></span></span><span class='period'>.</span><span class='id identifier rubyid_parse'><span class='object_link'><a href="ULID.html#parse-class_method" title="ULID.parse (method)">parse</a></span></span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>7ZZZZZZZZZZZZZZZZZZZZZZZZZ</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_next'>next</span> <span class='comment'>#=&gt; nil
+</span></code></pre>
+
+<p><code>ULID#pred</code> returns predecessor ULID.</p>
+
+<pre class="code ruby"><code class="ruby"><span class='const'><span class='object_link'><a href="ULID.html" title="ULID (class)">ULID</a></span></span><span class='period'>.</span><span class='id identifier rubyid_parse'><span class='object_link'><a href="ULID.html#parse-class_method" title="ULID.parse (method)">parse</a></span></span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>01BX5ZZKBK0000000000000001</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_pred'><span class='object_link'><a href="ULID.html#pred-instance_method" title="ULID#pred (method)">pred</a></span></span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span> <span class='comment'>#=&gt; &quot;01BX5ZZKBK0000000000000000&quot;
+</span><span class='const'><span class='object_link'><a href="ULID.html" title="ULID (class)">ULID</a></span></span><span class='period'>.</span><span class='id identifier rubyid_parse'><span class='object_link'><a href="ULID.html#parse-class_method" title="ULID.parse (method)">parse</a></span></span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>01BX5ZZKBK0000000000000000</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_pred'><span class='object_link'><a href="ULID.html#pred-instance_method" title="ULID#pred (method)">pred</a></span></span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span> <span class='comment'>#=&gt; &quot;01BX5ZZKBJZZZZZZZZZZZZZZZZ&quot;
+</span><span class='const'><span class='object_link'><a href="ULID.html" title="ULID (class)">ULID</a></span></span><span class='period'>.</span><span class='id identifier rubyid_parse'><span class='object_link'><a href="ULID.html#parse-class_method" title="ULID.parse (method)">parse</a></span></span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>00000000000000000000000000</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_pred'><span class='object_link'><a href="ULID.html#pred-instance_method" title="ULID#pred (method)">pred</a></span></span> <span class='comment'>#=&gt; nil
+</span></code></pre>
+
+<h4 id="label-Test+helpers">Test helpers</h4>
+
+<p><code>ULID.sample</code> returns random ULIDs.</p>
+
+<p>Basically ignores generating time.</p>
+
+<pre class="code ruby"><code class="ruby"><span class='const'><span class='object_link'><a href="ULID.html" title="ULID (class)">ULID</a></span></span><span class='period'>.</span><span class='id identifier rubyid_sample'><span class='object_link'><a href="ULID.html#sample-class_method" title="ULID.sample (method)">sample</a></span></span> <span class='comment'>#=&gt; ULID(2545-07-26 06:51:20.085 UTC: 0GGKQ45GMNMZR6N8A8GFG0ZXST)
+</span><span class='const'><span class='object_link'><a href="ULID.html" title="ULID (class)">ULID</a></span></span><span class='period'>.</span><span class='id identifier rubyid_sample'><span class='object_link'><a href="ULID.html#sample-class_method" title="ULID.sample (method)">sample</a></span></span> <span class='comment'>#=&gt; ULID(5098-07-26 21:31:06.946 UTC: 2SSBNGGYA272J7BMDCG4Z6EEM5)
+</span><span class='const'><span class='object_link'><a href="ULID.html" title="ULID (class)">ULID</a></span></span><span class='period'>.</span><span class='id identifier rubyid_sample'><span class='object_link'><a href="ULID.html#sample-class_method" title="ULID.sample (method)">sample</a></span></span><span class='lparen'>(</span><span class='int'>0</span><span class='rparen'>)</span> <span class='comment'>#=&gt; []
+</span><span class='const'><span class='object_link'><a href="ULID.html" title="ULID (class)">ULID</a></span></span><span class='period'>.</span><span class='id identifier rubyid_sample'><span class='object_link'><a href="ULID.html#sample-class_method" title="ULID.sample (method)">sample</a></span></span><span class='lparen'>(</span><span class='int'>1</span><span class='rparen'>)</span> <span class='comment'>#=&gt; [ULID(2241-04-16 03:31:18.440 UTC: 07S52YWZ98AZ8T565MD9VRYMQH)]
+</span><span class='const'><span class='object_link'><a href="ULID.html" title="ULID (class)">ULID</a></span></span><span class='period'>.</span><span class='id identifier rubyid_sample'><span class='object_link'><a href="ULID.html#sample-class_method" title="ULID.sample (method)">sample</a></span></span><span class='lparen'>(</span><span class='int'>5</span><span class='rparen'>)</span>
+<span class='comment'>#=&gt;
+</span><span class='comment'>#[ULID(5701-04-29 12:41:19.647 UTC: 3B2YH2DV0ZYDDATGTYSKMM1CMT),
+</span><span class='comment'># ULID(2816-08-01 01:21:46.612 UTC: 0R9GT6RZKMK3RG02Q2HAFVKEY2),
+</span><span class='comment'># ULID(10408-10-05 17:06:27.848 UTC: 7J6CPTEEC86Y24EQ4F1Y93YYN0),
+</span><span class='comment'># ULID(2741-09-02 16:24:18.803 UTC: 0P4Q4V34KKAJW46QW47WQB5463),
+</span><span class='comment'># ULID(2665-03-16 14:50:22.724 UTC: 0KYFW9DWM4CEGFNTAC6YFAVVJ6)]
+</span></code></pre>
+
+<p>You can specify a range object for the timestamp restriction, see also <code>ULID.range</code>.</p>
+
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_ulid1'>ulid1</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="ULID.html" title="ULID (class)">ULID</a></span></span><span class='period'>.</span><span class='id identifier rubyid_parse'><span class='object_link'><a href="ULID.html#parse-class_method" title="ULID.parse (method)">parse</a></span></span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>01F4A5Y1YAQCYAYCTC7GRMJ9AA</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='comment'>#=&gt; ULID(2021-04-27 17:27:22.826 UTC: 01F4A5Y1YAQCYAYCTC7GRMJ9AA)
+</span><span class='id identifier rubyid_ulid2'>ulid2</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="ULID.html" title="ULID (class)">ULID</a></span></span><span class='period'>.</span><span class='id identifier rubyid_parse'><span class='object_link'><a href="ULID.html#parse-class_method" title="ULID.parse (method)">parse</a></span></span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>01F4PTVCSN9ZPFKYTY2DDJVRK4</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='comment'>#=&gt; ULID(2021-05-02 15:23:48.917 UTC: 01F4PTVCSN9ZPFKYTY2DDJVRK4)
+</span><span class='id identifier rubyid_ulids'>ulids</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="ULID.html" title="ULID (class)">ULID</a></span></span><span class='period'>.</span><span class='id identifier rubyid_sample'><span class='object_link'><a href="ULID.html#sample-class_method" title="ULID.sample (method)">sample</a></span></span><span class='lparen'>(</span><span class='int'>1000</span><span class='comma'>,</span> <span class='label'>period:</span> <span class='id identifier rubyid_ulid1'>ulid1</span><span class='op'>..</span><span class='id identifier rubyid_ulid2'>ulid2</span><span class='rparen'>)</span>
+<span class='id identifier rubyid_ulids'>ulids</span><span class='period'>.</span><span class='id identifier rubyid_uniq'>uniq</span><span class='period'>.</span><span class='id identifier rubyid_size'>size</span> <span class='comment'>#=&gt; 1000
+</span><span class='id identifier rubyid_ulids'>ulids</span><span class='period'>.</span><span class='id identifier rubyid_take'>take</span><span class='lparen'>(</span><span class='int'>5</span><span class='rparen'>)</span>
+<span class='comment'>#=&gt;
+</span><span class='comment'>#[ULID(2021-05-02 06:57:19.954 UTC: 01F4NXW02JNB8H0J0TK48JD39X),
+</span><span class='comment'># ULID(2021-05-02 07:06:07.458 UTC: 01F4NYC372GVP7NS0YAYQGT4VZ),
+</span><span class='comment'># ULID(2021-05-01 06:16:35.791 UTC: 01F4K94P6F6P68K0H64WRDSFKW),
+</span><span class='comment'># ULID(2021-04-27 22:17:37.844 UTC: 01F4APHGSMFJZQTGXKZBFFBPJP),
+</span><span class='comment'># ULID(2021-04-28 20:17:55.357 UTC: 01F4D231MXQJXAR8G2JZHEJNH3)]
+</span><span class='const'><span class='object_link'><a href="ULID.html" title="ULID (class)">ULID</a></span></span><span class='period'>.</span><span class='id identifier rubyid_sample'><span class='object_link'><a href="ULID.html#sample-class_method" title="ULID.sample (method)">sample</a></span></span><span class='lparen'>(</span><span class='int'>5</span><span class='comma'>,</span> <span class='label'>period:</span> <span class='id identifier rubyid_ulid1'>ulid1</span><span class='period'>.</span><span class='id identifier rubyid_to_time'>to_time</span><span class='op'>..</span><span class='id identifier rubyid_ulid2'>ulid2</span><span class='period'>.</span><span class='id identifier rubyid_to_time'>to_time</span><span class='rparen'>)</span>
+<span class='comment'>#=&gt;
+</span><span class='comment'># [ULID(2021-04-29 06:44:41.513 UTC: 01F4E5YPD9XQ3MYXWK8ZJKY8SW),
+</span><span class='comment'>#  ULID(2021-05-01 00:35:06.629 UTC: 01F4JNKD85SVK1EAEYSJGF53A2),
+</span><span class='comment'>#  ULID(2021-05-02 12:45:28.408 UTC: 01F4PHSEYRG9BWBEWMRW1XE6WW),
+</span><span class='comment'>#  ULID(2021-05-01 03:06:09.130 UTC: 01F4JY7ZBABCBMX16XH2Q4JW4W),
+</span><span class='comment'>#  ULID(2021-04-29 21:38:58.109 UTC: 01F4FS45DX4049JEQK4W6TER6G)]
+</span></code></pre>
+
+<h4 id="label-Variants+of+format">Variants of format</h4>
+
+<p>I’m afraid so, we should consider <a href="https://github.com/ulid/spec/tree/d0c7170df4517939e70129b4d6462cc162f2d5bf#universally-unique-lexicographically-sortable-identifier">Current ULID spec</a> has <code>orthographical variants of the format</code> possibilities.</p>
+
+<blockquote>
+<p>Case insensitive</p>
+</blockquote>
+
+<p>I can understand it might be considered in actual use-case. So <code>ULID.parse</code> accepts upcase and downcase.\ However it is a controversial point, discussing in <a href="https://github.com/ulid/spec/issues/3">ulid/spec#3</a>.</p>
+
+<blockquote>
+<p>Uses Crockford’s base32 for better efficiency and readability (5 bits per character)</p>
+</blockquote>
+
+<p>The original <code>Crockford&#39;s base32</code> maps <code>I</code>, <code>L</code> to <code>1</code>, <code>O</code> to <code>0</code>.\ And accepts freestyle inserting <code>Hyphens (-)</code>.\ To consider this patterns or not is different in each implementations.</p>
+
+<p>I have suggested to clarify <code>subset of Crockford&#39;s base32</code> in <a href="https://github.com/ulid/spec/pull/57">ulid/spec#57</a>.</p>
+
+<p>This gem provides some methods to handle the nasty possibilities.</p>
+
+<p><code>ULID.normalize</code>, <code>ULID.normalized?</code>, <code>ULID.valid_as_variant_format?</code> and <code>ULID.parse_variant_format</code></p>
+
+<pre class="code ruby"><code class="ruby"><span class='const'><span class='object_link'><a href="ULID.html" title="ULID (class)">ULID</a></span></span><span class='period'>.</span><span class='id identifier rubyid_normalize'><span class='object_link'><a href="ULID.html#normalize-class_method" title="ULID.normalize (method)">normalize</a></span></span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>01g70y0y7g-z1xwdarexergsddd</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='comment'>#=&gt; &quot;01G70Y0Y7GZ1XWDAREXERGSDDD&quot;
+</span><span class='const'><span class='object_link'><a href="ULID.html" title="ULID (class)">ULID</a></span></span><span class='period'>.</span><span class='id identifier rubyid_normalized?'><span class='object_link'><a href="ULID.html#normalized%3F-class_method" title="ULID.normalized? (method)">normalized?</a></span></span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>01g70y0y7g-z1xwdarexergsddd</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='comment'>#=&gt; false
+</span><span class='const'><span class='object_link'><a href="ULID.html" title="ULID (class)">ULID</a></span></span><span class='period'>.</span><span class='id identifier rubyid_normalized?'><span class='object_link'><a href="ULID.html#normalized%3F-class_method" title="ULID.normalized? (method)">normalized?</a></span></span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>01G70Y0Y7GZ1XWDAREXERGSDDD</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='comment'>#=&gt; true
+</span><span class='const'><span class='object_link'><a href="ULID.html" title="ULID (class)">ULID</a></span></span><span class='period'>.</span><span class='id identifier rubyid_valid_as_variant_format?'><span class='object_link'><a href="ULID.html#valid_as_variant_format%3F-class_method" title="ULID.valid_as_variant_format? (method)">valid_as_variant_format?</a></span></span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>01g70y0y7g-z1xwdarexergsddd</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='comment'>#=&gt; true
+</span><span class='const'><span class='object_link'><a href="ULID.html" title="ULID (class)">ULID</a></span></span><span class='period'>.</span><span class='id identifier rubyid_parse_variant_format'><span class='object_link'><a href="ULID.html#parse_variant_format-class_method" title="ULID.parse_variant_format (method)">parse_variant_format</a></span></span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>01G70Y0Y7G-ZLXWDIREXERGSDoD</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='comment'>#=&gt; ULID(2022-07-03 02:25:22.672 UTC: 01G70Y0Y7GZ1XWD1REXERGSD0D)
+</span></code></pre>
+
+<h4 id="label-UUIDv4+converter+-28experimental-29">UUIDv4 converter (experimental)</h4>
+
+<p><code>ULID.from_uuidv4</code> and <code>ULID#to_uuidv4</code> is the converter.\ The imported timestamp is meaningless. So ULID’s benefit will lost.</p>
+
+<pre class="code ruby"><code class="ruby"><span class='comment'># Currently experimental feature, so needed to load the extension.
+</span><span class='id identifier rubyid_require'>require</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>ulid/uuid</span><span class='tstring_end'>&#39;</span></span>
+
+<span class='comment'># Basically reversible
+</span><span class='id identifier rubyid_ulid'>ulid</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="ULID.html" title="ULID (class)">ULID</a></span></span><span class='period'>.</span><span class='id identifier rubyid_from_uuidv4'><span class='object_link'><a href="ULID.html#from_uuidv4-class_method" title="ULID.from_uuidv4 (method)">from_uuidv4</a></span></span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>0983d0a2-ff15-4d83-8f37-7dd945b5aa39</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='comment'>#=&gt; ULID(2301-07-10 00:28:28.821 UTC: 09GF8A5ZRN9P1RYDVXV52VBAHS)
+</span><span class='id identifier rubyid_ulid'>ulid</span><span class='period'>.</span><span class='id identifier rubyid_to_uuidv4'>to_uuidv4</span> <span class='comment'>#=&gt; &quot;0983d0a2-ff15-4d83-8f37-7dd945b5aa39&quot;
+</span>
+<span class='id identifier rubyid_uuid_v4s'>uuid_v4s</span> <span class='op'>=</span> <span class='int'>10000</span><span class='period'>.</span><span class='id identifier rubyid_times'>times</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='const'>SecureRandom</span><span class='period'>.</span><span class='id identifier rubyid_uuid'>uuid</span> <span class='rbrace'>}</span>
+<span class='id identifier rubyid_uuid_v4s'>uuid_v4s</span><span class='period'>.</span><span class='id identifier rubyid_uniq'>uniq</span><span class='period'>.</span><span class='id identifier rubyid_size'>size</span> <span class='op'>==</span> <span class='int'>10000</span> <span class='comment'>#=&gt; Probably `true`
+</span>
+<span class='id identifier rubyid_ulids'>ulids</span> <span class='op'>=</span> <span class='id identifier rubyid_uuid_v4s'>uuid_v4s</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_uuid_v4'>uuid_v4</span><span class='op'>|</span> <span class='const'><span class='object_link'><a href="ULID.html" title="ULID (class)">ULID</a></span></span><span class='period'>.</span><span class='id identifier rubyid_from_uuidv4'><span class='object_link'><a href="ULID.html#from_uuidv4-class_method" title="ULID.from_uuidv4 (method)">from_uuidv4</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_uuid_v4'>uuid_v4</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
+<span class='id identifier rubyid_ulids'>ulids</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:to_uuidv4</span><span class='rparen'>)</span> <span class='op'>==</span> <span class='id identifier rubyid_uuid_v4s'>uuid_v4s</span> <span class='comment'>#=&gt; **Probably** `true` except below examples.
+</span>
+<span class='comment'># NOTE: Some boundary values are not reversible. See below.
+</span>
+<span class='const'><span class='object_link'><a href="ULID.html" title="ULID (class)">ULID</a></span></span><span class='period'>.</span><span class='id identifier rubyid_min'><span class='object_link'><a href="ULID.html#min-class_method" title="ULID.min (method)">min</a></span></span><span class='period'>.</span><span class='id identifier rubyid_to_uuidv4'><span class='object_link'><a href="ULID.html#to_uuidv4-instance_method" title="ULID#to_uuidv4 (method)">to_uuidv4</a></span></span> <span class='comment'>#=&gt; &quot;00000000-0000-4000-8000-000000000000&quot;
+</span><span class='const'><span class='object_link'><a href="ULID.html" title="ULID (class)">ULID</a></span></span><span class='period'>.</span><span class='id identifier rubyid_max'><span class='object_link'><a href="ULID.html#max-class_method" title="ULID.max (method)">max</a></span></span><span class='period'>.</span><span class='id identifier rubyid_to_uuidv4'><span class='object_link'><a href="ULID.html#to_uuidv4-instance_method" title="ULID#to_uuidv4 (method)">to_uuidv4</a></span></span> <span class='comment'>#=&gt; &quot;ffffffff-ffff-4fff-bfff-ffffffffffff&quot;
+</span>
+<span class='comment'># These importing results are same as https://github.com/ahawker/ulid/tree/96bdb1daad7ce96f6db8c91ac0410b66d2e1c4c1 on CPython 3.9.4
+</span><span class='id identifier rubyid_reversed_min'>reversed_min</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="ULID.html" title="ULID (class)">ULID</a></span></span><span class='period'>.</span><span class='id identifier rubyid_from_uuidv4'><span class='object_link'><a href="ULID.html#from_uuidv4-class_method" title="ULID.from_uuidv4 (method)">from_uuidv4</a></span></span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>00000000-0000-4000-8000-000000000000</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='comment'>#=&gt; ULID(1970-01-01 00:00:00.000 UTC: 00000000008008000000000000)
+</span><span class='id identifier rubyid_reversed_max'>reversed_max</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="ULID.html" title="ULID (class)">ULID</a></span></span><span class='period'>.</span><span class='id identifier rubyid_from_uuidv4'><span class='object_link'><a href="ULID.html#from_uuidv4-class_method" title="ULID.from_uuidv4 (method)">from_uuidv4</a></span></span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>ffffffff-ffff-4fff-bfff-ffffffffffff</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='comment'>#=&gt; ULID(10889-08-02 05:31:50.655 UTC: 7ZZZZZZZZZ9ZZVZZZZZZZZZZZZ)
+</span>
+<span class='comment'># But they are not reversible! Need to consider this issue in https://github.com/kachick/ruby-ulid/issues/76
+</span><span class='const'><span class='object_link'><a href="ULID.html" title="ULID (class)">ULID</a></span></span><span class='period'>.</span><span class='id identifier rubyid_min'><span class='object_link'><a href="ULID.html#min-class_method" title="ULID.min (method)">min</a></span></span> <span class='op'>==</span> <span class='id identifier rubyid_reversed_min'>reversed_min</span> <span class='comment'>#=&gt; false
+</span><span class='const'><span class='object_link'><a href="ULID.html" title="ULID (class)">ULID</a></span></span><span class='period'>.</span><span class='id identifier rubyid_max'><span class='object_link'><a href="ULID.html#max-class_method" title="ULID.max (method)">max</a></span></span> <span class='op'>==</span> <span class='id identifier rubyid_reversed_max'>reversed_max</span> <span class='comment'>#=&gt; false
+</span></code></pre>
+
+<h2 id="label-Migration+from+other+gems">Migration from other gems</h2>
+
+<p>See <a href="https://github.com/kachick/ruby-ulid/wiki/Gem-migration">wiki page for gem migration</a>.</p>
+
+<h2 id="label-RBS">RBS</h2>
+
+<p>Try at <a href="https://github.com/kachick/ruby-ulid/tree/main/examples/rbs_sandbox">examples/rbs_sandbox</a>.</p>
+
+<p>I have checked the behavior with <a href="https://github.com/ruby/rbs">ruby/rbs@2.6.0</a> + <a href="https://github.com/soutaro/steep">soutaro/steep@1.0.1</a> + <a href="https://github.com/soutaro/steep-vscode">soutaro/steep-vscode</a>.</p>
+<ul><li>
+<p><img src="./assets/ulid-rbs-overview.png?raw=true.png"></p>
+</li><li>
+<p><img src="./assets/ulid-rbs-mix.png?raw=true.png"></p>
+</li><li>
+<p><img src="./assets/ulid-rbs-ng-to_str.png?raw=true.png"></p>
+</li></ul>
+
+<h2 id="label-References">References</h2>
+<ul><li>
+<p><a href="https://github.com/kachick/ruby-ulid">Repository</a></p>
+</li><li>
+<p><a href="https://kachick.github.io/ruby-ulid/">API documents</a></p>
+</li><li>
+<p><a href="https://github.com/ulid/spec">ulid/spec</a></p>
+</li></ul>
+
+<h2 id="label-Note">Note</h2>
+<ul><li>
+<p><a href="https://www.ietf.org/archive/id/draft-peabody-dispatch-new-uuid-format-01.html">UUIDv6, UUIDv7, UUIDv8</a> is another choice for sortable and randomness ID.\  However they are stayed in draft state. ref: <a href="https://github.com/kachick/ruby-ulid/issues/37">ruby-ulid#37</a></p>
+</li></ul>
+</div></div>
+
+      <div id="footer">
+  Generated on Thu Jul 21 03:20:52 2022 by
+  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.28 (ruby-3.1.2).
+</div>
+
+    </div>
+  </body>
+</html>
