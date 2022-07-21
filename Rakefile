@@ -47,10 +47,11 @@ Rake::TestTask.new(:test_longtime) do |tt|
 end
 
 desc('Signature check, it means `rbs` and `YARD` syntax correctness')
-multitask(validate_signatures: [:'signature:validate_yard', :'signature:validate_rbs', :'signature:check_rbs_false_positive'])
+multitask(rbs: [:'signature:validate_rbs', :'signature:check_rbs_false_positive'])
+multitask(signature_all: [:'signature:validate_yard', :rbs])
 
 desc('Simulate CI results in local machine as possible')
-multitask(simulate_ci: [:test_all, :validate_signatures, :rubocop])
+multitask(simulate_ci: [:test_all, :signature_all, :rubocop])
 
 namespace(:signature) do
   desc('Validate `rbs` syntax, this should be passed')
@@ -68,9 +69,9 @@ namespace(:signature) do
     sh('bundle exec steep check --severity-level=warning --log-level=fatal --with-expectations')
   end
 
-  desc('Generate YARD docs for the syntax check')
+  desc('Run YARD without docs generating for the syntax check')
   task(:validate_yard) do
-    sh("bundle exec yard --fail-on-warning #{'--no-progress' if ENV['CI']}")
+    sh('bundle exec yard stats --fail-on-warning')
   end
 end
 

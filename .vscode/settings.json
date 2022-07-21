@@ -1,18 +1,18 @@
 {
-  "[ruby]": {
-    "editor.formatOnSave": true
-  },
+  "editor.defaultFormatter": "dprint.dprint",
+  "editor.formatOnSave": true,
   "ruby.useBundler": true,
   "ruby.useLanguageServer": true,
   "ruby.lint": {
     "rubocop": {
       "useBundler": true
-    },
+    }
   },
   "ruby.format": "rubocop",
   "cSpell.words": [
     "kwargs",
     "Undocumentable",
-    "unshareable"
+    "unshareable",
+    "abachman"
   ]
 }

@@ -1,8 +1,8 @@
 # How to contribute
 
-* Reporting bugs
-* Suggesting features
-* Creating PRs
+- Reporting bugs
+- Suggesting features
+- Creating PRs
 
 Welcome all of the contributions!
 
@@ -110,16 +110,16 @@ $ bundle exec ruby benchmark/the_added_file.rb
 
 ### What is `ADR`?
 
-* [English](https://github.com/joelparkerhenderson/architecture_decision_record)
-* [Japanese](https://quipper.hatenablog.com/entry/architecture_decision_records)
+- [English](https://github.com/joelparkerhenderson/architecture_decision_record)
+- [Japanese](https://quipper.hatenablog.com/entry/architecture_decision_records)
 
 ### Adding dependencies for this gem
 
-* Keep no runtime dependencies
-* Might be unavoidably needed latest versions of ruby standard libraries from `https://github.com/ruby/*`
-* Keep clean environment in `test` group. Do not add gems like `active_support` into `test` group # ref: [My struggle](https://github.com/kachick/ruby-ulid/pull/42#discussion_r623960639)
+- Keep no runtime dependencies
+- Might be unavoidably needed latest versions of ruby standard libraries from `https://github.com/ruby/*`
+- Keep clean environment in `test` group. Do not add gems like `active_support` into `test` group # ref: [My struggle](https://github.com/kachick/ruby-ulid/pull/42#discussion_r623960639)
 
 ### Adding `ULID` instance variables
 
-* Basically should be reduced. ref: [#91](https://github.com/kachick/ruby-ulid/issues/91)
-* When having some objects, they should be frozen. ref: [#126](https://github.com/kachick/ruby-ulid/pull/126)
+- Basically should be reduced. ref: [#91](https://github.com/kachick/ruby-ulid/issues/91)
+- When having some objects, they should be frozen. ref: [#126](https://github.com/kachick/ruby-ulid/pull/126)

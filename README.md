@@ -1,12 +1,12 @@
 # ruby-ulid
 
-[![Build Status](https://github.com/kachick/ruby-ulid/actions/workflows/test_behaviors.yml/badge.svg?branch=main)](https://github.com/kachick/ruby-ulid/actions/workflows/test_behaviors.yml/?branch=main)
+[![Build Status](https://github.com/kachick/ruby-ulid/actions/workflows/test_ci.yml/badge.svg?branch=main)](https://github.com/kachick/ruby-ulid/actions/workflows/test_ci.yml?query=branch%3Amain)
 [![Gem Version](https://badge.fury.io/rb/ruby-ulid.svg)](http://badge.fury.io/rb/ruby-ulid)
 
 ## Overview
 
-[ulid/spec](https://github.com/ulid/spec) is useful.
-Especially possess all `uniqueness`, `randomness`, `extractable timestamps` and `sortable` features.  
+[ulid/spec](https://github.com/ulid/spec) has some useful features.\
+Especially possess all `uniqueness`, `randomness`, `extractable timestamps` and `sortable` features.\
 This gem aims to provide the generator, optional monotonicity, parser and other manipulation features around ULID with included [RBS](https://github.com/ruby/rbs).
 
 ---
@@ -99,9 +99,9 @@ ULID.generate(moment: time) #=> ULID(2000-01-01 00:00:00.000 UTC: 00VHNCZB006WQT
 ULID.at(time) #=> ULID(2000-01-01 00:00:00.000 UTC: 00VHNCZB002W5BGWWKN76N22H6)
 ```
 
-Also `ULID.encode` and `ULID.decode_time` can be used to get primitive values for most usecases.  
+Also `ULID.encode` and `ULID.decode_time` can be used to get primitive values for most usecases.
 
-`ULID.encode` returns [normalized](#variants-of-format) String without ULID object creation.  
+`ULID.encode` returns [normalized](#variants-of-format) String without ULID object creation.\
 It can take same arguments as `ULID.generate`.
 
 ```ruby
@@ -120,9 +120,9 @@ This project does not prioritize the speed. However it actually works faster tha
 
 Snapshot on 0.6.1 is below
 
-* Generator is 1.5x faster than - [ulid gem](https://github.com/rafaelsales/ulid)
-* Generator is 1.9x faster than - [ulid-ruby gem](https://github.com/abachman/ulid-ruby)
-* Parser is 2.7x faster than - [ulid-ruby gem](https://github.com/abachman/ulid-ruby)
+- Generator is 1.5x faster than - [ulid gem](https://github.com/rafaelsales/ulid)
+- Generator is 1.9x faster than - [ulid-ruby gem](https://github.com/abachman/ulid-ruby)
+- Parser is 2.7x faster than - [ulid-ruby gem](https://github.com/abachman/ulid-ruby)
 
 You can see further detail at [Benchmark](https://github.com/kachick/ruby-ulid/wiki/Benchmark).
 
@@ -151,7 +151,7 @@ ulids.sort == ulids #=> false
 
 ### How to keep `Sortable` even if in same timestamp
 
-If you want to prefer `sortable`, Use `MonotonicGenerator` instead. It is called as [Monotonicity](https://github.com/ulid/spec/tree/d0c7170df4517939e70129b4d6462cc162f2d5bf#monotonicity) on the spec.
+If you want to prefer `sortable`, Use `MonotonicGenerator` instead. It is called as [Monotonicity](https://github.com/ulid/spec/tree/d0c7170df4517939e70129b4d6462cc162f2d5bf#monotonicity) on the spec.\
 (Though it starts with new random value when changed the timestamp)
 
 ```ruby
@@ -195,7 +195,7 @@ ulids.grep(one_of_the_above)
 ulids.grep_v(one_of_the_above)
 ```
 
-When want to filter ULIDs with `Time`, we should consider to handle the precision.
+When want to filter ULIDs with `Time`, we should consider to handle the precision.\
 So this gem provides `ULID.range` to generate reasonable `Range[ULID]` from `Range[Time]`
 
 ```ruby
@@ -294,7 +294,7 @@ ULID.max(time) #=> ULID(2000-01-01 00:00:00.123 UTC: 00VHNCZB3VZZZZZZZZZZZZZZZZ)
 
 #### As element in Enumerable
 
-`ULID#next` and `ULID#succ` returns next(successor) ULID.
+`ULID#next` and `ULID#succ` returns next(successor) ULID.\
 Especially `ULID#succ` makes it possible `Range[ULID]#each`.
 
 NOTE: However basically `Range[ULID]#each` should not be used. Incrementing 128 bits IDs are not reasonable operation in most cases.
@@ -360,15 +360,15 @@ ULID.sample(5, period: ulid1.to_time..ulid2.to_time)
 
 I'm afraid so, we should consider [Current ULID spec](https://github.com/ulid/spec/tree/d0c7170df4517939e70129b4d6462cc162f2d5bf#universally-unique-lexicographically-sortable-identifier) has `orthographical variants of the format` possibilities.
 
->Case insensitive
+> Case insensitive
 
-I can understand it might be considered in actual use-case. So `ULID.parse` accepts upcase and downcase.
+I can understand it might be considered in actual use-case. So `ULID.parse` accepts upcase and downcase.\
 However it is a controversial point, discussing in [ulid/spec#3](https://github.com/ulid/spec/issues/3).
 
->Uses Crockford's base32 for better efficiency and readability (5 bits per character)
+> Uses Crockford's base32 for better efficiency and readability (5 bits per character)
 
-The original `Crockford's base32` maps `I`, `L` to `1`, `O` to `0`.
-And accepts freestyle inserting `Hyphens (-)`.
+The original `Crockford's base32` maps `I`, `L` to `1`, `O` to `0`.\
+And accepts freestyle inserting `Hyphens (-)`.\
 To consider this patterns or not is different in each implementations.
 
 I have suggested to clarify `subset of Crockford's base32` in [ulid/spec#57](https://github.com/ulid/spec/pull/57).
@@ -387,7 +387,7 @@ ULID.parse_variant_format('01G70Y0Y7G-ZLXWDIREXERGSDoD') #=> ULID(2022-07-03 02:
 
 #### UUIDv4 converter (experimental)
 
-`ULID.from_uuidv4` and `ULID#to_uuidv4` is the converter.
+`ULID.from_uuidv4` and `ULID#to_uuidv4` is the converter.\
 The imported timestamp is meaningless. So ULID's benefit will lost.
 
 ```ruby
@@ -426,11 +426,11 @@ See [wiki page for gem migration](https://github.com/kachick/ruby-ulid/wiki/Gem-
 
 Try at [examples/rbs_sandbox](https://github.com/kachick/ruby-ulid/tree/main/examples/rbs_sandbox).
 
-I have checked the behavior with [ruby/rbs@2.6.0](https://github.com/ruby/rbs) + [soutaro/steep@1.0.1](https://github.com/soutaro/steep) +  [soutaro/steep-vscode](https://github.com/soutaro/steep-vscode).
+I have checked the behavior with [ruby/rbs@2.6.0](https://github.com/ruby/rbs) + [soutaro/steep@1.0.1](https://github.com/soutaro/steep) + [soutaro/steep-vscode](https://github.com/soutaro/steep-vscode).
 
-* ![rbs overview](./assets/ulid-rbs-overview.png?raw=true.png)
-* ![rbs mix](./assets/ulid-rbs-mix.png?raw=true.png)
-* ![rbs ng-to_str](./assets/ulid-rbs-ng-to_str.png?raw=true.png)
+- ![rbs overview](./assets/ulid-rbs-overview.png?raw=true.png)
+- ![rbs mix](./assets/ulid-rbs-mix.png?raw=true.png)
+- ![rbs ng-to_str](./assets/ulid-rbs-ng-to_str.png?raw=true.png)
 
 ## References
 
@@ -440,5 +440,5 @@ I have checked the behavior with [ruby/rbs@2.6.0](https://github.com/ruby/rbs) +
 
 ## Note
 
-- [UUIDv6, UUIDv7, UUIDv8](https://www.ietf.org/archive/id/draft-peabody-dispatch-new-uuid-format-01.html) is another choice for sortable and randomness ID.  
+- [UUIDv6, UUIDv7, UUIDv8](https://www.ietf.org/archive/id/draft-peabody-dispatch-new-uuid-format-01.html) is another choice for sortable and randomness ID.\
   However they are stayed in draft state. ref: [ruby-ulid#37](https://github.com/kachick/ruby-ulid/issues/37)
