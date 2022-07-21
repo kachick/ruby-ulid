@@ -1,11 +1,11 @@
 # https://docs.github.com/ja/actions/reference/workflow-syntax-for-github-actions
-name: Test
+name: CI
 on:
   push:
     branches:
       - main
     paths:
-      - '.github/workflows/test_behaviors.yml'
+      - '.github/workflows/ci.yml'
       - 'lib/**'
       - 'test/**'
       - 'spec/**'
@@ -15,7 +15,7 @@ on:
       - 'Rakefile'
   pull_request:
     paths:
-      - '.github/workflows/test_behaviors.yml'
+      - '.github/workflows/ci.yml'
       - 'lib/**'
       - 'test/**'
       - 'spec/**'
@@ -29,7 +29,7 @@ jobs:
       fail-fast: false
       # Syntax https://docs.github.com/en/actions/using-jobs/using-a-matrix-for-your-jobs
       matrix:
-        os: [ubuntu-latest]
+        os: ['ubuntu-latest']
         # Due to https://github.com/actions/runner/issues/849, we have to use quotes for '3.0'
         ruby: ['head', '3.1', '3.0', '2.7']
         include:
@@ -39,15 +39,15 @@ jobs:
             ruby: '3.1'
     runs-on: ${{ matrix.os }}
     steps:
-    - uses: actions/checkout@v3
-    - uses: ruby/setup-ruby@v1
-      env:
-        # https://github.com/kachick/ruby-ulid/blob/104834846baf5caa1e8536a11c43acdd56fc849c/CONTRIBUTING.md#adding-dependencies-for-this-gem
-        BUNDLE_WITHOUT: development
-      with:
-        ruby-version: ${{ matrix.ruby }}
-        bundler-cache: true # runs 'bundle install' and caches installed gems automatically
-    - run: bundle exec rake test_all --suppress-backtrace='\/bundle'
-      env:
-        # Need same specifying for now(want to squash)
-        BUNDLE_WITHOUT: development
+      - uses: actions/checkout@v3
+      - uses: ruby/setup-ruby@v1
+        env:
+          # https://github.com/kachick/ruby-ulid/blob/104834846baf5caa1e8536a11c43acdd56fc849c/CONTRIBUTING.md#adding-dependencies-for-this-gem
+          BUNDLE_WITHOUT: development
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+      - run: bundle exec rake test_all --suppress-backtrace='\/bundle'
+        env:
+          # Need same specifying for now(want to squash)
+          BUNDLE_WITHOUT: development

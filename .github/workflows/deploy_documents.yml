@@ -1,20 +1,23 @@
 name: Deploy documents
 on:
   push:
-    branches: [ main ]
+    branches: [main]
     paths:
       - '.github/workflows/deploy_documents.yml'
       - 'lib/**'
       - '**.md'
       - '**.txt'
+      - '**.gemspec'
+      - 'Gemfile'
+      - 'Rakefile'
 jobs:
-  build:
+  gh-pages:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.1
+          ruby-version: '3.1'
           bundler-cache: true # runs 'bundle install' and caches installed gems automatically
       - name: git setting
         run: |

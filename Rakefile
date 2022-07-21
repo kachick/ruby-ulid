@@ -47,10 +47,11 @@ Rake::TestTask.new(:test_longtime) do |tt|
 end
 
 desc('Signature check, it means `rbs` and `YARD` syntax correctness')
-multitask(validate_signatures: [:'signature:validate_yard', :'signature:validate_rbs', :'signature:check_rbs_false_positive'])
+multitask(rbs_all: [:'signature:validate_rbs', :'signature:check_rbs_false_positive'])
+multitask(signature_all: [:'signature:validate_yard', :rbs_all])
 
 desc('Simulate CI results in local machine as possible')
-multitask(simulate_ci: [:test_all, :validate_signatures, :rubocop])
+multitask(simulate_ci: [:test_all, :signature_all, :rubocop])
 
 namespace(:signature) do
   desc('Validate `rbs` syntax, this should be passed')

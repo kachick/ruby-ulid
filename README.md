@@ -1,6 +1,6 @@
 # ruby-ulid
 
-[![Build Status](https://github.com/kachick/ruby-ulid/actions/workflows/test_behaviors.yml/badge.svg?branch=main)](https://github.com/kachick/ruby-ulid/actions/workflows/test_behaviors.yml/?branch=main)
+[![Build Status](https://github.com/kachick/ruby-ulid/actions/workflows/test_ci.yml/badge.svg?branch=main)](https://github.com/kachick/ruby-ulid/actions/workflows/test_ci.yml?query=branch%3Amain)
 [![Gem Version](https://badge.fury.io/rb/ruby-ulid.svg)](http://badge.fury.io/rb/ruby-ulid)
 
 ## Overview
