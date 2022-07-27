@@ -44,7 +44,7 @@ class ULID
     def generate(moment: Utils.current_milliseconds)
       bump(moment: moment) do |milliseconds:, entropy:|
         ulid = ULID.generate(moment: milliseconds, entropy: entropy)
-        [ulid, -> ulid2 { ulid2.inspect }]
+        [ulid, -> { ulid.inspect }]
       end
     end
 
@@ -53,7 +53,7 @@ class ULID
     def encode(moment: Utils.current_milliseconds)
       bump(moment: moment) do |milliseconds:, entropy:|
         encoded = ULID.encode(moment: milliseconds, entropy: entropy)
-        [encoded, -> encoded2 { ULID.parse(encoded2).inspect }]
+        [encoded, -> { ULID.parse(encoded).inspect }]
       end
     end
 
@@ -116,7 +116,7 @@ class ULID
         encoded = result.to_s
 
         unless encoded > prev_enc
-          base_message = "monotonicity broken from unexpected reasons # generated: #{inspector.call(result)}, prev: #{ULID.parse(prev_enc).inspect}"
+          base_message = "monotonicity broken from unexpected reasons # generated: #{inspector.call}, prev: #{ULID.parse(prev_enc).inspect}"
           additional_information = (
             if Thread.list == [Thread.main]
               '# NOTE: looks single thread only exist'

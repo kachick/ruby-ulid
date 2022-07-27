@@ -106,18 +106,17 @@ class ULID < Object
     alias to_s inspect
     def freeze: -> void
 
-    interface _ToS
-      def to_s: () -> String
-    end
+    # This can't be used for `T`
+    # type inspector = _Inspect | _ToStr
 
-    # type inspector = ^() -> String
+    type inspector = ^() -> String
 
     private
 
     def initialize: -> void
 
-    # def bump: [T < _ToS](moment: moment) { (milliseconds: milliseconds, entropy: Integer) -> [T, inspector] } -> T
-    def bump: [T < _ToS](moment: moment) { (milliseconds: milliseconds, entropy: Integer) -> [T, ^(T) -> String] } -> T
+    def bump: [T < _ToS](moment: moment) { (milliseconds: milliseconds, entropy: Integer) -> [T, inspector] } -> T
+    # def bump: [T < inspector](moment: moment) { (milliseconds: milliseconds, entropy: Integer) -> [T, ^(T) -> String] } -> T
 
     def rewind: (?prev_ulid: ULID?) -> void
   end
