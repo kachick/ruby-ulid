@@ -22,7 +22,7 @@ group(:development) do
   gem('benchmark-ips', '~> 2.10.0', require: false)
   gem('stackprof')
   gem('yard', '~> 0.9.28', require: false)
-  gem('rubocop', '~> 1.32.0', require: false)
+  gem('rubocop', '~> 1.33.0', require: false)
   gem('rubocop-rake', '~> 0.6.0', require: false)
   gem('rubocop-performance', '~> 1.14.3', require: false)
   gem('rubocop-rubycw', '~> 0.1.6', require: false)
