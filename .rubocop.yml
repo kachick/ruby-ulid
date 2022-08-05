@@ -916,6 +916,14 @@ Lint/ConstantResolution:
 Lint/EmptyInPattern:
   Enabled: true
 
+# https://docs.rubocop.org/rubocop/cops_lint.html#lintnumberconversion
+# Want to use, however currently it does not stable work. Keep in mind.
+# e.g. base number is not covered. AllowedPatterns can not be supported even if documented.
+Lint/NumberConversion:
+  Enabled: true
+  Include:
+    - 'lib/ulid/crockford_base32.rb'
+
 Rubycw/Rubycw:
   Enabled: true
   Include:
