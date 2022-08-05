@@ -16,7 +16,7 @@ class TestRactorShareable < Test::Unit::TestCase
     Warning[:experimental] = false
   end
 
-  def test_shareable
+  def test_signature
     assert_true(Ractor.shareable?(ULID_CLASS))
     assert_false(ULID_CLASS.frozen?)
     assert_false(Ractor.shareable?(ULID_INSTANCE))
@@ -57,6 +57,13 @@ class TestRactorShareable < Test::Unit::TestCase
       end.take
     )
   end
+
+  def test_instances_are_can_be_shareable
+    ulid = ULID.generate
+    Ractor.make_shareable(ulid)
+    assert_true(Ractor.shareable?(ulid))
+  end
+
 
   const_name_to_value = ULID.constants.to_h { |const_name| [const_name, ULID.const_get(const_name)] }
   raise unless const_name_to_value.size >= 10

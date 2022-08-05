@@ -23,12 +23,9 @@ class TestULIDInstance < Test::Unit::TestCase
         :<=>,
         :==,
         :===,
-        :clone,
-        :dup,
         :encode,
         :entropy,
         :eql?,
-        :freeze,
         :hash,
         :inspect,
         :marshal_dump,
@@ -56,8 +53,9 @@ class TestULIDInstance < Test::Unit::TestCase
     ulid = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
     assert_equal('01ARZ3NDEK', ulid.timestamp)
     assert_instance_of(String, ulid.timestamp)
-    assert_same(ulid.timestamp, ulid.timestamp)
-    assert_true(ulid.timestamp.frozen?)
+    assert_not_same(ulid.timestamp, ulid.timestamp)
+    assert_equal(ulid.timestamp, ulid.timestamp)
+    assert_false(ulid.timestamp.frozen?)
     assert_equal(Encoding::US_ASCII, ulid.timestamp.encoding)
   end
 
@@ -65,8 +63,9 @@ class TestULIDInstance < Test::Unit::TestCase
     ulid = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
     assert_equal('TSV4RRFFQ69G5FAV', ulid.randomness)
     assert_instance_of(String, ulid.randomness)
-    assert_same(ulid.randomness, ulid.randomness)
-    assert_true(ulid.randomness.frozen?)
+    assert_not_same(ulid.randomness, ulid.randomness)
+    assert_equal(ulid.randomness, ulid.randomness)
+    assert_false(ulid.randomness.frozen?)
     assert_equal(Encoding::US_ASCII, ulid.randomness.encoding)
   end
 
@@ -182,24 +181,28 @@ class TestULIDInstance < Test::Unit::TestCase
   def test_encode
     ulid = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
     assert_equal('01ARZ3NDEKTSV4RRFFQ69G5FAV', ulid.encode)
-    assert_same(ulid.encode, ulid.encode)
-    assert_true(ulid.encode.frozen?)
-    assert_same(ulid.to_s, ulid.encode)
+    assert_not_same(ulid.encode, ulid.encode)
+    assert_equal(ulid.encode, ulid.encode)
+    assert_false(ulid.encode.frozen?)
+    assert_not_same(ulid.to_s, ulid.encode)
   end
 
   def test_to_s
     ulid = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
     assert_equal('01ARZ3NDEKTSV4RRFFQ69G5FAV', ulid.to_s)
-    assert_same(ulid.to_s, ulid.to_s)
-    assert_true(ulid.to_s.frozen?)
-    assert_same(ulid.encode, ulid.to_s)
+    assert_not_same(ulid.to_s, ulid.to_s)
+    assert_equal(ulid.to_s, ulid.to_s)
+    assert_false(ulid.to_s.frozen?)
+    assert_not_same(ulid.encode, ulid.to_s)
+    assert_equal(ulid.encode, ulid.to_s)
   end
 
   def test_inspect
     ulid = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
     assert_equal('ULID(2016-07-30 23:54:10.259 UTC: 01ARZ3NDEKTSV4RRFFQ69G5FAV)', ulid.inspect)
-    assert_same(ulid.inspect, ulid.inspect)
-    assert_true(ulid.inspect.frozen?)
+    assert_not_same(ulid.inspect, ulid.inspect)
+    assert_equal(ulid.inspect, ulid.inspect)
+    assert_false(ulid.inspect.frozen?)
     assert_not_equal(ulid.to_s, ulid.inspect)
     assert_equal(Encoding::US_ASCII, ulid.inspect.encoding)
 
@@ -266,20 +269,24 @@ class TestULIDInstance < Test::Unit::TestCase
 
   def test_dup
     ulid = ULID.sample
-    assert_same(ulid, ulid.dup)
+    assert_equal(ulid, ulid.dup)
+    assert_not_same(ulid, ulid.dup)
+    assert_false(ulid.frozen?)
+    assert_false(ulid.dup.frozen?)
   end
 
   def test_clone
     ulid = ULID.sample
-    assert_same(ulid, ulid.clone)
-    assert_same(ulid, ulid.clone(freeze: true))
-    assert_same(ulid, ulid.clone(freeze: false))
+    assert_equal(ulid, ulid.clone)
+    assert_not_same(ulid, ulid.clone)
+    assert_false(ulid.frozen?)
+    assert_false(ulid.clone.frozen?)
   end
 
   def test_instance_variable_set
     ulid = ULID.sample
     int = ulid.to_i
-    str = ulid.to_s
+    str = ulid.instance_variable_get(:@encoded)
 
     assert_raises(NoMethodError) do
       ulid.instance_variable_set(:@integer, int + 42)
@@ -288,9 +295,8 @@ class TestULIDInstance < Test::Unit::TestCase
     assert_equal(int, ulid.instance_variable_get(:@integer))
 
     assert_raises(NoMethodError) do
-      ulid.instance_variable_set(:@encoded, str.downcase)
+      ulid.instance_variable_set(:@encoded, str.dup.downcase)
     end
-    assert_same(str, ulid.to_s)
     assert_same(str, ulid.instance_variable_get(:@encoded))
   end
 
@@ -304,12 +310,9 @@ class TestULIDInstance < Test::Unit::TestCase
     time = ulid.to_time
     assert_equal(Time.at(0, 1469922850259, :millisecond).utc, time)
     assert_true(time.utc?)
-    assert_same(ulid.to_time, time)
-    assert_true(time.frozen?)
-
-    assert_raises(FrozenError) do
-      time.localtime(time.utc_offset.succ)
-    end
+    assert_not_same(ulid.to_time, time)
+    assert_equal(ulid.to_time, time)
+    assert_false(time.frozen?)
   end
 
   def test_octets

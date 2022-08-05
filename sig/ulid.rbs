@@ -170,8 +170,6 @@ class ULID < Object
   # Retuns encoded and normalzied String.
   # It has same arguments signatures as `.generate`. So can be used for just ID creation usecases without needless object creation.
   #
-  # NOTE: Difference of ULID#encode, returned String is NOT frozen.
-  #
   def self.encode: (?moment: moment, ?entropy: Integer) -> String
 
   # Shorthand of `ULID.generate(moment: Time)`
@@ -236,16 +234,18 @@ class ULID < Object
   # ```
   def self.parse: (_ToStr string) -> ULID
 
+  type time_in = String | Integer | nil
+
   # Return Time instance from encoded String.
   # See also `ULID.encode` for similar purpose.
-  #
-  # NOTE: Difference of ULID#to_time, returned Time is NOT frozen.
   #
   # ```ruby
   # time = ULID.decode_time('01ARZ3NDEKTSV4RRFFQ69G5FAV')
   # #=> 2016-07-30 23:54:10.259 UTC
+  # ULID.decode_time('01ARZ3NDEKTSV4RRFFQ69G5FAV', in: '+09:00')
+  # #=> 2016-07-31 08:54:10.259 +0900
   # ```
-  def self.decode_time: (_ToStr string, ?in: String | Integer | nil) -> Time
+  def self.decode_time: (_ToStr string, ?in: time_in) -> Time
 
   # Get ULID instance from unnormalized String that encoded in Crockford's base32.
   #
@@ -459,14 +459,16 @@ class ULID < Object
   # ulid.milliseconds #=> 1619544442826
   # ```
   attr_reader milliseconds: Integer
+
   attr_reader entropy: Integer
+
+  # Private api. (Actually defined protected visibility)
+  attr_reader encoded: String
 
   # ```ruby
   # ulid = ULID.generate
   # #=> ULID(2021-04-27 17:27:22.826 UTC: 01F4A5Y1YAQCYAYCTC7GRMJ9AA)
   # ulid.encode #=> "01F4A5Y1YAQCYAYCTC7GRMJ9AA"
-  # ulid.encode.frozen? #=> true
-  # ulid.encode.equal?(ulid.to_s) #=> true
   # ```
   def encode: -> String
   alias to_s encode
@@ -533,11 +535,12 @@ class ULID < Object
          | (untyped other) -> false
 
   # ```ruby
-  # ulid = ULID.generate
-  # #=> ULID(2021-04-27 17:27:22.826 UTC: 01F4A5Y1YAQCYAYCTC7GRMJ9AA)
-  # ulid.to_time #=> 2021-04-27 17:27:22.826 UTC
+  # ULID.parse('01F4A5Y1YAQCYAYCTC7GRMJ9AA').to_time
+  # #=> 2021-04-27 17:27:22.826 UTC
+  # ULID.parse('01F4A5Y1YAQCYAYCTC7GRMJ9AA').to_time(in: '+09:00')
+  # #=> 2021-04-28 02:27:22.826 +0900
   # ```
-  def to_time: -> Time
+  def to_time: (?in: time_in) -> Time
 
   # ```ruby
   # ulid = ULID.generate
@@ -598,7 +601,6 @@ class ULID < Object
   #
   # See also [ULID#succ](https://kachick.github.io/ruby-ulid/ULID.html#succ-instance_method)
   def pred: -> ULID?
-  def freeze: -> self
 
   def marshal_dump: -> Integer
 
@@ -607,16 +609,7 @@ class ULID < Object
   # Returns `self`
   def to_ulid: -> self
 
-  # Returns `self`. Not a new instance.
-  def dup: -> self
-
-  # Same API as [Object#clone](https://github.com/ruby/rbs/blob/4fb4c33b2325d1a73d79ff7aaeb49f21cec1e0e5/core/object.rbs#L79)
-  # But actually returns `self`. Not a new instance.
-  def clone: (?freeze: bool) -> self
-
   private
 
   def initialize: (milliseconds: milliseconds, entropy: Integer, integer: Integer, encoded: String) -> void
-
-  def cache_all_instance_variables: -> void
 end
