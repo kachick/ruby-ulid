@@ -64,13 +64,10 @@ class TestRactorShareable < Test::Unit::TestCase
     data(name.to_s, value)
   end
   def test_shareable_constants(const_value)
-    assert do
-      case const_value
-      when Module
-        Ractor.shareable?(const_value)
-      else
-        const_value.frozen? && Ractor.shareable?(const_value)
-      end
+    assert_true(Ractor.shareable?(const_value))
+
+    unless const_value.kind_of?(Module)
+      assert_true(const_value.frozen?)
     end
   end
 
