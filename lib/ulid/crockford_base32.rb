@@ -74,7 +74,7 @@ class ULID
     # @return [Integer]
     def self.decode(string)
       base32encoded = string.upcase.tr(CROCKFORD_TR_PATTERN, BASE32_TR_PATTERN)
-      base32encoded.to_i(32)
+      Integer(base32encoded, 32, exception: true)
     end
 
     # @param [Integer] integer
