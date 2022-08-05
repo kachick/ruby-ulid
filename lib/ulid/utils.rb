@@ -85,6 +85,32 @@ class ULID
         name || fallback
       end
     end
+
+    def self.make_sharable_value(value)
+      value.freeze
+      if defined?(Ractor)
+        case value
+        when ULID, Time
+          if ractor_can_make_shareable_time?
+            Ractor.make_shareable(value)
+          end
+        else
+          Ractor.make_shareable(value)
+        end
+      end
+    end
+
+    # @note Call before Module#private_constant
+    def self.make_sharable_constantans(mod)
+      mod.constants.each do |const_name|
+        value = mod.const_get(const_name)
+        make_sharable_value(value)
+      end
+    end
+
+    def self.ractor_can_make_shareable_time?
+      RUBY_VERSION >= '3.1'
+    end
   end
 
   private_constant(:Utils)

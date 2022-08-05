@@ -123,3 +123,10 @@ $ bundle exec ruby benchmark/the_added_file.rb
 
 - Basically should be reduced. ref: [#91](https://github.com/kachick/ruby-ulid/issues/91)
 - When having some objects, they should be frozen. ref: [#126](https://github.com/kachick/ruby-ulid/pull/126)
+
+## Tasks to drop Ruby 2.7.x
+
+- grep `RUBY_VERSION` guards
+- grep `2.7`
+- Remove needless `freeze` from regex literal
+- Update gemspec and `TargetRubyVersion` in .rubocop.yml

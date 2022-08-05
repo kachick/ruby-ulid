@@ -1,6 +1,5 @@
 # coding: us-ascii
 # frozen_string_literal: true
-# shareable_constant_value: literal
 
 # Copyright (C) 2021 Kenichi Kamiya
 
@@ -13,6 +12,7 @@ require_relative('errors')
 class ULID
   # Imported from https://stackoverflow.com/a/38191104/1212807, thank you!
   UUIDV4_PATTERN = /\A[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}\z/i.freeze
+  Utils.make_sharable_value(UUIDV4_PATTERN)
   private_constant(:UUIDV4_PATTERN)
 
   # @param [String, #to_str] uuid

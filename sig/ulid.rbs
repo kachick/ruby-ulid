@@ -47,6 +47,12 @@ class ULID < Object
     def self.milliseconds_from_time: (Time time) -> milliseconds
 
     def self.safe_get_class_name: (untyped object) -> String
+
+    def self.make_sharable_value: (untyped object) -> void
+
+    def self.make_sharable_constantans: (Module) -> void
+
+    def self.ractor_can_make_shareable_time?: -> bool
   end
 
   # Private module
