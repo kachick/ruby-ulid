@@ -202,7 +202,11 @@ class TestULIDInstance < Test::Unit::TestCase
     assert_equal('ULID(2016-07-30 23:54:10.259 UTC: 01ARZ3NDEKTSV4RRFFQ69G5FAV)', ulid.inspect)
     assert_not_same(ulid.inspect, ulid.inspect)
     assert_equal(ulid.inspect, ulid.inspect)
-    assert_false(ulid.inspect.frozen?)
+    if RUBY_VERSION >= '3.0'
+      # Because of https://bugs.ruby-lang.org/issues/17104
+      # Do not care 2.7.x adjustment in this library.
+      assert_false(ulid.inspect.frozen?)
+    end
     assert_not_equal(ulid.to_s, ulid.inspect)
     assert_equal(Encoding::US_ASCII, ulid.inspect.encoding)
 
