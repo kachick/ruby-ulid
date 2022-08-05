@@ -431,6 +431,7 @@ class ULID
   end
 
   # @return [Time]
+  # @param [String, Integer, nil] in
   def to_time(in: 'UTC')
     Time.at(0, @milliseconds, :millisecond, in: binding.local_variable_get(:in))
   end
