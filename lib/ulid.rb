@@ -359,11 +359,25 @@ class ULID
     end
   end
 
-  attr_reader(:milliseconds, :entropy)
+  attr_reader(:milliseconds, :entropy, :encoded)
+  protected(:encoded)
+
+  # @param [Integer] milliseconds
+  # @param [Integer] entropy
+  # @param [Integer] integer
+  # @param [String] encoded
+  # @return [void]
+  def initialize(milliseconds:, entropy:, integer:, encoded:)
+    # All arguments check should be done with each constructors, not here
+    @integer = integer
+    @encoded = encoded
+    @milliseconds = milliseconds
+    @entropy = entropy
+  end
 
   # @return [String]
   def encode
-    @encoded
+    @encoded.dup
   end
   alias_method(:to_s, :encode)
 
@@ -384,7 +398,7 @@ class ULID
 
   # @return [String]
   def inspect
-    @inspect ||= "ULID(#{to_time.strftime(TIME_FORMAT_IN_INSPECT)}: #{@encoded})".freeze
+    "ULID(#{to_time.strftime(TIME_FORMAT_IN_INSPECT)}: #{@encoded})"
   end
 
   # @return [Boolean]
@@ -417,8 +431,9 @@ class ULID
   end
 
   # @return [Time]
-  def to_time
-    @time ||= Time.at(0, @milliseconds, :millisecond, in: 'UTC').freeze
+  # @param [String, Integer, nil] in
+  def to_time(in: 'UTC')
+    Time.at(0, @milliseconds, :millisecond, in: binding.local_variable_get(:in))
   end
 
   # @return [Array(Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer)]
@@ -442,12 +457,12 @@ class ULID
 
   # @return [String]
   def timestamp
-    @timestamp ||= (@encoded.slice(0, TIMESTAMP_ENCODED_LENGTH).freeze || raise(UnexpectedError))
+    @encoded.slice(0, TIMESTAMP_ENCODED_LENGTH) || raise(UnexpectedError)
   end
 
   # @return [String]
   def randomness
-    @randomness ||= (@encoded.slice(TIMESTAMP_ENCODED_LENGTH, RANDOMNESS_ENCODED_LENGTH).freeze || raise(UnexpectedError))
+    @encoded.slice(TIMESTAMP_ENCODED_LENGTH, RANDOMNESS_ENCODED_LENGTH) || raise(UnexpectedError)
   end
 
   # @note Providing for rough operations. The keys and values is not fixed.
@@ -489,13 +504,6 @@ class ULID
     end
   end
 
-  # @return [self]
-  def freeze
-    # Need to cache before freezing, because frozen objects can't assign instance variables
-    cache_all_instance_variables
-    super
-  end
-
   # @return [Integer]
   def marshal_dump
     @integer
@@ -509,7 +517,7 @@ class ULID
       integer: unmarshaled.to_i,
       milliseconds: unmarshaled.milliseconds,
       entropy: unmarshaled.entropy,
-      encoded: unmarshaled.to_s
+      encoded: unmarshaled.encoded
     )
   end
 
@@ -518,39 +526,7 @@ class ULID
     self
   end
 
-  # @return [self]
-  def dup
-    self
-  end
-
-  # @return [self]
-  def clone(freeze: true)
-    self
-  end
-
   undef_method(:instance_variable_set)
-
-  private
-
-  # @param [Integer] milliseconds
-  # @param [Integer] entropy
-  # @param [Integer] integer
-  # @param [String] encoded
-  # @return [void]
-  def initialize(milliseconds:, entropy:, integer:, encoded:)
-    # All arguments check should be done with each constructors, not here
-    @integer = integer
-    @encoded = encoded
-    @milliseconds = milliseconds
-    @entropy = entropy
-  end
-
-  # @return [void]
-  def cache_all_instance_variables
-    inspect
-    timestamp
-    randomness
-  end
 
   MIN = parse('00000000000000000000000000').freeze
   MAX = parse('7ZZZZZZZZZZZZZZZZZZZZZZZZZ').freeze

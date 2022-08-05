@@ -121,8 +121,8 @@ $ bundle exec ruby benchmark/the_added_file.rb
 
 ### Adding `ULID` instance variables
 
-- Basically should be reduced. ref: [#91](https://github.com/kachick/ruby-ulid/issues/91)
-- When having some objects, they should be frozen. ref: [#126](https://github.com/kachick/ruby-ulid/pull/126)
+- Basically should be reduced. ref: [#91](kachick/ruby-ulid#91), [#236](kachick/ruby-ulid#236)
+- When having some objects, they should be frozen. ref: [#126](kachick/ruby-ulid#126)
 
 ## Tasks to drop Ruby 2.7.x
 

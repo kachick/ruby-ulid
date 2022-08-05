@@ -142,7 +142,7 @@ class TestULIDUseCase < Test::Unit::TestCase
     frozen = ULID.sample.freeze
     dumped = Marshal.dump(frozen)
     unmarshaled = Marshal.load(dumped)
-    assert(!unmarshaled.frozen?)
-    assert(unmarshaled.to_s.frozen?)
+    assert_false(unmarshaled.frozen?)
+    assert_false(unmarshaled.to_s.frozen?)
   end
 end

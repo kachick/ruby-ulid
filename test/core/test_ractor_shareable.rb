@@ -16,18 +16,14 @@ class TestRactorShareable < Test::Unit::TestCase
     Warning[:experimental] = false
   end
 
-  def test_shareable
+  def test_signature
     assert_true(Ractor.shareable?(ULID_CLASS))
     assert_false(ULID_CLASS.frozen?)
     assert_false(Ractor.shareable?(ULID_INSTANCE))
     assert_false(Ractor.shareable?(MONOTONIC_GENERATOR))
 
-    if RUBY_VERSION >= '3.1'
-      assert_true(Ractor.shareable?(ULID_FROZEN_INSTANCE))
-      assert_equal('01F4GNAV5ZR6FJQ5SFQC7WDSY3', Ractor.new { ULID_FROZEN_INSTANCE.to_s }.take)
-    else
-      assert_false(Ractor.shareable?(ULID_FROZEN_INSTANCE))
-    end
+    assert_true(Ractor.shareable?(ULID_FROZEN_INSTANCE))
+    assert_equal('01F4GNAV5ZR6FJQ5SFQC7WDSY3', Ractor.new { ULID_FROZEN_INSTANCE.to_s }.take)
 
     assert_instance_of(ULID, Ractor.new { ULID_CLASS.generate }.take)
 
@@ -56,6 +52,12 @@ class TestRactorShareable < Test::Unit::TestCase
         end
       end.take
     )
+  end
+
+  def test_instances_are_can_be_shareable
+    ulid = ULID.generate
+    Ractor.make_shareable(ulid)
+    assert_true(Ractor.shareable?(ulid))
   end
 
   const_name_to_value = ULID.constants.to_h { |const_name| [const_name, ULID.const_get(const_name)] }

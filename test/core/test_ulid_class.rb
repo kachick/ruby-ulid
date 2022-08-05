@@ -255,10 +255,7 @@ class TestULIDClass < Test::Unit::TestCase
     assert(normalized.frozen?)
     assert_not_same(normalized, ULID.normalize(normalized))
 
-    # This behavior is controversial, should be return non frozen string?
-    assert do
-      ULID.normalize(normalized).frozen?
-    end
+    assert_false(ULID.normalize(normalized).frozen?)
 
     # Ensure the string is not modified in parser
     assert_false(downcased.frozen?)
@@ -431,6 +428,10 @@ class TestULIDClass < Test::Unit::TestCase
     assert_false(range.cover?(ULID.generate(moment: time_has_more_value_than_milliseconds2)))
     assert_true(range.cover?(range.begin))
     assert_true(range.cover?(range.end))
+    if RUBY_VERSION >= '3.0'
+      # Just a note
+      assert_true(range.frozen?)
+    end
     assert_false(range.begin.frozen?)
     assert_false(range.end.frozen?)
     assert_true(from_time.begin.frozen?)
