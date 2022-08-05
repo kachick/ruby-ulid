@@ -1,6 +1,5 @@
 # coding: us-ascii
 # frozen_string_literal: true
-# shareable_constant_value: experimental_everything
 
 # Copyright (C) 2021 Kenichi Kamiya
 
@@ -50,6 +49,8 @@ class ULID
   RANDOM_INTEGER_GENERATOR = -> {
     SecureRandom.random_number(MAX_INTEGER)
   }.freeze
+
+  Utils.make_sharable_constantans(self)
 
   private_constant(
     :PATTERN_WITH_CROCKFORD_BASE32_SUBSET,
@@ -550,6 +551,12 @@ class ULID
     timestamp
     randomness
   end
-end
 
-require_relative('ulid/ractor_unshareable_constants')
+  MIN = parse('00000000000000000000000000').freeze
+  MAX = parse('7ZZZZZZZZZZZZZZZZZZZZZZZZZ').freeze
+
+  Utils.make_sharable_value(MIN)
+  Utils.make_sharable_value(MAX)
+
+  private_constant(:MIN, :MAX)
+end

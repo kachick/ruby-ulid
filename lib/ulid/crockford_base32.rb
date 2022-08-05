@@ -1,8 +1,9 @@
 # coding: us-ascii
 # frozen_string_literal: true
-# shareable_constant_value: literal
 
 # Copyright (C) 2021 Kenichi Kamiya
+
+require_relative('utils')
 
 class ULID
   # @see https://www.crockford.com/base32.html
@@ -67,6 +68,8 @@ class ULID
     }.freeze
     VARIANT_TR_PATTERN = variant_to_normarized.keys.join.freeze
     NORMALIZED_TR_PATTERN = variant_to_normarized.values.join.freeze
+
+    Utils.make_sharable_constantans(self)
 
     # @note Avoid to depend regex as possible. `tr(string, string)` is almost 2x Faster than `gsub(regex, hash)` in Ruby 3.1
 

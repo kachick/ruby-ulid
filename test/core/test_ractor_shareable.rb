@@ -58,6 +58,22 @@ class TestRactorShareable < Test::Unit::TestCase
     )
   end
 
+  const_name_to_value = ULID.constants.to_h { |const_name| [const_name, ULID.const_get(const_name)] }
+  raise unless const_name_to_value.size >= 10
+  const_name_to_value.each_pair do |name, value|
+    data(name.to_s, value)
+  end
+  def test_shareable_constants(const_value)
+    assert do
+      case const_value
+      when Module
+        Ractor.shareable?(const_value)
+      else
+        const_value.frozen? && Ractor.shareable?(const_value)
+      end
+    end
+  end
+
   def teardown
     Warning[:experimental] = @warning_original_experimental
   end
