@@ -440,5 +440,6 @@ I have checked the behavior with [ruby/rbs@2.6.0](https://github.com/ruby/rbs) +
 
 ## Note
 
-- [UUIDv6, UUIDv7, UUIDv8](https://www.ietf.org/archive/id/draft-peabody-dispatch-new-uuid-format-01.html) is another choice for sortable and randomness ID.\
+- [UUIDv6, UUIDv7, UUIDv8](https://www.ietf.org/archive/id/draft-peabody-dispatch-new-uuid-format-01.html) is another choice for sortable and randomness ID.
+  \
   However they are stayed in draft state. ref: [ruby-ulid#37](https://github.com/kachick/ruby-ulid/issues/37)
