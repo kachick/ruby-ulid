@@ -321,19 +321,6 @@ class ULID
     true
   end
 
-  # @deprecated Use [.valid_as_variant_format?] or [.normalized?] instead
-  #
-  # Returns `true` if it is normalized string.
-  # Basically the difference of normalized? is to accept downcase or not. This returns true for downcased ULIDs.
-  #
-  # @return [Boolean]
-  def self.valid?(string)
-    warn_kwargs = (RUBY_VERSION >= '3.0') ? { category: :deprecated } : {}
-    Warning.warn('ULID.valid? is deprecated. Use ULID.valid_as_variant_format? or ULID.normalized? instead.', **warn_kwargs)
-    string = String.try_convert(string)
-    string ? STRICT_PATTERN_WITH_CROCKFORD_BASE32_SUBSET.match?(string) : false
-  end
-
   # @param [ULID, #to_ulid] object
   # @return [ULID, nil]
   # @raise [TypeError] if `object.to_ulid` did not return ULID instance

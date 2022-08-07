@@ -46,7 +46,6 @@ class TestULIDClass < Test::Unit::TestCase
         :scan,
         :sample,
         :try_convert,
-        :valid?, # deprecated
         :max,
         :min,
         :generate,
@@ -226,30 +225,6 @@ class TestULIDClass < Test::Unit::TestCase
       ULID.new(milliseconds: 0, entropy: 42)
     end
     assert_match(/private method `new' called/, err.message)
-  end
-
-  def test_valid?
-    assert_warning('ULID.valid? is deprecated. Use ULID.valid_as_variant_format? or ULID.normalized? instead.') do
-      assert_false(ULID.valid?(nil))
-      assert_false(ULID.valid?(''))
-      assert_false(ULID.valid?(BasicObject.new))
-      assert_false(ULID.valid?(Object.new))
-      assert_false(ULID.valid?(42))
-      assert_false(ULID.valid?(:'01ARZ3NDEKTSV4RRFFQ69G5FAV'))
-      assert_false(ULID.valid?(ULID.sample))
-      assert_false(ULID.valid?("01ARZ3NDEKTSV4RRFFQ69G5FAV\n"))
-      assert_false(ULID.valid?('01ARZ3NDEKTSV4RRFFQ69G5FAU'))
-      assert_true(ULID.valid?('01ARZ3NDEKTSV4RRFFQ69G5FAV'))
-      assert_true(ULID.valid?('01ARZ3NDEKTSV4RRFFQ69G5FAV'.downcase))
-      assert_true(ULID.valid?('7ZZZZZZZZZZZZZZZZZZZZZZZZZ'))
-      assert_false(ULID.valid?('80000000000000000000000000'))
-
-      assert_false(ULID.valid?('01G70Y0Y7G-Z1XWDAREXERGSDDD'))
-    end
-
-    assert_raises(ArgumentError) do
-      ULID.valid?
-    end
   end
 
   def test_normalize

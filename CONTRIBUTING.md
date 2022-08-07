@@ -31,7 +31,7 @@ The name of this source file (`Rakefile'`) should use snake_case.
 $ ./bin/console
 # Starting up IRB with loading developing ULID library
 irb(main):001:0> ULID::VERSION
-=> "0.7.0.pre"
+=> "0.8.0.pre"
 ```
 
 ```ruby
@@ -47,9 +47,9 @@ ls ULID
 # Module#methods: ...
 # Class#methods: ...
 # ULID.methods:
-#   at         decode_time               encode  floor                 from_integer  generate  max   min
-#   normalize  normalized?               parse   parse_variant_format  range         sample    scan  try_convert
-#   valid?     valid_as_variant_format?
+#   at                        decode_time  encode  floor                 from_integer  generate  max   min
+#   normalize                 normalized?  parse   parse_variant_format  range         sample    scan  try_convert
+#   valid_as_variant_format?
 # => nil
 ```
 
