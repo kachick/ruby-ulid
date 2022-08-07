@@ -4,6 +4,44 @@
 require_relative('../helper')
 
 class TestULIDInstance < Test::Unit::TestCase
+  EXPOSED_METHODS = [
+    :<=>,
+    :==,
+    :===,
+    :encode,
+    :entropy,
+    :eql?,
+    :hash,
+    :inspect,
+    :marshal_dump,
+    :marshal_load,
+    :milliseconds,
+    :next,
+    :octets,
+    :patterns,
+    :pred,
+    :randomness,
+    :randomness_octets, # dislike this name. However providing octets class sounds overdo...
+    :timestamp_octets, # dislike this too!
+    :succ,
+    :timestamp,
+    :to_i,
+    :to_s,
+    :to_time,
+    :to_ulid,
+    :dup,
+    :clone
+  ].freeze
+
+  ULID_RETURNING_METHODS = %i[
+    to_ulid
+    succ
+    next
+    pred
+  ].freeze
+
+   raise 'Incorrect fixture setup' unless (EXPOSED_METHODS & ULID_RETURNING_METHODS).sort == ULID_RETURNING_METHODS.sort
+
   def setup
     @actual_timezone = ENV.fetch('TZ', nil)
     ENV['TZ'] = 'EST' # Just chosen from not UTC and JST
@@ -19,32 +57,7 @@ class TestULIDInstance < Test::Unit::TestCase
 
   def test_exposed_methods
     assert_equal(
-      [
-        :<=>,
-        :==,
-        :===,
-        :encode,
-        :entropy,
-        :eql?,
-        :hash,
-        :inspect,
-        :marshal_dump,
-        :marshal_load,
-        :milliseconds,
-        :next,
-        :octets,
-        :patterns,
-        :pred,
-        :randomness,
-        :randomness_octets, # dislike this name. However providing octets class sounds overdo...
-        :timestamp_octets, # dislike this too!
-        :succ,
-        :timestamp,
-        :to_i,
-        :to_s,
-        :to_time,
-        :to_ulid
-      ].sort,
+      EXPOSED_METHODS.sort,
       ULID.sample.public_methods(false).sort
     )
   end
@@ -102,7 +115,7 @@ class TestULIDInstance < Test::Unit::TestCase
 
   def test_eqq
     typical_string = '01G6Z7Q4RSH97E6QHAC7VK19G2'
-    ulid = ULID.parse(typical_string).freeze
+    ulid = ULID.parse(typical_string)
 
     assert_true(ulid === ULID.parse(ulid.to_s))
     assert_true(ulid === ulid.to_s)
@@ -275,16 +288,28 @@ class TestULIDInstance < Test::Unit::TestCase
     ulid = ULID.sample
     assert_equal(ulid, ulid.dup)
     assert_not_same(ulid, ulid.dup)
-    assert_false(ulid.frozen?)
-    assert_false(ulid.dup.frozen?)
+    assert_true(ulid.frozen?)
+    assert_true(ulid.dup.frozen?)
   end
 
   def test_clone
     ulid = ULID.sample
     assert_equal(ulid, ulid.clone)
     assert_not_same(ulid, ulid.clone)
-    assert_false(ulid.frozen?)
-    assert_false(ulid.clone.frozen?)
+    assert_true(ulid.frozen?)
+    assert_true(ulid.clone.frozen?)
+    assert_true(ulid.clone(freeze: true).frozen?)
+    assert_raise_with_message(ArgumentError, 'unfreezing ULID is an unexpected operation') do
+      assert_true(ulid.clone(freeze: false).frozen?)
+    end
+  end
+
+  def test_instance_variables
+    @ulid.instance_variables.each do |name|
+      ivar = @ulid.instance_variable_get(name)
+      assert_true(!!ivar, "#{name} is still falsy: #{ivar.inspect}")
+      assert_true(ivar.frozen?, "#{name} is not frozen")
+    end
   end
 
   def test_instance_variable_set
@@ -292,13 +317,13 @@ class TestULIDInstance < Test::Unit::TestCase
     int = ulid.to_i
     str = ulid.instance_variable_get(:@encoded)
 
-    assert_raises(NoMethodError) do
+    assert_raises(FrozenError) do
       ulid.instance_variable_set(:@integer, int + 42)
     end
     assert_equal(int, ulid.to_i)
     assert_equal(int, ulid.instance_variable_get(:@integer))
 
-    assert_raises(NoMethodError) do
+    assert_raises(FrozenError) do
       ulid.instance_variable_set(:@encoded, str.dup.downcase)
     end
     assert_same(str, ulid.instance_variable_get(:@encoded))
@@ -366,9 +391,15 @@ class TestULIDInstance < Test::Unit::TestCase
 
   def test_freeze
     ulid = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
-    assert_false(ulid.frozen?)
-    assert_same(ulid, ulid.freeze)
     assert_true(ulid.frozen?)
+    assert_same(ulid, ulid.freeze)
+  end
+
+  ULID_RETURNING_METHODS.each do |method_name|
+    data("ULID##{method_name}", method_name)
+  end
+  def test_all_returned_ulids_are_frozen(method_name)
+    assert_true(ULID.sample.public_send(method_name).frozen?)
   end
 
   def teardown

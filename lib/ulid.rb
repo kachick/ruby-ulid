@@ -205,12 +205,10 @@ class ULID
     raise(ArgumentError, 'ULID.range takes only `Range[Time]`, `Range[nil]` or `Range[ULID]`') unless Range === period
 
     begin_element, end_element, exclude_end = period.begin, period.end, period.exclude_end?
-    new_begin, new_end = false, false
 
     begin_ulid = (
       case begin_element
       when Time
-        new_begin = true
         min(begin_element)
       when nil
         MIN
@@ -224,7 +222,6 @@ class ULID
     end_ulid = (
       case end_element
       when Time
-        new_end = true
         exclude_end ? min(end_element) : max(end_element)
       when nil
         exclude_end = false
@@ -236,9 +233,6 @@ class ULID
         raise(ArgumentError, "ULID.range takes only `Range[Time]`, `Range[nil]` or `Range[ULID]`, given: #{period.inspect}")
       end
     )
-
-    begin_ulid.freeze if new_begin
-    end_ulid.freeze if new_end
 
     Range.new(begin_ulid, end_ulid, exclude_end)
   end
@@ -373,6 +367,7 @@ class ULID
     @encoded = encoded
     @milliseconds = milliseconds
     @entropy = entropy
+    freeze
   end
 
   # @return [String]
@@ -526,10 +521,20 @@ class ULID
     self
   end
 
-  undef_method(:instance_variable_set)
+  # @return [ULID]
+  def dup
+    super.freeze
+  end
 
-  MIN = parse('00000000000000000000000000').freeze
-  MAX = parse('7ZZZZZZZZZZZZZZZZZZZZZZZZZ').freeze
+  # @return [ULID]
+  def clone(freeze: true)
+    raise(ArgumentError, 'unfreezing ULID is an unexpected operation') unless freeze == true
+
+    super
+  end
+
+  MIN = parse('00000000000000000000000000')
+  MAX = parse('7ZZZZZZZZZZZZZZZZZZZZZZZZZ')
 
   Utils.make_sharable_value(MIN)
   Utils.make_sharable_value(MAX)

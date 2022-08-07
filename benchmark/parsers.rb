@@ -5,7 +5,7 @@ require('benchmark/ips')
 require_relative('../lib/ulid')
 
 fixed_integer = SecureRandom.random_number(ULID::MAX_INTEGER)
-sample = ULID.sample.freeze
+sample = ULID.sample
 encoded = sample.to_s
 
 Benchmark.ips do |x|

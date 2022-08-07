@@ -106,7 +106,6 @@ class ULID < Object
     # ```
     def inspect: -> String
     alias to_s inspect
-    def freeze: -> void
 
     private
 
@@ -608,6 +607,13 @@ class ULID < Object
 
   # Returns `self`
   def to_ulid: -> self
+
+  # Returns same ID with different Ruby object.
+  def dup: -> ULID
+
+  # Returns same ID with different Ruby object.::Array::_Pattern
+  # `freeze` keyarg is just provided for standardized API with `Object#clone`, however it accepts only `true`.
+  def clone: (?freeze: true) -> ULID
 
   private
 
