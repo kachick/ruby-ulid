@@ -298,7 +298,7 @@ class ULID
     raise(ArgumentError, 'ULID.normalize takes only strings') unless string
 
     # Ensure the ULID correctness, because CrockfordBase32 does not always mean to satisfy ULID format
-    parse_variant_format(string).to_s
+    parse_variant_format(string).encode
   end
 
   # @param [String, #to_str] string
