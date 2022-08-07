@@ -305,8 +305,9 @@ class TestULIDInstance < Test::Unit::TestCase
   end
 
   def test_instance_variables
-    @ulid.instance_variables.each do |name|
-      ivar = @ulid.instance_variable_get(name)
+    ulid = ULID.sample
+    ulid.instance_variables.each do |name|
+      ivar = ulid.instance_variable_get(name)
       assert_true(!!ivar, "#{name} is still falsy: #{ivar.inspect}")
       assert_true(ivar.frozen?, "#{name} is not frozen")
     end
