@@ -7,8 +7,7 @@ require_relative('../helper')
 
 class TestRactorShareable < Test::Unit::TestCase
   ULID_CLASS = ULID
-  ULID_FROZEN_INSTANCE = ULID.parse('01F4GNAV5ZR6FJQ5SFQC7WDSY3').freeze
-  ULID_INSTANCE = ULID.parse(ULID_FROZEN_INSTANCE.to_s)
+  ULID_INSTANCE = ULID.parse('01F4GNAV5ZR6FJQ5SFQC7WDSY3')
   MONOTONIC_GENERATOR = ULID::MonotonicGenerator.new
 
   def setup
@@ -19,26 +18,12 @@ class TestRactorShareable < Test::Unit::TestCase
   def test_signature
     assert_true(Ractor.shareable?(ULID_CLASS))
     assert_false(ULID_CLASS.frozen?)
-    assert_false(Ractor.shareable?(ULID_INSTANCE))
+    assert_true(Ractor.shareable?(ULID_INSTANCE))
     assert_false(Ractor.shareable?(MONOTONIC_GENERATOR))
 
-    assert_true(Ractor.shareable?(ULID_FROZEN_INSTANCE))
-    assert_equal('01F4GNAV5ZR6FJQ5SFQC7WDSY3', Ractor.new { ULID_FROZEN_INSTANCE.to_s }.take)
+    assert_equal('01F4GNAV5ZR6FJQ5SFQC7WDSY3', Ractor.new { ULID_INSTANCE.to_s }.take)
 
     assert_instance_of(ULID, Ractor.new { ULID_CLASS.generate }.take)
-
-    assert_instance_of(
-      Ractor::IsolationError,
-      Ractor.new do
-        begin
-          ULID_INSTANCE
-        rescue Exception => err
-          err
-        else
-          'should not reach here'
-        end
-      end.take
-    )
 
     assert_instance_of(
       Ractor::IsolationError,

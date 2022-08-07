@@ -4,7 +4,7 @@
 require('benchmark/ips')
 require_relative('../lib/ulid')
 
-sample = ULID.sample.freeze
+sample = ULID.sample
 moment = sample.to_time
 period = moment..(moment + 10000000)
 

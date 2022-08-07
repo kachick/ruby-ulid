@@ -92,6 +92,15 @@ class TestULIDClass < Test::Unit::TestCase
     end
   end
 
+  def test_allocate
+    # Ensure do not affect to built-in classes
+    assert_instance_of(Object, Object.allocate)
+
+    assert_raises(NoMethodError) do
+      ULID.allocate
+    end
+  end
+
   def test_parse
     string = +'01ARZ3NDEKTSV4RRFFQ69G5FAV'
     dup_string = string.dup
@@ -432,8 +441,8 @@ class TestULIDClass < Test::Unit::TestCase
       # Just a note
       assert_true(range.frozen?)
     end
-    assert_false(range.begin.frozen?)
-    assert_false(range.end.frozen?)
+    assert_true(range.begin.frozen?)
+    assert_true(range.end.frozen?)
     assert_true(from_time.begin.frozen?)
     assert_true(from_time.end.frozen?)
 
@@ -443,8 +452,8 @@ class TestULIDClass < Test::Unit::TestCase
 
     assert_not_same(range, ULID.range(range))
     assert_equal(range, ULID.range(range))
-    assert_false(range.begin.frozen?)
-    assert_false(range.end.frozen?)
+    assert_true(range.begin.frozen?)
+    assert_true(range.end.frozen?)
     assert_equal(range.begin..ULID.max, ULID.range(range.begin..nil))
 
     assert_equal(ULID.min..range.end, ULID.range(nil..range.end))
@@ -784,7 +793,7 @@ class TestULIDClass < Test::Unit::TestCase
 
     assert_equal(ULID.min(milliseconds), ULID.min(milliseconds))
     assert_not_same(ULID.min(milliseconds), ULID.min(milliseconds))
-    assert_false(ULID.min(milliseconds).frozen?)
+    assert_true(ULID.min(milliseconds).frozen?)
 
     # For optimization
     assert_same(ULID.min, ULID.min)
@@ -802,7 +811,7 @@ class TestULIDClass < Test::Unit::TestCase
 
     assert_equal(ULID.max(milliseconds), ULID.max(milliseconds))
     assert_not_same(ULID.max(milliseconds), ULID.max(milliseconds))
-    assert_false(ULID.max(milliseconds).frozen?)
+    assert_true(ULID.max(milliseconds).frozen?)
 
     # For optimization
     assert_same(ULID.max, ULID.max)
@@ -929,6 +938,23 @@ class TestULIDClass < Test::Unit::TestCase
       ULID.try_convert(accidental)
     end
     assert_same(error, err)
+  end
+
+  def test_all_constructors_returns_frozen_ulid
+    assert_true(ULID.generate.frozen?)
+    assert_true(ULID.parse(ULID.sample.encode).frozen?)
+    assert_true(ULID.parse_variant_format(ULID.sample.encode).frozen?)
+    assert_true(ULID.at(ULID.sample.to_time).frozen?)
+    assert_true(ULID.sample.frozen?)
+    assert do
+      ULID.sample(2).map(&:frozen?).all?(&:itself)
+    end
+    assert_true(ULID.min.frozen?)
+    assert_true(ULID.max.frozen?)
+    assert_true(ULID.from_integer(42).frozen?)
+    assert do
+      ULID.scan('["01F4GNAV5ZR6FJQ5SFQC7WDSY3", "01F4GNBXW1AM2KWW52PVT3ZY9X"]').map(&:frozen?).all?(&:itself)
+    end
   end
 
   def teardown
