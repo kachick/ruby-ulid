@@ -394,19 +394,6 @@ class ULID < Object
   def self.valid_as_variant_format?: (_ToStr string) -> bool
                              | (untyped) -> false
 
-  # DEPRECATED Use valid_as_variant_format? instead
-  #
-  # Returns `true` if it is normalized string.
-  # Basically the difference of normalized? is to accept downcase or not. This returns true for downcased ULIDs.
-  #
-  # ```ruby
-  # ULID.valid?(ULID.generate.to_s.downcase) #=> true
-  # ```
-  #
-  # See also [ulid/spec#57](https://github.com/ulid/spec/pull/57) and [ulid/spec#3](https://github.com/ulid/spec/issues/3)
-  def self.valid?: (_ToStr string) -> bool
-                 | (untyped) -> false
-
   # Returns parsed ULIDs from given String for rough operations.
   #
   # ```ruby
