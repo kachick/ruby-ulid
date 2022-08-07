@@ -92,6 +92,13 @@ class TestULIDClass < Test::Unit::TestCase
     end
   end
 
+  def test_allocate_is_special_allowed
+    plain = ULID.allocate
+    assert_instance_of(ULID, plain)
+    assert_nil(plain.encode)
+    assert_false(plain.frozen?)
+  end
+
   def test_parse
     string = +'01ARZ3NDEKTSV4RRFFQ69G5FAV'
     dup_string = string.dup
