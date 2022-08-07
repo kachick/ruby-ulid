@@ -125,10 +125,6 @@ class ULID < Object
 
   @integer: Integer
   @encoded: String
-  @timestamp: String?
-  @randomness: String?
-  @inspect: String?
-  @time: Time?
 
   # Retuns a ULID
   #
