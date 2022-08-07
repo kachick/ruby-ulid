@@ -92,11 +92,13 @@ class TestULIDClass < Test::Unit::TestCase
     end
   end
 
-  def test_allocate_is_special_allowed
-    plain = ULID.allocate
-    assert_instance_of(ULID, plain)
-    assert_nil(plain.encode)
-    assert_false(plain.frozen?)
+  def test_allocate
+    # Ensure do not affect to built-in classes
+    assert_instance_of(Object, Object.allocate)
+
+    assert_raises(NoMethodError) do
+      ULID.allocate
+    end
   end
 
   def test_parse

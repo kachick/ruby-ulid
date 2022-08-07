@@ -60,7 +60,7 @@ class ULID
     :RANDOM_INTEGER_GENERATOR
   )
 
-  private_class_method(:new)
+  private_class_method(:new, :allocate)
 
   # @param [Integer, Time] moment
   # @param [Integer] entropy
