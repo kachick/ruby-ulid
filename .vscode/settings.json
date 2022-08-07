@@ -10,9 +10,10 @@
   },
   "ruby.format": "rubocop",
   "cSpell.words": [
+    "abachman",
     "kwargs",
+    "uchars",
     "Undocumentable",
-    "unshareable",
-    "abachman"
+    "unshareable"
   ]
 }

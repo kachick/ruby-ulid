@@ -100,6 +100,11 @@ class ULID
         make_sharable_value(value)
       end
     end
+
+    def self.deprecate(deprecated, replaced)
+      warn_kwargs = (RUBY_VERSION >= '3.0') ? { category: :deprecated } : {}
+      Warning.warn("#{deprecated} is deprecated. Use #{replaced} instead.", **warn_kwargs)
+    end
   end
 
   private_constant(:Utils)

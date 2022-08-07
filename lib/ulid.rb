@@ -7,8 +7,9 @@ require('securerandom')
 
 require_relative('ulid/version')
 require_relative('ulid/errors')
-require_relative('ulid/crockford_base32')
 require_relative('ulid/utils')
+require_relative('ulid/crockford_base32')
+require_relative('ulid/byte_tuple')
 require_relative('ulid/monotonic_generator')
 
 # @see https://github.com/ulid/spec
@@ -418,23 +419,79 @@ class ULID
     Time.at(0, @milliseconds, :millisecond, in: binding.local_variable_get(:in))
   end
 
+  # @deprecated Use [#bytes] instead
   # @return [Array(Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer)]
   def octets
-    digits = @integer.digits(256)
-    (OCTETS_LENGTH - digits.size).times do
-      digits.push(0)
-    end
-    digits.reverse!
+    Utils.deprecate("ULID#{__callee__}", 'ULID#bytes')
+
+    bytes.uchars
   end
 
+  # @deprecated Use [#bytes] instead
   # @return [Array(Integer, Integer, Integer, Integer, Integer, Integer)]
   def timestamp_octets
-    octets.slice(0, TIMESTAMP_OCTETS_LENGTH) || raise(UnexpectedError)
+    Utils.deprecate("ULID#{__callee__}", 'ULID#bytes')
+
+    bytes(:timestamp).uchars
   end
 
+  # @deprecated Use [#bytes] instead
   # @return [Array(Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer)]
   def randomness_octets
-    octets.slice(TIMESTAMP_OCTETS_LENGTH, RANDOMNESS_OCTETS_LENGTH) || raise(UnexpectedError)
+    Utils.deprecate("ULID#{__callee__}", 'ULID#bytes')
+
+    bytes(:randomness).uchars
+  end
+
+  # @return [Array<Integer>]
+  # def bytes(component=:integer, fromat:)
+  #   octets  = (
+  #     digits = @integer.digits(256)
+  #     (OCTETS_LENGTH - digits.size).times do
+  #       digits.push(0)
+  #     end
+  #     digits.reverse!
+  #   )
+
+  #   uchars = (
+  #     case component
+  #     when :integer
+  #       octets
+  #     when :timestamp, :milliseconds
+  #       octets.slice(0, TIMESTAMP_OCTETS_LENGTH) || raise(UnexpectedError)
+  #     when :randomness, :entropy
+  #       octets.slice(TIMESTAMP_OCTETS_LENGTH, RANDOMNESS_OCTETS_LENGTH) || raise(UnexpectedError)
+  #     else
+  #       raise(ArgumentError, "#{component} is unknown component in byte format")
+  #     end
+  #   )
+
+  #   case fromat
+  #   when :uchar, nil
+  #     uchars
+  #   when :pack
+  #     uchars.pack('C*')
+  #   else
+  #     raise(ArgumentError, "#{fromat} is unknown fromat")
+  #   end
+  # end
+
+  def bytes(component=:integer)
+    int, length = *(
+      case component
+      when :integer
+        [@integer, OCTETS_LENGTH]
+      when :timestamp, :milliseconds
+        [@milliseconds, TIMESTAMP_OCTETS_LENGTH]
+      when :randomness, :entropy
+        [@entropy, RANDOMNESS_OCTETS_LENGTH]
+      else
+        raise(ArgumentError, "#{component} is unknown component in byte format")
+      end
+    )
+    raise(UnexpectedError) unless int && length
+
+    ByteTuple.new(int, length)
   end
 
   # @return [String]
