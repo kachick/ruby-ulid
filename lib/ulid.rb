@@ -69,12 +69,12 @@ class ULID
   # @raise [ArgumentError] if the given milliseconds and/or entropy is negative number
   def self.generate(moment: Utils.current_milliseconds, entropy: Utils.reasonable_entropy)
     milliseconds = Utils.milliseconds_from_moment(moment)
-    base32_encoded = Utils.encode_base32(milliseconds: milliseconds, entropy: entropy)
+    base32hex = Utils.encode_base32hex(milliseconds: milliseconds, entropy: entropy)
     new(
       milliseconds: milliseconds,
       entropy: entropy,
-      integer: Integer(base32_encoded, 32, exception: true),
-      encoded: CrockfordBase32.from_base32(base32_encoded).freeze
+      integer: Integer(base32hex, 32, exception: true),
+      encoded: CrockfordBase32.from_base32hex(base32hex).freeze
     )
   end
 
@@ -84,8 +84,8 @@ class ULID
   # @param [Integer] entropy
   # @return [String]
   def self.encode(moment: Utils.current_milliseconds, entropy: Utils.reasonable_entropy)
-    base32_encoded = Utils.encode_base32(milliseconds: Utils.milliseconds_from_moment(moment), entropy: entropy)
-    CrockfordBase32.from_base32(base32_encoded)
+    base32hex = Utils.encode_base32hex(milliseconds: Utils.milliseconds_from_moment(moment), entropy: entropy)
+    CrockfordBase32.from_base32hex(base32hex)
   end
 
   # Short hand of `ULID.generate(moment: time)`
@@ -181,20 +181,20 @@ class ULID
     raise(OverflowError, "integer overflow: given #{integer}, max: #{MAX_INTEGER}") unless integer <= MAX_INTEGER
     raise(ArgumentError, "integer should not be negative: given: #{integer}") if integer.negative?
 
-    base32encoded = integer.to_s(32).rjust(ENCODED_LENGTH, '0')
-    base32encoded_timestamp = base32encoded.slice(0, TIMESTAMP_ENCODED_LENGTH)
-    base32encoded_randomness = base32encoded.slice(TIMESTAMP_ENCODED_LENGTH, RANDOMNESS_ENCODED_LENGTH)
+    base32hex = integer.to_s(32).rjust(ENCODED_LENGTH, '0')
+    base32hex_timestamp = base32hex.slice(0, TIMESTAMP_ENCODED_LENGTH)
+    base32hex_randomness = base32hex.slice(TIMESTAMP_ENCODED_LENGTH, RANDOMNESS_ENCODED_LENGTH)
 
-    raise(UnexpectedError) unless base32encoded_timestamp && base32encoded_randomness
+    raise(UnexpectedError) unless base32hex_timestamp && base32hex_randomness
 
-    milliseconds = Integer(base32encoded_timestamp, 32, exception: true)
-    entropy = Integer(base32encoded_randomness, 32, exception: true)
+    milliseconds = Integer(base32hex_timestamp, 32, exception: true)
+    entropy = Integer(base32hex_randomness, 32, exception: true)
 
     new(
       milliseconds: milliseconds,
       entropy: entropy,
       integer: integer,
-      encoded: CrockfordBase32.from_base32(base32encoded).freeze
+      encoded: CrockfordBase32.from_base32hex(base32hex).freeze
     )
   end
 

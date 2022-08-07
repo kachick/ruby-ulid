@@ -6,7 +6,7 @@
 require_relative('utils')
 
 class ULID
-  # @see https://www.crockford.com/base32.html
+  # @see https://www.crockford.com/base32.html and https://www.rfc-editor.org/rfc/rfc4648
   #
   # This module supporting only `subset of original crockford for actual use-case` in ULID context.
   # Original decoding spec allows other characters.
@@ -38,7 +38,7 @@ class ULID
     }.freeze
 
     # Excluded I, L, O, U, - from Base32
-    base32_to_crockford = {
+    base32hex_to_crockford = {
       'I' => 'J',
       'J' => 'K',
       'K' => 'M',
@@ -54,8 +54,8 @@ class ULID
       'U' => 'Y',
       'V' => 'Z'
     }.freeze
-    BASE32_TR_PATTERN = base32_to_crockford.keys.join.freeze
-    CROCKFORD_TR_PATTERN = base32_to_crockford.values.join.freeze
+    BASE32HEX_TR_PATTERN = base32hex_to_crockford.keys.join.freeze
+    CROCKFORD_TR_PATTERN = base32hex_to_crockford.values.join.freeze
     ENCODING_STRING = "#{same_definitions.values.join}#{CROCKFORD_TR_PATTERN}".freeze
 
     variant_to_normarized = {
@@ -76,15 +76,15 @@ class ULID
     # @param [String] string
     # @return [Integer]
     def self.decode(string)
-      base32encoded = string.upcase.tr(CROCKFORD_TR_PATTERN, BASE32_TR_PATTERN)
-      Integer(base32encoded, 32, exception: true)
+      base32hex = string.upcase.tr(CROCKFORD_TR_PATTERN, BASE32HEX_TR_PATTERN)
+      Integer(base32hex, 32, exception: true)
     end
 
     # @param [Integer] integer
     # @return [String]
     def self.encode(integer)
-      base32encoded = integer.to_s(32)
-      from_base32(base32encoded).rjust(ENCODED_LENGTH, '0')
+      base32hex = integer.to_s(32)
+      from_base32hex(base32hex).rjust(ENCODED_LENGTH, '0')
     end
 
     # @param [String] string
@@ -93,10 +93,10 @@ class ULID
       string.delete('-').tr(VARIANT_TR_PATTERN, NORMALIZED_TR_PATTERN)
     end
 
-    # @param [String] base32encoded
+    # @param [String] base32hex
     # @return [String]
-    def self.from_base32(base32encoded)
-      base32encoded.upcase.tr(BASE32_TR_PATTERN, CROCKFORD_TR_PATTERN)
+    def self.from_base32hex(base32hex)
+      base32hex.upcase.tr(BASE32HEX_TR_PATTERN, CROCKFORD_TR_PATTERN)
     end
   end
 

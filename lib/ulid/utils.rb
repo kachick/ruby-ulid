@@ -46,15 +46,15 @@ class ULID
     # @return [String]
     # @raise [OverflowError] if the given value is larger than the ULID limit
     # @raise [ArgumentError] if the given milliseconds and/or entropy is negative number
-    def self.encode_base32(milliseconds:, entropy:)
+    def self.encode_base32hex(milliseconds:, entropy:)
       raise(ArgumentError, 'milliseconds and entropy should be an `Integer`') unless Integer === milliseconds && Integer === entropy
       raise(OverflowError, "timestamp overflow: given #{milliseconds}, max: #{MAX_MILLISECONDS}") unless milliseconds <= MAX_MILLISECONDS
       raise(OverflowError, "entropy overflow: given #{entropy}, max: #{MAX_ENTROPY}") unless entropy <= MAX_ENTROPY
       raise(ArgumentError, 'milliseconds and entropy should not be negative') if milliseconds.negative? || entropy.negative?
 
-      base32encoded_timestamp = milliseconds.to_s(32).rjust(TIMESTAMP_ENCODED_LENGTH, '0')
-      base32encoded_randomness = entropy.to_s(32).rjust(RANDOMNESS_ENCODED_LENGTH, '0')
-      "#{base32encoded_timestamp}#{base32encoded_randomness}"
+      base32hex_timestamp = milliseconds.to_s(32).rjust(TIMESTAMP_ENCODED_LENGTH, '0')
+      base32hex_randomness = entropy.to_s(32).rjust(RANDOMNESS_ENCODED_LENGTH, '0')
+      "#{base32hex_timestamp}#{base32hex_randomness}"
     end
 
     # @param [BasicObject] object
