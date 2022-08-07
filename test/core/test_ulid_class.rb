@@ -264,7 +264,7 @@ class TestULIDClass < Test::Unit::TestCase
     assert(normalized.frozen?)
     assert_not_same(normalized, ULID.normalize(normalized))
 
-    assert_false(ULID.normalize(normalized).frozen?)
+    assert_true(ULID.normalize(normalized).frozen?)
 
     # Ensure the string is not modified in parser
     assert_false(downcased.frozen?)

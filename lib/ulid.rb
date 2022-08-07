@@ -372,7 +372,7 @@ class ULID
 
   # @return [String]
   def encode
-    @encoded.dup
+    @encoded
   end
   alias_method(:to_s, :encode)
 

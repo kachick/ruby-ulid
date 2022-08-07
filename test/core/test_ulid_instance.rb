@@ -194,20 +194,17 @@ class TestULIDInstance < Test::Unit::TestCase
   def test_encode
     ulid = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
     assert_equal('01ARZ3NDEKTSV4RRFFQ69G5FAV', ulid.encode)
-    assert_not_same(ulid.encode, ulid.encode)
-    assert_equal(ulid.encode, ulid.encode)
-    assert_false(ulid.encode.frozen?)
-    assert_not_same(ulid.to_s, ulid.encode)
+    assert_same(ulid.encode, ulid.encode)
+    assert_true(ulid.encode.frozen?)
+    assert_same(ulid.to_s, ulid.encode)
   end
 
   def test_to_s
     ulid = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
     assert_equal('01ARZ3NDEKTSV4RRFFQ69G5FAV', ulid.to_s)
-    assert_not_same(ulid.to_s, ulid.to_s)
-    assert_equal(ulid.to_s, ulid.to_s)
-    assert_false(ulid.to_s.frozen?)
-    assert_not_same(ulid.encode, ulid.to_s)
-    assert_equal(ulid.encode, ulid.to_s)
+    assert_same(ulid.to_s, ulid.to_s)
+    assert_true(ulid.to_s.frozen?)
+    assert_same(ulid.encode, ulid.to_s)
   end
 
   def test_inspect

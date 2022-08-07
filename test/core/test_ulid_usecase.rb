@@ -143,6 +143,6 @@ class TestULIDUseCase < Test::Unit::TestCase
     dumped = Marshal.dump(frozen)
     unmarshaled = Marshal.load(dumped)
     assert_true(unmarshaled.frozen?)
-    assert_false(unmarshaled.to_s.frozen?)
+    assert_true(unmarshaled.to_s.frozen?)
   end
 end
