@@ -73,7 +73,7 @@ class ULID
     new(
       milliseconds: milliseconds,
       entropy: entropy,
-      integer: base32_encoded.to_i(32),
+      integer: Integer(base32_encoded, 32, exception: true),
       encoded: CrockfordBase32.from_base32(base32_encoded).freeze
     )
   end
@@ -187,8 +187,8 @@ class ULID
 
     raise(UnexpectedError) unless base32encoded_timestamp && base32encoded_randomness
 
-    milliseconds = base32encoded_timestamp.to_i(32)
-    entropy = base32encoded_randomness.to_i(32)
+    milliseconds = Integer(base32encoded_timestamp, 32, exception: true)
+    entropy = Integer(base32encoded_randomness, 32, exception: true)
 
     new(
       milliseconds: milliseconds,
