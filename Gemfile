@@ -11,7 +11,7 @@ group(:development, :test) do
 end
 
 group(:development) do
-  gem('debug', '~> 1.6.1', require: false)
+  gem('debug', '~> 1.6.2', require: false)
   gem(
     'rbs',
     # To apply https://github.com/ruby/rbs/pull/1056
