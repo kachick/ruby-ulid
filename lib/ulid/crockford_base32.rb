@@ -69,7 +69,7 @@ class ULID
     VARIANT_TR_PATTERN = variant_to_normarized.keys.join.freeze
     NORMALIZED_TR_PATTERN = variant_to_normarized.values.join.freeze
 
-    Utils.make_sharable_constantans(self)
+    Utils.make_sharable_constants(self)
 
     # @note Avoid to depend regex as possible. `tr(string, string)` is almost 2x Faster than `gsub(regex, hash)` in Ruby 3.1
 

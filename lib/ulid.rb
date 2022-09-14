@@ -50,7 +50,7 @@ class ULID
     SecureRandom.random_number(MAX_INTEGER)
   }.freeze
 
-  Utils.make_sharable_constantans(self)
+  Utils.make_sharable_constants(self)
 
   private_constant(
     :PATTERN_WITH_CROCKFORD_BASE32_SUBSET,

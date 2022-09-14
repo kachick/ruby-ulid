@@ -50,7 +50,7 @@ class ULID < Object
 
     def self.make_sharable_value: (untyped object) -> void
 
-    def self.make_sharable_constantans: (Module) -> void
+    def self.make_sharable_constants: (Module) -> void
 
     def self.ractor_can_make_shareable_time?: -> bool
   end

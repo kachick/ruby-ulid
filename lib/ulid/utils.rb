@@ -94,7 +94,7 @@ class ULID
     end
 
     # @note Call before Module#private_constant
-    def self.make_sharable_constantans(mod)
+    def self.make_sharable_constants(mod)
       mod.constants.each do |const_name|
         value = mod.const_get(const_name)
         make_sharable_value(value)
