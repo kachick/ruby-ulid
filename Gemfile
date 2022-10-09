@@ -18,7 +18,7 @@ group(:development) do
     github: 'ruby/rbs',
     require: false
   )
-  gem('steep', '~> 1.1.1', require: false)
+  gem('steep', '~> 1.2.0', require: false)
   gem('benchmark-ips', '~> 2.10.0', require: false)
   gem('stackprof')
   gem('yard', '~> 0.9.28', require: false)
