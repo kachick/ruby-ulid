@@ -1,7 +1,7 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "github>kachick/renovate-config-asdf#1.6.0",
+    "github>kachick/renovate-config-asdf#1.7.0",
     "github>kachick/renovate-config-asdf:self",
     "github>kachick/renovate-config-dprint:plugins"
   ],
