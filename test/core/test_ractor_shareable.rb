@@ -16,7 +16,7 @@ class TestRactorShareable < Test::Unit::TestCase
     assert_true(Ractor.shareable?(ULID_INSTANCE))
     assert_false(Ractor.shareable?(MONOTONIC_GENERATOR))
 
-    alllow_warning(/Ractor is experimental, and the behavior may change in future versions of Ruby!/) do
+    allow_warning(/Ractor is experimental, and the behavior may change in future versions of Ruby!/) do
       assert_equal('01F4GNAV5ZR6FJQ5SFQC7WDSY3', Ractor.new { ULID_INSTANCE.to_s }.take)
 
       assert_instance_of(ULID, Ractor.new { ULID_CLASS.generate }.take)

@@ -60,7 +60,7 @@ class Test::Unit::TestCase
     end
   end
 
-  def alllow_warning(pattern, &block)
+  def allow_warning(pattern, &block)
     Warning.clear do
       # Both ignore and process can be passed https://github.com/jeremyevans/ruby-warning/blob/eae08ac7b43ae577f86dc29e6629b80694ef96f0/lib/warning.rb#L219-L267
       # We can get the caller path as `caller_locations.map(&:path).grep_v(/gems/).grep(/\Atest\//).last`. However some errors can not be handled by the path. See below
