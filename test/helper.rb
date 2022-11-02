@@ -16,9 +16,11 @@ require 'stringio'
 Warning[:deprecated] = true
 Warning[:experimental] = true
 
-Warning.process do |_warning_message|
+WARNING_PROCESS = -> _warning_message {
   :raise
-end
+}
+
+Warning.process(&WARNING_PROCESS)
 
 require_relative('../lib/ulid')
 
@@ -55,6 +57,16 @@ class Test::Unit::TestCase
       ensure
         $stderr = org_stderr
       end
+    end
+  end
+
+  def alllow_warning(pattern, &block)
+    Warning.clear do
+      # Both ignore and process can be passed https://github.com/jeremyevans/ruby-warning/blob/eae08ac7b43ae577f86dc29e6629b80694ef96f0/lib/warning.rb#L219-L267
+      Warning.ignore(pattern)
+      # Warning.clear is not just a sandbox. It initially clears state in the block https://github.com/jeremyevans/ruby-warning/blob/eae08ac7b43ae577f86dc29e6629b80694ef96f0/lib/warning.rb#L48-L74
+      Warning.process(&WARNING_PROCESS)
+      block.call
     end
   end
 end
