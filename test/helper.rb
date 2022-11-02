@@ -61,12 +61,14 @@ class Test::Unit::TestCase
   end
 
   def allow_warning(pattern, &block)
+    # Some errors can not be handled by only path. So covered for internal warnings. See below
+    #   - https://github.com/ruby/ruby/pull/6629
+    #   - https://github.com/jeremyevans/ruby-warning/blob/eae08ac7b43ae577f86dc29e6629b80694ef96f0/lib/warning.rb#L221-L222
+    caller_path = caller_locations.map(&:path).grep_v(/gems/).grep(/\Atest\//).last
+    path_pattern = Regexp.union(/<internal:\S+?>/, caller_path)
     Warning.clear do
       # Both ignore and process can be passed https://github.com/jeremyevans/ruby-warning/blob/eae08ac7b43ae577f86dc29e6629b80694ef96f0/lib/warning.rb#L219-L267
-      # We can get the caller path as `caller_locations.map(&:path).grep_v(/gems/).grep(/\Atest\//).last`. However some errors can not be handled by the path. See below
-      #   - https://github.com/ruby/ruby/pull/6629
-      #   - https://github.com/jeremyevans/ruby-warning/blob/eae08ac7b43ae577f86dc29e6629b80694ef96f0/lib/warning.rb#L221-L222
-      Warning.ignore(pattern)
+      Warning.ignore(pattern, path_pattern)
       # Warning.clear is not just a sandbox. It initially clears state in the block https://github.com/jeremyevans/ruby-warning/blob/eae08ac7b43ae577f86dc29e6629b80694ef96f0/lib/warning.rb#L48-L74
       Warning.process(&WARNING_PROCESS)
       block.call
