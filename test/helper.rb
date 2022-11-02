@@ -16,9 +16,11 @@ require 'stringio'
 Warning[:deprecated] = true
 Warning[:experimental] = true
 
-Warning.process do |_warning_message|
+WARNING_PROCESS = -> _warning_message {
   :raise
-end
+}
+
+Warning.process(&WARNING_PROCESS)
 
 require_relative('../lib/ulid')
 
@@ -42,6 +44,8 @@ class Test::Unit::TestCase
   end
 
   def assert_warning(pattern, &block)
+    raise(ArgumentError, 'should pass block as an warning sandbox')  unless block_given?
+
     org_stderr = $stderr
     $stderr = fake_io = StringIO.new(+'', 'r+')
 
@@ -53,6 +57,19 @@ class Test::Unit::TestCase
       ensure
         $stderr = org_stderr
       end
+    end
+  end
+
+  def alllow_warning(pattern, &block)
+    Warning.clear do
+      # Both ignore and process can be passed https://github.com/jeremyevans/ruby-warning/blob/eae08ac7b43ae577f86dc29e6629b80694ef96f0/lib/warning.rb#L219-L267
+      # We can get the caller path as `caller_locations.map(&:path).grep_v(/gems/).grep(/\Atest\//).last`. However some errors can not be handled by the path. See below
+      #   - https://github.com/ruby/ruby/pull/6629
+      #   - https://github.com/jeremyevans/ruby-warning/blob/eae08ac7b43ae577f86dc29e6629b80694ef96f0/lib/warning.rb#L221-L222
+      Warning.ignore(pattern)
+      # Warning.clear is not just a sandbox. It initially clears state in the block https://github.com/jeremyevans/ruby-warning/blob/eae08ac7b43ae577f86dc29e6629b80694ef96f0/lib/warning.rb#L48-L74
+      Warning.process(&WARNING_PROCESS)
+      block.call
     end
   end
 end
