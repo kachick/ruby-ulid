@@ -42,6 +42,8 @@ class Test::Unit::TestCase
   end
 
   def assert_warning(pattern, &block)
+    raise(ArgumentError, 'should pass block as an warning sandbox')  unless block_given?
+
     org_stderr = $stderr
     $stderr = fake_io = StringIO.new(+'', 'r+')
 

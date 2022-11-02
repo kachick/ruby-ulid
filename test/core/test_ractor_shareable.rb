@@ -10,33 +10,31 @@ class TestRactorShareable < Test::Unit::TestCase
   ULID_INSTANCE = ULID.parse('01F4GNAV5ZR6FJQ5SFQC7WDSY3')
   MONOTONIC_GENERATOR = ULID::MonotonicGenerator.new
 
-  def setup
-    @warning_original_experimental = Warning[:experimental]
-    Warning[:experimental] = false
-  end
-
   def test_signature
     assert_true(Ractor.shareable?(ULID_CLASS))
     assert_false(ULID_CLASS.frozen?)
     assert_true(Ractor.shareable?(ULID_INSTANCE))
     assert_false(Ractor.shareable?(MONOTONIC_GENERATOR))
 
-    assert_equal('01F4GNAV5ZR6FJQ5SFQC7WDSY3', Ractor.new { ULID_INSTANCE.to_s }.take)
+    # TODO: This guard should fail when Ractor is a stable feature.
+    assert_warning(/Ractor is experimental/) do
+      assert_equal('01F4GNAV5ZR6FJQ5SFQC7WDSY3', Ractor.new { ULID_INSTANCE.to_s }.take)
 
-    assert_instance_of(ULID, Ractor.new { ULID_CLASS.generate }.take)
+      assert_instance_of(ULID, Ractor.new { ULID_CLASS.generate }.take)
 
-    assert_instance_of(
-      Ractor::IsolationError,
-      Ractor.new do
-        begin
-          MONOTONIC_GENERATOR
-        rescue Exception => err
-          err
-        else
-          'should not reach here'
-        end
-      end.take
-    )
+      assert_instance_of(
+        Ractor::IsolationError,
+        Ractor.new do
+          begin
+            MONOTONIC_GENERATOR
+          rescue Exception => err
+            err
+          else
+            'should not reach here'
+          end
+        end.take
+      )
+    end
   end
 
   def test_instances_are_can_be_shareable
@@ -56,9 +54,5 @@ class TestRactorShareable < Test::Unit::TestCase
     unless const_value.kind_of?(Module)
       assert_true(const_value.frozen?)
     end
-  end
-
-  def teardown
-    Warning[:experimental] = @warning_original_experimental
   end
 end
