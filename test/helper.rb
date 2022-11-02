@@ -64,7 +64,7 @@ class Test::Unit::TestCase
     # Some errors can not be handled by only path. So covered for internal warnings. See below
     #   - https://github.com/ruby/ruby/pull/6629
     #   - https://github.com/jeremyevans/ruby-warning/blob/eae08ac7b43ae577f86dc29e6629b80694ef96f0/lib/warning.rb#L221-L222
-    caller_path = caller_locations.map(&:path).grep_v(/gems/).grep(/\Atest\//).last
+    caller_path = caller_locations.map(&:path).grep_v(%r!/gems/!).last
     path_pattern = Regexp.union(/<internal:\S+?>/, caller_path)
     Warning.clear do
       # Both ignore and process can be passed https://github.com/jeremyevans/ruby-warning/blob/eae08ac7b43ae577f86dc29e6629b80694ef96f0/lib/warning.rb#L219-L267
