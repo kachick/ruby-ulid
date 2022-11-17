@@ -1,10 +1,8 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "github>kachick/renovate-config-asdf#1.11.1",
-    "github>kachick/renovate-config-asdf:self",
     "github>kachick/renovate-config-dprint:plugins"
   ],
   "labels": ["dependencies", "renovate"],
-  "enabledManagers": ["regex"]
+  "enabledManagers": ["asdf", "regex"]
 }
