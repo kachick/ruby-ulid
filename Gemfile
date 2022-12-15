@@ -26,6 +26,6 @@ group(:development) do
 end
 
 group(:test) do
-  gem('test-unit', '~> 3.5.6')
+  gem('test-unit', '~> 3.5.7')
   gem('warning', '~> 1.3.0')
 end
