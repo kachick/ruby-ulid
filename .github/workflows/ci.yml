@@ -13,6 +13,7 @@ on:
       - '**.gemspec'
       - 'Gemfile'
       - 'Rakefile'
+      - '.tool-versions'
   pull_request:
     paths:
       - '.github/workflows/ci.yml'
@@ -23,6 +24,7 @@ on:
       - '**.gemspec'
       - 'Gemfile'
       - 'Rakefile'
+      - '.tool-versions'
 jobs:
   test:
     strategy:
