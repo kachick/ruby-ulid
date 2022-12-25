@@ -609,6 +609,12 @@ class TestULIDClass < Test::Unit::TestCase
     assert_true(scanning_pattern.match?('7ZZZZZZZZZZZZZZZZZZZZZZZZZ'))
     assert_false(scanning_pattern.match?('80000000000000000000000000'))
     assert_equal([], scanning_pattern.names)
+
+    omit_if(RUBY_VERSION < '3.2')
+
+    [subset_pattern, strict_pattern, scanning_pattern].each do |pattern|
+      assert_true(Regexp.linear_time?(pattern))
+    end
   end
 
   def test_generate
