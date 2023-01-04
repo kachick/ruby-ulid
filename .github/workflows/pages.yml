@@ -32,3 +32,4 @@ jobs:
     name: Build and deploy YARD
     steps:
       - uses: kachick/deploy-yard-to-pages@v1
+        id: deployment
