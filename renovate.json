@@ -4,5 +4,11 @@
     "github>kachick/renovate-config-dprint:plugins"
   ],
   "labels": ["dependencies", "renovate"],
-  "enabledManagers": ["asdf", "regex"]
+  "enabledManagers": ["regex"],
+  "packageRules": [
+    {
+      "extends": ["schedule:weekly"],
+      "matchPackagePrefixes": ["dprint"]
+    }
+  ]
 }

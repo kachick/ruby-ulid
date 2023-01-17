@@ -8,13 +8,13 @@ Welcome all of the contributions!
 
 ## Development
 
-At first, you should install development dependencies
+Install [Nix](https://nixos.org/) package manager. And following steps.
 
 ```console
 $ git clone git@github.com:kachick/ruby-ulid.git
 $ cd ./ruby-ulid
+$ nix-shell
 $ ./bin/setup
-# Executing first time might take longtime, because development mode dependent active_support via steep
 ```
 
 Author is using vscode for development. For your information, the rubocop vscode integration shows wrong errors for Rakefile and ruby-ulid.gemspec as below
