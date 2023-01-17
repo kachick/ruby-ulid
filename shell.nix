@@ -2,7 +2,7 @@
 
 pkgs.mkShell {
   buildInputs = [
-    pkgs.ruby_3_1
+    # Do not include ruby. Because switching the version is needed for gem development
     pkgs.dprint
   ];
 }

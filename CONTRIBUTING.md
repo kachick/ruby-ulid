@@ -6,18 +6,24 @@
 
 Welcome all of the contributions!
 
-## Development
+## Setup
 
-Install [Nix](https://nixos.org/) package manager. And following steps.
+Needs your ruby and [dprint](https://dprint.dev/) for development.\
+If you are using [Nix](https://nixos.org/) package manager, [the definition](shell.nix) is included.
 
 ```console
 $ git clone git@github.com:kachick/ruby-ulid.git
 $ cd ./ruby-ulid
 $ nix-shell
+$ dprint --version
 $ bundle install || bundle update
 ```
 
-Author is using vscode for development. For your information, the rubocop vscode integration shows wrong errors for Rakefile and ruby-ulid.gemspec as below
+Author is using vscode for development.
+
+### Note - rubocop in vscode
+
+For your information, the rubocop vscode integration shows wrong errors for Rakefile and ruby-ulid.gemspec as below
 
 ```text
 The name of this source file (`Rakefile'`) should use snake_case.
