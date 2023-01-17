@@ -14,7 +14,7 @@ Install [Nix](https://nixos.org/) package manager. And following steps.
 $ git clone git@github.com:kachick/ruby-ulid.git
 $ cd ./ruby-ulid
 $ nix-shell
-$ ./bin/setup
+$ bundle install || bundle update
 ```
 
 Author is using vscode for development. For your information, the rubocop vscode integration shows wrong errors for Rakefile and ruby-ulid.gemspec as below
