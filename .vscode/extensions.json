@@ -7,7 +7,7 @@
     "soutaro.steep-vscode",
     "soutaro.rbs-syntax",
     "dprint.dprint",
-    "rebornix.ruby",
+    "pucelle.run-on-save",
     "jnoortheen.nix-ide"
   ]
 }
