@@ -10,5 +10,8 @@
       "extends": ["schedule:weekly"],
       "matchPackagePrefixes": ["dprint"]
     }
-  ]
+  ],
+  "nix": {
+    "enabled": true
+  }
 }
