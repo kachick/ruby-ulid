@@ -14,7 +14,8 @@ jobs:
     steps:
       - name: Dependabot metadata
         id: metadata
-        uses: dependabot/fetch-metadata@v1.3.5
+        # https://github.com/dependabot/fetch-metadata/pull/224
+        uses: kachick/fetch-metadata@fix-get-info-for-library
         with:
           github-token: '${{ secrets.GITHUB_TOKEN }}'
       - uses: actions/checkout@v3
