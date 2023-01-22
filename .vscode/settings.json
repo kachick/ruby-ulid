@@ -4,8 +4,7 @@
   "runOnSave.statusMessageTimeout": 3000,
   "runOnSave.commands": [
     {
-      // Match scss files except names start with `_`.
-      "match": ".*\\.rb$",
+      "match": "(.*\\.rb|Rakefile|Gemfile|.*\\.gemspec)$",
       "command": "bundle exec rubocop --autocorrect ${file}",
       "runIn": "backend",
       "runningStatusMessage": "Formatting with rubocop ${fileBasename}",
