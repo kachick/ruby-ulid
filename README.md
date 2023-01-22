@@ -228,31 +228,31 @@ ULID.floor(time) #=> 2000-01-01 00:00:00.123 UTC
 For rough operations, `ULID.scan` might be useful.
 
 ```ruby
-json = <<~'JSON'
-  {
-    "id": "01F4GNAV5ZR6FJQ5SFQC7WDSY3",
-    "author": {
-      "id": "01F4GNBXW1AM2KWW52PVT3ZY9X",
-      "name": "kachick"
-    },
-    "title": "My awesome blog post",
-    "comments": [
-      {
-        "id": "01F4GNCNC3CH0BCRZBPPDEKBKS",
-        "commenter": {
-          "id": "01F4GNBXW1AM2KWW52PVT3ZY9X",
-          "name": "kachick"
-        }
-      },
-      {
-        "id": "01F4GNCXAMXQ1SGBH5XCR6ZH0M",
-        "commenter": {
-          "id": "01F4GND4RYYSKNAADHQ9BNXAWJ",
-          "name": "pankona"
-        }
+json = <<'JSON'
+{
+  "id": "01F4GNAV5ZR6FJQ5SFQC7WDSY3",
+  "author": {
+    "id": "01F4GNBXW1AM2KWW52PVT3ZY9X",
+    "name": "kachick"
+  },
+  "title": "My awesome blog post",
+  "comments": [
+    {
+      "id": "01F4GNCNC3CH0BCRZBPPDEKBKS",
+      "commenter": {
+        "id": "01F4GNBXW1AM2KWW52PVT3ZY9X",
+        "name": "kachick"
       }
-    ]
-  }
+    },
+    {
+      "id": "01F4GNCXAMXQ1SGBH5XCR6ZH0M",
+      "commenter": {
+        "id": "01F4GND4RYYSKNAADHQ9BNXAWJ",
+        "name": "pankona"
+      }
+    }
+  ]
+}
 JSON
 
 ULID.scan(json).to_a
