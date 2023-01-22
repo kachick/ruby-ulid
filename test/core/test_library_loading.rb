@@ -10,6 +10,7 @@ class TestLibraryLoading < Test::Unit::TestCase
 
   compilable_paths = Dir.glob('lib/**/*.rb')
   raise unless compilable_paths.size >= 5
+
   compilable_paths.each do |path|
     data(path, path)
   end

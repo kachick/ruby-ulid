@@ -61,7 +61,6 @@ p(examples.sample(20))
 filename = "dumped_fixed_examples_#{Time.now.strftime('%Y-%m-%d_%H-%M')}.bin"
 output_path = "#{File.expand_path('.')}/test/many_data/fixtures/#{filename}"
 
-
 File.open(output_path, 'w+b') do |file|
   Marshal.dump(examples, file)
 end

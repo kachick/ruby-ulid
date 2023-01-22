@@ -40,7 +40,7 @@ class TestULIDInstance < Test::Unit::TestCase
     pred
   ].freeze
 
-   raise 'Incorrect fixture setup' unless (EXPOSED_METHODS & ULID_RETURNING_METHODS).sort == ULID_RETURNING_METHODS.sort
+  raise 'Incorrect fixture setup' unless (EXPOSED_METHODS & ULID_RETURNING_METHODS).sort == ULID_RETURNING_METHODS.sort
 
   def setup
     @actual_timezone = ENV.fetch('TZ', nil)

@@ -102,7 +102,7 @@ class TestULIDMonotonicGeneratorThreadSafety < Test::Unit::TestCase
     assert(basically_random_but_contain_same_1000_times.none?(initial_and_median.to_time))
 
     # Might be flaky...
-    later_than_initial_and_median_count = basically_random_but_contain_same_1000_times.count{ |time| time > initial_and_median.to_time }
+    later_than_initial_and_median_count = basically_random_but_contain_same_1000_times.count { |time| time > initial_and_median.to_time }
     assert do
       1500 < later_than_initial_and_median_count
     end
