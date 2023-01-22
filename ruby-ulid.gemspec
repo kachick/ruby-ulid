@@ -18,9 +18,9 @@ Gem::Specification.new do |gem|
 
   gem.metadata = {
     'documentation_uri' => 'https://kachick.github.io/ruby-ulid/',
-    'homepage_uri'      => repository_url,
-    'source_code_uri'   => repository_url,
-    'bug_tracker_uri'   => "#{repository_url}/issues",
+    'homepage_uri' => repository_url,
+    'source_code_uri' => repository_url,
+    'bug_tracker_uri' => "#{repository_url}/issues",
     'rubygems_mfa_required' => 'true'
   }
 
@@ -32,7 +32,7 @@ Gem::Specification.new do |gem|
   gem.email         = ['kachick1+ruby@gmail.com']
   git_managed_files = `git ls-files`.lines.map(&:chomp)
   might_be_parsing_by_tool_as_dependabot = git_managed_files.empty?
-  base_files = Dir['README*', '*LICENSE*',  'lib/**/*', 'sig/**/*'].uniq
+  base_files = Dir['README*', '*LICENSE*', 'lib/**/*', 'sig/**/*'].uniq
   files = might_be_parsing_by_tool_as_dependabot ? base_files : (base_files & git_managed_files)
 
   unless might_be_parsing_by_tool_as_dependabot

@@ -434,7 +434,7 @@ class TestULIDClass < Test::Unit::TestCase
     assert_equal(ULID.min..range.end, ULID.range(nil..range.end))
 
     [nil, 42, 1..42, time_has_more_value_than_milliseconds1, ULID.sample.to_s, ULID.sample,
-    BasicObject.new, Object.new, range.begin.to_s..range.end.to_s].each do |evil|
+     BasicObject.new, Object.new, range.begin.to_s..range.end.to_s].each do |evil|
       err = assert_raises(ArgumentError) do
         ULID.range(evil)
       end
@@ -581,7 +581,7 @@ class TestULIDClass < Test::Unit::TestCase
     assert_true(subset_pattern.match?('00000000000000000000000000'))
     assert_true(subset_pattern.match?('7ZZZZZZZZZZZZZZZZZZZZZZZZZ'))
     assert_false(subset_pattern.match?('80000000000000000000000000'))
-    assert_equal({'timestamp' => '01ARZ3NDEK', 'randomness' => 'TSV4RRFFQ69G5FAV'}, subset_pattern.match('01ARZ3NDEKTSV4RRFFQ69G5FAV').named_captures)
+    assert_equal({ 'timestamp' => '01ARZ3NDEK', 'randomness' => 'TSV4RRFFQ69G5FAV' }, subset_pattern.match('01ARZ3NDEKTSV4RRFFQ69G5FAV').named_captures)
 
     assert_true(strict_pattern.casefold?)
     assert_equal(Encoding::US_ASCII, strict_pattern.encoding)
@@ -594,7 +594,7 @@ class TestULIDClass < Test::Unit::TestCase
     assert_true(strict_pattern.match?('00000000000000000000000000'))
     assert_true(strict_pattern.match?('7ZZZZZZZZZZZZZZZZZZZZZZZZZ'))
     assert_false(strict_pattern.match?('80000000000000000000000000'))
-    assert_equal({'timestamp' => '01ARZ3NDEK', 'randomness' => 'TSV4RRFFQ69G5FAV'}, strict_pattern.match('01ARZ3NDEKTSV4RRFFQ69G5FAV').named_captures)
+    assert_equal({ 'timestamp' => '01ARZ3NDEK', 'randomness' => 'TSV4RRFFQ69G5FAV' }, strict_pattern.match('01ARZ3NDEKTSV4RRFFQ69G5FAV').named_captures)
 
     assert_true(scanning_pattern.casefold?)
     assert_equal(Encoding::US_ASCII, scanning_pattern.encoding)

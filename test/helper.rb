@@ -16,7 +16,7 @@ require 'stringio'
 Warning[:deprecated] = true
 Warning[:experimental] = true
 
-WARNING_PROCESS = -> _warning_message {
+WARNING_PROCESS = ->_warning_message {
   :raise
 }
 
@@ -35,8 +35,8 @@ class Test::Unit::TestCase
     def assert_acceptable_randomized_string(ulids)
       awesome_randomized_ulids = ulids.select { |ulid|
         (0..3).cover?(ULID::TIMESTAMP_ENCODED_LENGTH - ulid.timestamp.squeeze.size) ||
-        (0..3).cover?(ULID::RANDOMNESS_ENCODED_LENGTH - ulid.randomness.squeeze.size) ||
-        '000' != ulid.randomness.slice(-3, 3)
+          (0..3).cover?(ULID::RANDOMNESS_ENCODED_LENGTH - ulid.randomness.squeeze.size) ||
+          '000' != ulid.randomness.slice(-3, 3)
       }
 
       assert_in_epsilon(awesome_randomized_ulids.size, ulids.size, (5/100r).to_f)
@@ -44,7 +44,7 @@ class Test::Unit::TestCase
   end
 
   def assert_warning(pattern, &block)
-    raise(ArgumentError, 'should pass block as an warning sandbox')  unless block_given?
+    raise(ArgumentError, 'should pass block as an warning sandbox') unless block_given?
 
     org_stderr = $stderr
     $stderr = fake_io = StringIO.new(+'', 'r+')

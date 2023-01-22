@@ -44,6 +44,7 @@ class TestRactorShareable < Test::Unit::TestCase
 
   const_name_to_value = ULID.constants.to_h { |const_name| [const_name, ULID.const_get(const_name)] }
   raise unless const_name_to_value.size >= 10
+
   const_name_to_value.each_pair do |name, value|
     data(name.to_s, value)
   end
