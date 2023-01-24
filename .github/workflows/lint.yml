@@ -23,9 +23,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Install dprint
-        run: |
-          curl -fsSL https://dprint.dev/install.sh | sh -s 0.34.1 > /dev/null 2>&1
-          echo "/home/runner/.dprint/bin" >> $GITHUB_PATH
-      - name: Check formatting
-        run: ~/.dprint/bin/dprint --config dprint-ci.json check
+      # https://github.com/dprint/check/pull/9
+      - uses: kachick/dprint-check@feat-specifiable-config
+        with:
+          dprint-version: '0.34.1'
+          dprint-config-path: 'dprint-ci.json'
