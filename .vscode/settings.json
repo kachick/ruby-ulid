@@ -1,16 +1,6 @@
 {
   "editor.defaultFormatter": "dprint.dprint",
   "editor.formatOnSave": true,
-  "runOnSave.statusMessageTimeout": 3000,
-  "runOnSave.commands": [
-    {
-      "match": "(.*\\.rb|Rakefile|Gemfile|.*\\.gemspec)$",
-      "command": "bundle exec rubocop --autocorrect ${file}",
-      "runIn": "backend",
-      "runningStatusMessage": "Formatting with rubocop ${fileBasename}",
-      "finishStatusMessage": "${fileBasename} formatted"
-    }
-  ],
   "cSpell.words": [
     "kwargs",
     "Undocumentable",

@@ -3,11 +3,16 @@
   },
   "markdown": {
   },
+  "exec": {
+    "associations": ["**/*.{rb,gemspec,rake}", "Rakefile", "Gemfile", "Steepfile"],
+    "rubocop": "bundle exec rubocop --autocorrect --stdin {{file_path}} --stderr",
+    "rubocop.associations": "**/**"
+  },
   "prettier": {
     "printWidth": 120,
     "singleQuote": true
   },
-  "includes": ["**/*.{json,md,yml,html,css}"],
+  "includes": ["**/*.{json,md,yml,html,css,rb,gemspec,rake}", "{Rakefile,Gemfile,Steepfile}"],
   "excludes": [
     ".git",
     "**/*lock.json",
