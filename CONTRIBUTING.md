@@ -19,17 +19,19 @@ $ dprint --version
 $ bundle install || bundle update
 ```
 
-Author is using vscode for development.
+## Dprint
 
-### Note - rubocop in vscode
+Use dprint as below
 
-For your information, the rubocop vscode integration shows wrong errors for Rakefile and ruby-ulid.gemspec as below
-
-```text
-The name of this source file (`Rakefile'`) should use snake_case.
+```console
+$ dprint --config dprint-ci.json check
+$ dprint --config dprint-ci.json fmt
 ```
 
-`bundle exec rubocop` does not show this messsage. It looks fixed in https://github.com/rubyide/vscode-ruby/pull/647. However it is not released yet at 2022-05-26. (https://github.com/rubyide/vscode-ruby/commit/dc81c809c82003d26af9c4dc7c89fa8f8a26cbf5 "rebornix.ruby" maintainance is inactive now)
+Providing 2 config files. For the purpose below
+
+* [dprint-ci.json](dprint-ci.json) - Except ruby for faster run
+* [dprint.json](dprint.json) - Includes rubocop integration. Just using in vscode
 
 ## Touch the development version with REPL
 
