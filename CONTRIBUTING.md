@@ -19,6 +19,18 @@ $ dprint --version
 $ bundle install || bundle update
 ```
 
+## Rubocop
+
+Using rubocop as a formatter. So recommend to execute `bundle exec rubocop --server` before editting code to reduce time.\
+Vscode tasks does not include it because of executed server process will exists even after closing vscode.\
+Please manually kill it as below.
+
+```console
+$ bundle exec rubocop --stop-server
+```
+
+See [microsoft/vscode#65986](https://github.com/microsoft/vscode/issues/65986) for further detail.
+
 ## Dprint
 
 Use dprint as below
