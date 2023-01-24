@@ -23,4 +23,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: dprint/check@v2.1
+      - name: Install dprint
+        run: |
+          curl -fsSL https://dprint.dev/install.sh | sh -s 0.34.1 > /dev/null 2>&1
+          echo "/home/runner/.dprint/bin" >> $GITHUB_PATH
+      - name: Check formatting
+        run: ~/.dprint/bin/dprint --config dprint-ci.json check
