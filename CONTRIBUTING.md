@@ -30,8 +30,8 @@ $ dprint --config dprint-ci.json fmt
 
 Providing 2 config files. For the purpose below
 
-* [dprint-ci.json](dprint-ci.json) - Except ruby for faster run
-* [dprint.json](dprint.json) - Includes rubocop integration. Just using in vscode
+- [dprint-ci.json](dprint-ci.json) - Except ruby for faster run
+- [dprint.json](dprint.json) - Includes rubocop integration. Just using in vscode
 
 ## Touch the development version with REPL
 
