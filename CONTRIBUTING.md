@@ -19,8 +19,6 @@ $ dprint --version
 $ bundle install || bundle update
 ```
 
-See [microsoft/vscode#65986](https://github.com/microsoft/vscode/issues/65986) for further detail.
-
 ## Dprint
 
 Use dprint as below
@@ -49,6 +47,8 @@ Please manually kill it as below.
 ```console
 $ bundle exec rubocop --stop-server
 ```
+
+See [microsoft/vscode#65986](https://github.com/microsoft/vscode/issues/65986) for further detail.
 
 ## Touch the development version with REPL
 
