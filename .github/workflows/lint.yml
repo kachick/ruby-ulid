@@ -23,8 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      # https://github.com/dprint/check/pull/9
-      - uses: kachick/dprint-check@feat-specifiable-config
+      - uses: dprint/check@v2.2
         with:
           dprint-version: '0.34.1'
-          dprint-config-path: 'dprint-ci.json'
+          config-path: 'dprint-ci.json'
