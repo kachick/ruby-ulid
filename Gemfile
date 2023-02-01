@@ -22,7 +22,7 @@ group(:development) do
   gem('rubocop-performance', '~> 1.15.2', require: false)
   gem('rubocop-rubycw', '~> 0.1.6', require: false)
   gem('rubocop-thread_safety', '~> 0.4.4', require: false)
-  gem('rubocop-md', '~> 1.1.0', require: false)
+  gem('rubocop-md', '~> 1.2.0', require: false)
 end
 
 group(:test) do
