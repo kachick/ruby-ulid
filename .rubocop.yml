@@ -926,3 +926,9 @@ Lint/NumberConversion:
   Enabled: true
   Include:
     - 'lib/ulid/crockford_base32.rb'
+
+Lint/Debugger:
+  Exclude:
+    - 'benchmark/**/*.rb'
+    - 'examples/**/*.rb'
+    - 'scripts/**/*.rb'
