@@ -744,6 +744,11 @@ Style/QuotedSymbols:
 Style/MultilineInPatternThen:
   Enabled: true
 
+# https://github.com/rubocop/rubocop/pull/11528
+# I don't think this is redundant.
+Style/RedundantHeredocDelimiterQuotes:
+  Enabled: false
+
 Layout/TrailingEmptyLines:
   Enabled: true
 
