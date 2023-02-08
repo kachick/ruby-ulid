@@ -1,9 +1,7 @@
 require:
   - rubocop-rake
   - rubocop-performance
-  - rubocop-rubycw
   - rubocop-thread_safety
-  - rubocop-md
 
 AllCops:
   TargetRubyVersion: 2.7
@@ -928,16 +926,3 @@ Lint/NumberConversion:
   Enabled: true
   Include:
     - 'lib/ulid/crockford_base32.rb'
-
-Rubycw/Rubycw:
-  Enabled: true
-  Include:
-    - '**/*.rb'
-    - 'Rakefile'
-    - 'Steepfile'
-    - 'bin/**/*'
-    - 'exe/**/*'
-
-Markdown:
-  WarnInvalid: true
-  Autodetect: true
