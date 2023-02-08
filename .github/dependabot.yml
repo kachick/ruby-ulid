@@ -11,7 +11,11 @@ updates:
     versioning-strategy: increase
     ignore:
       - dependency-name: 'rubocop'
-        versions: ['1.31.2']
+        versions:
+          # https://github.com/rubocop/rubocop/pull/10796
+          - '1.31.2'
+          # https://github.com/rubocop/rubocop/issues/11549
+          - '1.45.0'
   - package-ecosystem: 'bundler'
     directory: '/benchmark/compare_with_othergems/kachick'
     schedule:
