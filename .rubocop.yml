@@ -1,9 +1,7 @@
 require:
   - rubocop-rake
   - rubocop-performance
-  - rubocop-rubycw
   - rubocop-thread_safety
-  - rubocop-md
 
 AllCops:
   TargetRubyVersion: 2.7
@@ -746,6 +744,11 @@ Style/QuotedSymbols:
 Style/MultilineInPatternThen:
   Enabled: true
 
+# https://github.com/rubocop/rubocop/pull/11528
+# I don't think this is redundant.
+Style/RedundantHeredocDelimiterQuotes:
+  Enabled: false
+
 Layout/TrailingEmptyLines:
   Enabled: true
 
@@ -929,15 +932,8 @@ Lint/NumberConversion:
   Include:
     - 'lib/ulid/crockford_base32.rb'
 
-Rubycw/Rubycw:
-  Enabled: true
-  Include:
-    - '**/*.rb'
-    - 'Rakefile'
-    - 'Steepfile'
-    - 'bin/**/*'
-    - 'exe/**/*'
-
-Markdown:
-  WarnInvalid: true
-  Autodetect: true
+Lint/Debugger:
+  Exclude:
+    - 'benchmark/**/*.rb'
+    - 'examples/**/*.rb'
+    - 'scripts/**/*.rb'

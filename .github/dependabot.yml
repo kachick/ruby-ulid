@@ -7,7 +7,7 @@ updates:
   - package-ecosystem: 'bundler'
     directory: '/'
     schedule:
-      interval: 'daily'
+      interval: 'weekly'
     versioning-strategy: increase
     ignore:
       - dependency-name: 'rubocop'
@@ -19,15 +19,15 @@ updates:
   - package-ecosystem: 'bundler'
     directory: '/benchmark/compare_with_othergems/kachick'
     schedule:
-      interval: 'daily'
+      interval: 'weekly'
     versioning-strategy: increase
   - package-ecosystem: 'bundler'
     directory: '/benchmark/compare_with_othergems/rafaelsales'
     schedule:
-      interval: 'daily'
+      interval: 'weekly'
     versioning-strategy: increase
   - package-ecosystem: 'bundler'
     directory: '/benchmark/compare_with_othergems/abachman'
     schedule:
-      interval: 'daily'
+      interval: 'weekly'
     versioning-strategy: increase
