@@ -277,7 +277,9 @@ class ULID
   # @return [Time]
   # @raise [ParserError] if the given format is not correct for ULID specs
   def self.decode_time(string, in: 'UTC')
-    in_for_time_at = binding.local_variable_get(:in) # Needed because `in` is a reserved word.
+    # @note When dropping Ruby 3.0.
+    #   Replace `Binding#local_variable_get` with Hash shorthand. It is faster. See https://bugs.ruby-lang.org/issues/17292
+    in_for_time_at = binding.local_variable_get(:in)
     string = String.try_convert(string)
     raise(ArgumentError, 'ULID.decode_time takes only strings') unless string
 
