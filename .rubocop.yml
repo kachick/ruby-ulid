@@ -745,7 +745,7 @@ Style/MultilineInPatternThen:
   Enabled: true
 
 # https://github.com/rubocop/rubocop/pull/11528
-# I don't think this is redundant.
+# I disagree that this is called "redundant". Similar to always using single quotes
 Style/RedundantHeredocDelimiterQuotes:
   Enabled: false
 
