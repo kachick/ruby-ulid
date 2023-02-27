@@ -26,6 +26,7 @@ on:
       - 'Rakefile'
 jobs:
   rbs:
+    timeout-minutes: 15
     runs-on: 'ubuntu-latest'
     steps:
       - uses: actions/checkout@v3
@@ -35,6 +36,7 @@ jobs:
           bundler-cache: true # runs 'bundle install' and caches installed gems automatically
       - run: bundle exec rake rbs
   yard:
+    timeout-minutes: 15
     runs-on: 'ubuntu-latest'
     steps:
       - uses: actions/checkout@v3

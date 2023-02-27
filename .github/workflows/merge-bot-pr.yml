@@ -9,6 +9,7 @@ permissions:
 
 jobs:
   dependabot:
+    timeout-minutes: 30
     runs-on: ubuntu-latest
     if: ${{ github.actor == 'dependabot[bot]' }}
     steps:
@@ -41,6 +42,7 @@ jobs:
   #    - `Require status checks to pass before merging` and specify the status names
   #   Changing in all personal repository is annoy task for me. Even if using terrafform, getting mandatory CI names in each repo is too annoy!
   renovate:
+    timeout-minutes: 30
     runs-on: ubuntu-latest
     if: ${{ github.actor == 'renovate[bot]' }}
     steps:
