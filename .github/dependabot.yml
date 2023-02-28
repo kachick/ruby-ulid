@@ -16,9 +16,6 @@ updates:
           - '1.31.2'
           # https://github.com/rubocop/rubocop/issues/11549
           - '1.45.0'
-      # TODO: Manually Update to RBS3 after steep will be done https://github.com/kachick/ruby-ulid/pull/328#issuecomment-1446124253
-      - dependency-name: 'rbs'
-        update-types: ['version-update:semver-major']
   - package-ecosystem: 'bundler'
     directory: '/benchmark/compare_with_othergems/kachick'
     schedule:
