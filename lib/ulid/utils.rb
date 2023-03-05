@@ -86,18 +86,11 @@ class ULID
       end
     end
 
-    def self.make_sharable_value(value)
-      value.freeze
-      if defined?(Ractor)
-        Ractor.make_shareable(value)
-      end
-    end
-
     # @note Call before Module#private_constant
     def self.make_sharable_constants(mod)
       mod.constants.each do |const_name|
         value = mod.const_get(const_name)
-        make_sharable_value(value)
+        Ractor.make_shareable(value)
       end
     end
   end
