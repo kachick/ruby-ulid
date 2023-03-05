@@ -421,10 +421,7 @@ class ULID
   # @return [Array(Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer)]
   def octets
     digits = @integer.digits(256)
-    (OCTETS_LENGTH - digits.size).times do
-      digits.push(0)
-    end
-    digits.reverse!
+    digits.fill(0, digits.size, OCTETS_LENGTH - digits.size).reverse
   end
 
   # @return [Array(Integer, Integer, Integer, Integer, Integer, Integer)]
