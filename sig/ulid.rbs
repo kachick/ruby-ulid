@@ -76,12 +76,12 @@ class ULID < Object
     #
     # ```ruby
     # generator.synchronize do
-    #   generator.prev
+    #   generator.last
     #   generator.inspect
     #   generator.generate
     # end
     # ```
-    attr_reader prev: ULID | nil
+    attr_reader last: ULID | nil
 
     # See [How to keep `Sortable` even if in same timestamp](https://github.com/kachick/ruby-ulid#how-to-keep-sortable-even-if-in-same-timestamp)
     # The `Thread-safety` is implemented with [Monitor](https://bugs.ruby-lang.org/issues/16255)
@@ -95,7 +95,7 @@ class ULID < Object
     #
     # ```ruby
     # generator.synchronize do
-    #   generator.prev
+    #   generator.last
     #   generator.inspect
     #   generator.generate
     # end
@@ -107,7 +107,7 @@ class ULID < Object
 
     def initialize: -> void
 
-    def prev=: (ULID?) -> void
+    def last=: (ULID?) -> void
   end
 
   interface _ToULID

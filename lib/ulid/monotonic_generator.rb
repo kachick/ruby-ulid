@@ -14,19 +14,19 @@ class ULID
     include(MonitorMixin)
 
     # @return [ULID, nil]
-    attr_accessor(:prev)
-    private(:prev=)
+    attr_accessor(:last)
+    private(:last=)
 
     undef_method(:instance_variable_set)
 
     def initialize
       super
-      @prev = nil
+      @last = nil
     end
 
     # @return [String]
     def inspect
-      "ULID::MonotonicGenerator(prev: #{@prev.inspect})"
+      "ULID::MonotonicGenerator(last: #{@last.inspect})"
     end
     alias_method(:to_s, :inspect)
 
@@ -37,25 +37,25 @@ class ULID
     #   Basically will not happen. Just means this feature prefers error rather than invalid value.
     def generate(moment: Utils.current_milliseconds)
       synchronize do
-        prev_ulid = @prev
-        unless prev_ulid
+        prev = @last
+        unless prev
           ret = ULID.generate(moment:)
-          @prev = ret
+          @last = ret
           return ret
         end
 
         milliseconds = Utils.milliseconds_from_moment(moment)
 
         ulid = (
-          if prev_ulid.milliseconds < milliseconds
+          if prev.milliseconds < milliseconds
             ULID.generate(moment: milliseconds)
           else
-            ULID.generate(moment: prev_ulid.milliseconds, entropy: prev_ulid.entropy.succ)
+            ULID.generate(moment: prev.milliseconds, entropy: prev.entropy.succ)
           end
         )
 
-        unless ulid > prev_ulid
-          base_message = "monotonicity broken from unexpected reasons # generated: #{ulid.inspect}, prev: #{prev_ulid.inspect}"
+        unless ulid > prev
+          base_message = "monotonicity broken from unexpected reasons # generated: #{ulid.inspect}, prev: #{prev.inspect}"
           additional_information = (
             if Thread.list == [Thread.main]
               '# NOTE: looks single thread only exist'
@@ -67,7 +67,7 @@ class ULID
           raise(UnexpectedError, base_message + additional_information)
         end
 
-        @prev = ulid
+        @last = ulid
         ulid
       end
     end

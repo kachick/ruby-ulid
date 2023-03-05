@@ -174,34 +174,34 @@ class TestULIDMonotonicGeneratorThreadSafety < Test::Unit::TestCase
     end
   end
 
-  def test_prev_can_not_ensure_thread_safety
+  def test_last_can_not_ensure_thread_safety
     generator = ULID::MonotonicGenerator.new
     thread_count = 2000
 
-    prevs = []
+    lasts = []
 
     threads = 1.upto(thread_count).map do |n|
       Thread.start(n) do |_thread_number|
         sleep(sleeping_time)
-        prevs << generator.prev
+        lasts << generator.last
         generator.generate
       end
     end
 
     threads.each(&:join)
 
-    assert(prevs.compact.all?(ULID))
-    assert_equal(thread_count, prevs.size)
+    assert(lasts.compact.all?(ULID))
+    assert_equal(thread_count, lasts.size)
 
     omit("ULID::MonotonicGenerator#pred can't be guaranteed the returned value is Thread-safety when separately called with #generate") do
-      assert_equal(1, prevs.count(nil)) # Basically passed, but can't be guaranteed
+      assert_equal(1, lasts.count(nil)) # Basically passed, but can't be guaranteed
 
-      weirds = prevs.tally.select { |_ulid, count| count > 1 }
+      weirds = lasts.tally.select { |_ulid, count| count > 1 }
       assert do
         weirds.empty?
       end
 
-      assert_equal(thread_count, prevs.uniq.size)
+      assert_equal(thread_count, lasts.uniq.size)
     end
   end
 
@@ -229,18 +229,18 @@ class TestULIDMonotonicGeneratorThreadSafety < Test::Unit::TestCase
     end
   end
 
-  def test_generate_prev_and_inspect_ensure_thread_safety_when_called_in_synchronize
+  def test_generate_last_and_inspect_ensure_thread_safety_when_called_in_synchronize
     generator = ULID::MonotonicGenerator.new
     thread_count = 2000
 
-    prevs = []
+    lasts = []
     inspects = []
 
     threads = 1.upto(thread_count).map do |n|
       Thread.start(n) do |_thread_number|
         sleep(sleeping_time)
         generator.synchronize do
-          prevs << generator.prev
+          lasts << generator.last
           inspects << generator.inspect
           generator.generate
         end
@@ -249,17 +249,17 @@ class TestULIDMonotonicGeneratorThreadSafety < Test::Unit::TestCase
 
     threads.each(&:join)
 
-    assert(prevs.compact.all?(ULID))
-    assert_equal(thread_count, prevs.size)
+    assert(lasts.compact.all?(ULID))
+    assert_equal(thread_count, lasts.size)
 
-    assert_equal(1, prevs.count(nil)) # Basically passed, but can't be guaranteed
+    assert_equal(1, lasts.count(nil)) # Basically passed, but can't be guaranteed
 
-    weirds = prevs.tally.select { |_ulid, count| count > 1 }
+    weirds = lasts.tally.select { |_ulid, count| count > 1 }
     assert do
       weirds.empty?
     end
 
-    assert_equal(thread_count, prevs.uniq.size)
+    assert_equal(thread_count, lasts.uniq.size)
 
     assert(inspects.all?(String))
     assert_equal(thread_count, inspects.size)

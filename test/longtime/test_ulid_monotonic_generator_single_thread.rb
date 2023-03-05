@@ -6,21 +6,21 @@ require_relative('../helper')
 class TestULIDMonotonicGeneratorWithSingleThread < Test::Unit::TestCase
   include(ULIDAssertions)
 
-  def test_prev_with_many_data
+  def test_last_with_many_data
     generator = ULID::MonotonicGenerator.new
-    prevs = []
+    lasts = []
 
     1.upto(2000) do
       sleep(0.0042)
-      prevs << generator.prev
+      lasts << generator.last
       generator.generate
     end
 
-    assert_equal(1, prevs.count(nil))
-    assert_equal(2000, prevs.size)
-    assert_equal(2000, prevs.uniq.size)
+    assert_equal(1, lasts.count(nil))
+    assert_equal(2000, lasts.size)
+    assert_equal(2000, lasts.uniq.size)
 
-    times_count = prevs.compact.count(&:to_time)
+    times_count = lasts.compact.count(&:to_time)
     assert do
       420 < times_count
     end
@@ -28,15 +28,15 @@ class TestULIDMonotonicGeneratorWithSingleThread < Test::Unit::TestCase
 
   def test_inspect_with_many_data
     generator = ULID::MonotonicGenerator.new
-    prevs = []
+    lasts = []
 
     1.upto(2000) do
       sleep(0.0042)
-      prevs << generator.inspect
+      lasts << generator.inspect
       generator.generate
     end
 
-    assert_equal(2000, prevs.size)
-    assert_equal(2000, prevs.uniq.size)
+    assert_equal(2000, lasts.size)
+    assert_equal(2000, lasts.uniq.size)
   end
 end
