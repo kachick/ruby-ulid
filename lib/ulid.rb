@@ -523,8 +523,8 @@ class ULID
   MIN = parse('00000000000000000000000000')
   MAX = parse('7ZZZZZZZZZZZZZZZZZZZZZZZZZ')
 
-  Utils.make_sharable_value(MIN)
-  Utils.make_sharable_value(MAX)
+  Ractor.make_shareable(MIN)
+  Ractor.make_shareable(MAX)
 
   private_constant(:MIN, :MAX)
 end
