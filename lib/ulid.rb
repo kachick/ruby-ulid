@@ -419,10 +419,12 @@ class ULID
   end
 
   # @return [Array(Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer)]
-  def octets
+  def bytes
     digits = @integer.digits(256)
     digits.fill(0, digits.size, OCTETS_LENGTH - digits.size).reverse
   end
+  # @deprecated Use [#bytes] instead
+  alias_method(:octets, :bytes)
 
   # @return [Array(Integer, Integer, Integer, Integer, Integer, Integer)]
   def timestamp_octets

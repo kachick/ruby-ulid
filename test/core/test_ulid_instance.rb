@@ -18,6 +18,7 @@ class TestULIDInstance < Test::Unit::TestCase
     :milliseconds,
     :next,
     :octets,
+    :bytes,
     :pred,
     :randomness,
     :randomness_octets, # dislike this name. However providing octets class sounds overdo...
@@ -110,7 +111,7 @@ class TestULIDInstance < Test::Unit::TestCase
     assert_false(ulid === ulid.randomness)
     assert_false(ulid === ulid.milliseconds)
     assert_false(ulid === ulid.entropy)
-    assert_false(ulid === ulid.octets)
+    assert_false(ulid === ulid.bytes)
     assert_false(ulid === ulid.timestamp_octets)
     assert_false(ulid === ulid.randomness_octets)
     assert_false(ulid === ulid.pred.to_s)
@@ -317,6 +318,13 @@ class TestULIDInstance < Test::Unit::TestCase
     assert_not_same(ulid.to_time, time)
     assert_equal(ulid.to_time, time)
     assert_false(time.frozen?)
+  end
+
+  def test_bytes
+    ulid = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
+    assert_equal([1, 86, 62, 58, 181, 211, 214, 118, 76, 97, 239, 185, 147, 2, 189, 91], ulid.bytes)
+    assert_not_same(ulid.bytes, ulid.bytes)
+    assert_false(ulid.bytes.frozen?)
   end
 
   def test_octets

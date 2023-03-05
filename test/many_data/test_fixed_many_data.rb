@@ -22,7 +22,7 @@ class TestFixedManyData < Test::Unit::TestCase
     assert_equal(example.randomness, ulid.randomness)
     assert_equal(example.uuidv4, ulid.to_uuidv4)
     assert_equal(example.to_time, ulid.to_time)
-    assert_equal(example.octets, ulid.octets)
+    assert_equal(example.bytes, ulid.bytes)
 
     assert do
       ULID.normalized?(example.string)

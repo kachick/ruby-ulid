@@ -536,7 +536,8 @@ class ULID < Object
   # ```
   def randomness: -> String
 
-  def octets: -> full_octets
+  def bytes: -> full_octets
+  alias octets bytes
   def timestamp_octets: -> timestamp_octets
   def randomness_octets: -> randomness_octets
 
