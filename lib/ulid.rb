@@ -447,16 +447,6 @@ class ULID
     @encoded.slice(TIMESTAMP_ENCODED_LENGTH, RANDOMNESS_ENCODED_LENGTH) || raise(UnexpectedError)
   end
 
-  # @note Providing for rough operations. The keys and values is not fixed.
-  # @return [Hash{Symbol => Regexp, String}]
-  def patterns
-    named_captures = /(?<timestamp>#{timestamp})(?<randomness>#{randomness})/i
-    {
-      named_captures:,
-      strict_named_captures: /\A#{named_captures.source}\z/i
-    }
-  end
-
   # @return [ULID, nil] when called on ULID as `7ZZZZZZZZZZZZZZZZZZZZZZZZZ`, returns `nil` instead of ULID
   def succ
     succ_int = @integer.succ

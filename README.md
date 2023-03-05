@@ -265,18 +265,6 @@ ULID.scan(json).to_a
 #  ULID(2021-04-30 05:53:12.478 UTC: 01F4GND4RYYSKNAADHQ9BNXAWJ)]
 ```
 
-`ULID#patterns` is a util for text based operations.
-The results and spec are not fixed. Should not be used except snippets/console operation.
-
-```ruby
-ULID.parse('01F4GNBXW1AM2KWW52PVT3ZY9X').patterns
-#=> returns like a fallowing Hash
-{
-  named_captures: /(?<timestamp>01F4GNBXW1)(?<randomness>AM2KWW52PVT3ZY9X)/i,
-  strict_named_captures: /\A(?<timestamp>01F4GNBXW1)(?<randomness>AM2KWW52PVT3ZY9X)\z/i
-}
-```
-
 #### Get boundary ULIDs
 
 `ULID.min` and `ULID.max` return termination values for ULID spec.

@@ -536,9 +536,6 @@ class ULID < Object
   # ```
   def randomness: -> String
 
-  # Intentionally avoiding to use `Record type` ref: https://github.com/ruby/rbs/blob/4fb4c33b2325d1a73d79ff7aaeb49f21cec1e0e5/docs/syntax.md#record-type
-  # Because the returning values are not fixed.
-  def patterns: -> Hash[Symbol, Regexp | String]
   def octets: -> full_octets
   def timestamp_octets: -> timestamp_octets
   def randomness_octets: -> randomness_octets
