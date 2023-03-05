@@ -58,7 +58,7 @@ gem('ruby-ulid', '~> 0.7.0')
 require 'ulid'
 
 ULID::VERSION
-# => "0.7.0"
+# => "0.8.0.pre"
 ```
 
 NOTE: This README includes info about development version. If you would see released version's one. [Look at the ref](https://github.com/kachick/ruby-ulid/tree/v0.7.0).
