@@ -20,7 +20,6 @@ class TestULIDClass < Test::Unit::TestCase
         :MAX_INTEGER,
         :MAX_MILLISECONDS,
         :MonotonicGenerator,
-        :OCTETS_LENGTH,
         :OverflowError,
         :ParserError,
         :RANDOMNESS_ENCODED_LENGTH,

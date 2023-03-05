@@ -49,7 +49,7 @@ class TestManyData < Test::Unit::TestCase
     ULID.sample(10000).each do |ulid|
       assert_instance_of(Array, ulid.bytes)
       assert(ulid.bytes.all?(Integer))
-      assert_equal(ULID::OCTETS_LENGTH, ulid.bytes.size)
+      assert_equal(ULID.const_get(:OCTETS_LENGTH), ulid.bytes.size)
       assert_not_same(ulid.bytes, ulid.bytes)
       assert_false(ulid.bytes.frozen?)
     end
