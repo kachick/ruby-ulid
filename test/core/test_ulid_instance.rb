@@ -236,10 +236,10 @@ class TestULIDInstance < Test::Unit::TestCase
     # They should have enough randomness similar as builtin objects. So do not depends int
     based_ints = ulids.map(&:to_i)
     assert do
-      (uniq_hashes & based_ints).empty?
+      !uniq_hashes.intersect?(based_ints)
     end
     assert do
-      (uniq_hashes & based_ints.map(&:hash)).empty?
+      !uniq_hashes.intersect?(based_ints.map(&:hash))
     end
   end
 
