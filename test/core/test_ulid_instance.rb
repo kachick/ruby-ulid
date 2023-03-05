@@ -18,7 +18,6 @@ class TestULIDInstance < Test::Unit::TestCase
     :milliseconds,
     :next,
     :octets,
-    :patterns,
     :pred,
     :randomness,
     :randomness_octets, # dislike this name. However providing octets class sounds overdo...
@@ -80,25 +79,6 @@ class TestULIDInstance < Test::Unit::TestCase
     assert_equal(ulid.randomness, ulid.randomness)
     assert_false(ulid.randomness.frozen?)
     assert_equal(Encoding::US_ASCII, ulid.randomness.encoding)
-  end
-
-  def test_patterns
-    ulid = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
-    assert_instance_of(Hash, ulid.patterns)
-    assert_not_same(ulid.patterns, ulid.patterns)
-    assert_false(ulid.patterns.frozen?)
-    ulid.patterns.each_pair do |key, pattern|
-      assert_equal(Encoding::US_ASCII, pattern.encoding)
-      assert_instance_of(Symbol, key)
-      assert_instance_of(Regexp, pattern) #=> Might be added String pattern
-    end
-    assert_equal(
-      {
-        named_captures: /(?<timestamp>01ARZ3NDEK)(?<randomness>TSV4RRFFQ69G5FAV)/i,
-        strict_named_captures: /\A(?<timestamp>01ARZ3NDEK)(?<randomness>TSV4RRFFQ69G5FAV)\z/i
-      },
-      ulid.patterns
-    )
   end
 
   def test_eq
