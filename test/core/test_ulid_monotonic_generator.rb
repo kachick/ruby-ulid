@@ -42,7 +42,7 @@ class TestULIDMonotonicGenerator < Test::Unit::TestCase
 
   def test_generate_and_encode_can_be_used_together
     moment = Time.now
-    encoded_results = 42.times.flat_map { [@generator.generate(moment: moment).encode, @generator.encode(moment: moment)] }
+    encoded_results = 42.times.flat_map { [@generator.generate(moment:).encode, @generator.encode(moment:)] }
     assert_equal(84, encoded_results.size)
     assert_equal(encoded_results, encoded_results.shuffle.sort)
     assert_equal(Array.new(83) { 1 }, encoded_results.map { |encoded| ULID.parse(encoded) }.each_cons(2).map { |prev, succ| succ.to_i - prev.to_i })

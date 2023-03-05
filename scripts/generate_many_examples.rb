@@ -27,7 +27,7 @@ distant_future = Time.parse("#{2021 + 2000}/1/1")...Time.parse("#{2021 + 4000}/1
 limit_of_the_ulid = (ULID.max.to_time - 1000000)..ULID.max.to_time
 
 examples = [ancient, recently, distant_future, limit_of_the_ulid].flat_map do |period|
-  ulids = ULID.sample(1000, period: period)
+  ulids = ULID.sample(1000, period:)
   if ulids.uniq!
     raise('Very rare case happened or bug exists')
   end
@@ -38,7 +38,7 @@ examples = [ancient, recently, distant_future, limit_of_the_ulid].flat_map do |p
     end
 
     Example.new(
-      period: period,
+      period:,
       to_time: ulid.to_time,
       string: ulid.to_s,
       integer: ulid.to_i,

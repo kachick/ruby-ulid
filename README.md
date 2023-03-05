@@ -37,7 +37,7 @@ Instead, herein is proposed ULID:
 
 ### Install
 
-Require Ruby 2.7 or later
+Require Ruby 3.1 or later
 
 This command will install the latest version into your environment
 

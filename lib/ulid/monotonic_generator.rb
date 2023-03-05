@@ -39,7 +39,7 @@ class ULID
       synchronize do
         prev_ulid = @prev
         unless prev_ulid
-          ret = ULID.generate(moment: moment)
+          ret = ULID.generate(moment:)
           @prev = ret
           return ret
         end
@@ -78,7 +78,7 @@ class ULID
     # @param [Time, Integer] moment
     # @return [String]
     def encode(moment: Utils.current_milliseconds)
-      generate(moment: moment).encode
+      generate(moment:).encode
     end
 
     undef_method(:freeze)

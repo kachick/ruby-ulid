@@ -412,10 +412,8 @@ class TestULIDClass < Test::Unit::TestCase
     assert_false(range.cover?(ULID.generate(moment: time_has_more_value_than_milliseconds2)))
     assert_true(range.cover?(range.begin))
     assert_true(range.cover?(range.end))
-    if RUBY_VERSION >= '3.0'
-      # Just a note
-      assert_true(range.frozen?)
-    end
+    # Just a note
+    assert_true(range.frozen?)
     assert_true(range.begin.frozen?)
     assert_true(range.end.frozen?)
     assert_true(from_time.begin.frozen?)
@@ -630,7 +628,7 @@ class TestULIDClass < Test::Unit::TestCase
     assert_equal(Time.at(0, milliseconds, :millisecond), ULID.generate(moment: milliseconds).to_time)
 
     entropy = 42
-    assert_equal(entropy, ULID.generate(entropy: entropy).entropy)
+    assert_equal(entropy, ULID.generate(entropy:).entropy)
   end
 
   def test_generate_with_invalid_arguments
@@ -704,7 +702,7 @@ class TestULIDClass < Test::Unit::TestCase
     assert_equal(Time.at(0, milliseconds, :millisecond), ULID.parse(ULID.encode(moment: milliseconds)).to_time)
 
     entropy = 42
-    assert_equal(entropy, ULID.parse(ULID.encode(entropy: entropy)).entropy)
+    assert_equal(entropy, ULID.parse(ULID.encode(entropy:)).entropy)
 
     [nil, 4.2, 42/24r, '42', ulid, ulid.to_s, BasicObject.new, Object.new].each do |evil|
       err = assert_raises(ArgumentError) do
