@@ -23,8 +23,6 @@ class ULID
   RANDOMNESS_ENCODED_LENGTH = 16
   ENCODED_LENGTH = 26
 
-  TIMESTAMP_OCTETS_LENGTH = 6
-  RANDOMNESS_OCTETS_LENGTH = 10
   OCTETS_LENGTH = 16
 
   MAX_MILLISECONDS = 281474976710655
@@ -425,16 +423,6 @@ class ULID
   end
   # @deprecated Use [#bytes] instead
   alias_method(:octets, :bytes)
-
-  # @return [Array(Integer, Integer, Integer, Integer, Integer, Integer)]
-  def timestamp_octets
-    octets.slice(0, TIMESTAMP_OCTETS_LENGTH) || raise(UnexpectedError)
-  end
-
-  # @return [Array(Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer)]
-  def randomness_octets
-    octets.slice(TIMESTAMP_OCTETS_LENGTH, RANDOMNESS_OCTETS_LENGTH) || raise(UnexpectedError)
-  end
 
   # @return [String]
   def timestamp

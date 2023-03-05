@@ -65,10 +65,9 @@ ulid = ULID.generate #=> ULID(2021-04-27 17:27:22.826 UTC: 01F4A5Y1YAQCYAYCTC7GR
 ls ULID
 
 # constants:
-#   ENCODED_LENGTH           Error                      MAX_ENTROPY               MAX_INTEGER
-#   MAX_MILLISECONDS         MonotonicGenerator         OCTETS_LENGTH             OverflowError
-#   ParserError              RANDOMNESS_ENCODED_LENGTH  RANDOMNESS_OCTETS_LENGTH  TIMESTAMP_ENCODED_LENGTH
-#   TIMESTAMP_OCTETS_LENGTH  UnexpectedError            VERSION
+#   ENCODED_LENGTH  Error          MAX_ENTROPY  MAX_INTEGER                MAX_MILLISECONDS          MonotonicGenerator
+#   OCTETS_LENGTH   OverflowError  ParserError  RANDOMNESS_ENCODED_LENGTH  TIMESTAMP_ENCODED_LENGTH  UnexpectedError
+#   VERSION
 # Module#methods: ...
 # Class#methods: ...
 # ULID.methods:
