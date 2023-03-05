@@ -62,7 +62,7 @@ class TestULIDMonotonicGeneratorThreadSafety < Test::Unit::TestCase
       Thread.start(n) do |thread_number|
         sleep(sleeping_time)
         worked_thread_numbers << thread_number
-        ulids << generator.generate(moment: moment)
+        ulids << generator.generate(moment:)
       end
     end
 

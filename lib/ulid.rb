@@ -33,12 +33,12 @@ class ULID
 
   # @see https://github.com/ulid/spec/pull/57
   # Currently not used as a constant, but kept as a reference for now.
-  PATTERN_WITH_CROCKFORD_BASE32_SUBSET = /(?<timestamp>[0-7][#{CrockfordBase32::ENCODING_STRING}]{#{TIMESTAMP_ENCODED_LENGTH - 1}})(?<randomness>[#{CrockfordBase32::ENCODING_STRING}]{#{RANDOMNESS_ENCODED_LENGTH}})/i.freeze
+  PATTERN_WITH_CROCKFORD_BASE32_SUBSET = /(?<timestamp>[0-7][#{CrockfordBase32::ENCODING_STRING}]{#{TIMESTAMP_ENCODED_LENGTH - 1}})(?<randomness>[#{CrockfordBase32::ENCODING_STRING}]{#{RANDOMNESS_ENCODED_LENGTH}})/i
 
-  STRICT_PATTERN_WITH_CROCKFORD_BASE32_SUBSET = /\A#{PATTERN_WITH_CROCKFORD_BASE32_SUBSET.source}\z/i.freeze
+  STRICT_PATTERN_WITH_CROCKFORD_BASE32_SUBSET = /\A#{PATTERN_WITH_CROCKFORD_BASE32_SUBSET.source}\z/i
 
   # Optimized for `ULID.scan`, might be changed the definition with gathered `ULID.scan` spec changed.
-  SCANNING_PATTERN = /\b[0-7][#{CrockfordBase32::ENCODING_STRING}]{#{TIMESTAMP_ENCODED_LENGTH - 1}}[#{CrockfordBase32::ENCODING_STRING}]{#{RANDOMNESS_ENCODED_LENGTH}}\b/i.freeze
+  SCANNING_PATTERN = /\b[0-7][#{CrockfordBase32::ENCODING_STRING}]{#{TIMESTAMP_ENCODED_LENGTH - 1}}[#{CrockfordBase32::ENCODING_STRING}]{#{RANDOMNESS_ENCODED_LENGTH}}\b/i
 
   # Similar as Time#inspect since Ruby 2.7, however it is NOT same.
   # Time#inspect trancates needless digits. Keeping full milliseconds with "%3N" will fit for ULID.
@@ -69,10 +69,10 @@ class ULID
   # @raise [ArgumentError] if the given milliseconds and/or entropy is negative number
   def self.generate(moment: Utils.current_milliseconds, entropy: Utils.reasonable_entropy)
     milliseconds = Utils.milliseconds_from_moment(moment)
-    base32hex = Utils.encode_base32hex(milliseconds: milliseconds, entropy: entropy)
+    base32hex = Utils.encode_base32hex(milliseconds:, entropy:)
     new(
-      milliseconds: milliseconds,
-      entropy: entropy,
+      milliseconds:,
+      entropy:,
       integer: Integer(base32hex, 32, exception: true),
       encoded: CrockfordBase32.from_base32hex(base32hex).freeze
     )
@@ -84,7 +84,7 @@ class ULID
   # @param [Integer] entropy
   # @return [String]
   def self.encode(moment: Utils.current_milliseconds, entropy: Utils.reasonable_entropy)
-    base32hex = Utils.encode_base32hex(milliseconds: Utils.milliseconds_from_moment(moment), entropy: entropy)
+    base32hex = Utils.encode_base32hex(milliseconds: Utils.milliseconds_from_moment(moment), entropy:)
     CrockfordBase32.from_base32hex(base32hex)
   end
 
@@ -100,13 +100,13 @@ class ULID
   # @param [Time, Integer] moment
   # @return [ULID]
   def self.min(moment=0)
-    0.equal?(moment) ? MIN : generate(moment: moment, entropy: 0)
+    0.equal?(moment) ? MIN : generate(moment:, entropy: 0)
   end
 
   # @param [Time, Integer] moment
   # @return [ULID]
   def self.max(moment=MAX_MILLISECONDS)
-    MAX_MILLISECONDS.equal?(moment) ? MAX : generate(moment: moment, entropy: MAX_ENTROPY)
+    MAX_MILLISECONDS.equal?(moment) ? MAX : generate(moment:, entropy: MAX_ENTROPY)
   end
 
   # @param [Range<Time>, Range<nil>, Range[ULID], nil] period
@@ -191,9 +191,9 @@ class ULID
     entropy = Integer(base32hex_randomness, 32, exception: true)
 
     new(
-      milliseconds: milliseconds,
-      entropy: entropy,
-      integer: integer,
+      milliseconds:,
+      entropy:,
+      integer:,
       encoded: CrockfordBase32.from_base32hex(base32hex).freeze
     )
   end
@@ -277,9 +277,7 @@ class ULID
   # @return [Time]
   # @raise [ParserError] if the given format is not correct for ULID specs
   def self.decode_time(string, in: 'UTC')
-    # @note When dropping Ruby 3.0.
-    #   Replace `Binding#local_variable_get` with Hash shorthand. It is faster. See https://bugs.ruby-lang.org/issues/17292
-    in_for_time_at = binding.local_variable_get(:in)
+    in_for_time_at = { in: }.fetch(:in)
     string = String.try_convert(string)
     raise(ArgumentError, 'ULID.decode_time takes only strings') unless string
 
@@ -417,7 +415,7 @@ class ULID
   # @return [Time]
   # @param [String, Integer, nil] in
   def to_time(in: 'UTC')
-    Time.at(0, @milliseconds, :millisecond, in: binding.local_variable_get(:in))
+    Time.at(0, @milliseconds, :millisecond, in: { in: }.fetch(:in))
   end
 
   # @return [Array(Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer)]
@@ -452,10 +450,10 @@ class ULID
   # @note Providing for rough operations. The keys and values is not fixed.
   # @return [Hash{Symbol => Regexp, String}]
   def patterns
-    named_captures = /(?<timestamp>#{timestamp})(?<randomness>#{randomness})/i.freeze
+    named_captures = /(?<timestamp>#{timestamp})(?<randomness>#{randomness})/i
     {
-      named_captures: named_captures,
-      strict_named_captures: /\A#{named_captures.source}\z/i.freeze
+      named_captures:,
+      strict_named_captures: /\A#{named_captures.source}\z/i
     }
   end
 

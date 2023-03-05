@@ -1,8 +1,6 @@
 # coding: utf-8
 # frozen_string_literal: true
 
-return unless RUBY_VERSION >= '3.0'
-
 require_relative('../helper')
 
 class TestGeneratorsInRactor < Test::Unit::TestCase

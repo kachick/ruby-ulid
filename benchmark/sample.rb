@@ -10,6 +10,6 @@ period = moment..(moment + 10000000)
 
 Benchmark.ips do |x|
   x.report('ULID.sample with big number') { ULID.sample(100000) }
-  x.report('ULID.sample with big number and period(Range[Time])') { ULID.sample(100000, period: period) }
+  x.report('ULID.sample with big number and period(Range[Time])') { ULID.sample(100000, period:) }
   x.compare!
 end

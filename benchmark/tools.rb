@@ -14,6 +14,6 @@ Benchmark.ips do |x|
   x.report('ULID.max with no arguments is optimized') { ULID.max }
   x.report('ULID.max with moment(Time)') { ULID.max(moment) }
   x.report('ULID.sample with no arguments') { ULID.sample }
-  x.report('ULID.sample with period') { ULID.sample(period: period) }
+  x.report('ULID.sample with period') { ULID.sample(period:) }
   x.compare!
 end
