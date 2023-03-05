@@ -87,7 +87,7 @@ ulid.to_s #=> "01F4A5Y1YAQCYAYCTC7GRMJ9AA"
 ulid.timestamp #=> "01F4A5Y1YA"
 ulid.randomness #=> "QCYAYCTC7GRMJ9AA"
 ulid.to_i #=> 1957909092946624190749577070267409738
-ulid.octets #=> [1, 121, 20, 95, 7, 202, 187, 60, 175, 51, 76, 60, 49, 73, 37, 74]
+ulid.bytes #=> [1, 121, 20, 95, 7, 202, 187, 60, 175, 51, 76, 60, 49, 73, 37, 74]
 ```
 
 `ULID.generate` can take fixed `Time` instance. `ULID.at` is the shorthand.

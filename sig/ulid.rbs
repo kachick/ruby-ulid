@@ -3,8 +3,6 @@ class ULID < Object
   TIMESTAMP_ENCODED_LENGTH: 10
   RANDOMNESS_ENCODED_LENGTH: 16
   ENCODED_LENGTH: 26
-  TIMESTAMP_OCTETS_LENGTH: 6
-  RANDOMNESS_OCTETS_LENGTH: 10
   OCTETS_LENGTH: 16
   MAX_MILLISECONDS: 281474976710655
   MAX_ENTROPY: 1208925819614629174706175
@@ -116,9 +114,7 @@ class ULID < Object
     def to_ulid: () -> ULID
   end
 
-  type full_octets = [Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer] | Array[Integer]
-  type timestamp_octets = [Integer, Integer, Integer, Integer, Integer, Integer] | Array[Integer]
-  type randomness_octets = [Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer] | Array[Integer]
+  type octets = [Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer] | Array[Integer]
   type period = Range[Time] | Range[nil] | Range[ULID]
 
   @integer: Integer
@@ -536,9 +532,8 @@ class ULID < Object
   # ```
   def randomness: -> String
 
-  def octets: -> full_octets
-  def timestamp_octets: -> timestamp_octets
-  def randomness_octets: -> randomness_octets
+  def bytes: -> octets
+  alias octets bytes
 
   # ```ruby
   # # Currently experimental feature, so needed to load the extension.

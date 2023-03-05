@@ -45,27 +45,13 @@ class TestManyData < Test::Unit::TestCase
     end
   end
 
-  def test_octets
+  def test_bytes
     ULID.sample(10000).each do |ulid|
-      assert_instance_of(Array, ulid.octets)
-      assert(ulid.octets.all?(Integer))
-      assert_equal(ULID::OCTETS_LENGTH, ulid.octets.size)
-      assert_not_same(ulid.octets, ulid.octets)
-      assert_false(ulid.octets.frozen?)
-
-      assert_instance_of(Array, ulid.timestamp_octets)
-      assert(ulid.timestamp_octets.all?(Integer))
-      assert_equal(ULID::TIMESTAMP_OCTETS_LENGTH, ulid.timestamp_octets.size)
-      assert_not_same(ulid.timestamp_octets, ulid.timestamp_octets)
-      assert_false(ulid.timestamp_octets.frozen?)
-
-      assert_instance_of(Array, ulid.randomness_octets)
-      assert(ulid.randomness_octets.all?(Integer))
-      assert_equal(ULID::RANDOMNESS_OCTETS_LENGTH, ulid.randomness_octets.size)
-      assert_not_same(ulid.randomness_octets, ulid.randomness_octets)
-      assert_false(ulid.randomness_octets.frozen?)
-
-      assert_equal(ulid.octets, ulid.timestamp_octets + ulid.randomness_octets)
+      assert_instance_of(Array, ulid.bytes)
+      assert(ulid.bytes.all?(Integer))
+      assert_equal(ULID::OCTETS_LENGTH, ulid.bytes.size)
+      assert_not_same(ulid.bytes, ulid.bytes)
+      assert_false(ulid.bytes.frozen?)
     end
   end
 end

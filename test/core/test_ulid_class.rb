@@ -24,9 +24,7 @@ class TestULIDClass < Test::Unit::TestCase
         :OverflowError,
         :ParserError,
         :RANDOMNESS_ENCODED_LENGTH,
-        :RANDOMNESS_OCTETS_LENGTH,
         :TIMESTAMP_ENCODED_LENGTH,
-        :TIMESTAMP_OCTETS_LENGTH,
         :UnexpectedError,
         :VERSION
       ].sort,
