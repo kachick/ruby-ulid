@@ -35,5 +35,8 @@ class TestBoundaryULID < Test::Unit::TestCase
   def test_octets
     assert_equal([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], @min.octets)
     assert_equal([255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255], @max.octets)
+
+    # Not 0, but too low as 0 parts in the prefix
+    assert_equal([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 121, 50], ULID.from_integer(424242).octets)
   end
 end
