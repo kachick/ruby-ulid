@@ -2,9 +2,10 @@
   "editor.defaultFormatter": "dprint.dprint",
   "editor.formatOnSave": true,
   "cSpell.words": [
+    "abachman",
     "kwargs",
     "Undocumentable",
     "unshareable",
-    "abachman"
+    "uuidish"
   ]
 }

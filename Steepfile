@@ -7,5 +7,8 @@ target(:lib) do
 
   library('securerandom', 'monitor')
 
-  configure_code_diagnostics(Steep::Diagnostic::Ruby::ElseOnExhaustiveCase => :information)
+  configure_code_diagnostics(
+    Steep::Diagnostic::Ruby::ElseOnExhaustiveCase => :information,
+    Steep::Diagnostic::Ruby::UnsupportedSyntax => :information
+  )
 end

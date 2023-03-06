@@ -32,6 +32,25 @@ class ULID < Object
   class UnexpectedError < Error
   end
 
+  class MalformedUUIDError < Error
+  end
+
+  class UUIDish < Struct[Integer]
+    attr_accessor time_low: Integer
+    attr_accessor time_mid: Integer
+    attr_accessor time_hi_and_version: Integer
+    attr_accessor clock_seq_hi_and_res: Integer
+    attr_accessor clk_seq_low: Integer
+    attr_accessor node: Integer
+    def self.from_bytes: (octets) -> UUIDish
+
+    def values: -> Array[Integer]
+
+    private
+
+    def initialize: (?time_low: Integer, ?time_mid: Integer, ?time_hi_and_version: Integer, ?clock_seq_hi_and_res: Integer, ?clk_seq_low: Integer, ?node: Integer) -> void
+  end
+
   # Private module
   module Utils
     def self.encode_base32hex: (milliseconds: milliseconds, entropy: Integer) -> String
@@ -535,19 +554,6 @@ class ULID < Object
   def bytes: -> octets
   alias octets bytes
 
-  # ```ruby
-  # # Currently experimental feature, so needed to load the extension.
-  # require 'ulid/uuid'
-  #
-  # # Basically reversible
-  # ulid = ULID.from_uuidv4('0983d0a2-ff15-4d83-8f37-7dd945b5aa39')
-  # #=> ULID(2301-07-10 00:28:28.821 UTC: 09GF8A5ZRN9P1RYDVXV52VBAHS)
-  # ulid.to_uuidv4 #=> "0983d0a2-ff15-4d83-8f37-7dd945b5aa39"
-  # ```
-  #
-  # See also [Why this is experimental?](https://github.com/kachick/ruby-ulid/issues/76)
-  def to_uuidv4: -> String
-
   # Returns next(successor) ULID.
   # Especially `ULID#succ` makes it possible `Range[ULID]#each`.
   #
@@ -580,6 +586,21 @@ class ULID < Object
 
   # Returns `self`
   def to_ulid: -> self
+
+  def to_uuidish: -> String
+
+  # ```ruby
+  # # Currently experimental feature, so needed to load the extension.
+  # require 'ulid/uuid'
+  #
+  # # Basically reversible
+  # ulid = ULID.from_uuidv4('0983d0a2-ff15-4d83-8f37-7dd945b5aa39')
+  # #=> ULID(2301-07-10 00:28:28.821 UTC: 09GF8A5ZRN9P1RYDVXV52VBAHS)
+  # ulid.to_uuidv4 #=> "0983d0a2-ff15-4d83-8f37-7dd945b5aa39"
+  # ```
+  #
+  # See also [Why this is experimental?](https://github.com/kachick/ruby-ulid/issues/76)
+  def to_uuidv4: (?force: boolish) -> String
 
   # Returns same ID with different Ruby object.
   def dup: -> ULID
