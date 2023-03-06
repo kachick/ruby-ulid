@@ -34,23 +34,29 @@ class ULID < Object
   class IrreversibleUUIDError < Error
   end
 
-  class UUIDish < Struct[Integer]
+  module UUID
     BASE_PATTERN: Regexp
     V4_PATTERN: Regexp
 
-    attr_accessor time_low: Integer
-    attr_accessor time_mid: Integer
-    attr_accessor time_hi_and_version: Integer
-    attr_accessor clock_seq_hi_and_res: Integer
-    attr_accessor clk_seq_low: Integer
-    attr_accessor node: Integer
-    def self.from_bytes: (octets) -> UUIDish
+    def self.parse_without_version_to_int: (String) -> Integer
+    def self.parse_v4_to_int: (String) -> Integer
 
-    def values: -> Array[Integer]
+    class Fields < Struct[Integer]
+      attr_accessor time_low: Integer
+      attr_accessor time_mid: Integer
+      attr_accessor time_hi_and_version: Integer
+      attr_accessor clock_seq_hi_and_res: Integer
+      attr_accessor clk_seq_low: Integer
+      attr_accessor node: Integer
+      def self.raw_from_bytes: (octets) -> Fields
+      def self.forced_v4_from_bytes: (octets) -> Fields
 
-    private
+      def values: -> Array[Integer]
 
-    def initialize: (?time_low: Integer, ?time_mid: Integer, ?time_hi_and_version: Integer, ?clock_seq_hi_and_res: Integer, ?clk_seq_low: Integer, ?node: Integer) -> void
+      private
+
+      def initialize: (?time_low: Integer, ?time_mid: Integer, ?time_hi_and_version: Integer, ?clock_seq_hi_and_res: Integer, ?clk_seq_low: Integer, ?node: Integer) -> void
+    end
   end
 
   # Private module
@@ -272,7 +278,7 @@ class ULID < Object
   # See also [ulid/spec#57](https://github.com/ulid/spec/pull/57) and [ulid/spec#3](https://github.com/ulid/spec/issues/3)
   def self.parse_variant_format: (_ToStr string) -> ULID
 
-  def self.from_uuidish: (String uuidsih) -> ULID
+  def self.from_uuidish: (String uuidish) -> ULID
   # ```ruby
   # ulid = ULID.from_uuidv4('0983d0a2-ff15-4d83-8f37-7dd945b5aa39')
   # #=> ULID(2301-07-10 00:28:28.821 UTC: 09GF8A5ZRN9P1RYDVXV52VBAHS)

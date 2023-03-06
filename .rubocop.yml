@@ -652,6 +652,8 @@ Style/Strip:
 
 Style/StructInheritance:
   Enabled: true
+  Exclude:
+    - 'lib/ulid/uuid.rb'
 
 Style/SwapValues:
   Enabled: false

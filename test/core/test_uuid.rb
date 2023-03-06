@@ -67,7 +67,7 @@ class TestUUID < Test::Unit::TestCase
       err = assert_raises(ArgumentError) do
         ULID.from_uuidish(evil)
       end
-      assert_equal('ULID.from_uuidish takes only strings', err.message)
+      assert_equal('should pass a string for UUID parser', err.message)
     end
   end
 
@@ -103,7 +103,7 @@ class TestUUID < Test::Unit::TestCase
       err = assert_raises(ArgumentError) do
         ULID.from_uuidv4(evil)
       end
-      assert_equal('ULID.from_uuidv4 takes only strings', err.message)
+      assert_equal('should pass a string for UUID parser', err.message)
     end
   end
 
