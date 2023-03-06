@@ -532,8 +532,8 @@ class ULID < Object
   # ```
   def randomness: -> String
 
-  def bytes: -> octets
-  alias octets bytes
+  def octets: -> octets
+  alias bytes octets
 
   # ```ruby
   # # Currently experimental feature, so needed to load the extension.
