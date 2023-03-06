@@ -21,7 +21,6 @@ class TestFixedManyData < Test::Unit::TestCase
     assert_equal(example.randomness, ulid.randomness)
     assert_equal(example.uuidv4, ulid.to_uuidv4(ignore_reversible: true))
     assert_equal(example.to_time, ulid.to_time)
-    # ULID#octets is a deprecated method. But keeping it in example class for dump data compatibility
     assert_equal(example.octets, ulid.bytes)
 
     assert do

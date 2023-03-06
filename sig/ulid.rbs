@@ -554,8 +554,8 @@ class ULID < Object
   # ```
   def randomness: -> String
 
-  def bytes: -> octets
-  alias octets bytes
+  def octets: -> octets
+  alias bytes octets
 
   # Returns next(successor) ULID.
   # Especially `ULID#succ` makes it possible `Range[ULID]#each`.
