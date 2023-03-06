@@ -2,7 +2,6 @@
 # frozen_string_literal: true
 
 require_relative('../helper')
-require_relative('../../lib/ulid/uuid')
 
 class TestUUID < Test::Unit::TestCase
   class Subclass < ULID

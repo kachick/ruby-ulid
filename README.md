@@ -373,15 +373,12 @@ ULID.valid_as_variant_format?('01g70y0y7g-z1xwdarexergsddd') #=> true
 ULID.parse_variant_format('01G70Y0Y7G-ZLXWDIREXERGSDoD') #=> ULID(2022-07-03 02:25:22.672 UTC: 01G70Y0Y7GZ1XWD1REXERGSD0D)
 ```
 
-#### UUIDv4 converter (experimental)
+#### UUIDv4 converter
 
 `ULID.from_uuidv4` and `ULID#to_uuidv4` is the converter.\
 The imported timestamp is meaningless. So ULID's benefit will lost.
 
 ```ruby
-# Currently experimental feature, so needed to load the extension.
-require 'ulid/uuid'
-
 # Basically reversible
 ulid = ULID.from_uuidv4('0983d0a2-ff15-4d83-8f37-7dd945b5aa39') #=> ULID(2301-07-10 00:28:28.821 UTC: 09GF8A5ZRN9P1RYDVXV52VBAHS)
 ulid.to_uuidv4 #=> "0983d0a2-ff15-4d83-8f37-7dd945b5aa39"

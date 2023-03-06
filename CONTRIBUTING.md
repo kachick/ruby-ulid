@@ -88,27 +88,27 @@ $ echo $?
 If you want to run partially tests, test-unit can take some patterns(String/Regexp) with the naming.
 
 ```console
-$ bundle exec rake test TESTOPTS="-v -n'/test_.*generate/i'"
-/Users/kachick/.rubies/ruby-3.0.1/bin/ruby -w -I"lib" /Users/kachick/repos/ruby-ulid/vendor/bundle/ruby/3.0.0/gems/rake-13.0.3/lib/rake/rake_test_loader.rb "test/core/test_boundary_ulid.rb" "test/core/test_frozen_ulid.rb" "test/core/test_ulid_class.rb" "test/core/test_ulid_example_values.rb" "test/core/test_ulid_instance.rb" "test/core/test_ulid_monotonic_generator.rb" "test/core/test_ulid_subclass.rb" "test/core/test_ulid_usecase.rb" -v -n'/test_.*generate/i'
-Loaded suite /Users/kachick/repos/ruby-ulid/vendor/bundle/ruby/3.0.0/gems/rake-13.0.3/lib/rake/rake_test_loader
+❯ bundle exec rake test TESTOPTS="-v -n'/test_.*generate/i'"
+Loaded suite /nix/store/d2grc9vz9d3bgl3ncjj7s0nrqi4xz003-ruby-3.2.1/lib/ruby/gems/3.2.0/gems/rake-13.0.6/lib/rake/rake_test_loader
 Started
 TestULIDClass:
-  test_generate:											.: (0.002371)
+  test_generate:                                                                                        .: (0.000568)
+  test_generate_with_invalid_arguments:                                                                 .: (0.001486)
 TestULIDMonotonicGenerator:
-  test_generate_ignores_lower_moment_than_prev_is_given:						.: (0.002052)
-  test_generate_just_bump_1_when_same_moment:								.: (0.000106)
-  test_generate_optionally_take_moment_as_milliseconds:							.: (0.002259)
-  test_generate_optionally_take_moment_as_time:								.: (0.002548)
-  test_generate_raises_overflow_when_called_on_max_entropy:						.: (0.000216)
-  test_generate_with_negative_moment:									.: (0.000134)
+  test_generate_and_encode_can_be_used_together:                                                        .: (0.001844)
+  test_generate_ignores_lower_moment_than_last_is_given:                                                .: (0.000249)
+  test_generate_just_bump_1_when_same_moment:                                                           .: (0.000173)
+  test_generate_optionally_take_moment_as_milliseconds:                                                 .: (0.001897)
+  test_generate_optionally_take_moment_as_time:                                                         .: (0.004004)
+  test_generate_raises_overflow_when_called_on_max_entropy:                                             .: (0.000288)
+  test_generate_with_negative_moment:                                                                   .: (0.000098)
 
-Finished in 0.013148 seconds.
------------------------------------------------------------------------------------------------------------------------------
-7 tests, 428 assertions, 0 failures, 0 errors, 0 pendings, 0 omissions, 0 notifications
+Finished in 0.011706387 seconds.
+------------------------------------------------------------------------------------------------------------------------
+9 tests, 503 assertions, 0 failures, 0 errors, 0 pendings, 0 omissions, 0 notifications
 100% passed
------------------------------------------------------------------------------------------------------------------------------
-532.40 tests/s, 32552.48 assertions/s
-/Users/kachick/.rubies/ruby-3.0.1/bin/ruby -w -I"lib" /Users/kachick/repos/ruby-ulid/vendor/bundle/ruby/3.0.0/gems/rake-13.0.3/lib/rake/rake_test_loader.rb "test/experimental/test_uuid_handlers.rb" -v -n'/test_.*generate/i
+------------------------------------------------------------------------------------------------------------------------
+768.81 tests/s, 42968.00 assertions/s
 ```
 
 CI includes other heavy tests, signature check, lint, if you want to check them in own machine, below command is the one.

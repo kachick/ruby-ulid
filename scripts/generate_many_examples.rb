@@ -3,7 +3,6 @@
 
 require('bundler/setup')
 require_relative('../lib/ulid')
-require_relative('../lib/ulid/uuid')
 require_relative('../test/many_data/fixtures/example')
 
 require('time') # To use `Time.parse` for readability, Do not depend on tests

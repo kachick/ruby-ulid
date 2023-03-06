@@ -7,4 +7,5 @@ class ULID
   class OverflowError < Error; end
   class ParserError < Error; end
   class UnexpectedError < Error; end
+  class MalformedUUIDError < Error; end
 end
