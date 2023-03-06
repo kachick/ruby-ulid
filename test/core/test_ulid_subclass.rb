@@ -68,7 +68,7 @@ class TestULIDSubClass < Test::Unit::TestCase
       ulid2 => :ulid2
     }
 
-    assert_equal([:ulid1_sub, :ulid2], hash.values)
+    assert_equal(%i[ulid1_sub ulid2], hash.values)
     assert_equal(:ulid1_sub, hash.fetch(ulid1))
     assert_equal(:ulid1_sub, hash.fetch(ulid1_sub))
     assert_equal(:ulid2, hash.fetch(ulid2))

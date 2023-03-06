@@ -230,7 +230,7 @@ class TestULIDInstance < Test::Unit::TestCase
       ulid2 => :ulid2
     }
 
-    assert_equal([:ulid1_2, :ulid2], hash.values)
+    assert_equal(%i[ulid1_2 ulid2], hash.values)
     assert_equal(:ulid1_2, hash.fetch(ulid1_1))
     assert_equal(:ulid2, hash.fetch(ulid2))
 
