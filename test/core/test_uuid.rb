@@ -33,6 +33,44 @@ class TestUUID < Test::Unit::TestCase
     end
   end
 
+  def test_from_uuidish
+    # The example value was taken from https://github.com/ahawker/ulid/tree/96bdb1daad7ce96f6db8c91ac0410b66d2e1c4c1#usage
+    assert_equal(ULID.parse('09GF8A5ZRN9P1RYDVXV52VBAHS'), ULID.from_uuidish('0983d0a2-ff15-4d83-8f37-7dd945b5aa39'))
+    assert_equal(ULID.parse('09GF8A5ZRN9P1RYDVXV52VBAHS'), ULID.from_uuidish('urn:uuid:0983d0a2-ff15-4d83-8f37-7dd945b5aa39'))
+
+    # UUIDv3, v5
+    assert_equal(ULID.parse('3BMYW117DD278R1D00R17X8C68'), ULID.from_uuidish('6ba7b810-9dad-11d1-80b4-00c04fd430c8'))
+
+    # Rough tests
+    ulids = 1000.times.map do
+      ULID.from_uuidish(SecureRandom.uuid)
+    end
+    assert_true(ulids.uniq == ulids)
+
+    # Ensure some invalid patterns (I'd like to add more examples)
+    [
+      '0983d0a2-ff15-4d83-8f37-7dd945b5aa3', # Shortage
+      '0983d0a2-ff15-4d83-8f37-7dd945b5aa390', # Excess
+      "0983d0a2-ff15-4d83-8f37-7dd945b5aa39\n", # Line end
+      '0983d0a2-ff15-4d83-8f37--7dd945b5aa39' # `-` excess
+    ].each do |invalid_uuid|
+      assert_raises(ULID::ParserError) do
+        ULID.from_uuidish(invalid_uuid)
+      end
+    end
+
+    assert_raises(ArgumentError) do
+      ULID.from_uuidish
+    end
+
+    [nil, 42, :'0983d0a2-ff15-4d83-8f37-7dd945b5aa39', BasicObject.new, Object.new, ulids.sample].each do |evil|
+      err = assert_raises(ArgumentError) do
+        ULID.from_uuidish(evil)
+      end
+      assert_equal('ULID.from_uuidish takes only strings', err.message)
+    end
+  end
+
   def test_from_uuidv4
     # The example value was taken from https://github.com/ahawker/ulid/tree/96bdb1daad7ce96f6db8c91ac0410b66d2e1c4c1#usage
     assert_equal(ULID.parse('09GF8A5ZRN9P1RYDVXV52VBAHS'), ULID.from_uuidv4('0983d0a2-ff15-4d83-8f37-7dd945b5aa39'))
@@ -46,6 +84,7 @@ class TestUUID < Test::Unit::TestCase
 
     # Ensure some invalid patterns (I'd like to add more examples)
     [
+      '6ba7b810-9dad-11d1-80b4-00c04fd430c8', # UUIDv3, v5
       '0983d0a2-ff15-4d83-8f37-7dd945b5aa3', # Shortage
       '0983d0a2-ff15-4d83-8f37-7dd945b5aa390', # Excess
       "0983d0a2-ff15-4d83-8f37-7dd945b5aa39\n", # Line end
@@ -68,13 +107,30 @@ class TestUUID < Test::Unit::TestCase
     end
   end
 
-  def test_from_uuidv4_for_boundary_example
+  def test_uuid_parser_for_boundary_example
     # This behavior is same as https://github.com/ahawker/ulid/tree/96bdb1daad7ce96f6db8c91ac0410b66d2e1c4c1 on CPython 3.9.4
     assert_equal(ULID.parse('00000000008008000000000000'), ULID.from_uuidv4('00000000-0000-4000-8000-000000000000'))
     assert_equal(ULID.parse('7ZZZZZZZZZ9ZZVZZZZZZZZZZZZ'), ULID.from_uuidv4('ffffffff-ffff-4fff-bfff-ffffffffffff'))
 
+    # Also uuidish can load as same
+    assert_equal(ULID.parse('00000000008008000000000000'), ULID.from_uuidish('00000000-0000-4000-8000-000000000000'))
+    assert_equal(ULID.parse('7ZZZZZZZZZ9ZZVZZZZZZZZZZZZ'), ULID.from_uuidish('ffffffff-ffff-4fff-bfff-ffffffffffff'))
+
+    # Just ensuring
     assert_not_equal(ULID.min, ULID.from_uuidv4('00000000-0000-4000-8000-000000000000'))
     assert_not_equal(ULID.max, ULID.from_uuidv4('ffffffff-ffff-4fff-bfff-ffffffffffff'))
+
+    # Min and Max values does not have version and variants, so failed in v4 parser
+    assert_raises(ULID::ParserError) do
+      ULID.from_uuidv4('00000000-0000-0000-0000-000000000000')
+    end
+    assert_raises(ULID::ParserError) do
+      ULID.from_uuidv4('ffffffff-ffff-ffff-ffff-ffffffffffff')
+    end
+
+    # But relaxed parser parsed it with ignoring the version and variants specs
+    assert_equal(ULID.min, ULID.from_uuidish('00000000-0000-0000-0000-000000000000'))
+    assert_equal(ULID.max, ULID.from_uuidish('ffffffff-ffff-ffff-ffff-ffffffffffff'))
   end
 
   def test_to_uuidv4_for_typical_example

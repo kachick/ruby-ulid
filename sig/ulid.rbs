@@ -12,7 +12,6 @@ class ULID < Object
   PATTERN_WITH_CROCKFORD_BASE32_SUBSET: Regexp
   STRICT_PATTERN_WITH_CROCKFORD_BASE32_SUBSET: Regexp
   SCANNING_PATTERN: Regexp
-  UUIDV4_PATTERN: Regexp
   MIN: ULID
   MAX: ULID
   include Comparable
@@ -36,6 +35,9 @@ class ULID < Object
   end
 
   class UUIDish < Struct[Integer]
+    BASE_PATTERN: Regexp
+    V4_PATTERN: Regexp
+
     attr_accessor time_low: Integer
     attr_accessor time_mid: Integer
     attr_accessor time_hi_and_version: Integer
@@ -270,8 +272,8 @@ class ULID < Object
   # See also [ulid/spec#57](https://github.com/ulid/spec/pull/57) and [ulid/spec#3](https://github.com/ulid/spec/issues/3)
   def self.parse_variant_format: (_ToStr string) -> ULID
 
+  def self.from_uuidish: (String uuidsih) -> ULID
   # ```ruby
-  # # Basically reversible
   # ulid = ULID.from_uuidv4('0983d0a2-ff15-4d83-8f37-7dd945b5aa39')
   # #=> ULID(2301-07-10 00:28:28.821 UTC: 09GF8A5ZRN9P1RYDVXV52VBAHS)
   # ulid.to_uuidv4 #=> "0983d0a2-ff15-4d83-8f37-7dd945b5aa39"
@@ -585,7 +587,6 @@ class ULID < Object
   def to_uuidish: -> String
 
   # ```ruby
-  # # Basically reversible
   # ulid = ULID.from_uuidv4('0983d0a2-ff15-4d83-8f37-7dd945b5aa39')
   # #=> ULID(2301-07-10 00:28:28.821 UTC: 09GF8A5ZRN9P1RYDVXV52VBAHS)
   # ulid.to_uuidv4 #=> "0983d0a2-ff15-4d83-8f37-7dd945b5aa39"

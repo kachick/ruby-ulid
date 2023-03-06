@@ -58,6 +58,7 @@ class TestULIDClass < Test::Unit::TestCase
         decode_time
         valid_as_variant_format?
         parse_variant_format
+        from_uuidish
         from_uuidv4
       ].sort,
       exposed_methods.sort

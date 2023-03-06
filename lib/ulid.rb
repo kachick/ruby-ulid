@@ -48,8 +48,6 @@ class ULID
     SecureRandom.random_number(MAX_INTEGER)
   }.freeze
 
-  # Imported from https://stackoverflow.com/a/38191104/1212807, thank you!
-  UUIDV4_PATTERN = /\A[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}\z/i
   UUIDish =
     # https://github.com/ruby/rbs/issues/627#issuecomment-797330517
     _ =
@@ -68,6 +66,11 @@ class ULID
           '%08x-%04x-%04x-%04x-%04x%08x' % values
         end
       end
+  class UUIDish
+    BASE_PATTERN = /\A[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}\z/i
+    # Imported from https://stackoverflow.com/a/38191104/1212807, thank you!
+    V4_PATTERN = /\A[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}\z/i
+  end
 
   Utils.make_sharable_constants(self)
 
@@ -78,7 +81,6 @@ class ULID
     :TIME_FORMAT_IN_INSPECT,
     :RANDOM_INTEGER_GENERATOR,
     :OCTETS_LENGTH,
-    :UUIDV4_PATTERN,
     :UUIDish
   )
 
@@ -362,6 +364,37 @@ class ULID
     end
   end
 
+  # @param [String, #to_str] uuidish
+  # @return [ULID]
+  # @raise [ParserError] if the given format is not correct for UUID`ish` format
+  def self.from_uuidish(uuidish)
+    encoded = String.try_convert(uuidish)
+    raise(ArgumentError, 'ULID.from_uuidish takes only strings') unless encoded
+
+    prefix_trimmed = encoded.delete_prefix('urn:uuid:')
+    unless UUIDish::BASE_PATTERN.match?(prefix_trimmed)
+      raise(ParserError, "given `#{encoded}` does not match to `#{UUIDish::BASE_PATTERN.inspect}`")
+    end
+
+    normalized = prefix_trimmed.gsub(/[^0-9A-Fa-f]/, '')
+    from_integer(Integer(normalized, 16, exception: true))
+  end
+
+  # @param [String, #to_str] uuid
+  # @return [ULID]
+  # @raise [ParserError] if the given format is not correct for UUIDv4 specs
+  def self.from_uuidv4(uuid)
+    encoded = String.try_convert(uuid)
+    raise(ArgumentError, 'ULID.from_uuidv4 takes only strings') unless encoded
+
+    prefix_trimmed = encoded.delete_prefix('urn:uuid:')
+    unless UUIDish::V4_PATTERN.match?(prefix_trimmed)
+      raise(ParserError, "given `#{encoded}` does not match to `#{UUIDish::V4_PATTERN.inspect}`")
+    end
+
+    from_uuidish(encoded)
+  end
+
   attr_reader(:milliseconds, :entropy, :encoded)
   protected(:encoded)
 
@@ -513,22 +546,6 @@ class ULID
   # @return [String]
   def to_uuidish
     UUIDish.from_bytes(bytes).to_s.freeze
-  end
-
-  # @param [String, #to_str] uuid
-  # @return [ULID]
-  # @raise [ParserError] if the given format is not correct for UUIDv4 specs
-  def self.from_uuidv4(uuid)
-    uuid = String.try_convert(uuid)
-    raise(ArgumentError, 'ULID.from_uuidv4 takes only strings') unless uuid
-
-    prefix_trimmed = uuid.delete_prefix('urn:uuid:')
-    unless UUIDV4_PATTERN.match?(prefix_trimmed)
-      raise(ParserError, "given `#{uuid}` does not match to `#{UUIDV4_PATTERN.inspect}`")
-    end
-
-    normalized = prefix_trimmed.gsub(/[^0-9A-Fa-f]/, '')
-    from_integer(normalized.to_i(16))
   end
 
   # Convert the ULID to UUIDv4 with setting ULID version and variants field
