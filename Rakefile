@@ -18,7 +18,7 @@ desc('Keep light weight!')
 task(test: :test_core)
 
 desc('Contains heavy tests. So basically checked in CI only')
-task(test_all: [:test, :test_many_data, :test_concurrency, :test_longtime])
+task(test_all: [:test_core, :test_many_data, :test_concurrency, :test_longtime])
 
 Rake::TestTask.new(:test_core) do |tt|
   tt.pattern = 'test/core/**/test_*.rb'
