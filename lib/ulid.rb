@@ -531,10 +531,12 @@ class ULID
     from_integer(normalized.to_i(16))
   end
 
-  # Convert the ULID to UUIDv4 that will have version and variants field
-  # Some boundary case, they cannot be restore original ULID, if it is needed, use `#to_uuidish` instead
+  # Convert the ULID to UUIDv4 with setting ULID version and variants field
+  # @raise [IrreversibleUUIDError] if the converted UUID cannot be reversible with the replacing above 2 fields
+  # @see https://github.com/kachick/ruby-ulid/issues/76
+  # @param [bool] ignore_reversible
   # @return [String]
-  def to_uuidv4(force: true)
+  def to_uuidv4(ignore_reversible: false)
     uuidish = UUIDish.from_bytes(bytes)
     v4 = UUIDish.new(
       **uuidish.to_h,
@@ -542,7 +544,7 @@ class ULID
       time_hi_and_version: (uuidish.time_hi_and_version & 0x0fff) | 0x4000,
       clock_seq_hi_and_res: (uuidish.clock_seq_hi_and_res & 0x3fff) | 0x8000
     )
-    raise(MalformedUUIDError) unless (uuidish == v4) || force
+    raise(IrreversibleUUIDError) unless (uuidish == v4) || ignore_reversible
 
     v4.to_s.freeze
   end

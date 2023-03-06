@@ -73,15 +73,15 @@ class TestUUID < Test::Unit::TestCase
     assert_equal(ULID.parse('00000000008008000000000000'), ULID.from_uuidv4('00000000-0000-4000-8000-000000000000'))
     assert_equal(ULID.parse('7ZZZZZZZZZ9ZZVZZZZZZZZZZZZ'), ULID.from_uuidv4('ffffffff-ffff-4fff-bfff-ffffffffffff'))
 
-    omit('Below cases might be correct behavior rather than above, to handle the `V4` specifying. Considering in https://github.com/kachick/ruby-ulid/issues/76')
-    assert_equal(ULID.min, ULID.from_uuidv4('00000000-0000-4000-8000-000000000000'))
-    assert_equal(ULID.max, ULID.from_uuidv4('ffffffff-ffff-4fff-bfff-ffffffffffff'))
+    assert_not_equal(ULID.min, ULID.from_uuidv4('00000000-0000-4000-8000-000000000000'))
+    assert_not_equal(ULID.max, ULID.from_uuidv4('ffffffff-ffff-4fff-bfff-ffffffffffff'))
   end
 
   def test_to_uuidv4_for_typical_example
     # The example value was taken from https://github.com/ahawker/ulid/tree/96bdb1daad7ce96f6db8c91ac0410b66d2e1c4c1#usage
     ulid = ULID.parse('09GF8A5ZRN9P1RYDVXV52VBAHS')
     assert_equal('0983d0a2-ff15-4d83-8f37-7dd945b5aa39', ulid.to_uuidv4)
+    assert_equal('0983d0a2-ff15-4d83-8f37-7dd945b5aa39', ulid.to_uuidv4(ignore_reversible: false))
     assert_equal(ulid.to_uuidv4, ulid.to_uuidv4)
     assert_not_same(ulid.to_uuidv4, ulid.to_uuidv4)
     assert_true(ulid.to_uuidv4.frozen?)
@@ -89,14 +89,13 @@ class TestUUID < Test::Unit::TestCase
   end
 
   def test_to_uuidv4_for_boundary_example
-    assert_equal('00000000-0000-4000-8000-000000000000', ULID.min.to_uuidv4)
-    assert_equal('ffffffff-ffff-4fff-bfff-ffffffffffff', ULID.max.to_uuidv4)
+    assert_equal('00000000-0000-4000-8000-000000000000', ULID.min.to_uuidv4(ignore_reversible: true))
+    assert_equal('ffffffff-ffff-4fff-bfff-ffffffffffff', ULID.max.to_uuidv4(ignore_reversible: true))
 
-    omit('Below cases might be correct behavior rather than above, to handle the `V4` specifying. Considering in https://github.com/kachick/ruby-ulid/issues/76')
-    assert_raises do
+    assert_raises(ULID::IrreversibleUUIDError) do
       ULID.min.to_uuidv4
     end
-    assert_raises do
+    assert_raises(ULID::IrreversibleUUIDError) do
       ULID.max.to_uuidv4
     end
   end
@@ -117,6 +116,6 @@ class TestUUID < Test::Unit::TestCase
   end
 
   def test_to_uuidv4_on_frozen_ulid
-    assert_equal('01563e3a-b5d3-4676-8c61-efb99302bd5b', ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV').freeze.to_uuidv4)
+    assert_equal('01563e3a-b5d3-4676-8c61-efb99302bd5b', ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV').freeze.to_uuidv4(ignore_reversible: true))
   end
 end

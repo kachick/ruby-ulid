@@ -22,7 +22,7 @@ class TestULIDClass < Test::Unit::TestCase
         MonotonicGenerator
         OverflowError
         ParserError
-        MalformedUUIDError
+        IrreversibleUUIDError
         RANDOMNESS_ENCODED_LENGTH
         TIMESTAMP_ENCODED_LENGTH
         UnexpectedError
