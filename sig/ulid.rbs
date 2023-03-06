@@ -38,7 +38,7 @@ class ULID < Object
     BASE_PATTERN: Regexp
     V4_PATTERN: Regexp
 
-    def self.parse_without_version_to_int: (String) -> Integer
+    def self.parse_any_to_int: (String) -> Integer
     def self.parse_v4_to_int: (String) -> Integer
 
     class Fields < Struct[Integer]

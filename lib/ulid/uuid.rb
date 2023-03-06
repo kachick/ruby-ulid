@@ -13,7 +13,7 @@ class ULID
     # Imported from https://stackoverflow.com/a/38191104/1212807, thank you!
     V4_PATTERN = /\A[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}\z/i
 
-    def self.parse_without_version_to_int(uuidish)
+    def self.parse_any_to_int(uuidish)
       encoded = String.try_convert(uuidish)
       raise(ArgumentError, 'should pass a string for UUID parser') unless encoded
 
@@ -35,7 +35,7 @@ class ULID
         raise(ParserError, "given `#{encoded}` does not match to `#{V4_PATTERN.inspect}`")
       end
 
-      parse_without_version_to_int(encoded)
+      parse_any_to_int(encoded)
     end
 
     # @see https://www.rfc-editor.org/rfc/rfc4122#section-4.1.2

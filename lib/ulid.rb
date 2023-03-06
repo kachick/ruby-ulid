@@ -345,7 +345,7 @@ class ULID
   # @return [ULID]
   # @raise [ParserError] if the given format is not correct for UUID`ish` format
   def self.from_uuidish(uuidish)
-    from_integer(UUID.parse_without_version_to_int(uuidish))
+    from_integer(UUID.parse_any_to_int(uuidish))
   end
 
   # @param [String, #to_str] uuid
