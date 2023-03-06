@@ -517,7 +517,7 @@ class ULID
     v4 = UUID::Fields.forced_v4_from_bytes(bytes)
     unless ignore_reversible
       uuidish = UUID::Fields.raw_from_bytes(bytes)
-      raise(IrreversibleUUIDError) unless (uuidish == v4)
+      raise(IrreversibleUUIDError) unless uuidish == v4
     end
 
     v4.to_s.freeze
