@@ -4,7 +4,7 @@
 require_relative('../helper')
 require_relative('../../lib/ulid/uuid')
 
-class TestUUIDHandlers < Test::Unit::TestCase
+class TestUUID < Test::Unit::TestCase
   class Subclass < ULID
   end
 
