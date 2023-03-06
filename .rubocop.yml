@@ -657,7 +657,7 @@ Style/SwapValues:
   Enabled: false
 
 Style/SymbolArray:
-  Enabled: false
+  Enabled: true
 
 Style/SymbolLiteral:
   Enabled: true

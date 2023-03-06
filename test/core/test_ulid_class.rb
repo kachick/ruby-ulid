@@ -13,19 +13,19 @@ class TestULIDClass < Test::Unit::TestCase
 
   def test_exposed_constants
     assert_equal(
-      [
-        :ENCODED_LENGTH,
-        :Error,
-        :MAX_ENTROPY,
-        :MAX_INTEGER,
-        :MAX_MILLISECONDS,
-        :MonotonicGenerator,
-        :OverflowError,
-        :ParserError,
-        :RANDOMNESS_ENCODED_LENGTH,
-        :TIMESTAMP_ENCODED_LENGTH,
-        :UnexpectedError,
-        :VERSION
+      %i[
+        ENCODED_LENGTH
+        Error
+        MAX_ENTROPY
+        MAX_INTEGER
+        MAX_MILLISECONDS
+        MonotonicGenerator
+        OverflowError
+        ParserError
+        RANDOMNESS_ENCODED_LENGTH
+        TIMESTAMP_ENCODED_LENGTH
+        UnexpectedError
+        VERSION
       ].sort,
       ULID.constants.sort
     )
@@ -39,24 +39,24 @@ class TestULIDClass < Test::Unit::TestCase
     assert_equal([], exposed_methods.grep(/safe/).to_a)
 
     assert_equal(
-      [
-        :scan,
-        :sample,
-        :try_convert,
-        :max,
-        :min,
-        :generate,
-        :encode,
-        :from_integer,
-        :normalize,
-        :floor,
-        :range,
-        :at,
-        :normalized?,
-        :parse,
-        :decode_time,
-        :valid_as_variant_format?,
-        :parse_variant_format
+      %i[
+        scan
+        sample
+        try_convert
+        max
+        min
+        generate
+        encode
+        from_integer
+        normalize
+        floor
+        range
+        at
+        normalized?
+        parse
+        decode_time
+        valid_as_variant_format?
+        parse_variant_format
       ].sort,
       exposed_methods.sort
     )

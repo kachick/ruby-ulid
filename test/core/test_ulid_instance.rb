@@ -4,31 +4,31 @@
 require_relative('../helper')
 
 class TestULIDInstance < Test::Unit::TestCase
-  EXPOSED_METHODS = [
-    :<=>,
-    :==,
-    :===,
-    :encode,
-    :entropy,
-    :eql?,
-    :hash,
-    :inspect,
-    :marshal_dump,
-    :marshal_load,
-    :milliseconds,
-    :next,
-    :octets,
-    :bytes,
-    :pred,
-    :randomness,
-    :succ,
-    :timestamp,
-    :to_i,
-    :to_s,
-    :to_time,
-    :to_ulid,
-    :dup,
-    :clone
+  EXPOSED_METHODS = %i[
+    <=>
+    ==
+    ===
+    encode
+    entropy
+    eql?
+    hash
+    inspect
+    marshal_dump
+    marshal_load
+    milliseconds
+    next
+    octets
+    bytes
+    pred
+    randomness
+    succ
+    timestamp
+    to_i
+    to_s
+    to_time
+    to_ulid
+    dup
+    clone
   ].freeze
 
   ULID_RETURNING_METHODS = %i[
@@ -231,7 +231,7 @@ class TestULIDInstance < Test::Unit::TestCase
       ulid2 => :ulid2
     }
 
-    assert_equal([:ulid1_2, :ulid2], hash.values)
+    assert_equal(%i[ulid1_2 ulid2], hash.values)
     assert_equal(:ulid1_2, hash.fetch(ulid1_1))
     assert_equal(:ulid2, hash.fetch(ulid2))
 

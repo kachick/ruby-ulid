@@ -14,12 +14,12 @@ end
 
 task(default: [:test])
 
-basic_test_tasks = [:test_core, :test_experimental]
+basic_test_tasks = %i[test_core test_experimental]
 desc('Keep light weight!')
 task(test: basic_test_tasks)
 
 desc('Contains heavy tests. So basically checked in CI only')
-task(test_all: basic_test_tasks | [:test_many_data, :test_concurrency, :test_longtime])
+task(test_all: basic_test_tasks | %i[test_many_data test_concurrency test_longtime])
 
 Rake::TestTask.new(:test_core) do |tt|
   tt.pattern = 'test/core/**/test_*.rb'
@@ -47,11 +47,11 @@ Rake::TestTask.new(:test_longtime) do |tt|
 end
 
 desc('Signature check, it means `rbs` and `YARD` syntax correctness')
-multitask(rbs: [:'signature:validate_rbs', :'signature:check_rbs_false_positive'])
-multitask(signature_all: [:'signature:validate_yard', :rbs])
+multitask(rbs: %i[signature:validate_rbs signature:check_rbs_false_positive])
+multitask(signature_all: %i[signature:validate_yard rbs])
 
 desc('Simulate CI results in local machine as possible')
-multitask(simulate_ci: [:test_all, :signature_all, :rubocop])
+multitask(simulate_ci: %i[test_all signature_all rubocop])
 
 namespace(:signature) do
   desc('Validate `rbs` syntax, this should be passed')
