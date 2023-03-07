@@ -151,3 +151,38 @@ $ bundle exec ruby benchmark/the_added_file.rb
 - grep `RUBY_VERSION` guards
 - grep `3.1` and '3.2'
 - Update gemspec and `TargetRubyVersion` in .rubocop.yml
+
+## Use profiler
+
+```console
+> bundle install || bundle update
+❯ bundle exec rake stackprof
+rm -rf ./tmp/stackprof-*
+bundle exec ruby ./scripts/prof.rb
+bundle exec stackprof tmp/stackprof-wall-*.dump --text --limit 5
+==================================
+  Mode: wall(1000)
+  Samples: 445 (0.00% miss rate)
+  GC: 50 (11.24%)
+==================================
+     TOTAL    (pct)     SAMPLES    (pct)     FRAME
+        86  (19.3%)          86  (19.3%)     String#tr
+        88  (19.8%)          40   (9.0%)     ULID::Utils.encode_base32hex
+        38   (8.5%)          38   (8.5%)     (sweeping)
+        41   (9.2%)          38   (8.5%)     Time#to_r
+        80  (18.0%)          34   (7.6%)     Random::Formatter#random_number
+bundle exec stackprof tmp/stackprof-cpu-*.dump --text --limit 5
+==================================
+  Mode: cpu(1000)
+  Samples: 45 (0.00% miss rate)
+  GC: 6 (13.33%)
+==================================
+     TOTAL    (pct)     SAMPLES    (pct)     FRAME
+         8  (17.8%)           8  (17.8%)     String#tr
+         6  (13.3%)           6  (13.3%)     Random.urandom
+         5  (11.1%)           5  (11.1%)     Time#to_r
+         4   (8.9%)           4   (8.9%)     Rational#*
+        10  (22.2%)           4   (8.9%)     Random::Formatter#random_number
+```
+
+See [#213](https://github.com/kachick/ruby-ulid/pull/213) for further detail

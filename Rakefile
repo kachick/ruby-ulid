@@ -98,9 +98,10 @@ task(:benchmark_with_other_gems) do
 end
 
 task(:stackprof) do
+  sh('rm -rf ./tmp/stackprof-*')
   sh('bundle exec ruby ./scripts/prof.rb')
-  sh('bundle exec stackprof tmp/stackprof-wall-*.dump --text --limit 1')
-  sh('bundle exec stackprof tmp/stackprof-cpu-*.dump --text --limit 1')
+  sh('bundle exec stackprof tmp/stackprof-wall-*.dump --text --limit 5')
+  sh('bundle exec stackprof tmp/stackprof-cpu-*.dump --text --limit 5')
 end
 
 desc('Generate many sample data for snapshot tests')
