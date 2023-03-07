@@ -56,7 +56,7 @@ See [microsoft/vscode#65986](https://github.com/microsoft/vscode/issues/65986) f
 $ ./bin/console
 # Starting up IRB with loading developing ULID library
 irb(main):001:0> ULID::VERSION
-=> "0.8.0.pre"
+=> "0.8.0"
 ```
 
 ```ruby
