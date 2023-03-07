@@ -5,9 +5,10 @@
 
 ## Overview
 
-[ulid/spec](https://github.com/ulid/spec) has some useful features.\
-Especially possess all `uniqueness`, `randomness`, `extractable timestamps` and `sortability`.\
-This gem aims to provide the generator, optional monotonicity, parser and other manipulation ways around ULID with included [RBS](https://github.com/ruby/rbs).
+[ulid/spec](https://github.com/ulid/spec) defines some useful features.\
+In particular, it has uniqueness, randomness, extractable timestamps, and sortability.\
+This gem aims to provide the generator, optional monotonicity, parser, and other manipulations around ULID.\
+[RBS](https://github.com/ruby/rbs) definitions are also included.
 
 ---
 
@@ -39,29 +40,20 @@ Instead, herein is proposed ULID:
 
 Require Ruby 3.1 or later
 
-This command will install the latest version into your environment
-
-```console
-$ gem install ruby-ulid
-Should be installed!
-```
-
 Add this line in your Gemfile.
 
 ```ruby
 gem('ruby-ulid', '~> 0.7.0')
 ```
 
-### How to use
+And load it
 
 ```ruby
 require 'ulid'
-
-ULID::VERSION
-# => "0.8.0.pre"
 ```
 
-NOTE: This README includes info about development version. If you would see released version's one. [Look at the ref](https://github.com/kachick/ruby-ulid/tree/v0.7.0).
+NOTE: This README contains information about the development version.\
+If you would like to see released version's one. [Look at the ref](https://github.com/kachick/ruby-ulid/tree/v0.7.0).
 
 ### Generator and Parser
 
@@ -163,20 +155,16 @@ sample_ulids_by_the_time = ulids.uniq(&:to_time)
 sample_ulids_by_the_time.size #=> 32 (the size is not fixed, might be changed in environment)
 
 # In same milliseconds creation, it just increments the end of randomness part
-ulids.take(5) #=>
+ulids.take(3) #=>
 # [ULID(2021-05-02 15:23:48.917 UTC: 01F4PTVCSN9ZPFKYTY2DDJVRK4),
 #  ULID(2021-05-02 15:23:48.917 UTC: 01F4PTVCSN9ZPFKYTY2DDJVRK5),
-#  ULID(2021-05-02 15:23:48.917 UTC: 01F4PTVCSN9ZPFKYTY2DDJVRK6),
-#  ULID(2021-05-02 15:23:48.917 UTC: 01F4PTVCSN9ZPFKYTY2DDJVRK7),
-#  ULID(2021-05-02 15:23:48.917 UTC: 01F4PTVCSN9ZPFKYTY2DDJVRK8)]
+#  ULID(2021-05-02 15:23:48.917 UTC: 01F4PTVCSN9ZPFKYTY2DDJVRK6)]
 
 # When the milliseconds is updated, it starts with new randomness
-sample_ulids_by_the_time.take(5) #=>
+sample_ulids_by_the_time.take(3) #=>
 # [ULID(2021-05-02 15:23:48.917 UTC: 01F4PTVCSN9ZPFKYTY2DDJVRK4),
 #  ULID(2021-05-02 15:23:48.918 UTC: 01F4PTVCSPF2KXG4ABT7CK3204),
-#  ULID(2021-05-02 15:23:48.919 UTC: 01F4PTVCSQF1GERBPCQV6TCX2K),
-#  ULID(2021-05-02 15:23:48.920 UTC: 01F4PTVCSRBXN2H4P1EYWZ27AK),
-#  ULID(2021-05-02 15:23:48.921 UTC: 01F4PTVCSSK0ASBBZARV7013F8)]
+#  ULID(2021-05-02 15:23:48.919 UTC: 01F4PTVCSQF1GERBPCQV6TCX2K)]
 
 ulids.sort == ulids #=> true
 ```
@@ -312,13 +300,11 @@ ULID.sample #=> ULID(2545-07-26 06:51:20.085 UTC: 0GGKQ45GMNMZR6N8A8GFG0ZXST)
 ULID.sample #=> ULID(5098-07-26 21:31:06.946 UTC: 2SSBNGGYA272J7BMDCG4Z6EEM5)
 ULID.sample(0) #=> []
 ULID.sample(1) #=> [ULID(2241-04-16 03:31:18.440 UTC: 07S52YWZ98AZ8T565MD9VRYMQH)]
-ULID.sample(5)
+ULID.sample(3)
 #=>
 #[ULID(5701-04-29 12:41:19.647 UTC: 3B2YH2DV0ZYDDATGTYSKMM1CMT),
 # ULID(2816-08-01 01:21:46.612 UTC: 0R9GT6RZKMK3RG02Q2HAFVKEY2),
-# ULID(10408-10-05 17:06:27.848 UTC: 7J6CPTEEC86Y24EQ4F1Y93YYN0),
-# ULID(2741-09-02 16:24:18.803 UTC: 0P4Q4V34KKAJW46QW47WQB5463),
-# ULID(2665-03-16 14:50:22.724 UTC: 0KYFW9DWM4CEGFNTAC6YFAVVJ6)]
+# ULID(10408-10-05 17:06:27.848 UTC: 7J6CPTEEC86Y24EQ4F1Y93YYN0)]
 ```
 
 You can specify a range object for the timestamp restriction, see also `ULID.range`.
@@ -326,22 +312,16 @@ You can specify a range object for the timestamp restriction, see also `ULID.ran
 ```ruby
 ulid1 = ULID.parse('01F4A5Y1YAQCYAYCTC7GRMJ9AA') #=> ULID(2021-04-27 17:27:22.826 UTC: 01F4A5Y1YAQCYAYCTC7GRMJ9AA)
 ulid2 = ULID.parse('01F4PTVCSN9ZPFKYTY2DDJVRK4') #=> ULID(2021-05-02 15:23:48.917 UTC: 01F4PTVCSN9ZPFKYTY2DDJVRK4)
-ulids = ULID.sample(1000, period: ulid1..ulid2)
-ulids.uniq.size #=> 1000
-ulids.take(5)
+ulids = ULID.sample(3, period: ulid1..ulid2)
 #=>
 #[ULID(2021-05-02 06:57:19.954 UTC: 01F4NXW02JNB8H0J0TK48JD39X),
 # ULID(2021-05-02 07:06:07.458 UTC: 01F4NYC372GVP7NS0YAYQGT4VZ),
-# ULID(2021-05-01 06:16:35.791 UTC: 01F4K94P6F6P68K0H64WRDSFKW),
-# ULID(2021-04-27 22:17:37.844 UTC: 01F4APHGSMFJZQTGXKZBFFBPJP),
-# ULID(2021-04-28 20:17:55.357 UTC: 01F4D231MXQJXAR8G2JZHEJNH3)]
-ULID.sample(5, period: ulid1.to_time..ulid2.to_time)
+# ULID(2021-05-01 06:16:35.791 UTC: 01F4K94P6F6P68K0H64WRDSFKW)]
+ULID.sample(3, period: ulid1.to_time..ulid2.to_time)
 #=>
 # [ULID(2021-04-29 06:44:41.513 UTC: 01F4E5YPD9XQ3MYXWK8ZJKY8SW),
 #  ULID(2021-05-01 00:35:06.629 UTC: 01F4JNKD85SVK1EAEYSJGF53A2),
-#  ULID(2021-05-02 12:45:28.408 UTC: 01F4PHSEYRG9BWBEWMRW1XE6WW),
-#  ULID(2021-05-01 03:06:09.130 UTC: 01F4JY7ZBABCBMX16XH2Q4JW4W),
-#  ULID(2021-04-29 21:38:58.109 UTC: 01F4FS45DX4049JEQK4W6TER6G)]
+#  ULID(2021-05-02 12:45:28.408 UTC: 01F4PHSEYRG9BWBEWMRW1XE6WW)]
 ```
 
 #### Variants of format
@@ -415,13 +395,8 @@ See [wiki page for gem migration](https://github.com/kachick/ruby-ulid/wiki/Gem-
 
 ## RBS
 
-Try at [examples/rbs_sandbox](https://github.com/kachick/ruby-ulid/tree/main/examples/rbs_sandbox).
-
-I have checked the behavior with [ruby/rbs@2.6.0](https://github.com/ruby/rbs) + [soutaro/steep@1.0.1](https://github.com/soutaro/steep) + [soutaro/steep-vscode](https://github.com/soutaro/steep-vscode).
-
-- ![rbs overview](./assets/ulid-rbs-overview.png?raw=true.png)
-- ![rbs mix](./assets/ulid-rbs-mix.png?raw=true.png)
-- ![rbs ng-to_str](./assets/ulid-rbs-ng-to_str.png?raw=true.png)
+- Try at [examples/rbs_sandbox](https://github.com/kachick/ruby-ulid/tree/main/examples/rbs_sandbox).
+- See the overview in [our wiki page for RBS](https://github.com/kachick/ruby-ulid/wiki/RBS)
 
 ## References
 
@@ -431,6 +406,6 @@ I have checked the behavior with [ruby/rbs@2.6.0](https://github.com/ruby/rbs) +
 
 ## Note
 
-- [UUIDv6, UUIDv7, UUIDv8](https://www.ietf.org/archive/id/draft-peabody-dispatch-new-uuid-format-01.html) is another choice for sortable and randomness ID.
+- [UUIDv6, UUIDv7, UUIDv8](https://www.ietf.org/archive/id/draft-ietf-uuidrev-rfc4122bis-02.html) is another choice for sortable and randomness ID.
   \
-  However they are stayed in draft state. ref: [ruby-ulid#37](https://github.com/kachick/ruby-ulid/issues/37)
+  However they remain in draft state. Our tracker is: [ruby-ulid#37](https://github.com/kachick/ruby-ulid/issues/37)
