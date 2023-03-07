@@ -373,34 +373,40 @@ ULID.valid_as_variant_format?('01g70y0y7g-z1xwdarexergsddd') #=> true
 ULID.parse_variant_format('01G70Y0Y7G-ZLXWDIREXERGSDoD') #=> ULID(2022-07-03 02:25:22.672 UTC: 01G70Y0Y7GZ1XWD1REXERGSD0D)
 ```
 
-#### UUIDv4 converter
+#### UUID
 
-`ULID.from_uuidv4` and `ULID#to_uuidv4` is the converter.\
-The imported timestamp is meaningless. So ULID's benefit will lost.
+Both ULID and UUID are 128-bit IDs. But with different specs. Especially UUID has some versions probably UUIDv4.
+
+All UUIDv4s can be converted to ULID, but this will not have the correct "timestamp".\
+Most ULIDs cannot be converted to UUIDv4 while maintaining reversibility, because UUIDv4 requires version and variants in the fields.
+
+See also [ulid/spec#64](https://github.com/ulid/spec/issues/64) for further detail.
+
+For now, this gem provides 4 methods for UUIDs.
+
+- Reversibility is preferred: ULID.from_uuidish, ULID.to_uuidish
+- Prefer UUIDv4 specification: ULID.from_uuidv4, ULID.to_uuidv4
 
 ```ruby
-# Basically reversible
-ulid = ULID.from_uuidv4('0983d0a2-ff15-4d83-8f37-7dd945b5aa39') #=> ULID(2301-07-10 00:28:28.821 UTC: 09GF8A5ZRN9P1RYDVXV52VBAHS)
-ulid.to_uuidv4 #=> "0983d0a2-ff15-4d83-8f37-7dd945b5aa39"
+# All UUIDv4 IDs can be reversible even if converted to ULID
+uuid = SecureRandom.uuid
+ULID.from_uuidish(uuid) == ULID.from_uuidv4(uuid) #=> true
+ULID.from_uuidish(uuid).to_uuidish == ULID.from_uuidv4(uuid).to_uuidv4 #=> true
 
-uuid_v4s = 10000.times.map { SecureRandom.uuid }
-uuid_v4s.uniq.size == 10000 #=> Probably `true`
+# But most ULIDs cannot be converted to UUIDv4 
+ulid = ULID.parse('01F4A5Y1YAQCYAYCTC7GRMJ9AA')
+ulid.to_uuidv4 #=> ULID::IrreversibleUUIDError
+# So 2 ways to get substitute strings that might satisfy the use case
+ulid.to_uuidv4(force: true) #=> "0179145f-07ca-4b3c-af33-4c3c3149254a" this cannot be reverse to source ULID
+ulid == ULID.from_uuidv4(ulid.to_uuidv4(force: true)) #=> false
+ulid.to_uuidish #=> "0179145f-07ca-bb3c-af33-4c3c3149254a" does not satisfy UUIDv4 spec
+ulid == ULID.from_uuidish(ulid.to_uuidish) #=> true
 
-ulids = uuid_v4s.map { |uuid_v4| ULID.from_uuidv4(uuid_v4) }
-ulids.map(&:to_uuidv4) == uuid_v4s #=> **Probably** `true` except below examples.
-
-# NOTE: Some boundary values are not reversible. See below.
-
-ULID.min.to_uuidv4 #=> "00000000-0000-4000-8000-000000000000"
-ULID.max.to_uuidv4 #=> "ffffffff-ffff-4fff-bfff-ffffffffffff"
-
-# These importing results are same as https://github.com/ahawker/ulid/tree/96bdb1daad7ce96f6db8c91ac0410b66d2e1c4c1 on CPython 3.9.4
-reversed_min = ULID.from_uuidv4('00000000-0000-4000-8000-000000000000') #=> ULID(1970-01-01 00:00:00.000 UTC: 00000000008008000000000000)
-reversed_max = ULID.from_uuidv4('ffffffff-ffff-4fff-bfff-ffffffffffff') #=> ULID(10889-08-02 05:31:50.655 UTC: 7ZZZZZZZZZ9ZZVZZZZZZZZZZZZ)
-
-# But they are not reversible! Need to consider this issue in https://github.com/kachick/ruby-ulid/issues/76
-ULID.min == reversed_min #=> false
-ULID.max == reversed_max #=> false
+# Seeing boundary IDs makes it easier to understand
+ULID.min.to_uuidish #=> "00000000-0000-0000-0000-000000000000"
+ULID.min.to_uuidv4(force: true) #=> "00000000-0000-4000-8000-000000000000"
+ULID.max.to_uuidish #=> "ffffffff-ffff-ffff-ffff-ffffffffffff"
+ULID.max.to_uuidv4(force: true) #=> "ffffffff-ffff-4fff-bfff-ffffffffffff"
 ```
 
 ## Migration from other gems
