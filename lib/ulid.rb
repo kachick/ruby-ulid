@@ -438,7 +438,6 @@ class ULID
     digits = @integer.digits(256)
     digits.fill(0, digits.size, OCTETS_LENGTH - digits.size).reverse
   end
-  alias_method(:bytes, :octets)
 
   # @return [String]
   def timestamp
@@ -506,7 +505,7 @@ class ULID
   #
   # @return [String]
   def to_uuidish
-    UUID::Fields.raw_from_bytes(bytes).to_s.freeze
+    UUID::Fields.raw_from_octets(octets).to_s.freeze
   end
 
   # Generate a UUIDv4-like string that sets the version and variants field.
@@ -518,9 +517,9 @@ class ULID
   # @param [bool] force
   # @return [String]
   def to_uuidv4(force: false)
-    v4 = UUID::Fields.forced_v4_from_bytes(bytes)
+    v4 = UUID::Fields.forced_v4_from_octets(octets)
     unless force
-      uuidish = UUID::Fields.raw_from_bytes(bytes)
+      uuidish = UUID::Fields.raw_from_octets(octets)
       raise(IrreversibleUUIDError) unless uuidish == v4
     end
 
