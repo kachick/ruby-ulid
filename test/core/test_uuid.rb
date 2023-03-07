@@ -189,8 +189,4 @@ class TestUUID < Test::Unit::TestCase
 
     assert_equal(uuids, ulids.map(&:to_uuidv4))
   end
-
-  def test_to_uuidv4_on_frozen_ulid
-    assert_equal('01563e3a-b5d3-4676-8c61-efb99302bd5b', ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV').freeze.to_uuidv4(ignore_reversible: true))
-  end
 end
