@@ -78,7 +78,7 @@ class TestULIDUseCase < Test::Unit::TestCase
     assert_equal(ulid.timestamp, unmarshaled.timestamp)
     assert_equal(ulid.randomness, unmarshaled.randomness)
     assert_equal(ulid.milliseconds, unmarshaled.milliseconds)
-    assert_equal(ulid.bytes, unmarshaled.bytes)
+    assert_equal(ulid.octets, unmarshaled.octets)
 
     # Do not ensure frozen instance behaviors, this tests just check current behavior
     frozen = ULID.sample.freeze

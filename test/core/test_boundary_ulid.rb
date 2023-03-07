@@ -31,12 +31,4 @@ class TestBoundaryULID < Test::Unit::TestCase
     assert_equal(ULID.parse('01BX5ZZKBJZZZZZZZZZZZZZZZZ'), @min_entropy.pred)
     assert_same(@min, ULID.parse('00000000000000000000000001').pred)
   end
-
-  def test_bytes
-    assert_equal([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], @min.bytes)
-    assert_equal([255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255], @max.bytes)
-
-    # Not 0, but too low as 0 parts in the prefix
-    assert_equal([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 121, 50], ULID.from_integer(424242).bytes)
-  end
 end

@@ -48,8 +48,8 @@ class ULID < Object
       attr_accessor clock_seq_hi_and_res: Integer
       attr_accessor clk_seq_low: Integer
       attr_accessor node: Integer
-      def self.raw_from_bytes: (octets) -> Fields
-      def self.forced_v4_from_bytes: (octets) -> Fields
+      def self.raw_from_octets: (octets) -> Fields
+      def self.forced_v4_from_octets: (octets) -> Fields
 
       def values: -> Array[Integer]
 
@@ -580,7 +580,6 @@ class ULID < Object
   def randomness: -> String
 
   def octets: -> octets
-  alias bytes octets
 
   # Returns next(successor) ULID.\
   # Especially `ULID#succ` makes it possible `Range[ULID]#each`.

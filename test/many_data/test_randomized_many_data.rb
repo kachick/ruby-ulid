@@ -45,13 +45,13 @@ class TestManyData < Test::Unit::TestCase
     end
   end
 
-  def test_bytes
+  def test_octets
     ULID.sample(10000).each do |ulid|
-      assert_instance_of(Array, ulid.bytes)
-      assert(ulid.bytes.all?(Integer))
-      assert_equal(ULID.const_get(:OCTETS_LENGTH), ulid.bytes.size)
-      assert_not_same(ulid.bytes, ulid.bytes)
-      assert_false(ulid.bytes.frozen?)
+      assert_instance_of(Array, ulid.octets)
+      assert(ulid.octets.all?(Integer))
+      assert_equal(ULID.const_get(:OCTETS_LENGTH), ulid.octets.size)
+      assert_not_same(ulid.octets, ulid.octets)
+      assert_false(ulid.octets.frozen?)
     end
   end
 end

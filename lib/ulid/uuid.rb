@@ -42,15 +42,15 @@ class ULID
     # @todo Replace to Data class after dropped Ruby 3.1
     # @note Using `Fields = Struct.new` syntax made https://github.com/kachick/ruby-ulid/issues/233 again. So use class syntax instead
     class Fields < Struct.new(:time_low, :time_mid, :time_hi_and_version, :clock_seq_hi_and_res, :clk_seq_low, :node, keyword_init: true)
-      def self.raw_from_bytes(bytes)
-        case bytes.pack('C*').unpack('NnnnnN')
+      def self.raw_from_octets(octets)
+        case octets.pack('C*').unpack('NnnnnN')
         in [Integer => time_low, Integer => time_mid, Integer => time_hi_and_version, Integer => clock_seq_hi_and_res, Integer => clk_seq_low, Integer => node]
           new(time_low:, time_mid:, time_hi_and_version:, clock_seq_hi_and_res:, clk_seq_low:, node:).freeze
         end
       end
 
-      def self.forced_v4_from_bytes(bytes)
-        case bytes.pack('C*').unpack('NnnnnN')
+      def self.forced_v4_from_octets(octets)
+        case octets.pack('C*').unpack('NnnnnN')
         in [Integer => time_low, Integer => time_mid, Integer => time_hi_and_version, Integer => clock_seq_hi_and_res, Integer => clk_seq_low, Integer => node]
           new(
             time_low:,
