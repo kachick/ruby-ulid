@@ -501,13 +501,18 @@ class ULID
     self
   end
 
-  # Provided for ULID and UUID converting vice versa with ignoring UUID version and variant spec
+  # Generate a UUID-like string that does not set the version and variants field.
+  # It means wrong in UUIDv4 spec, but reversible
+  #
   # @return [String]
   def to_uuidish
     UUID::Fields.raw_from_bytes(bytes).to_s.freeze
   end
 
-  # Convert the ULID to UUIDv4 with setting ULID version and variants field
+  # Generate a UUIDv4-like string that sets the version and variants field.
+  # It may conform to the UUID specification, but it is irreversible with the source ULID and may conflict with some other ULIDs.
+  # You can specify `force` keyword argument to turn off the irreversible check
+  #
   # @raise [IrreversibleUUIDError] if the converted UUID cannot be reversible with the replacing above 2 fields
   # @see https://github.com/kachick/ruby-ulid/issues/76
   # @param [bool] force
