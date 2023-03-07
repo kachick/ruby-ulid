@@ -144,6 +144,25 @@ class TestUUID < Test::Unit::TestCase
     assert_equal(Encoding::US_ASCII, ulid.to_uuidv4.encoding)
   end
 
+  # @see https://github.com/kachick/ruby-ulid/issues/76 for further detail
+  def test_v4compatible_or_not
+    ulid = ULID.parse('2E63N1RV0MW8XNHAFCPQ1Z8E88')
+    assert_equal('4e30ea1c-6c14-e23b-58a9-ecb5c3f43908', ulid.to_uuidish)
+    assert_equal(ulid, ULID.from_uuidish(ulid.to_uuidish))
+
+    assert_raises(ULID::ParserError) do
+      ULID.from_uuidv4(ulid.to_uuidish)
+    end
+
+    assert_raises(ULID::IrreversibleUUIDError) do
+      ulid.to_uuidv4
+    end
+
+    assert_equal('4e30ea1c-6c14-423b-98a9-ecb5c3f43908', ulid.to_uuidv4(ignore_reversible: true))
+    assert_equal(ULID.parse('2E63N1RV0M88XSHAFCPQ1Z8E88'), ULID.from_uuidv4(ulid.to_uuidv4(ignore_reversible: true)))
+    assert_equal(ULID.from_uuidish(ulid.to_uuidv4(ignore_reversible: true)), ULID.from_uuidv4(ulid.to_uuidv4(ignore_reversible: true)))
+  end
+
   def test_to_uuidv4_for_boundary_example
     assert_equal('00000000-0000-4000-8000-000000000000', ULID.min.to_uuidv4(ignore_reversible: true))
     assert_equal('ffffffff-ffff-4fff-bfff-ffffffffffff', ULID.max.to_uuidv4(ignore_reversible: true))
