@@ -55,7 +55,7 @@ class TestFixedManyData < Test::Unit::TestCase
     assert_equal(ulid_strings.shuffle.sort, ulid_objects.shuffle.sort.map(&:to_s))
   end
 
-  # @TODO Update with https://github.com/kachick/ruby-ulid/pull/341 direction
+  # ref: https://github.com/kachick/ruby-ulid/pull/341
   def test_many_fixed_examples_from_uuidv4
     irreversible_ulid_to_uuid = {}
     EXAMPLES.each do |example|
@@ -67,7 +67,18 @@ class TestFixedManyData < Test::Unit::TestCase
       end
       assert_example(ulid, example)
     end
-    puts("#{irreversible_ulid_to_uuid.size}/#{EXAMPLES.size} patterns are not mapping to same ULID. Work in progress https://github.com/kachick/ruby-ulid/issues/76")
-    puts('Samples are below', irreversible_ulid_to_uuid.to_a.sample(5).to_h)
+    irreversible_rate = Rational(irreversible_ulid_to_uuid.size, EXAMPLES.size)
+    assert do
+      ((9/10r)...1).cover?(irreversible_rate)
+    end
+    irreversible_ulid_to_uuid.each_value do |original_encoded, _|
+      original_ulid = ULID.parse(original_encoded)
+
+      assert_raises(ULID::IrreversibleUUIDError) do
+        original_ulid.to_uuidv4
+      end
+
+      assert_equal(original_ulid, ULID.from_uuidish(original_ulid.to_uuidish))
+    end
   end
 end
