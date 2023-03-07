@@ -137,7 +137,7 @@ class TestUUID < Test::Unit::TestCase
     # The example value was taken from https://github.com/ahawker/ulid/tree/96bdb1daad7ce96f6db8c91ac0410b66d2e1c4c1#usage
     ulid = ULID.parse('09GF8A5ZRN9P1RYDVXV52VBAHS')
     assert_equal('0983d0a2-ff15-4d83-8f37-7dd945b5aa39', ulid.to_uuidv4)
-    assert_equal('0983d0a2-ff15-4d83-8f37-7dd945b5aa39', ulid.to_uuidv4(ignore_reversible: false))
+    assert_equal('0983d0a2-ff15-4d83-8f37-7dd945b5aa39', ulid.to_uuidv4(force: false))
     assert_equal(ulid.to_uuidv4, ulid.to_uuidv4)
     assert_not_same(ulid.to_uuidv4, ulid.to_uuidv4)
     assert_true(ulid.to_uuidv4.frozen?)
@@ -158,14 +158,14 @@ class TestUUID < Test::Unit::TestCase
       ulid.to_uuidv4
     end
 
-    assert_equal('4e30ea1c-6c14-423b-98a9-ecb5c3f43908', ulid.to_uuidv4(ignore_reversible: true))
-    assert_equal(ULID.parse('2E63N1RV0M88XSHAFCPQ1Z8E88'), ULID.from_uuidv4(ulid.to_uuidv4(ignore_reversible: true)))
-    assert_equal(ULID.from_uuidish(ulid.to_uuidv4(ignore_reversible: true)), ULID.from_uuidv4(ulid.to_uuidv4(ignore_reversible: true)))
+    assert_equal('4e30ea1c-6c14-423b-98a9-ecb5c3f43908', ulid.to_uuidv4(force: true))
+    assert_equal(ULID.parse('2E63N1RV0M88XSHAFCPQ1Z8E88'), ULID.from_uuidv4(ulid.to_uuidv4(force: true)))
+    assert_equal(ULID.from_uuidish(ulid.to_uuidv4(force: true)), ULID.from_uuidv4(ulid.to_uuidv4(force: true)))
   end
 
   def test_to_uuidv4_for_boundary_example
-    assert_equal('00000000-0000-4000-8000-000000000000', ULID.min.to_uuidv4(ignore_reversible: true))
-    assert_equal('ffffffff-ffff-4fff-bfff-ffffffffffff', ULID.max.to_uuidv4(ignore_reversible: true))
+    assert_equal('00000000-0000-4000-8000-000000000000', ULID.min.to_uuidv4(force: true))
+    assert_equal('ffffffff-ffff-4fff-bfff-ffffffffffff', ULID.max.to_uuidv4(force: true))
 
     assert_raises(ULID::IrreversibleUUIDError) do
       ULID.min.to_uuidv4

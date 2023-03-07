@@ -19,7 +19,7 @@ class TestFixedManyData < Test::Unit::TestCase
     assert_equal(example.inspect, ulid.inspect)
     assert_equal(example.timestamp, ulid.timestamp)
     assert_equal(example.randomness, ulid.randomness)
-    assert_equal(example.uuidv4, ulid.to_uuidv4(ignore_reversible: true))
+    assert_equal(example.uuidv4, ulid.to_uuidv4(force: true))
     assert_equal(example.to_time, ulid.to_time)
     assert_equal(example.octets, ulid.bytes)
 

@@ -510,11 +510,11 @@ class ULID
   # Convert the ULID to UUIDv4 with setting ULID version and variants field
   # @raise [IrreversibleUUIDError] if the converted UUID cannot be reversible with the replacing above 2 fields
   # @see https://github.com/kachick/ruby-ulid/issues/76
-  # @param [bool] ignore_reversible
+  # @param [bool] force
   # @return [String]
-  def to_uuidv4(ignore_reversible: false)
+  def to_uuidv4(force: false)
     v4 = UUID::Fields.forced_v4_from_bytes(bytes)
-    unless ignore_reversible
+    unless force
       uuidish = UUID::Fields.raw_from_bytes(bytes)
       raise(IrreversibleUUIDError) unless uuidish == v4
     end
