@@ -16,6 +16,9 @@ updates:
           - '1.31.2'
           # https://github.com/rubocop/rubocop/issues/11549
           - '1.45.0'
+      - dependency-name: 'rbs'
+        # https://github.com/soutaro/steep/issues/725#issuecomment-1455649161
+        update-types: ['version-update:semver-major']
   - package-ecosystem: 'bundler'
     directory: '/benchmark/compare_with_othergems/kachick'
     schedule:
