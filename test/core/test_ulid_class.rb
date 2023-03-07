@@ -22,6 +22,7 @@ class TestULIDClass < Test::Unit::TestCase
         MonotonicGenerator
         OverflowError
         ParserError
+        IrreversibleUUIDError
         RANDOMNESS_ENCODED_LENGTH
         TIMESTAMP_ENCODED_LENGTH
         UnexpectedError
@@ -57,6 +58,8 @@ class TestULIDClass < Test::Unit::TestCase
         decode_time
         valid_as_variant_format?
         parse_variant_format
+        from_uuidish
+        from_uuidv4
       ].sort,
       exposed_methods.sort
     )
@@ -65,9 +68,6 @@ class TestULIDClass < Test::Unit::TestCase
   def test_ensure_testing_environment
     assert_equal(Encoding::UTF_8, ''.encoding)
     assert_equal('EST', Time.now.zone)
-    assert_raise(NoMethodError) do
-      ULID.from_uuidv4('0983d0a2-ff15-4d83-8f37-7dd945b5aa39')
-    end
   end
 
   def test_frozen

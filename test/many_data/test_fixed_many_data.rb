@@ -2,7 +2,6 @@
 # frozen_string_literal: true
 
 require_relative('../helper')
-require_relative('../../lib/ulid/uuid')
 require_relative('fixtures/example')
 
 # https://github.com/kachick/ruby-ulid/issues/89
@@ -20,7 +19,7 @@ class TestFixedManyData < Test::Unit::TestCase
     assert_equal(example.inspect, ulid.inspect)
     assert_equal(example.timestamp, ulid.timestamp)
     assert_equal(example.randomness, ulid.randomness)
-    assert_equal(example.uuidv4, ulid.to_uuidv4)
+    assert_equal(example.uuidv4, ulid.to_uuidv4(force: true))
     assert_equal(example.to_time, ulid.to_time)
     assert_equal(example.octets, ulid.bytes)
 
@@ -56,19 +55,30 @@ class TestFixedManyData < Test::Unit::TestCase
     assert_equal(ulid_strings.shuffle.sort, ulid_objects.shuffle.sort.map(&:to_s))
   end
 
-  # Fix ME!
+  # ref: https://github.com/kachick/ruby-ulid/pull/341
   def test_many_fixed_examples_from_uuidv4
-    weird_uuid_by_ulid = {}
+    irreversible_ulid_to_uuid = {}
     EXAMPLES.each do |example|
       ulid = ULID.from_uuidv4(example.uuidv4)
-      assert_equal(example.uuidv4, ulid.to_uuidv4, 'Basically reversible...')
-      unless example.string == ulid.to_s # Why this happened...
-        weird_uuid_by_ulid[ulid.to_s] = [example.string, example.uuidv4]
+      assert_equal(example.uuidv4, ulid.to_uuidv4, 'Loading results should be same')
+      unless example.string == ulid.to_s
+        irreversible_ulid_to_uuid[ulid.to_s] = [example.string, example.uuidv4]
         next
       end
       assert_example(ulid, example)
     end
-    puts("All #{EXAMPLES.size} patterns `reversible`, but #{weird_uuid_by_ulid.size}/#{EXAMPLES.size} patterns are not mapping to same ULID... might relate to https://github.com/kachick/ruby-ulid/issues/76 ?")
-    puts('Samples are below', weird_uuid_by_ulid.to_a.sample(5).to_h)
+    irreversible_rate = Rational(irreversible_ulid_to_uuid.size, EXAMPLES.size)
+    assert do
+      ((9/10r)...1).cover?(irreversible_rate)
+    end
+    irreversible_ulid_to_uuid.each_value do |original_encoded, _|
+      original_ulid = ULID.parse(original_encoded)
+
+      assert_raises(ULID::IrreversibleUUIDError) do
+        original_ulid.to_uuidv4
+      end
+
+      assert_equal(original_ulid, ULID.from_uuidish(original_ulid.to_uuidish))
+    end
   end
 end

@@ -9,6 +9,7 @@ require_relative('ulid/version')
 require_relative('ulid/errors')
 require_relative('ulid/crockford_base32')
 require_relative('ulid/utils')
+require_relative('ulid/uuid')
 require_relative('ulid/monotonic_generator')
 
 # @see https://github.com/ulid/spec
@@ -56,7 +57,8 @@ class ULID
     :SCANNING_PATTERN,
     :TIME_FORMAT_IN_INSPECT,
     :RANDOM_INTEGER_GENERATOR,
-    :OCTETS_LENGTH
+    :OCTETS_LENGTH,
+    :UUID
   )
 
   private_class_method(:new, :allocate)
@@ -339,6 +341,20 @@ class ULID
     end
   end
 
+  # @param [String, #to_str] uuidish
+  # @return [ULID]
+  # @raise [ParserError] if the given format is not correct for UUID`ish` format
+  def self.from_uuidish(uuidish)
+    from_integer(UUID.parse_any_to_int(uuidish))
+  end
+
+  # @param [String, #to_str] uuid
+  # @return [ULID]
+  # @raise [ParserError] if the given format is not correct for UUIDv4 specs
+  def self.from_uuidv4(uuid)
+    from_integer(UUID.parse_v4_to_int(uuid))
+  end
+
   attr_reader(:milliseconds, :entropy, :encoded)
   protected(:encoded)
 
@@ -483,6 +499,32 @@ class ULID
   # @return [self]
   def to_ulid
     self
+  end
+
+  # Generate a UUID-like string that does not set the version and variants field.
+  # It means wrong in UUIDv4 spec, but reversible
+  #
+  # @return [String]
+  def to_uuidish
+    UUID::Fields.raw_from_bytes(bytes).to_s.freeze
+  end
+
+  # Generate a UUIDv4-like string that sets the version and variants field.
+  # It may conform to the UUID specification, but it is irreversible with the source ULID and may conflict with some other ULIDs.
+  # You can specify `force` keyword argument to turn off the irreversible check
+  #
+  # @raise [IrreversibleUUIDError] if the converted UUID cannot be reversible with the replacing above 2 fields
+  # @see https://github.com/kachick/ruby-ulid/issues/76
+  # @param [bool] force
+  # @return [String]
+  def to_uuidv4(force: false)
+    v4 = UUID::Fields.forced_v4_from_bytes(bytes)
+    unless force
+      uuidish = UUID::Fields.raw_from_bytes(bytes)
+      raise(IrreversibleUUIDError) unless uuidish == v4
+    end
+
+    v4.to_s.freeze
   end
 
   # @return [ULID]

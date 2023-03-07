@@ -29,6 +29,8 @@ class TestULIDInstance < Test::Unit::TestCase
     to_ulid
     dup
     clone
+    to_uuidish
+    to_uuidv4
   ].freeze
 
   ULID_RETURNING_METHODS = %i[
@@ -48,9 +50,6 @@ class TestULIDInstance < Test::Unit::TestCase
   def test_ensure_testing_environment
     assert_equal(Encoding::UTF_8, ''.encoding)
     assert_equal('EST', Time.now.zone)
-    assert_raise(NoMethodError) do
-      ULID.sample.to_uuidv4
-    end
   end
 
   def test_exposed_methods

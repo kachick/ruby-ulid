@@ -12,7 +12,6 @@ class ULID < Object
   PATTERN_WITH_CROCKFORD_BASE32_SUBSET: Regexp
   STRICT_PATTERN_WITH_CROCKFORD_BASE32_SUBSET: Regexp
   SCANNING_PATTERN: Regexp
-  UUIDV4_PATTERN: Regexp
   MIN: ULID
   MAX: ULID
   include Comparable
@@ -30,6 +29,34 @@ class ULID < Object
   end
 
   class UnexpectedError < Error
+  end
+
+  class IrreversibleUUIDError < Error
+  end
+
+  module UUID
+    BASE_PATTERN: Regexp
+    V4_PATTERN: Regexp
+
+    def self.parse_any_to_int: (String) -> Integer
+    def self.parse_v4_to_int: (String) -> Integer
+
+    class Fields < Struct[Integer]
+      attr_accessor time_low: Integer
+      attr_accessor time_mid: Integer
+      attr_accessor time_hi_and_version: Integer
+      attr_accessor clock_seq_hi_and_res: Integer
+      attr_accessor clk_seq_low: Integer
+      attr_accessor node: Integer
+      def self.raw_from_bytes: (octets) -> Fields
+      def self.forced_v4_from_bytes: (octets) -> Fields
+
+      def values: -> Array[Integer]
+
+      private
+
+      def initialize: (?time_low: Integer, ?time_mid: Integer, ?time_hi_and_version: Integer, ?clock_seq_hi_and_res: Integer, ?clk_seq_low: Integer, ?node: Integer) -> void
+    end
   end
 
   # Private module
@@ -71,7 +98,7 @@ class ULID < Object
   class MonotonicGenerator
     include MonitorMixin
 
-    # Returned value is `basically not` Thread-safety
+    # Returned value is `basically not` Thread-safety\
     # If you want to keep Thread-safety, keep to call {#generate} only in same {#synchronize} block
     #
     # ```ruby
@@ -83,14 +110,14 @@ class ULID < Object
     # ```
     attr_reader last: ULID | nil
 
-    # See [How to keep `Sortable` even if in same timestamp](https://github.com/kachick/ruby-ulid#how-to-keep-sortable-even-if-in-same-timestamp)
+    # See [How to keep `Sortable` even if in same timestamp](https://github.com/kachick/ruby-ulid#how-to-keep-sortable-even-if-in-same-timestamp)\
     # The `Thread-safety` is implemented with [Monitor](https://bugs.ruby-lang.org/issues/16255)
     def generate: (?moment: moment) -> ULID
 
     # Just providing similar api as `ULID.generate` and `ULID.encode` relation. No performance benefit exists in monotonic generator's one.
     def encode: (?moment: moment) -> String
 
-    # Returned value is `basically not` Thread-safety
+    # Returned value is `basically not` Thread-safety\
     # If you want to keep Thread-safety, keep to call {#generate} only in same {#synchronize} block
     #
     # ```ruby
@@ -156,12 +183,13 @@ class ULID < Object
   #
   def self.generate: (?moment: moment, ?entropy: Integer) -> ULID
 
-  # Retuns encoded and normalzied String.
-  # It has same arguments signatures as `.generate`. So can be used for just ID creation usecases without needless object creation.
+  # Retuns encoded and normalzied String.\
+  # It has same arguments signatures as `.generate`\
+  # So can be used for just ID creation usecases without needless object creation.
   #
   def self.encode: (?moment: moment, ?entropy: Integer) -> String
 
-  # Shorthand of `ULID.generate(moment: Time)`
+  # Shorthand of `ULID.generate(moment: Time)`\
   # See also [ULID.generate](https://kachick.github.io/ruby-ulid/ULID.html#generate-class_method)
   #
   # ```ruby
@@ -175,7 +203,8 @@ class ULID < Object
   # ```
   def self.at: (Time time) -> ULID
 
-  # `ULID` can be element of the `Range`. If you generated the IDs in monotonic generator, ID based filtering is easy and reliable
+  # `ULID` can be element of the `Range`.\
+  # If you generated the IDs in monotonic generator, ID based filtering is easy and reliable
   #
   # ```ruby
   # include_end = ulid1..ulid2
@@ -225,7 +254,7 @@ class ULID < Object
 
   type time_in = String | Integer | nil
 
-  # Return Time instance from encoded String.
+  # Return Time instance from encoded String.\
   # See also `ULID.encode` for similar purpose.
   #
   # ```ruby
@@ -251,18 +280,35 @@ class ULID < Object
   # See also [ulid/spec#57](https://github.com/ulid/spec/pull/57) and [ulid/spec#3](https://github.com/ulid/spec/issues/3)
   def self.parse_variant_format: (_ToStr string) -> ULID
 
-  # ```ruby
-  # # Currently experimental feature, so needed to load the extension.
-  # require 'ulid/uuid'
+  # Load a UUID-like string without checking version and variants.
   #
-  # # Basically reversible
-  # ulid = ULID.from_uuidv4('0983d0a2-ff15-4d83-8f37-7dd945b5aa39')
-  # #=> ULID(2301-07-10 00:28:28.821 UTC: 09GF8A5ZRN9P1RYDVXV52VBAHS)
-  # ulid.to_uuidv4 #=> "0983d0a2-ff15-4d83-8f37-7dd945b5aa39"
+  # ```ruby
+  # ULID.from_uuidish('123e4567-e89b-12d3-a456-426614174000')
+  # #=> ULID(2605-08-20 10:28:29.979 UTC: 0J7S2PFT4V2B9T8NJ2CRA1EG00)
   # ```
   #
-  # See also [Why this is experimental?](https://github.com/kachick/ruby-ulid/issues/76)
+  # See also [ULID.from_uuidv4]
+  def self.from_uuidish: (String uuidish) -> ULID
+
+  # Load a UUIDv4 string with checking version and variants.
+  #
+  # ```ruby
+  # ULID.from_uuidv4('0983d0a2-ff15-4d83-8f37-7dd945b5aa39')
+  # #=> ULID(2301-07-10 00:28:28.821 UTC: 09GF8A5ZRN9P1RYDVXV52VBAHS)
+  # ULID.from_uuidv4('123e4567-e89b-12d3-a456-426614174000')
+  # #=> ULID::ParserError
+  # ```
+  #
+  # See also [ULID.from_uuidish]
   def self.from_uuidv4: (String uuid) -> ULID
+
+  # Load integer as ULID
+  #
+  # ```ruby
+  # ulid = ULID.parse('01GTXYCWNDKRYH14DBZ77TRSD7')
+  # ULID.from_integer(ulid.to_i)
+  # #=> ULID(2023-03-07 11:48:07.469 UTC: 01GTXYCWNDKRYH14DBZ77TRSD7)
+  # ```
   def self.from_integer: (Integer integer) -> ULID
 
   # Returns termination values for ULID spec.
@@ -323,7 +369,8 @@ class ULID < Object
   # # ULID(2665-03-16 14:50:22.724 UTC: 0KYFW9DWM4CEGFNTAC6YFAVVJ6)]
   # ```
   #
-  # You can specify a range object for the timestamp restriction, See also [ULID.range](https://kachick.github.io/ruby-ulid/ULID.html#range-class_method).
+  # You can specify a range object for the timestamp restriction.\
+  # See also [ULID.range](https://kachick.github.io/ruby-ulid/ULID.html#range-class_method)
   #
   # ```ruby
   # ulid1 = ULID.parse('01F4A5Y1YAQCYAYCTC7GRMJ9AA') #=> ULID(2021-04-27 17:27:22.826 UTC: 01F4A5Y1YAQCYAYCTC7GRMJ9AA)
@@ -467,7 +514,7 @@ class ULID < Object
   # #=> true
   # ```
   #
-  # To be precise, this sorting unaffected with `case sensitive or not` and might handle [ulid/spec#57](https://github.com/ulid/spec/pull/57) in future.
+  # To be precise, this sorting unaffected with `case sensitive or not` and might handle [ulid/spec#57](https://github.com/ulid/spec/pull/57) in future.\
   # So preferable than `lexicographically sortable` in actual case.
   #
   # This returns -1 | 0 | 1 for ULIDs. However defined as returning Integer. It is caused on ruby/rbs current definition.
@@ -491,7 +538,7 @@ class ULID < Object
           | (untyped other) -> false
   alias == eql?
 
-  # Return `true` for same value of ULID, variant formats of strings, same Time in ULID precision(msec).
+  # Return `true` for same value of ULID, variant formats of strings, same Time in ULID precision(msec).\
   # Do not consider integer, octets and partial strings, then returns `false`.
   #
   # ```ruby
@@ -535,20 +582,7 @@ class ULID < Object
   def octets: -> octets
   alias bytes octets
 
-  # ```ruby
-  # # Currently experimental feature, so needed to load the extension.
-  # require 'ulid/uuid'
-  #
-  # # Basically reversible
-  # ulid = ULID.from_uuidv4('0983d0a2-ff15-4d83-8f37-7dd945b5aa39')
-  # #=> ULID(2301-07-10 00:28:28.821 UTC: 09GF8A5ZRN9P1RYDVXV52VBAHS)
-  # ulid.to_uuidv4 #=> "0983d0a2-ff15-4d83-8f37-7dd945b5aa39"
-  # ```
-  #
-  # See also [Why this is experimental?](https://github.com/kachick/ruby-ulid/issues/76)
-  def to_uuidv4: -> String
-
-  # Returns next(successor) ULID.
+  # Returns next(successor) ULID.\
   # Especially `ULID#succ` makes it possible `Range[ULID]#each`.
   #
   # NOTE: But basically `Range[ULID]#each` should not be used, incrementing 128 bits IDs are not reasonable operation in most case
@@ -581,10 +615,41 @@ class ULID < Object
   # Returns `self`
   def to_ulid: -> self
 
+  # Generate a UUID-like string that does not set the version and variants field.\
+  # It means wrong in UUIDv4 spec, but reversible
+  #
+  # ```ruby
+  # ulid = ULID.parse('01GTXYCWNDKRYH14DBZ77TRSD7')
+  # ulid.to_uuidish #-> '0186bbe6-72ad-9e3d-1091-abf9cfac65a7'
+  # ULID.from_uuidish(ulid.to_uuidish) #=> ULID(2023-03-07 11:48:07.469 UTC: 01GTXYCWNDKRYH14DBZ77TRSD7)
+  # ```
+  #
+  # See also [ULID.from_uuidish], [ULID#to_uuidv4], [ulid/spec#64](https://github.com/ulid/spec/issues/64)
+  def to_uuidish: -> String
+
+  # Generate a UUIDv4-like string that sets the version and variants field.\
+  # It may conform to the UUID specification, but it is irreversible with the source ULID and may conflict with some other ULIDs.\
+  # You can specify `force` keyword argument to turn off the irreversible check
+  #
+  # ```ruby
+  # uuid = '0983d0a2-ff15-4d83-8f37-7dd945b5aa39'
+  # ulid = ULID.from_uuidv4(uuid)
+  # ulid.to_uuidv4 #=> 0983d0a2-ff15-4d83-8f37-7dd945b5aa39
+  # ```
+  #
+  # ```ruby
+  # ulid = ULID.from_uuidish('0186bbe6-72ad-9e3d-1091-abf9cfac65a7')
+  # ulid.to_uuidv4 #=> ULID::IrreversibleUUIDError
+  # ulid.to_uuidv4(force: true) #=> '0186bbe6-72ad-4e3d-9091-abf9cfac65a7'
+  # ```
+  #
+  # See also [ULID.from_uuidv4], [ULID#to_uuidish], [ulid/spec#64](https://github.com/ulid/spec/issues/64)
+  def to_uuidv4: (?force: boolish) -> String
+
   # Returns same ID with different Ruby object.
   def dup: -> ULID
 
-  # Returns same ID with different Ruby object.::Array::_Pattern
+  # Returns same ID with different Ruby object.::Array::_Pattern\
   # `freeze` keyarg is just provided for standardized API with `Object#clone`, however it accepts only `true`.
   def clone: (?freeze: true) -> ULID
 

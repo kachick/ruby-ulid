@@ -14,20 +14,14 @@ end
 
 task(default: [:test])
 
-basic_test_tasks = %i[test_core test_experimental]
 desc('Keep light weight!')
-task(test: basic_test_tasks)
+task(test: :test_core)
 
 desc('Contains heavy tests. So basically checked in CI only')
-task(test_all: basic_test_tasks | %i[test_many_data test_concurrency test_longtime])
+task(test_all: %i[test_core test_many_data test_concurrency test_longtime])
 
 Rake::TestTask.new(:test_core) do |tt|
   tt.pattern = 'test/core/**/test_*.rb'
-  tt.warning = true
-end
-
-Rake::TestTask.new(:test_experimental) do |tt|
-  tt.pattern = 'test/experimental/**/test_*.rb'
   tt.warning = true
 end
 

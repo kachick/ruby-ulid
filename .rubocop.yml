@@ -652,6 +652,8 @@ Style/Strip:
 
 Style/StructInheritance:
   Enabled: true
+  Exclude:
+    - 'lib/ulid/uuid.rb'
 
 Style/SwapValues:
   Enabled: false
@@ -829,7 +831,8 @@ Naming/FileName:
     - '**.md'
 
 Naming/ConstantName:
-  Enabled: true
+  # Disabling because we can use the constant assignment syntax for class objects
+  Enabled: false
 
 Naming/ClassAndModuleCamelCase:
   Enabled: true
