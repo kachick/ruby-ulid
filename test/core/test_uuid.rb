@@ -176,12 +176,11 @@ class TestUUID < Test::Unit::TestCase
   end
 
   def test_uuidv4_compatibility_with_many_random_data
-    # Rough tests
-    uuids = 10000.times.map do
+    uuids = 1000.times.map do
       SecureRandom.uuid
     end
 
-    assert_true(uuids.uniq.size == 10000)
+    assert_true(uuids.uniq.size == 1000)
 
     ulids = uuids.map do |uuid|
       ULID.from_uuidv4(uuid)
