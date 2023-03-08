@@ -473,6 +473,7 @@ class ULID < Object
   def self.scan:  (_ToStr string) -> Enumerator[self, singleton(ULID)]
                 | (_ToStr string) { (ULID ulid) -> void } -> singleton(ULID)
 
+  # Returns nil if given object is not a ULID
   def self.try_convert: (_ToULID) -> ULID
                       | (untyped) -> nil
 
@@ -524,6 +525,8 @@ class ULID < Object
   def <=>: (ULID other) -> Integer
          | (untyped other) -> nil
 
+  # Returns human readable strings that used by Kernel.#p
+  #
   # ```ruby
   # ulid = ULID.generate
   # ulid.inspect #=> "ULID(2021-04-27 17:27:22.826 UTC: 01F4A5Y1YAQCYAYCTC7GRMJ9AA)"
@@ -565,6 +568,8 @@ class ULID < Object
   # ```
   def to_time: (?in: time_in) -> Time
 
+  # Returns timestamp(prefix) part of encoded ULID
+  #
   # ```ruby
   # ulid = ULID.generate
   # #=> ULID(2021-04-27 17:27:22.826 UTC: 01F4A5Y1YAQCYAYCTC7GRMJ9AA)
@@ -572,6 +577,8 @@ class ULID < Object
   # ```
   def timestamp: -> String
 
+  # Returns randomness(suffix) part of encoded ULID
+  #
   # ```ruby
   # ulid = ULID.generate
   # #=> ULID(2021-04-27 17:27:22.826 UTC: 01F4A5Y1YAQCYAYCTC7GRMJ9AA)
@@ -579,6 +586,12 @@ class ULID < Object
   # ```
   def randomness: -> String
 
+  # Returns 6 + 10 octets(bytes) represented with Array[Integer]
+  #
+  # ```ruby
+  # ulid = ULID.parse('01F4A5Y1YAQCYAYCTC7GRMJ9AA')
+  # ulid.octets #=> [1, 121, 20, 95, 7, 202, 187, 60, 175, 51, 76, 60, 49, 73, 37, 74]
+  # ```
   def octets: -> octets
 
   # Returns next(successor) ULID.\
