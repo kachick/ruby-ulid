@@ -38,15 +38,15 @@ Instead, herein is proposed ULID:
 
 ### Install
 
-Require Ruby 3.1 or later
+Tested only in the last 2 Rubies. So you need Ruby 3.1 or higher.
 
-Add this line in your Gemfile.
+Add this line to your `Gemfile`.
 
 ```ruby
 gem('ruby-ulid', '~> 0.7.0')
 ```
 
-And load it
+And load it.
 
 ```ruby
 require 'ulid'
@@ -69,7 +69,7 @@ ulid = ULID.generate #=> ULID(2021-04-27 17:27:22.826 UTC: 01F4A5Y1YAQCYAYCTC7GR
 ulid = ULID.parse('01F4A5Y1YAQCYAYCTC7GRMJ9AA') #=> ULID(2021-04-27 17:27:22.826 UTC: 01F4A5Y1YAQCYAYCTC7GRMJ9AA)
 ```
 
-It is helpful to inspect.
+It has inspector methods.
 
 ```ruby
 ulid.to_time #=> 2021-04-27 17:27:22.826 UTC
@@ -118,7 +118,7 @@ Snapshot on 0.7.0 is below
 
 You can see further detail at [Benchmark](https://github.com/kachick/ruby-ulid/wiki/Benchmark).
 
-### Sortable with the timestamp
+### Sortable by timestamp
 
 ULIDs are sortable when they are generated in different timestamp with milliseconds precision.
 
@@ -131,7 +131,7 @@ ulids.uniq(&:to_time).size #=> 1000
 ulids.sort == ulids #=> true
 ```
 
-Basic generator prefers `randomness`, it does not guarantee `sortable` for same milliseconds ULIDs.
+The basic generator prefers `randomness`, the results in the same milliseconds are not sortable.
 
 ```ruby
 ulids = 10000.times.map do
@@ -143,8 +143,9 @@ ulids.sort == ulids #=> false
 
 ### How to keep `Sortable` even if in same timestamp
 
-If you want to prefer `sortable`, Use `MonotonicGenerator` instead. It is called as [Monotonicity](https://github.com/ulid/spec/tree/d0c7170df4517939e70129b4d6462cc162f2d5bf#monotonicity) on the spec.\
-(Though it starts with new random value when changed the timestamp)
+If you prefer `sortability`, you can use `MonotonicGenerator` instead.\
+It is referred to as [Monotonicity](https://github.com/ulid/spec/tree/d0c7170df4517939e70129b4d6462cc162f2d5bf#monotonicity) in the spec.\
+(Although it starts with a new random value when the timestamp is changed)
 
 ```ruby
 monotonic_generator = ULID::MonotonicGenerator.new
@@ -364,8 +365,8 @@ See also [ulid/spec#64](https://github.com/ulid/spec/issues/64) for further deta
 
 For now, this gem provides 4 methods for UUIDs.
 
-- Reversibility is preferred: ULID.from_uuidish, ULID.to_uuidish
-- Prefer UUIDv4 specification: ULID.from_uuidv4, ULID.to_uuidv4
+- Reversibility is preferred: `ULID.from_uuidish`, `ULID.to_uuidish`
+- Prefer UUIDv4 specification: `ULID.from_uuidv4`, `ULID.to_uuidv4`
 
 ```ruby
 # All UUIDv4 IDs can be reversible even if converted to ULID
