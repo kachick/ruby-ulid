@@ -124,3 +124,7 @@ end
 task(:dprint) do
   sh('dprint check --config dprint-ci.json')
 end
+
+task(:update) do
+  sh('dprint config update --config dprint-ci.json')
+end
