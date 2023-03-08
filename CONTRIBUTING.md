@@ -116,7 +116,8 @@ CI includes other heavy tests, signature check, lint, if you want to check them 
 But please don't hesitate to send PRs even if something fail in this command!
 
 ```console
-$ bundle exec rake simulate_ci
+$ bundle exec rake # mostly, lightweight
+$ bundle exec rake simulate_ci # all, heavy
 $ echo $?
 0
 ```

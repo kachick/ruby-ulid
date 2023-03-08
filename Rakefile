@@ -12,7 +12,7 @@ else
   RuboCop::RakeTask.new
 end
 
-task(default: [:test])
+multitask(default: %i[test signature_all rubocop dprint])
 
 desc('Keep light weight!')
 task(test: :test_core)
@@ -45,7 +45,7 @@ multitask(rbs: %i[signature:validate_rbs signature:check_rbs_false_positive])
 multitask(signature_all: %i[signature:validate_yard rbs])
 
 desc('Simulate CI results in local machine as possible')
-multitask(simulate_ci: %i[test_all signature_all rubocop])
+multitask(simulate_ci: %i[test_all signature_all rubocop dprint])
 
 namespace(:signature) do
   desc('Validate `rbs` syntax, this should be passed')
@@ -119,4 +119,8 @@ task(:view_packaging_files) do
     sh('tree -I *\.gem')
   end
   sh('rm -rf ./pkg')
+end
+
+task(:dprint) do
+  sh('dprint check --config dprint-ci.json')
 end
