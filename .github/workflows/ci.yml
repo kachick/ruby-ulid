@@ -34,10 +34,9 @@ jobs:
         os: ['ubuntu-latest']
         # Due to https://github.com/actions/runner/issues/849, we have to use quotes for 'n.0'
         ruby: ['head', '3.2', '3.1']
-        # # Disabled macos runner. This gem should work because of it is written in pure ruby :). And the runner is too slow and often be stacked.
-        # include:
-        #   - os: 'macos-latest'
-        #     ruby: '3.2'
+        include:
+          - os: 'macos-latest-xl'
+            ruby: '3.2'
         # # Windows CI takes longtime. It has been succeeded in #223, it is enough for now.
         # - os: 'windows-latest'
         #   ruby: '3.2'
