@@ -11,7 +11,7 @@ group(:development, :test) do
 end
 
 group(:development) do
-  gem('debug', '~> 1.7.2', require: false)
+  gem('debug', '~> 1.8.0', require: false)
   gem('rbs', '~> 3.1.0', require: false)
   gem('steep', '~> 1.4.0', require: false)
   gem('benchmark-ips', '~> 2.12.0', require: false)
