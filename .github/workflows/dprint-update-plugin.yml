@@ -1,0 +1,39 @@
+name: Update dprint plugins
+on:
+  push:
+    branches: ['main']
+    paths:
+      - '.github/workflows/dprint-update-plugin.yml'
+      - 'dprint-ci.json'
+  schedule:
+    - cron: '0 17 * * *'
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+# Allow one concurrent updates
+concurrency:
+  group: 'dprint'
+  cancel-in-progress: true
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - id: update-dprint-plugins
+        uses: kachick/action-update-dprint-plugins@v1-beta
+        with:
+          base-branch: 'main'
+          github-token: '${{ secrets.GITHUB_TOKEN }}'
+          config-path: 'dprint-ci.json'
+      # Enable `Allow auto-merge` in your repository settings if you need following steps
+      - name: Merge sent PR
+        # Merge if `dprint fmt` does not make any diff even after updating plugins
+        if: ${{ steps.update-dprint-plugins.outputs.pr_url != '' && steps.update-dprint-plugins.outputs.fmt == 'false' }}
+        run: gh pr merge --auto --squash --delete-branch "${{ steps.update-dprint-plugins.outputs.pr_url }}"
+        env:
+          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'

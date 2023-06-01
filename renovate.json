@@ -1,16 +1,7 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "github>kachick/renovate-config-dprint:plugins"
-  ],
   "labels": ["dependencies", "renovate"],
-  "enabledManagers": ["nix", "regex"],
-  "packageRules": [
-    {
-      "extends": ["schedule:weekly"],
-      "matchPackagePrefixes": ["dprint"]
-    }
-  ],
+  "enabledManagers": ["nix"],
   "nix": {
     "enabled": true
   }
