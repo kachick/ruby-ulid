@@ -9,6 +9,10 @@ updates:
     schedule:
       interval: 'weekly'
     versioning-strategy: increase
+    groups:
+      rubocop-dependencies:
+        patterns:
+          - '*rubocop*'
     ignore:
       - dependency-name: 'rubocop'
         versions:
