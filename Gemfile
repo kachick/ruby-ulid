@@ -6,7 +6,7 @@ gemspec
 
 group(:development, :test) do
   gem('rake', '~> 13.0.6')
-  gem('irb', '~> 1.6.4')
+  gem('irb', '~> 1.7.0')
   gem('irb-power_assert', '0.1.1')
 end
 
