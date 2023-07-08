@@ -32,7 +32,6 @@ jobs:
       - uses: actions/checkout@v3
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.2'
           bundler-cache: true # runs 'bundle install' and caches installed gems automatically
       - run: bundle exec rake rbs
   yard:
@@ -42,6 +41,5 @@ jobs:
       - uses: actions/checkout@v3
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.2'
           bundler-cache: true # runs 'bundle install' and caches installed gems automatically
       - run: bundle exec rake signature:validate_yard
