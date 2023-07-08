@@ -8,7 +8,7 @@ Welcome all of the contributions!
 
 ## Setup
 
-Needs your ruby, which is a supported version, and and some external tools for development.\
+Needs your ruby, which is a supported version, and some external tools for development.\
 Author is using [Nix](https://nixos.org/), and put the [definition](flake.nix).
 
 ```console
