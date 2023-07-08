@@ -11,6 +11,7 @@
     "**/*lock.json",
     "docs",
     "doc",
-    "steep_expectations.yml"
+    "steep_expectations.yml",
+    "vendor"
   ]
 }

@@ -36,4 +36,4 @@ jobs:
       - name: Test with external depdendencies
         run: nix develop --command bundle exec rake check_non_ruby
       - name: Test with Ruby
-        run: nix develop --command bundle exec rake simulate_ci
+        run: nix develop --command bundle exec rake
