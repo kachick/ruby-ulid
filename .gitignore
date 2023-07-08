@@ -60,8 +60,9 @@ benchmark/compare_with_othergems/*/vendor/
 # .rubocop-https?--*
 
 *.lock
+!flake.lock
+.direnv
 
 .DS_Store
 
-.ruby-version
 .tool-versions
