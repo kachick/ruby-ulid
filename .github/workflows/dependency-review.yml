@@ -4,6 +4,8 @@ on:
     paths:
       - '.github/workflows/dependency-review.yml'
       - 'Gemfile'
+      - '**.nix'
+      - 'flake.*'
 
 permissions:
   contents: read
