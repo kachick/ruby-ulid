@@ -1,0 +1,38 @@
+name: CI - Nix
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/ci-nix.yml'
+      - '**.nix'
+      - 'flake.*'
+      - '.ruby-version'
+      - 'dprint.json'
+  pull_request:
+    paths:
+      - '.github/workflows/ci-nix.yml'
+      - '**.nix'
+      - 'flake.*'
+      - '.ruby-version'
+      - 'dprint.json'
+  schedule:
+    # About JST 8:00
+    - cron: '0 17 * * *'
+  workflow_dispatch:
+
+jobs:
+  tasks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v3
+      - uses: DeterminateSystems/nix-installer-action@v4
+      - uses: DeterminateSystems/magic-nix-cache-action@v2
+      - run: nix flake check
+      - run: nix develop --command bundle install
+      - name: Log current versions
+        run: nix develop --command bundle exec rake inspect_dependencies
+      - name: Test with external depdendencies
+        run: nix develop --command bundle exec rake check_non_ruby
+      - name: Test with Ruby
+        run: nix develop --command bundle exec rake simulate_ci

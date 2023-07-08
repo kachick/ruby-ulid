@@ -128,3 +128,17 @@ end
 task(:update) do
   sh('dprint config update --config dprint-ci.json')
 end
+
+desc 'Print dependencies'
+task :inspect_dependencies do
+  sh 'ruby --version'
+  sh 'dprint --version'
+  sh 'tree --version'
+  sh 'actionlint --version'
+end
+
+desc 'Tests except ruby'
+task :check_non_ruby do
+  sh 'dprint check'
+  sh 'actionlint'
+end
