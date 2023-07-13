@@ -122,11 +122,11 @@ task(:view_packaging_files) do
 end
 
 task(:dprint) do
-  sh('dprint check --config dprint-ci.json')
+  sh('dprint check')
 end
 
 task(:update) do
-  sh('dprint config update --config dprint-ci.json')
+  sh('dprint config update')
 end
 
 desc 'Print dependencies'
