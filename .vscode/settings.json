@@ -3,13 +3,5 @@
   "editor.formatOnSave": true,
   "[nix]": {
     "editor.defaultFormatter": "jnoortheen.nix-ide"
-  },
-  "cSpell.words": [
-    "abachman",
-    "kwargs",
-    "nixpkgs",
-    "Undocumentable",
-    "unshareable",
-    "uuidish"
-  ]
+  }
 }

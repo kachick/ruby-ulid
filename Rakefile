@@ -134,12 +134,14 @@ task :inspect_dependencies do
   sh('ruby --version')
   sh('dprint --version')
   sh('tree --version')
+  sh('typos --version')
   sh('actionlint --version')
 end
 
 desc 'Tests except ruby'
 task :check_non_ruby do
   Rake::Task['dprint'].invoke
+  sh('typos')
   sh('actionlint')
   sh('nixpkgs-fmt --check ./*.nix')
 end
