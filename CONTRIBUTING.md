@@ -35,7 +35,7 @@ Providing 2 config files. For the purpose below
 
 ## Rubocop
 
-Using rubocop as a formatter. So recommend to execute it with servermode before editting code to reduce time.
+Using rubocop as a formatter. So recommend to execute it with servermode before editing code to reduce time.
 
 ```console
 $ bundle exec rubocop --start-server

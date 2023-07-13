@@ -2,7 +2,7 @@
   "recommendations": [
     "editorconfig.editorconfig",
     "github.vscode-github-actions",
-    "streetsidesoftware.code-spell-checker",
+    "tekumara.typos-vscode",
     "koichisasada.vscode-rdbg",
     "soutaro.steep-vscode",
     "soutaro.rbs-syntax",
