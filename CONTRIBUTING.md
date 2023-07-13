@@ -21,34 +21,23 @@ $ bundle install || bundle update
 
 ## Dprint
 
-Using [dprint](https://dprint.dev/) as below
+Using [dprint](https://dprint.dev/) for common formatter except ruby.
 
 ```console
-$ dprint --config dprint-ci.json check
-$ dprint --config dprint-ci.json fmt
+$ dprint check
+$ dprint fmt
+...
 ```
-
-Providing 2 config files. For the purpose below
-
-- [dprint-ci.json](dprint-ci.json) - Except ruby for faster run
-- [dprint.json](dprint.json) - Includes rubocop integration. Just using in vscode
 
 ## Rubocop
 
-Using rubocop as a formatter. So recommend to execute it with servermode before editing code to reduce time.
+Using rubocop as a ruby formatter.
 
 ```console
-$ bundle exec rubocop --start-server
+$ bundle exec rubocop
+$ bundle exec rubocop --autocorrect
+...
 ```
-
-Vscode tasks does not include it because of executed server process will exists even after closing vscode.\
-Please manually kill it as below.
-
-```console
-$ bundle exec rubocop --stop-server
-```
-
-See [microsoft/vscode#65986](https://github.com/microsoft/vscode/issues/65986) for further detail.
 
 ## Touch the development version with REPL
 

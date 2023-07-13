@@ -28,7 +28,6 @@ jobs:
         with:
           # Keep same version as *.nix
           dprint-version: '0.36.1'
-          config-path: 'dprint-ci.json'
 
   typos:
     timeout-minutes: 15
