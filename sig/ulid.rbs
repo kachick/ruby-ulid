@@ -147,7 +147,7 @@ class ULID < Object
   @integer: Integer
   @encoded: String
 
-  # Retuns a ULID
+  # Returns a ULID
   #
   # They are sortable when generated in different timestamp with milliseconds precision
   #
@@ -183,7 +183,7 @@ class ULID < Object
   #
   def self.generate: (?moment: moment, ?entropy: Integer) -> ULID
 
-  # Retuns encoded and normalzied String.\
+  # Returns encoded and normalzied String.\
   # It has same arguments signatures as `.generate`\
   # So can be used for just ID creation usecases without needless object creation.
   #
