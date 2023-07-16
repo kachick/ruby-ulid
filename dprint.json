@@ -19,6 +19,6 @@
   "plugins": [
     "https://plugins.dprint.dev/json-0.17.4.wasm",
     "https://plugins.dprint.dev/markdown-0.15.3.wasm",
-    "https://plugins.dprint.dev/prettier-0.26.1.json@fdbe31f6aecd24f9d6b924214710a6766050d03146163b4e241e6056b2462f2e"
+    "https://plugins.dprint.dev/prettier-0.26.6.json@0118376786f37496e41bb19dbcfd1e7214e2dc859a55035c5e54d1107b4c9c57"
   ]
 }
