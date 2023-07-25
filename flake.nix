@@ -15,7 +15,7 @@
           inherit system;
         };
       in
-      {
+      rec {
         devShells.default = with pkgs;
           mkShell {
             buildInputs = [
@@ -28,5 +28,36 @@
               actionlint
             ];
           };
-      });
+
+        packages.ruby-ulid = pkgs.stdenv.mkDerivation
+          {
+            name = "ruby-ulid";
+            src = self;
+            # https://discourse.nixos.org/t/adding-runtime-dependency-to-flake/27785
+            buildInputs = with pkgs; [
+              makeWrapper
+            ];
+            installPhase = ''
+              mkdir -p $out/bin
+              cp -rf ./lib $out
+              install -t $out/bin bin/pure-console.rb
+              makeWrapper $out/bin/pure-console.rb $out/bin/console \
+                --prefix PATH : ${nixpkgs.lib.makeBinPath [ ruby ]}
+            '';
+            runtimeDependencies = [
+              ruby
+            ];
+          };
+
+        packages.default = packages.ruby-ulid;
+
+        # `nix run`
+        apps = {
+          console = {
+            type = "app";
+            program = "${packages.ruby-ulid}/bin/console";
+          };
+        };
+      }
+    );
 }

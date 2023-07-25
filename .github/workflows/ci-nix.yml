@@ -31,6 +31,7 @@ jobs:
       - uses: DeterminateSystems/magic-nix-cache-action@v2
       - run: nix flake check
       - run: nix develop --command echo 'This step should be done before any other "nix develop" steps because of measuring Nix build time'
+      - run: nix run .#console
       - run: nix develop --command bundle install
       - name: Log current versions
         run: nix develop --command bundle exec rake inspect_dependencies

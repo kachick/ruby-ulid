@@ -55,6 +55,14 @@ require 'ulid'
 NOTE: This README contains information about the development version.\
 If you would like to see released version's one. [Look at the ref](https://github.com/kachick/ruby-ulid/tree/v0.8.0).
 
+In [Nix](https://nixos.org/), you can skip the installation steps for both ruby and ruby-ulid to try.
+
+```console
+> nix run github:kachick/ruby-ulid#console
+irb(main):001:0> ULID.parse('01H66XG2A9WWYRCYGPA62T4AZA')
+=> ULID(2023-07-25 16:18:12.937 UTC: 01H66XG2A9WWYRCYGPA62T4AZA)
+```
+
 ### Generator and Parser
 
 `ULID.generate` returns `ULID` instance. It is not just a string.
