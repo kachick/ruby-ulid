@@ -62,7 +62,7 @@
         apps = {
           irb = {
             type = "app";
-            program = "${packages.ruby-ulid}/bin/console";
+            program = "${packages.ruby-ulid}/bin/wrapped_console";
           };
         };
       }
