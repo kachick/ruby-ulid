@@ -40,8 +40,8 @@
             installPhase = ''
               mkdir -p $out/bin
               cp -rf ./lib $out
-              install -t $out/bin bin/pure-console.rb
-              makeWrapper $out/bin/pure-console.rb $out/bin/console \
+              install -t $out/bin bin/pure-console
+              makeWrapper $out/bin/pure-console $out/bin/console \
                 --prefix PATH : ${nixpkgs.lib.makeBinPath [ ruby ]}
             '';
             runtimeDependencies = [
