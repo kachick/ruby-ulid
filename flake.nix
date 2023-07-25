@@ -33,10 +33,11 @@
           {
             name = "ruby-ulid";
             src = self;
-            # buildInputs = with pkgs; [
-            #   go_1_20
-            #   go-task
-            # ];
+            # nativeBuildInputs = [ pkgs.makeWrapper ];
+            # https://discourse.nixos.org/t/adding-runtime-dependency-to-flake/27785
+            buildInputs = with pkgs; [
+              makeWrapper
+            ];
             # buildPhase = ''
             #   # https://github.com/NixOS/nix/issues/670#issuecomment-1211700127
             #   export HOME=$(pwd)
@@ -44,7 +45,11 @@
             # '';
             installPhase = ''
               mkdir -p $out/bin
+              # mkdir -p $out/lib
+              cp -rf ./lib $out
               install -t $out/bin bin/console
+              makeWrapper $out/bin/console $out/bin/wrapped_console \
+                --prefix PATH : ${nixpkgs.lib.makeBinPath [ ruby ]}
             '';
             runtimeDependencies = [
               ruby
