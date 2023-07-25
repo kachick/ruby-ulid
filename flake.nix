@@ -33,6 +33,11 @@
           {
             name = "ruby-ulid";
             src = self;
+            # https://discourse.nixos.org/t/mkderivation-src-as-list-of-filenames/3537/2
+            # srcs = [
+            #   ./lib
+            #   ./bin
+            # ];
             # nativeBuildInputs = [ pkgs.makeWrapper ];
             # https://discourse.nixos.org/t/adding-runtime-dependency-to-flake/27785
             buildInputs = with pkgs; [
@@ -54,6 +59,9 @@
             runtimeDependencies = [
               ruby
             ];
+            shellHook = ''
+              bundle install
+            '';
           };
 
         packages.default = packages.ruby-ulid;
