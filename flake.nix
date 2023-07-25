@@ -37,16 +37,11 @@
             buildInputs = with pkgs; [
               makeWrapper
             ];
-            # buildPhase = ''
-            #   # https://github.com/NixOS/nix/issues/670#issuecomment-1211700127
-            #   export HOME=$(pwd)
-            #   task build
-            # '';
             installPhase = ''
               mkdir -p $out/bin
               cp -rf ./lib $out
-              install -t $out/bin bin/tutor.rb
-              makeWrapper $out/bin/tutor.rb $out/bin/tutor \
+              install -t $out/bin bin/pure-console.rb
+              makeWrapper $out/bin/pure-console.rb $out/bin/console \
                 --prefix PATH : ${nixpkgs.lib.makeBinPath [ ruby ]}
             '';
             runtimeDependencies = [
@@ -60,7 +55,7 @@
         apps = {
           console = {
             type = "app";
-            program = "${packages.ruby-ulid}/bin/tutor";
+            program = "${packages.ruby-ulid}/bin/console";
           };
         };
       }
