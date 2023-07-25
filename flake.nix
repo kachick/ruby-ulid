@@ -15,7 +15,7 @@
           inherit system;
         };
       in
-      {
+      rec {
         devShells.default = with pkgs;
           mkShell {
             buildInputs = [
@@ -28,5 +28,38 @@
               actionlint
             ];
           };
-      });
+
+        packages.ruby-ulid = pkgs.stdenv.mkDerivation
+          {
+            name = "ruby-ulid";
+            src = self;
+            # buildInputs = with pkgs; [
+            #   go_1_20
+            #   go-task
+            # ];
+            # buildPhase = ''
+            #   # https://github.com/NixOS/nix/issues/670#issuecomment-1211700127
+            #   export HOME=$(pwd)
+            #   task build
+            # '';
+            installPhase = ''
+              mkdir -p $out/bin
+              install -t $out/bin bin/console
+            '';
+            runtimeDependencies = [
+              ruby
+            ];
+          };
+
+        packages.default = packages.ruby-ulid;
+
+        # `nix run`
+        apps = {
+          irb = {
+            type = "app";
+            program = "${packages.ruby-ulid}/bin/console";
+          };
+        };
+      }
+    );
 }
