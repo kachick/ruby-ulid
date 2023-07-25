@@ -9,6 +9,3 @@ require('irb/completion') # easy tab completion ref: https://docs.ruby-lang.org/
 require_relative('../lib/ulid')
 
 IRB.start
-
-puts 'start trying with `ULID.generate` in this console, an example is ...'
-ULID.generate
