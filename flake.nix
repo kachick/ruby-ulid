@@ -33,12 +33,6 @@
           {
             name = "ruby-ulid";
             src = self;
-            # https://discourse.nixos.org/t/mkderivation-src-as-list-of-filenames/3537/2
-            # srcs = [
-            #   ./lib
-            #   ./bin
-            # ];
-            # nativeBuildInputs = [ pkgs.makeWrapper ];
             # https://discourse.nixos.org/t/adding-runtime-dependency-to-flake/27785
             buildInputs = with pkgs; [
               makeWrapper
@@ -50,27 +44,23 @@
             # '';
             installPhase = ''
               mkdir -p $out/bin
-              # mkdir -p $out/lib
               cp -rf ./lib $out
-              install -t $out/bin bin/console
-              makeWrapper $out/bin/console $out/bin/wrapped_console \
+              install -t $out/bin bin/tutor.rb
+              makeWrapper $out/bin/tutor.rb $out/bin/tutor \
                 --prefix PATH : ${nixpkgs.lib.makeBinPath [ ruby ]}
             '';
             runtimeDependencies = [
               ruby
             ];
-            shellHook = ''
-              bundle install
-            '';
           };
 
         packages.default = packages.ruby-ulid;
 
         # `nix run`
         apps = {
-          irb = {
+          console = {
             type = "app";
-            program = "${packages.ruby-ulid}/bin/wrapped_console";
+            program = "${packages.ruby-ulid}/bin/tutor";
           };
         };
       }
