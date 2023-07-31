@@ -15,6 +15,10 @@ updates:
       rubocop-dependencies:
         patterns:
           - '*rubocop*'
+      rbs-dependencies:
+        patterns:
+          - 'rbs*'
+          - '*steep*'
     ignore:
       - dependency-name: 'rubocop'
         versions:
