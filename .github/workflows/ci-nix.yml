@@ -34,7 +34,7 @@ jobs:
       - run: nix run .#console
       - run: nix develop --command bundle install
       - name: Log current versions
-        run: nix develop --command bundle exec rake inspect_dependencies
+        run: nix develop --command bundle exec rake deps
       - name: Test with external dependencies
         run: nix develop --command bundle exec rake check_non_ruby
       - name: Test with Ruby
