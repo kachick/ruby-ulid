@@ -1,3 +1,0 @@
-[files]
-ignore-hidden = false
-extend-exclude = [".git", '.direnv', '.yardoc', '.bundle']
