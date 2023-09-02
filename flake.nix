@@ -44,10 +44,10 @@
               cp -rf ./lib $out
               install -t $out/bin bin/pure-console.rb
               makeWrapper $out/bin/pure-console.rb $out/bin/console \
-                --prefix PATH : ${nixpkgs.lib.makeBinPath [ pkgs.ruby ]}
+                --prefix PATH : ${nixpkgs.lib.makeBinPath [ pkgs.ruby_3_2 ]}
             '';
             runtimeDependencies = [
-              pkgs.ruby
+              pkgs.ruby_3_2
             ];
           };
 
