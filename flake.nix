@@ -22,6 +22,11 @@
               bashInteractive
 
               ruby_3_2
+              # Required to build psych via irb dependency
+              # https://github.com/kachick/irb-power_assert/issues/116
+              # https://github.com/ruby/irb/pull/648
+              libyaml
+
               dprint
               tree
               nil
@@ -48,6 +53,7 @@
             '';
             runtimeDependencies = [
               pkgs.ruby_3_2
+              pkgs.libyaml
             ];
           };
 
