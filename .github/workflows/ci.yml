@@ -45,7 +45,7 @@ jobs:
         #   ruby: '3.2'
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: ruby/setup-ruby@v1
         env:
           # https://github.com/kachick/ruby-ulid/blob/104834846baf5caa1e8536a11c43acdd56fc849c/CONTRIBUTING.md#adding-dependencies-for-this-gem
