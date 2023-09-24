@@ -32,6 +32,7 @@
               # Needed in darwin
               gnumake
               coreutils
+              pkg-config
 
               dprint
               tree
