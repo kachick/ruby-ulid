@@ -29,9 +29,7 @@
               # Required to build ffi via steep dependency
               # https://github.com/kachick/ruby-ulid/issues/423
               libffi
-              # Needed in darwin
-              gnumake
-              coreutils
+              # Needed for libffi in darwin
               pkg-config
 
               dprint
