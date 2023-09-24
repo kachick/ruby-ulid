@@ -26,6 +26,11 @@
               # https://github.com/kachick/irb-power_assert/issues/116
               # https://github.com/ruby/irb/pull/648
               libyaml
+              # Required to build ffi via steep dependency
+              # https://github.com/kachick/ruby-ulid/issues/423
+              libffi
+              # Needed for libffi in darwin
+              pkg-config
 
               dprint
               tree

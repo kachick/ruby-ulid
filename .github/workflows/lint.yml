@@ -35,7 +35,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       # Keep same version as used in *.nix
-      - uses: crate-ci/typos@v1.16.8
+      - uses: crate-ci/typos@v1.16.12
         with:
           # https://github.com/crate-ci/typos/issues/779
           files: |
