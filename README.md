@@ -398,6 +398,10 @@ ULID.max.to_uuidish #=> "ffffffff-ffff-ffff-ffff-ffffffffffff"
 ULID.max.to_uuidv4(force: true) #=> "ffffffff-ffff-4fff-bfff-ffffffffffff"
 ```
 
+[UUIDv6, UUIDv7, UUIDv8](https://www.ietf.org/archive/id/draft-ietf-uuidrev-rfc4122bis-02.html) are other candidates for sortable and randomness ID.\
+Latest [ruby/securerandom merged the UUIDv7 generator](https://github.com/ruby/securerandom/pull/19).\
+See [tracker](https://bugs.ruby-lang.org/issues/19735) for further detail.
+
 ## Migration from other gems
 
 See [wiki page for gem migration](https://github.com/kachick/ruby-ulid/wiki/Gem-migration).
@@ -412,9 +416,3 @@ See [wiki page for gem migration](https://github.com/kachick/ruby-ulid/wiki/Gem-
 - [Repository](https://github.com/kachick/ruby-ulid)
 - [API documents](https://kachick.github.io/ruby-ulid/)
 - [ulid/spec](https://github.com/ulid/spec)
-
-## Note
-
-- [UUIDv6, UUIDv7, UUIDv8](https://www.ietf.org/archive/id/draft-ietf-uuidrev-rfc4122bis-02.html) is another choice for sortable and randomness ID.
-  \
-  However they remain in draft state. Our tracker is: [ruby-ulid#37](https://github.com/kachick/ruby-ulid/issues/37)
