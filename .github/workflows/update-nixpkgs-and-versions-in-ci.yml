@@ -1,0 +1,25 @@
+name: Update nixpkgs and CI dependencies
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/update-nixpkgs-and-versions-in-ci.yml'
+  schedule:
+    # Every Monday 10:17 JST
+    # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
+    - cron: '17 1 * * 1'
+  workflow_dispatch:
+
+jobs:
+  update-nixpkgs:
+    uses: kachick/anylang-template/.github/workflows/reusable-update-nixpkgs-and-versions-in-ci.yml@2413fce002263e6675ce084da251be0dbbe2a8fc
+    if: (github.event.sender.login == 'kachick') || (github.event_name != 'pull_request')
+    with:
+      dry-run: ${{ github.event_name == 'pull_request' }}
+      optional-run: |
+        nix develop --command ruby -e 'puts RUBY_VERSION' > .ruby-version
+        # https://stackoverflow.com/q/34807971
+        git update-index -q --really-refresh
+        git diff-index --quiet HEAD || git commit -m 'Update .ruby-version' .ruby-version
+    secrets:
+      APP_ID: ${{ secrets.APP_ID }}
+      APP_PRIVATE_KEY: ${{ secrets.APP_PRIVATE_KEY }}
