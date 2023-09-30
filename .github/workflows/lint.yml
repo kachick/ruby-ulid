@@ -33,7 +33,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: crate-ci/typos@v1.16.12 # selfup { "regex": "\\d\\.\\d+\\.\\d+", "script": "typos --version | cut -d ' ' -f 2" }
+      - uses: crate-ci/typos@v1.16.14 # selfup { "regex": "\\d\\.\\d+\\.\\d+", "script": "typos --version | cut -d ' ' -f 2" }
         with:
           # https://github.com/crate-ci/typos/issues/779
           files: |
