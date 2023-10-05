@@ -19,7 +19,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Wait other jobs
         if: ${{steps.metadata.outputs.update-type != 'version-update:semver-major'}}
-        uses: kachick/wait-other-jobs@v2.0.0
+        uses: kachick/wait-other-jobs@v2.0.1
         timeout-minutes: 10
         with:
           retry-method: 'equal_intervals'
@@ -45,7 +45,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Wait other jobs
-        uses: kachick/wait-other-jobs@v2.0.0
+        uses: kachick/wait-other-jobs@v2.0.1
         timeout-minutes: 10
       - name: Approve and merge
         run: gh pr review --approve "$PR_URL" && gh pr merge --auto --squash "$PR_URL"
