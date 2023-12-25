@@ -19,7 +19,7 @@ group(:development) do
   gem('yard', '~> 0.9.34', require: false)
   gem('rubocop', '~> 1.59.0', require: false)
   gem('rubocop-rake', '~> 0.6.0', require: false)
-  gem('rubocop-performance', '~> 1.20.0', require: false)
+  gem('rubocop-performance', '~> 1.20.1', require: false)
   gem('rubocop-thread_safety', '~> 0.5.1', require: false)
 end
 
