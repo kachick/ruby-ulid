@@ -4,7 +4,7 @@ require:
   - rubocop-thread_safety
 
 AllCops:
-  TargetRubyVersion: 3.1
+  TargetRubyVersion: 3.2
   DisplayCopNames: true
   Exclude:
     - '**/vendor/**/*'
@@ -650,7 +650,7 @@ Style/StringMethods:
 Style/Strip:
   Enabled: true
 
-Style/StructInheritance:
+Style/DataInheritance:
   Enabled: true
   Exclude:
     - 'lib/ulid/uuid.rb'

@@ -38,8 +38,14 @@ class ULID
       parse_any_to_int(encoded)
     end
 
+    #     # @!parse
+    # #   # Docstring
+    # #   class Fields < Data; end
+    # #
+    # # @see https://www.rfc-editor.org/rfc/rfc4122#section-4.1.2
+    # # @note Using `Fields = Data.define do; end` syntax made https://github.com/kachick/ruby-ulid/issues/233 again. So use class syntax instead
+    # class Fields < Data.define(:time_low, :time_mid, :time_hi_and_version, :clock_seq_hi_and_res, :clk_seq_low, :node)
     # @see https://www.rfc-editor.org/rfc/rfc4122#section-4.1.2
-    # @todo Replace to Data class after dropped Ruby 3.1
     # @note Using `Fields = Struct.new` syntax made https://github.com/kachick/ruby-ulid/issues/233 again. So use class syntax instead
     class Fields < Struct.new(:time_low, :time_mid, :time_hi_and_version, :clock_seq_hi_and_res, :clk_seq_low, :node, keyword_init: true)
       def self.raw_from_octets(octets)
