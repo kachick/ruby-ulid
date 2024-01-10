@@ -41,17 +41,17 @@ class ULID < Object
     def self.parse_any_to_int: (String) -> Integer
     def self.parse_v4_to_int: (String) -> Integer
 
-    class Fields < Struct[Integer]
-      attr_accessor time_low: Integer
-      attr_accessor time_mid: Integer
-      attr_accessor time_hi_and_version: Integer
-      attr_accessor clock_seq_hi_and_res: Integer
-      attr_accessor clk_seq_low: Integer
-      attr_accessor node: Integer
+    class Fields
+      attr_reader time_low: Integer
+      attr_reader time_mid: Integer
+      attr_reader time_hi_and_version: Integer
+      attr_reader clock_seq_hi_and_res: Integer
+      attr_reader clk_seq_low: Integer
+      attr_reader node: Integer
       def self.raw_from_octets: (octets) -> Fields
       def self.forced_v4_from_octets: (octets) -> Fields
 
-      def values: -> Array[Integer]
+      def deconstruct: -> Array[Integer]
 
       private
 
