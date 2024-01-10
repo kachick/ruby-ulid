@@ -38,7 +38,7 @@ Instead, herein is proposed ULID:
 
 ### Install
 
-Tested only in the last 2 Rubies. So you need Ruby 3.1 or higher.
+Tested only in the last 2 Rubies. So you need Ruby 3.2 or higher.
 
 Add this line to your `Gemfile`.
 
