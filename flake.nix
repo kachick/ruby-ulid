@@ -21,7 +21,7 @@
               # https://github.com/NixOS/nix/issues/730#issuecomment-162323824
               bashInteractive
 
-              ruby_3_2
+              ruby_3_3
               # Required to build psych via irb dependency
               # https://github.com/kachick/irb-power_assert/issues/116
               # https://github.com/ruby/irb/pull/648
@@ -49,10 +49,10 @@
               cp -rf ./lib $out
               install -t $out/bin bin/pure-console.rb
               makeWrapper $out/bin/pure-console.rb $out/bin/console \
-                --prefix PATH : ${nixpkgs.lib.makeBinPath [ pkgs.ruby_3_2 ]}
+                --prefix PATH : ${nixpkgs.lib.makeBinPath [ pkgs.ruby_3_3 ]}
             '';
             runtimeDependencies = [
-              pkgs.ruby_3_2
+              pkgs.ruby_3_3
               pkgs.libyaml
             ];
           };
