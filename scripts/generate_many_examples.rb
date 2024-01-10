@@ -45,7 +45,7 @@ examples = [ancient, recently, distant_future, limit_of_the_ulid].flat_map do |p
       randomness: ulid.randomness,
       octets: ulid.octets,
       inspect: ulid.inspect,
-      uuidv4: ulid.to_uuidv4
+      uuidv4: ulid.to_uuidv4(force: true)
     )
   end
 end
