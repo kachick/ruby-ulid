@@ -653,7 +653,8 @@ Style/Strip:
 Style/DataInheritance:
   Enabled: true
   Exclude:
-    - 'lib/ulid/uuid.rb'
+    # Using `Fields = Data.define do; end` syntax made https://github.com/kachick/ruby-ulid/issues/233 again. So use class syntax instead
+    - 'lib/ulid/uuid/fields.rb'
 
 Style/SwapValues:
   Enabled: false

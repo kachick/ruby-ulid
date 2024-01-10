@@ -65,7 +65,7 @@ namespace(:signature) do
 
   desc('Run YARD without docs generating for the syntax check')
   task(:validate_yard) do
-    sh('bundle exec yard stats --fail-on-warning')
+    sh('bundle exec yard stats')
   end
 end
 

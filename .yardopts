@@ -1,3 +1,4 @@
+--exclude lib/ulid/uuid/fields.rb
 --fail-on-warning
 --tag dynamic:"To avoid conflict with rbs(steep) annotation. See https://github.com/soutaro/steep/tree/3994d5af99c458c2799331258fbe463db3b26d9a#2-write-ruby-code"
 --hide-tag dynamic
