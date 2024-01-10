@@ -35,14 +35,14 @@ jobs:
       matrix:
         os: ['ubuntu-latest']
         # Due to https://github.com/actions/runner/issues/849, we have to use quotes for 'n.0'
-        ruby: ['head', '3.2', '3.1']
+        ruby: ['head', '3.3', '3.2']
         # # Disabled macos runner. This gem should work because of it is written in pure ruby :). And the runner is too slow and often be stacked.
         # include:
         #   - os: 'macos-latest'
-        #     ruby: '3.2'
+        #     ruby: '3.3'
         # # Windows CI takes longtime. It has been succeeded in #223, it is enough for now.
         # - os: 'windows-latest'
-        #   ruby: '3.2'
+        #   ruby: '3.3'
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4

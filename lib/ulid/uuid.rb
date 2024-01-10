@@ -6,6 +6,7 @@
 
 require_relative('errors')
 require_relative('utils')
+require_relative('uuid/fields')
 
 class ULID
   module UUID
@@ -36,36 +37,6 @@ class ULID
       end
 
       parse_any_to_int(encoded)
-    end
-
-    # @see https://www.rfc-editor.org/rfc/rfc4122#section-4.1.2
-    # @todo Replace to Data class after dropped Ruby 3.1
-    # @note Using `Fields = Struct.new` syntax made https://github.com/kachick/ruby-ulid/issues/233 again. So use class syntax instead
-    class Fields < Struct.new(:time_low, :time_mid, :time_hi_and_version, :clock_seq_hi_and_res, :clk_seq_low, :node, keyword_init: true)
-      def self.raw_from_octets(octets)
-        case octets.pack('C*').unpack('NnnnnN')
-        in [Integer => time_low, Integer => time_mid, Integer => time_hi_and_version, Integer => clock_seq_hi_and_res, Integer => clk_seq_low, Integer => node]
-          new(time_low:, time_mid:, time_hi_and_version:, clock_seq_hi_and_res:, clk_seq_low:, node:).freeze
-        end
-      end
-
-      def self.forced_v4_from_octets(octets)
-        case octets.pack('C*').unpack('NnnnnN')
-        in [Integer => time_low, Integer => time_mid, Integer => time_hi_and_version, Integer => clock_seq_hi_and_res, Integer => clk_seq_low, Integer => node]
-          new(
-            time_low:,
-            time_mid:,
-            time_hi_and_version: (time_hi_and_version & 0x0fff) | 0x4000,
-            clock_seq_hi_and_res: (clock_seq_hi_and_res & 0x3fff) | 0x8000,
-            clk_seq_low:,
-            node:
-          ).freeze
-        end
-      end
-
-      def to_s
-        '%08x-%04x-%04x-%04x-%04x%08x' % values
-      end
     end
   end
 

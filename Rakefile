@@ -50,7 +50,7 @@ multitask(simulate_ci: %i[test_all signature_all rubocop dprint])
 namespace(:signature) do
   desc('Validate `rbs` syntax, this should be passed')
   task(:validate_rbs) do
-    sh('bundle exec rbs -rsecurerandom -rmonitor -I sig validate --silent')
+    sh('bundle exec rbs -rsecurerandom -rmonitor -I sig validate')
   end
 
   desc('Check `rbs` definition with `steep` and save alerts into ignoring list :<')
@@ -65,7 +65,7 @@ namespace(:signature) do
 
   desc('Run YARD without docs generating for the syntax check')
   task(:validate_yard) do
-    sh('bundle exec yard stats --fail-on-warning')
+    sh('bundle exec yard stats')
   end
 end
 

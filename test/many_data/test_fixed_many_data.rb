@@ -6,7 +6,7 @@ require_relative('fixtures/example')
 
 # https://github.com/kachick/ruby-ulid/issues/89
 class TestFixedManyData < Test::Unit::TestCase
-  dump_data = File.binread("#{__dir__}/fixtures/dumped_fixed_examples_2021-05-09_06-22.bin")
+  dump_data = File.binread("#{__dir__}/fixtures/dumped_fixed_examples_2024-01-10_07-59.bin")
   EXAMPLES = Marshal.load(dump_data)
 
   def assert_example(ulid, example)
