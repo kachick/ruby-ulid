@@ -50,7 +50,7 @@ multitask(simulate_ci: %i[test_all signature_all rubocop dprint])
 namespace(:signature) do
   desc('Validate `rbs` syntax, this should be passed')
   task(:validate_rbs) do
-    sh('bundle exec rbs -rsecurerandom -rmonitor -I sig validate --silent')
+    sh('bundle exec rbs -rsecurerandom -rmonitor -I sig validate')
   end
 
   desc('Check `rbs` definition with `steep` and save alerts into ignoring list :<')
