@@ -11,7 +11,7 @@ on:
 
 jobs:
   update-nixpkgs:
-    uses: kachick/anylang-template/.github/workflows/reusable-update-nixpkgs-and-versions-in-ci.yml@2413fce002263e6675ce084da251be0dbbe2a8fc
+    uses: kachick/selfup/.github/workflows/reusable-bump-flake-lock-and-selfup.yml@action-v1
     if: (github.event.sender.login == 'kachick') || (github.event_name != 'pull_request')
     with:
       dry-run: ${{ github.event_name == 'pull_request' }}

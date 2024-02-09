@@ -16,7 +16,6 @@ jobs:
       - name: Dependabot metadata
         id: metadata
         uses: dependabot/fetch-metadata@v1.6.0
-      - uses: actions/checkout@v4
       - name: Wait other jobs
         if: ${{steps.metadata.outputs.update-type != 'version-update:semver-major'}}
         uses: kachick/wait-other-jobs@v2.0.2
@@ -43,12 +42,26 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.actor == 'renovate[bot]' }}
     steps:
-      - uses: actions/checkout@v4
       - name: Wait other jobs
         uses: kachick/wait-other-jobs@v2.0.2
         timeout-minutes: 10
       - name: Approve and merge
         run: gh pr review --approve "$PR_URL" && gh pr merge --auto --squash "$PR_URL"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # https://github.com/kachick/anylang-template/issues/51
+  selfup-runner:
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    if: ${{ github.actor == 'selfup-runner[bot]' }}
+    steps:
+      - name: Wait other jobs
+        uses: kachick/wait-other-jobs@v2.0.2
+        timeout-minutes: 20
+      - name: Approve and merge
+        run: gh pr review --approve "$PR_URL" && gh pr merge --auto --delete-branch --squash "$PR_URL"
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
