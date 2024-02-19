@@ -1,6 +1,8 @@
 # coding: us-ascii
 # frozen_string_literal: true
 
+# TODO: Remove this line after #495
+
 # How to use: https://github.com/jeremyevans/ruby-warning
 require('warning')
 
