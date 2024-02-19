@@ -221,7 +221,7 @@ class TestULIDClass < Test::Unit::TestCase
     err = assert_raises(NoMethodError) do
       ULID.new(milliseconds: 0, entropy: 42)
     end
-    assert_match(/private method `new' called/, err.message)
+    assert_match(/private method (`|')new' called/, err.message)
   end
 
   def test_normalize
