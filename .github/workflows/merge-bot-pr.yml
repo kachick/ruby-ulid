@@ -18,7 +18,7 @@ jobs:
         uses: dependabot/fetch-metadata@v1.6.0
       - name: Wait other jobs
         if: ${{steps.metadata.outputs.update-type != 'version-update:semver-major'}}
-        uses: kachick/wait-other-jobs@v2.0.2
+        uses: kachick/wait-other-jobs@v2.0.3
         timeout-minutes: 10
         with:
           retry-method: 'equal_intervals'
@@ -43,7 +43,7 @@ jobs:
     if: ${{ github.actor == 'renovate[bot]' }}
     steps:
       - name: Wait other jobs
-        uses: kachick/wait-other-jobs@v2.0.2
+        uses: kachick/wait-other-jobs@v2.0.3
         timeout-minutes: 10
       - name: Approve and merge
         run: gh pr review --approve "$PR_URL" && gh pr merge --auto --squash "$PR_URL"
@@ -58,7 +58,7 @@ jobs:
     if: ${{ github.actor == 'selfup-runner[bot]' }}
     steps:
       - name: Wait other jobs
-        uses: kachick/wait-other-jobs@v2.0.2
+        uses: kachick/wait-other-jobs@v2.0.3
         timeout-minutes: 20
       - name: Approve and merge
         run: gh pr review --approve "$PR_URL" && gh pr merge --auto --delete-branch --squash "$PR_URL"
