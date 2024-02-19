@@ -221,6 +221,7 @@ class TestULIDClass < Test::Unit::TestCase
     err = assert_raises(NoMethodError) do
       ULID.new(milliseconds: 0, entropy: 42)
     end
+    # NoMethodError#private_call? will not fit. Checking the error message is not a good test, but required at here
     assert_match(/private method (`|')new' called/, err.message)
   end
 
