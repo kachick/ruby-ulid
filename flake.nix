@@ -39,16 +39,9 @@
           {
             name = "ruby-ulid";
             src = self;
-            # https://discourse.nixos.org/t/adding-runtime-dependency-to-flake/27785
-            buildInputs = with pkgs; [
-              makeWrapper
-            ];
             installPhase = ''
               mkdir -p $out/bin
               cp -rf ./lib $out
-              install -t $out/bin bin/pure-console.rb
-              makeWrapper $out/bin/pure-console.rb $out/bin/console \
-                --prefix PATH : ${nixpkgs.lib.makeBinPath [ pkgs.ruby_3_3 ]}
             '';
             runtimeDependencies = [
               pkgs.ruby_3_3
@@ -56,13 +49,30 @@
             ];
           };
 
+        packages.ruby = pkgs.writeShellScriptBin "ruby-with-ulid" ''
+          set -euo pipefail
+
+          ${pkgs.ruby_3_3}/bin/ruby -r"${packages.ruby-ulid}/lib/ulid" "$@"
+        '';
+
+        packages.irb = pkgs.writeShellScriptBin "irb-with-ulid" ''
+          set -euo pipefail
+
+          ${pkgs.ruby_3_3}/bin/irb -r"${packages.ruby-ulid}/lib/ulid" "$@"
+        '';
+
         packages.default = packages.ruby-ulid;
 
         # `nix run`
         apps = {
-          console = {
+          ruby = {
             type = "app";
-            program = "${packages.ruby-ulid}/bin/console";
+            program = "${packages.ruby}/bin/ruby-with-ulid";
+          };
+
+          irb = {
+            type = "app";
+            program = "${packages.irb}/bin/irb-with-ulid";
           };
         };
       }
