@@ -58,7 +58,10 @@ If you would like to see released version's one. [Look at the ref](https://githu
 In [Nix](https://nixos.org/), you can skip the installation steps for both ruby and ruby-ulid to try.
 
 ```console
-> nix run github:kachick/ruby-ulid#console
+> nix run github:kachick/ruby-ulid#ruby -- -e 'p ULID.generate'
+ULID(2024-03-03 18:37:06.152 UTC: 01HR2SNY789ZZ027EDJEHAGQ62)
+
+> nix run github:kachick/ruby-ulid#irb
 irb(main):001:0> ULID.parse('01H66XG2A9WWYRCYGPA62T4AZA')
 => ULID(2023-07-25 16:18:12.937 UTC: 01H66XG2A9WWYRCYGPA62T4AZA)
 ```
