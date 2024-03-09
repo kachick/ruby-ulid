@@ -7,35 +7,7 @@
 require('securerandom')
 
 class ULID
-  # @note I don't have confidence for the naming of `Utils`. However some standard libraries have same name.
-  #   https://github.com/ruby/webrick/blob/14612a7540fdd7373344461851c4bfff64985b3e/lib/webrick/utils.rb#L17
-  #   https://docs.ruby-lang.org/ja/latest/class/ERB=3a=3aUtil.html
-  #   https://github.com/ruby/rss/blob/af1c3c9c9630ec0a48abec48ed1ef348ba82aa13/lib/rss/utils.rb#L9
   module Utils
-    # @return [Integer]
-    def self.current_milliseconds
-      milliseconds_from_time(Time.now)
-    end
-
-    # @param [Time] time
-    # @return [Integer]
-    def self.milliseconds_from_time(time)
-      (time.to_r * 1000).to_i
-    end
-
-    # @param [Time, Integer] moment
-    # @return [Integer]
-    def self.milliseconds_from_moment(moment)
-      case moment
-      when Integer
-        moment
-      when Time
-        milliseconds_from_time(moment)
-      else
-        raise(ArgumentError, '`moment` should be a `Time` or `Integer as milliseconds`')
-      end
-    end
-
     # @return [Integer]
     def self.reasonable_entropy
       SecureRandom.random_number(MAX_ENTROPY)
