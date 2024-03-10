@@ -16,6 +16,7 @@ group(:development) do
   gem('steep', '~> 1.6.0', require: false)
   gem('benchmark-ips', '~> 2.13.0', require: false)
   gem('stackprof')
+  gem('perfect_toml', '~> 0.9.0', require: false)
   gem('yard', '~> 0.9.36', require: false)
   gem('rubocop', '~> 1.61.0', require: false)
   gem('rubocop-rake', '~> 0.6.0', require: false)

@@ -52,7 +52,8 @@ Performance:
 
 Security/MarshalLoad:
   Exclude:
-    - 'test/many_data/test_fixed_many_data.rb'
+    - 'scripts/**'
+    - 'test/many_data/**'
     - 'test/core/test_ulid_usecase.rb'
 
 Style/Alias:
