@@ -45,34 +45,38 @@
             '';
             runtimeDependencies = [
               pkgs.ruby_3_3
-              pkgs.libyaml
             ];
           };
-
-        packages.ruby = pkgs.writeShellScriptBin "ruby-with-ulid" ''
-          set -euo pipefail
-
-          ${pkgs.ruby_3_3}/bin/ruby -r"${packages.ruby-ulid}/lib/ulid" "$@"
-        '';
-
-        packages.irb = pkgs.writeShellScriptBin "irb-with-ulid" ''
-          set -euo pipefail
-
-          ${pkgs.ruby_3_3}/bin/irb -r"${packages.ruby-ulid}/lib/ulid" "$@"
-        '';
-
-        packages.default = packages.ruby-ulid;
 
         # `nix run`
         apps = {
           ruby = {
             type = "app";
-            program = "${packages.ruby}/bin/ruby-with-ulid";
+            program = with pkgs; lib.getExe (writeShellApplication
+              {
+                name = "ruby-with-ulid";
+                runtimeInputs = [
+                  ruby_3_3
+                ];
+                text = ''
+                  ruby -r"${packages.ruby-ulid}/lib/ulid" "$@"
+                '';
+              });
           };
 
           irb = {
             type = "app";
-            program = "${packages.irb}/bin/irb-with-ulid";
+            program = with pkgs; lib.getExe (writeShellApplication
+              {
+                name = "irb-with-ulid";
+                runtimeInputs = [
+                  ruby_3_3
+                  libyaml
+                ];
+                text = ''
+                  irb -r"${packages.ruby-ulid}/lib/ulid" "$@"
+                '';
+              });
           };
         };
       }
