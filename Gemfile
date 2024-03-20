@@ -6,7 +6,7 @@ gemspec
 
 group(:development, :test) do
   gem('rake', '~> 13.1.0')
-  gem('irb', '~> 1.11.2')
+  gem('irb', '~> 1.12.0')
   gem('irb-power_assert', '0.2.0')
 end
 
@@ -18,7 +18,7 @@ group(:development) do
   gem('stackprof')
   gem('toml-rb', '~> 3.0.1', require: false)
   gem('yard', '~> 0.9.36', require: false)
-  gem('rubocop', '~> 1.61.0', require: false)
+  gem('rubocop', '~> 1.62.1', require: false)
   gem('rubocop-rake', '~> 0.6.0', require: false)
   gem('rubocop-performance', '~> 1.20.2', require: false)
   gem('rubocop-thread_safety', '~> 0.5.1', require: false)
