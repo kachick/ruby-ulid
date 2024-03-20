@@ -8,6 +8,7 @@ group(:development, :test) do
   gem('rake', '~> 13.1.0')
   gem('irb', '~> 1.12.0')
   gem('irb-power_assert', '0.2.0')
+  gem('perfect_toml', '~> 0.9.0', require: false)
 end
 
 group(:development) do
@@ -16,7 +17,6 @@ group(:development) do
   gem('steep', '~> 1.6.0', require: false)
   gem('benchmark-ips', '~> 2.13.0', require: false)
   gem('stackprof')
-  gem('perfect_toml', '~> 0.9.0', require: false)
   gem('yard', '~> 0.9.36', require: false)
   gem('rubocop', '~> 1.62.1', require: false)
   gem('rubocop-rake', '~> 0.6.0', require: false)

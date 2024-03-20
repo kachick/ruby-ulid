@@ -105,8 +105,8 @@ task(:stackprof) do
 end
 
 desc('Generate many sample data for snapshot tests')
-task(:update_fixed_examples) do
-  sh('rm ./test/many_data/fixtures/snapshots_*.bin')
+task(:update_snapshots) do
+  sh('rm ./test/many_data/fixtures/snapshots_*.toml')
   ruby('./scripts/generate_snapshots.rb')
 end
 

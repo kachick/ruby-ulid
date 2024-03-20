@@ -1,6 +1,8 @@
 # coding: us-ascii
 # frozen_string_literal: true
 
+# @TODO: This file in unused now, remove after watched new snapshot format is working
+
 require('bundler/setup')
 require_relative('../lib/ulid')
 require_relative('../test/many_data/fixtures/example')
