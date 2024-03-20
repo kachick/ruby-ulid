@@ -51,9 +51,8 @@ Performance:
     - '**/*.md'
 
 Security/MarshalLoad:
+  Enabled: true
   Exclude:
-    - 'scripts/**'
-    - 'test/many_data/**'
     - 'test/core/test_ulid_usecase.rb'
 
 Style/Alias:
