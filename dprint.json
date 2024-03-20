@@ -13,7 +13,8 @@
     "docs",
     "doc",
     "steep_expectations.yml",
-    "vendor"
+    "vendor",
+    "test/**/fixtures/**"
   ],
   "plugins": [
     "https://plugins.dprint.dev/json-0.19.1.wasm",

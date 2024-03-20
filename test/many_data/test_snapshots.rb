@@ -4,16 +4,28 @@
 require_relative('../helper')
 require_relative('fixtures/example')
 
+require('perfect_toml')
+
+# @TODO: Rewrite with data driven test, as for each ULID "test_ulid_271DRTPTX9Y1SHE8V0WAQ6XSK3"
+
 # https://github.com/kachick/ruby-ulid/issues/89
-class TestFixedManyData < Test::Unit::TestCase
-  dump_data = File.binread("#{__dir__}/fixtures/dumped_fixed_examples_2024-01-10_07-59.bin")
-  EXAMPLES = Marshal.load(dump_data)
+class TestSnapshots < Test::Unit::TestCase
+  toml = PerfectTOML.load_file("#{__dir__}/fixtures/snapshots_2024-01-10_07-59.toml")
+  EXAMPLES = toml.each_pair.with_object([]) do |(encoded, table), list|
+    list << Example.new(
+      string: encoded,
+      integer: table.fetch('integer'),
+      timestamp: table.fetch('timestamp'),
+      randomness: table.fetch('randomness'),
+      to_time: table.fetch('to_time'),
+      inspect: table.fetch('inspect'),
+      uuidv4: table.fetch('uuidv4'),
+      octets: table.fetch('octets'),
+      period: nil
+    )
+  end
 
   def assert_example(ulid, example)
-    assert do
-      example.period.cover?(ulid.to_time)
-    end
-
     assert_equal(example.string, ulid.to_s)
     assert_equal(example.integer, ulid.to_i)
     assert_equal(example.inspect, ulid.inspect)
@@ -28,21 +40,21 @@ class TestFixedManyData < Test::Unit::TestCase
     end
   end
 
-  def test_many_fixed_examples_for_from_integer
+  def test_from_integer
     EXAMPLES.each do |example|
       ulid = ULID.from_integer(example.integer)
       assert_example(ulid, example)
     end
   end
 
-  def test_many_fixed_examples_for_parse
+  def test_parse
     EXAMPLES.each do |example|
       ulid = ULID.parse(example.string)
       assert_example(ulid, example)
     end
   end
 
-  def test_many_fixed_examples_for_sortable
+  def test_sortable
     ulid_strings = []
     ulid_objects = []
     EXAMPLES.each do |example|
@@ -56,7 +68,7 @@ class TestFixedManyData < Test::Unit::TestCase
   end
 
   # ref: https://github.com/kachick/ruby-ulid/pull/341
-  def test_many_fixed_examples_from_uuidv4
+  def test_from_uuidv4
     irreversible_ulid_to_uuid = {}
     EXAMPLES.each do |example|
       ulid = ULID.from_uuidv4(example.uuidv4)

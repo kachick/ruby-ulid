@@ -20,6 +20,12 @@ WARNING_PROCESS = ->_warning_message {
   :raise
 }
 
+# https://bugs.ruby-lang.org/issues/20205
+# https://github.com/mame/perfect_toml/blob/6bdfc3b9e93a074a5180525483b6060f062b6724/lib/perfect_toml.rb#L400
+Gem.path.each do |path|
+  Warning.ignore(//, path)
+end
+
 Warning.process(&WARNING_PROCESS)
 
 require_relative('../lib/ulid')
