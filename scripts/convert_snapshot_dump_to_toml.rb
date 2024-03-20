@@ -12,7 +12,7 @@ timestamp = '2024-01-10_07-59'
 without_ext = "#{path_prefix}#{timestamp}"
 dump_data = File.binread("#{without_ext}.bin")
 examples = Marshal.load(dump_data)
-toml_prepared = examples.sort_by(&:integer).to_h { |example| [example.string, example.to_h.except(:string, :period)] }
+toml_prepared = examples.reject { |example| example.to_time.year > 9999 }.sort_by(&:integer).to_h { |example| [example.string, example.to_h.except(:string, :period)] }
 PerfectTOML.save_file("#{without_ext}.toml", toml_prepared)
 
 if toml_prepared == PerfectTOML.load_file("#{without_ext}.toml")
