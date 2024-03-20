@@ -10,20 +10,11 @@ require('perfect_toml')
 
 # https://github.com/kachick/ruby-ulid/issues/89
 class TestSnapshots < Test::Unit::TestCase
-  toml = PerfectTOML.load_file("#{__dir__}/fixtures/snapshots_2024-01-10_07-59.toml")
-  EXAMPLES = toml.each_pair.with_object([]) do |(encoded, table), list|
-    list << Example.new(
-      string: encoded,
-      integer: table.fetch('integer'),
-      timestamp: table.fetch('timestamp'),
-      randomness: table.fetch('randomness'),
-      to_time: table.fetch('to_time'),
-      inspect: table.fetch('inspect'),
-      uuidv4: table.fetch('uuidv4'),
-      octets: table.fetch('octets'),
-      period: nil
-    )
+  toml = PerfectTOML.load_file("#{__dir__}/fixtures/snapshots_2024-01-10_07-59.toml", symbolize_names: true)
+  EXAMPLES = toml.each_pair.to_a.map do |(encoded, table)|
+    Example.new(**table, string: encoded.id2name, period: nil)
   end
+  raise 'looks like misloading' unless EXAMPLES.size > 1000
 
   def assert_example(ulid, example)
     assert_equal(example.string, ulid.to_s)
