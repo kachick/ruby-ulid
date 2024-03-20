@@ -11,9 +11,7 @@ class TestLibraryLoading < Test::Unit::TestCase
   compilable_paths = Dir.glob('lib/**/*.rb')
   raise unless compilable_paths.size >= 5
 
-  compilable_paths.each do |path|
-    data(path, path)
-  end
+  data(compilable_paths.to_h { |path| [path, path] })
   def test_vm_compilable(path)
     assert_instance_of(String, RubyVM::InstructionSequence.compile_file(path).to_binary)
   end

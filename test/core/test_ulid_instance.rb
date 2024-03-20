@@ -351,9 +351,7 @@ class TestULIDInstance < Test::Unit::TestCase
     assert_same(ulid, ulid.freeze)
   end
 
-  ULID_RETURNING_METHODS.each do |method_name|
-    data("ULID##{method_name}", method_name)
-  end
+  data(ULID_RETURNING_METHODS.to_h { |method_name| ["ULID##{method_name}", method_name] })
   def test_all_returned_ulids_are_frozen(method_name)
     assert_true(ULID.sample.public_send(method_name).frozen?)
   end
