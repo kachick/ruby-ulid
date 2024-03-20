@@ -34,7 +34,7 @@ examples = [ancient, recently, distant_future, limit_of_toml].each_with_object({
     raise('Very rare case happened or bug exists')
   end
 
-  ulids.each do |ulid|
+  ulids.sort.each do |ulid|
     unless period.cover?(ulid.to_time)
       raise(ULID::Error, 'Crucial bug exists!')
     end
@@ -57,13 +57,12 @@ unless examples.size == 4000
 end
 
 puts('The generated samples are below')
-p(examples.sample(20))
+p(examples.values.sample(20))
 
 filename = "snapshots_#{Time.now.strftime('%Y-%m-%d_%H-%M')}.toml"
 output_path = "#{File.expand_path('.')}/test/many_data/fixtures/#{filename}"
 
-beautified = examples.sort_by { |attrs| attrs.fetch(:integer) }
-PerfectTOML.save_file(output_path, beautified)
+PerfectTOML.save_file(output_path, examples)
 
 puts('-' * 72)
 
