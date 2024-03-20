@@ -20,6 +20,7 @@ class TestSnapshots < Test::Unit::TestCase
     assert_equal(example.inspect, ulid.inspect)
     assert_equal(example.timestamp, ulid.timestamp)
     assert_equal(example.randomness, ulid.randomness)
+    assert_equal(example.uuidish, ulid.to_uuidish)
     assert_equal(example.uuidv4, ulid.to_uuidv4(force: true))
     assert_equal(example.to_time, ulid.to_time)
     assert_equal(example.octets, ulid.octets)
@@ -35,14 +36,10 @@ class TestSnapshots < Test::Unit::TestCase
   def test_decoders(example)
     ulid_parsed = ULID.parse(example.string)
     ulid_from_integer = ULID.from_integer(example.integer)
+    ulid_from_uuidv4 = ULID.from_uuidish(ulid_parsed.to_uuidish)
     assert_equal(ulid_parsed, ulid_from_integer)
+    assert_equal(ulid_parsed, ulid_from_uuidv4)
     assert_example(ulid_parsed, example)
-
-    # @TODO: Update snapshot formats with https://github.com/kachick/ruby-ulid/pull/341
-    # Handling UUID should consider the difference.
-    # See https://github.com/kachick/ruby-ulid/pull/341 for further detail
-    # ulid_from_uuidv4 = ULID.from_uuidish(ulid_parsed.to_uuidish)
-    # assert_equal(ulid_parsed, ulid_from_uuidv4)
   end
 
   def test_sortable

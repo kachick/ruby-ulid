@@ -49,6 +49,7 @@ examples = [ancient, recently, distant_future, limit_of_toml].flat_map do |perio
       randomness: ulid.randomness,
       octets: ulid.octets,
       inspect: ulid.inspect,
+      uuidish: ulid.to_uuidish,
       uuidv4: ulid.to_uuidv4(force: true)
     )
   end
