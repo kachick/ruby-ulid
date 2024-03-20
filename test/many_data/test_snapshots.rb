@@ -10,7 +10,7 @@ require('perfect_toml')
 class TestSnapshots < Test::Unit::TestCase
   toml = PerfectTOML.load_file("#{__dir__}/fixtures/snapshots_2024-01-10_07-59.toml", symbolize_names: true)
   EXAMPLES = toml.each_pair.to_a.map do |(encoded, table)|
-    Example.new(**table, string: encoded.id2name, period: nil)
+    Example.new(**table, string: encoded.id2name)
   end
   raise 'looks like misloading' unless EXAMPLES.size > 1000
 

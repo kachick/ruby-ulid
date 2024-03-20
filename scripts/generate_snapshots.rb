@@ -41,7 +41,6 @@ examples = [ancient, recently, distant_future, limit_of_toml].flat_map do |perio
     end
 
     Example.new(
-      period:,
       to_time: ulid.to_time,
       string: ulid.to_s,
       integer: ulid.to_i,
@@ -65,7 +64,7 @@ p(examples.sample(20))
 filename = "snapshots_#{Time.now.strftime('%Y-%m-%d_%H-%M')}.toml"
 output_path = "#{File.expand_path('.')}/test/many_data/fixtures/#{filename}"
 
-toml_prepared = examples.sort_by(&:integer).to_h { |example| [example.string, example.to_h.except(:string, :period)] }
+toml_prepared = examples.sort_by(&:integer).to_h { |example| [example.string, example.to_h.except(:string)] }
 PerfectTOML.save_file(output_path, toml_prepared)
 
 puts('-' * 72)
