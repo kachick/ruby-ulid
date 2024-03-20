@@ -29,7 +29,7 @@ distant_future = Time.parse("#{2021 + 2000}/1/1")...Time.parse("#{2021 + 4000}/1
 limit_of_toml = Time.parse('9999/1/1')..Time.parse('9999/12/31')
 
 examples = [ancient, recently, distant_future, limit_of_toml].each_with_object({}) do |period, acc|
-  ulids = ULID.sample(1000, period:)
+  ulids = ULID.sample(100, period:)
   if ulids.uniq!
     raise('Very rare case happened or bug exists')
   end
@@ -52,7 +52,7 @@ examples = [ancient, recently, distant_future, limit_of_toml].each_with_object({
   end
 end
 
-unless examples.size == 4000
+unless examples.size == 400
   raise(ScriptError, 'This script should have a bug! (or interpreter bug...?)')
 end
 

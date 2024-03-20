@@ -104,9 +104,8 @@ task(:stackprof) do
   sh('bundle exec stackprof tmp/stackprof-cpu-*.dump --text --limit 5')
 end
 
-desc('Generate many sample data for snapshot tests')
-task(:update_snapshots) do
-  sh('rm ./test/many_data/fixtures/snapshots_*.toml')
+desc('Generate samples for snapshot tests')
+task(:generate_snapshots) do
   ruby('./scripts/generate_snapshots.rb')
 end
 

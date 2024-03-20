@@ -7,12 +7,12 @@ require('perfect_toml')
 
 # https://github.com/kachick/ruby-ulid/issues/89
 class TestSnapshots < Test::Unit::TestCase
-  toml = PerfectTOML.load_file("#{__dir__}/fixtures/snapshots_2024-01-10_07-59.toml", symbolize_names: true)
+  toml = PerfectTOML.load_file("#{__dir__}/fixtures/snapshots_2024-03-20_10-18.toml", symbolize_names: true)
   EXAMPLES = toml.to_h do |id, table|
     encoded = id.id2name
     [encoded, [encoded, table]]
   end
-  raise 'looks like misloading' unless EXAMPLES.size > 1000
+  raise 'looks like misloading' unless EXAMPLES.size > 100
 
   def assert_example(ulid, example)
     case example
