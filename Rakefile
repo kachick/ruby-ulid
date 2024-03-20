@@ -106,8 +106,8 @@ end
 
 desc('Generate many sample data for snapshot tests')
 task(:update_fixed_examples) do
-  sh('rm ./test/many_data/fixtures/dumped_fixed_examples_*.bin')
-  ruby('./scripts/generate_many_examples.rb')
+  sh('rm ./test/many_data/fixtures/snapshots_*.bin')
+  ruby('./scripts/generate_snapshots.rb')
 end
 
 desc('To prevent #69 anymore!')

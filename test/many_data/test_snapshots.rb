@@ -5,8 +5,8 @@ require_relative('../helper')
 require_relative('fixtures/example')
 
 # https://github.com/kachick/ruby-ulid/issues/89
-class TestFixedManyData < Test::Unit::TestCase
-  dump_data = File.binread("#{__dir__}/fixtures/dumped_fixed_examples_2024-01-10_07-59.bin")
+class TestSnapshots < Test::Unit::TestCase
+  dump_data = File.binread("#{__dir__}/fixtures/snapshots_2024-01-10_07-59.bin")
   EXAMPLES = Marshal.load(dump_data)
 
   def assert_example(ulid, example)

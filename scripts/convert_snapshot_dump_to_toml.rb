@@ -7,7 +7,7 @@ require_relative('../test/many_data/fixtures/example')
 
 require('perfect_toml')
 
-path_prefix = "#{__dir__}/../test/many_data/fixtures/dumped_fixed_examples_"
+path_prefix = "#{__dir__}/../test/many_data/fixtures/snapshots_"
 timestamp = '2024-01-10_07-59'
 without_ext = "#{path_prefix}#{timestamp}"
 dump_data = File.binread("#{without_ext}.bin")
