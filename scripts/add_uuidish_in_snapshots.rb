@@ -3,7 +3,6 @@
 
 require('bundler/setup')
 require_relative('../lib/ulid')
-require_relative('../test/many_data/fixtures/example')
 require('perfect_toml')
 
 # Needless to rollback. This is rough script.

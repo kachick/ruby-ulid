@@ -3,7 +3,6 @@
 
 require('bundler/setup')
 require_relative('../lib/ulid')
-require_relative('../test/many_data/fixtures/example')
 
 require('time') # To use `Time.parse` for readability, Do not depend on tests
 
@@ -29,20 +28,19 @@ distant_future = Time.parse("#{2021 + 2000}/1/1")...Time.parse("#{2021 + 4000}/1
 # limit_of_the_ulid = (ULID.max.to_time - 1000000)..ULID.max.to_time
 limit_of_toml = Time.parse('9999/1/1')..Time.parse('9999/12/31')
 
-examples = [ancient, recently, distant_future, limit_of_toml].flat_map do |period|
+examples = [ancient, recently, distant_future, limit_of_toml].each_with_object({}) do |period, acc|
   ulids = ULID.sample(1000, period:)
   if ulids.uniq!
     raise('Very rare case happened or bug exists')
   end
 
-  ulids.map do |ulid|
+  ulids.each do |ulid|
     unless period.cover?(ulid.to_time)
       raise(ULID::Error, 'Crucial bug exists!')
     end
 
-    Example.new(
+    acc[ulid.to_s] = {
       to_time: ulid.to_time,
-      string: ulid.to_s,
       integer: ulid.to_i,
       timestamp: ulid.timestamp,
       randomness: ulid.randomness,
@@ -50,7 +48,7 @@ examples = [ancient, recently, distant_future, limit_of_toml].flat_map do |perio
       inspect: ulid.inspect,
       uuidish: ulid.to_uuidish,
       uuidv4: ulid.to_uuidv4(force: true)
-    )
+    }
   end
 end
 
@@ -64,8 +62,8 @@ p(examples.sample(20))
 filename = "snapshots_#{Time.now.strftime('%Y-%m-%d_%H-%M')}.toml"
 output_path = "#{File.expand_path('.')}/test/many_data/fixtures/#{filename}"
 
-toml_prepared = examples.sort_by(&:integer).to_h { |example| [example.string, example.to_h.except(:string)] }
-PerfectTOML.save_file(output_path, toml_prepared)
+beautified = examples.sort_by { |attrs| attrs.fetch(:integer) }
+PerfectTOML.save_file(output_path, beautified)
 
 puts('-' * 72)
 
