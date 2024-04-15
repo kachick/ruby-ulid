@@ -23,6 +23,7 @@ jobs:
         with:
           retry-method: 'equal_intervals'
           min-interval-seconds: '15'
+          skip-same-workflow: 'true'
       - name: Approve and merge
         if: ${{ steps.metadata.outputs.update-type != 'version-update:semver-major' || contains(steps.metadata.outputs.dependency-names, 'DeterminateSystems') }}
         run: gh pr review --approve "$PR_URL" && gh pr merge --auto --squash "$PR_URL"
@@ -45,6 +46,8 @@ jobs:
       - name: Wait other jobs
         uses: kachick/wait-other-jobs@v3.1.0
         timeout-minutes: 10
+        with:
+          skip-same-workflow: 'true'
       - name: Approve and merge
         run: gh pr review --approve "$PR_URL" && gh pr merge --auto --squash "$PR_URL"
         env:
@@ -60,6 +63,8 @@ jobs:
       - name: Wait other jobs
         uses: kachick/wait-other-jobs@v3.1.0
         timeout-minutes: 20
+        with:
+          skip-same-workflow: 'true'
       - name: Approve and merge
         run: gh pr review --approve "$PR_URL" && gh pr merge --auto --delete-branch --squash "$PR_URL"
         env:
