@@ -7,7 +7,7 @@ gemspec
 group(:development, :test) do
   gem('rake', '~> 13.2.1')
   gem('irb', '~> 1.13.1')
-  gem('irb-power_assert', '0.2.0')
+  gem('irb-power_assert', '0.3.1')
   gem('perfect_toml', '~> 0.9.0', require: false)
 end
 
