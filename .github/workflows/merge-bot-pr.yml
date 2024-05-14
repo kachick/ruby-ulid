@@ -10,7 +10,7 @@ permissions:
 jobs:
   dependabot:
     timeout-minutes: 30
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     if: ${{ github.actor == 'dependabot[bot]' }}
     steps:
       - name: Dependabot metadata
@@ -40,7 +40,7 @@ jobs:
   #   Changing in all personal repository is annoy task for me. Even if using terrafform, getting mandatory CI names in each repo is too annoy!
   renovate:
     timeout-minutes: 30
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     if: ${{ github.actor == 'renovate[bot]' }}
     steps:
       - name: Wait other jobs
@@ -57,7 +57,7 @@ jobs:
   # https://github.com/kachick/anylang-template/issues/51
   selfup-runner:
     timeout-minutes: 30
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     if: ${{ github.actor == 'selfup-runner[bot]' }}
     steps:
       - name: Wait other jobs

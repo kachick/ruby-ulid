@@ -29,7 +29,7 @@ on:
 jobs:
   rbs:
     timeout-minutes: 15
-    runs-on: 'ubuntu-latest'
+    runs-on: 'ubuntu-24.04'
     steps:
       - uses: actions/checkout@v4
       - uses: ruby/setup-ruby@v1
@@ -38,7 +38,7 @@ jobs:
       - run: bundle exec rake rbs
   yard:
     timeout-minutes: 15
-    runs-on: 'ubuntu-latest'
+    runs-on: 'ubuntu-24.04'
     steps:
       - uses: actions/checkout@v4
       - uses: ruby/setup-ruby@v1

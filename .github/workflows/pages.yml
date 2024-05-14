@@ -30,7 +30,7 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     name: Build and deploy YARD
     steps:
       - uses: kachick/deploy-yard-to-pages@v1

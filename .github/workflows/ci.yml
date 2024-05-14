@@ -34,7 +34,7 @@ jobs:
       # Syntax https://docs.github.com/en/actions/using-jobs/using-a-matrix-for-your-jobs
       matrix:
         # macos is covered in nix ci
-        os: ['ubuntu-latest']
+        os: ['ubuntu-24.04']
         # Due to https://github.com/actions/runner/issues/849, we have to use quotes for 'n.0'
         ruby: ['head', '3.3', '3.2']
     runs-on: ${{ matrix.os }}
