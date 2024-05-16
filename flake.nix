@@ -9,13 +9,21 @@
     flake-utils.url = "github:numtide/flake-utils";
   };
 
-  outputs = { self, nixpkgs, flake-utils }:
-    flake-utils.lib.eachDefaultSystem (system:
+  outputs =
+    {
+      self,
+      nixpkgs,
+      flake-utils,
+    }:
+    flake-utils.lib.eachDefaultSystem (
+      system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
       in
       rec {
-        devShells.default = with pkgs;
+        formatter = pkgs.nixfmt-rfc-style;
+        devShells.default =
+          with pkgs;
           mkShell {
             buildInputs = [
               # https://github.com/NixOS/nix/issues/730#issuecomment-162323824
@@ -30,35 +38,31 @@
               dprint
               tree
               nil
-              nixpkgs-fmt
+              nixfmt-rfc-style
               typos
               yamlfmt
             ];
           };
 
-        packages.ruby-ulid = pkgs.stdenv.mkDerivation
-          {
-            name = "ruby-ulid";
-            src = self;
-            installPhase = ''
-              mkdir -p $out/bin
-              cp -rf ./lib $out
-            '';
-            runtimeDependencies = [
-              pkgs.ruby_3_3
-            ];
-          };
+        packages.ruby-ulid = pkgs.stdenv.mkDerivation {
+          name = "ruby-ulid";
+          src = self;
+          installPhase = ''
+            mkdir -p $out/bin
+            cp -rf ./lib $out
+          '';
+          runtimeDependencies = [ pkgs.ruby_3_3 ];
+        };
 
         # `nix run`
         apps = {
           ruby = {
             type = "app";
-            program = with pkgs; lib.getExe (writeShellApplication
-              {
+            program =
+              with pkgs;
+              lib.getExe (writeShellApplication {
                 name = "ruby-with-ulid";
-                runtimeInputs = [
-                  ruby_3_3
-                ];
+                runtimeInputs = [ ruby_3_3 ];
                 text = ''
                   ruby -r"${packages.ruby-ulid}/lib/ulid" "$@"
                 '';
@@ -67,8 +71,9 @@
 
           irb = {
             type = "app";
-            program = with pkgs; lib.getExe (writeShellApplication
-              {
+            program =
+              with pkgs;
+              lib.getExe (writeShellApplication {
                 name = "irb-with-ulid";
                 runtimeInputs = [
                   ruby_3_3
