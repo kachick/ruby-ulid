@@ -32,6 +32,7 @@
               nil
               nixpkgs-fmt
               typos
+              yamlfmt
             ];
           };
 

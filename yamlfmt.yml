@@ -1,0 +1,7 @@
+gitignore_excludes: true
+exclude:
+  - 'steep_expectations.yml'
+line_ending: lf
+formatter:
+  type: basic
+  retain_line_breaks_single: true
