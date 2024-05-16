@@ -6,6 +6,7 @@
     "soutaro.steep-vscode",
     "soutaro.rbs-syntax",
     "dprint.dprint",
+    "kachick.vscode-yamlfmt",
     "rubocop.vscode-rubocop",
     "jnoortheen.nix-ide"
   ]
