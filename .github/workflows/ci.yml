@@ -34,13 +34,18 @@ jobs:
       # Syntax https://docs.github.com/en/actions/using-jobs/using-a-matrix-for-your-jobs
       matrix:
         # macos is covered in nix ci
-        os: ['ubuntu-latest']
+        os: ['ubuntu-24.04']
         # Due to https://github.com/actions/runner/issues/849, we have to use quotes for 'n.0'
         ruby: ['head', '3.3', '3.2']
     runs-on: ${{ matrix.os }}
     steps:
+      # libyaml is needed for psych, see https://github.com/actions/runner-images/issues/9895
+      # GitHub installs libyaml-dev in latest runners, but often dropped in new runners.
+      - name: Install libyaml
+        if: startsWith(matrix.os, 'ubuntu-') && matrix.ruby == '3.2'
+        run: sudo apt-get install --no-install-recommends --assume-yes libyaml-dev
       - uses: actions/checkout@v4
-      - uses: ruby/setup-ruby@v1
+      - uses: ruby/setup-ruby@7dc18ff0ca6e3630d3f29d2a85ebf6cc27ae9d6c # v1.177.0
         env:
           # https://github.com/kachick/ruby-ulid/blob/104834846baf5caa1e8536a11c43acdd56fc849c/CONTRIBUTING.md#adding-dependencies-for-this-gem
           BUNDLE_WITHOUT: development
