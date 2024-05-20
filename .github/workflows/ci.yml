@@ -39,6 +39,12 @@ jobs:
         ruby: ['head', '3.3', '3.2']
     runs-on: ${{ matrix.os }}
     steps:
+      # libyaml is needed for psych, see https://github.com/actions/runner-images/issues/9895
+      # GitHub installs libyaml-dev in latest runners, but often dropped in new runners.
+      # So, make sure to check here even if using runner installed.
+      - name: Install libyaml
+        if: startsWith(matrix.os, 'ubuntu-')
+        run: sudo apt-get install --no-install-recommends --assume-yes libyaml-dev
       - uses: actions/checkout@v4
       - uses: ruby/setup-ruby@v1
         env:
@@ -47,12 +53,6 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true # runs 'bundle install' and caches installed gems automatically
-      # libyaml is needed for psych, see https://github.com/actions/runner-images/issues/9895
-      # GitHub installs libyaml-dev in latest runners, but often dropped in new runners.
-      # So, make sure to check here even if using runner installed.
-      - name: Install libyaml
-        if: startsWith(matrix.os, 'ubuntu-')
-        run: sudo apt-get install --no-install-recommends --assume-yes libyaml-dev
       - run: bundle exec rake test_all --suppress-backtrace='\/bundle'
         env:
           # Need same specifying for now(want to squash)
