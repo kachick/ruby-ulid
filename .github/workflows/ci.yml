@@ -42,7 +42,7 @@ jobs:
       # libyaml is needed for psych, see https://github.com/actions/runner-images/issues/9895
       # GitHub installs libyaml-dev in latest runners, but often dropped in new runners.
       - name: Install libyaml
-        if: matrix.ruby == '3.2'
+        if: startsWith(matrix.os, 'ubuntu-') && matrix.ruby == '3.2'
         run: sudo apt-get install --no-install-recommends --assume-yes libyaml-dev
       - uses: actions/checkout@v4
       - uses: ruby/setup-ruby@7dc18ff0ca6e3630d3f29d2a85ebf6cc27ae9d6c # v1.177.0
