@@ -46,8 +46,12 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
-      - name: Set up Go
-        uses: actions/setup-go@v5
+      - name: Install mise
+        run: |
+          curl https://mise.jdx.dev/install.sh | sh
+          echo "$HOME/.local/share/mise/bin" >> $GITHUB_PATH
+          echo "$HOME/.local/share/mise/shims" >> $GITHUB_PATH
       - name: Install yamlfmt
-        run: go install github.com/google/yamlfmt/cmd/yamlfmt@v0.12.1 # TODO: Apply selfup after https://github.com/google/yamlfmt/pull/180
+        # TODO: Apply selfup after https://github.com/google/yamlfmt/pull/180
+        run: mise use -g yamlfmt@0.12.1
       - run: yamlfmt -lint .
