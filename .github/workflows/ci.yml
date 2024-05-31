@@ -42,7 +42,7 @@ jobs:
       # libyaml is needed for psych, see https://github.com/actions/runner-images/issues/9895
       # GitHub installs libyaml-dev in latest runners, but often dropped in new runners.
       - name: Install libyaml
-        if: startsWith(matrix.os, 'ubuntu-') && matrix.ruby == '3.2'
+        if: startsWith(matrix.os, 'ubuntu-')
         run: sudo apt-get install --no-install-recommends --assume-yes libyaml-dev
       - uses: actions/checkout@v4
       - uses: ruby/setup-ruby@943103cae7d3f1bb1e4951d5fcc7928b40e4b742 # v1.177.1
@@ -51,7 +51,10 @@ jobs:
           BUNDLE_WITHOUT: development
         with:
           ruby-version: ${{ matrix.ruby }}
-          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+          # Enabling is the recommended way, but it cannot detect runner changes in early stage.
+          # So disable it is better for test job, do not mind in other jobs
+          bundler-cache: false # runs 'bundle install' and caches installed gems automatically
+      - run: bundle install
       - run: bundle exec rake test_all --suppress-backtrace='\/bundle'
         env:
           # Need same specifying for now(want to squash)
