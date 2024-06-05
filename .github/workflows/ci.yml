@@ -42,11 +42,6 @@ jobs:
       # https://github.com/kachick/ruby-ulid/blob/104834846baf5caa1e8536a11c43acdd56fc849c/CONTRIBUTING.md#adding-dependencies-for-this-gem
       BUNDLE_WITHOUT: development
     steps:
-      # libyaml is needed for psych, see https://github.com/actions/runner-images/issues/9895
-      # GitHub installs libyaml-dev in latest runners, but often dropped in new runners.
-      - name: Install libyaml
-        if: startsWith(matrix.os, 'ubuntu-')
-        run: sudo apt-get install --no-install-recommends --assume-yes libyaml-dev
       - uses: actions/checkout@v4
       - uses: ruby/setup-ruby@0cde4689ba33c09f1b890c1725572ad96751a3fc # v1.178.0
         with:
