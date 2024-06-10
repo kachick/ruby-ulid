@@ -18,7 +18,7 @@ jobs:
         uses: dependabot/fetch-metadata@v2.1.0
       - name: Wait other jobs
         if: ${{ steps.metadata.outputs.update-type != 'version-update:semver-major' }}
-        uses: kachick/wait-other-jobs@v3.2.0
+        uses: kachick/wait-other-jobs@v3.4.0
         timeout-minutes: 10
         with:
           retry-method: 'equal_intervals'
@@ -44,7 +44,7 @@ jobs:
     if: ${{ github.actor == 'renovate[bot]' }}
     steps:
       - name: Wait other jobs
-        uses: kachick/wait-other-jobs@v3.2.0
+        uses: kachick/wait-other-jobs@v3.4.0
         timeout-minutes: 10
         with:
           skip-same-workflow: 'true'
@@ -61,7 +61,7 @@ jobs:
     if: ${{ github.actor == 'selfup-runner[bot]' }}
     steps:
       - name: Wait other jobs
-        uses: kachick/wait-other-jobs@v3.2.0
+        uses: kachick/wait-other-jobs@v3.4.0
         timeout-minutes: 20
         with:
           skip-same-workflow: 'true'
