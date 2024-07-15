@@ -134,14 +134,12 @@ task :deps do
   sh('dprint --version')
   sh('tree --version')
   sh('typos --version')
-  sh('yamlfmt -version')
 end
 
 desc 'Tests except ruby'
 task :check_non_ruby do
   Rake::Task['dprint'].invoke
   sh('typos . .github .vscode')
-  sh('yamlfmt -lint .')
   # nix fmt doesn't have check: https://github.com/NixOS/nix/issues/6918
   sh("git ls-files '*.nix' | xargs nixfmt --check")
 end

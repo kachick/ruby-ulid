@@ -3,6 +3,10 @@
   },
   "markdown": {
   },
+  "yaml": {
+    "quotes": "preferSingle",
+    "trimTrailingWhitespaces": false
+  },
   "excludes": [
     ".git",
     "**/*lock.json",
@@ -13,6 +17,7 @@
   ],
   "plugins": [
     "https://plugins.dprint.dev/json-0.19.1.wasm",
-    "https://plugins.dprint.dev/markdown-0.16.3.wasm"
+    "https://plugins.dprint.dev/markdown-0.16.3.wasm",
+    "https://plugins.dprint.dev/g-plane/pretty_yaml-v0.3.0.wasm"
   ]
 }
