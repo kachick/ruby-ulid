@@ -40,18 +40,3 @@ jobs:
             .
             .github
             .vscode
-
-  yamlfmt:
-    timeout-minutes: 15
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@v4
-      - name: Install mise
-        run: |
-          curl https://mise.jdx.dev/install.sh | sh
-          echo "$HOME/.local/share/mise/bin" >> $GITHUB_PATH
-          echo "$HOME/.local/share/mise/shims" >> $GITHUB_PATH
-      - name: Install yamlfmt
-        # TODO: Apply selfup after https://github.com/google/yamlfmt/pull/180
-        run: mise use -g yamlfmt@0.12.1
-      - run: yamlfmt -lint .
