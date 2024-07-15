@@ -13,7 +13,7 @@ end
 
 group(:development) do
   gem('debug', '~> 1.9.2', require: false)
-  gem('rbs', '~> 3.5.1', require: false)
+  gem('rbs', '~> 3.5.2', require: false)
   gem('steep', '~> 1.7.1', require: false)
   gem('benchmark-ips', '~> 2.13.0', require: false)
   gem('stackprof')
