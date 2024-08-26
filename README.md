@@ -280,7 +280,7 @@ ULID.min(time) #=> ULID(2000-01-01 00:00:00.123 UTC: 00VHNCZB3V0000000000000000)
 ULID.max(time) #=> ULID(2000-01-01 00:00:00.123 UTC: 00VHNCZB3VZZZZZZZZZZZZZZZZ)
 ```
 
-#### As element in Enumerable
+#### As an element in Enumerable and Range
 
 `ULID#next` and `ULID#succ` returns next(successor) ULID.\
 Especially `ULID#succ` makes it possible `Range[ULID]#each`.
@@ -299,6 +299,16 @@ ULID.parse('7ZZZZZZZZZZZZZZZZZZZZZZZZZ').next #=> nil
 ULID.parse('01BX5ZZKBK0000000000000001').pred.to_s #=> "01BX5ZZKBK0000000000000000"
 ULID.parse('01BX5ZZKBK0000000000000000').pred.to_s #=> "01BX5ZZKBJZZZZZZZZZZZZZZZZ"
 ULID.parse('00000000000000000000000000').pred #=> nil
+```
+
+`ULID#+` is also provided to realize `Range#step` since [ruby-3.4.0 spec changes](https://bugs.ruby-lang.org/issues/18368).
+
+```ruby
+(ULID.min...).step(42).take(3)
+# =>
+[ULID(1970-01-01 00:00:00.000 UTC: 00000000000000000000000000),
+ ULID(1970-01-01 00:00:00.000 UTC: 0000000000000000000000001A),
+ ULID(1970-01-01 00:00:00.000 UTC: 0000000000000000000000002M)]
 ```
 
 #### Test helpers
