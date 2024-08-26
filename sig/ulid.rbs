@@ -594,6 +594,18 @@ class ULID < Object
   # ```
   def octets: -> octets
 
+  # Returns incremented ULID.\
+  # Especially providing for Range#step since ruby-3.4.0 spec changes
+  #
+  # See also [ruby-lang#18368](https://bugs.ruby-lang.org/issues/18368)
+  # ```
+  def +: (Integer other) -> ULID?
+
+  # Returns decremented ULID.\
+  # Providing for realizing natural API convention with the `ULID#+`
+  # ```
+  def -: (Integer other) -> ULID?
+
   # Returns next(successor) ULID.\
   # Especially `ULID#succ` makes it possible `Range[ULID]#each`.
   #
