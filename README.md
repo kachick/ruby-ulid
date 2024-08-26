@@ -304,6 +304,7 @@ ULID.parse('00000000000000000000000000').pred #=> nil
 `ULID#+` is also provided to realize `Range#step` since [ruby-3.4.0 spec changes](https://bugs.ruby-lang.org/issues/18368).
 
 ```ruby
+# This code works only in ruby-3.4.0dev or later
 (ULID.min...).step(42).take(3)
 # =>
 [ULID(1970-01-01 00:00:00.000 UTC: 00000000000000000000000000),

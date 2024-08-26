@@ -25,6 +25,7 @@ class TestULIDUseCase < Test::Unit::TestCase
     assert_equal([begin_ulid, ulid4], exclude_end.step(3).to_a)
     assert_equal([begin_ulid], exclude_end.step(5).to_a)
 
+    omit_if(RUBY_VERSION < '3.4.0')
     assert_equal(
       [
         ULID.parse('00000000000000000000000000'),
