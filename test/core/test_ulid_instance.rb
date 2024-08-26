@@ -321,6 +321,27 @@ class TestULIDInstance < Test::Unit::TestCase
     assert_false(ulid.octets.frozen?)
   end
 
+  def test_plus
+    ulid = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
+    assert_equal((ulid + 42).to_i, ulid.to_i + 42)
+    assert_equal((ulid + -42).to_i, ulid.to_i - 42)
+    assert_instance_of(ULID, ulid + 42)
+    assert_not_same(ulid + 42, ulid + 42)
+    assert_raises(ArgumentError) do
+      ulid.__send__(:+)
+    end
+    assert_raises(ArgumentError) do
+      ulid.__send__(:+, 42, 6174)
+    end
+
+    [nil, '42', 42.1, BasicObject.new, Object.new, ULID.sample].each do |evil|
+      err = assert_raises(ArgumentError) do
+        ulid + evil
+      end
+      assert_equal('ULID#+ takes only integer', err.message)
+    end
+  end
+
   def test_succ
     ulid = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
     assert_equal(ulid.succ.to_i, ulid.to_i + 1)
