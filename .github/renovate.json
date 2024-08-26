@@ -2,7 +2,12 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "labels": ["dependencies", "renovate"],
   "enabledManagers": ["nix"],
+  "extends": [
+    "github>kachick/renovate-config-dprint#1.3.0",
+    "github>kachick/renovate-config-dprint:self"
+  ],
   "nix": {
     "enabled": true
-  }
+  },
+  "schedule": ["on Tuesday"]
 }
