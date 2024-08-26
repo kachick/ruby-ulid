@@ -8,6 +8,8 @@ class TestULIDInstance < Test::Unit::TestCase
     <=>
     ==
     ===
+    +
+    -
     encode
     entropy
     eql?
@@ -321,11 +323,71 @@ class TestULIDInstance < Test::Unit::TestCase
     assert_false(ulid.octets.frozen?)
   end
 
+  def test_plus
+    ulid = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
+    assert_equal((ulid + 42).to_i, ulid.to_i + 42)
+    assert_equal((ulid + -42).to_i, ulid.to_i - 42)
+    assert_instance_of(ULID, ulid + 42)
+    assert_not_same(ulid + 42, ulid + 42)
+    assert_raises(ArgumentError) do
+      ulid.__send__(:+)
+    end
+    assert_raises(ArgumentError) do
+      ulid.__send__(:+, 42, 6174)
+    end
+
+    [nil, '42', 42.1, BasicObject.new, Object.new, ULID.sample].each do |evil|
+      err = assert_raises(ArgumentError) do
+        ulid + evil
+      end
+      assert_equal('ULID#+ takes only integers', err.message)
+    end
+  end
+
+  def test_minus
+    ulid = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
+    assert_equal((ulid - 42).to_i, ulid.to_i - 42)
+    assert_equal((ulid - -42).to_i, ulid.to_i + 42)
+    assert_instance_of(ULID, ulid - 42)
+    assert_not_same(ulid - 42, ulid - 42)
+    assert_raises(ArgumentError) do
+      ulid.__send__(:-)
+    end
+    assert_raises(ArgumentError) do
+      ulid.__send__(:-, 42, 6174)
+    end
+
+    [nil, '42', 42.1, BasicObject.new, Object.new, ULID.sample].each do |evil|
+      err = assert_raises(ArgumentError) do
+        ulid - evil
+      end
+      assert_equal('ULID#- takes only integers', err.message)
+    end
+  end
+
+  def test_succ
+    ulid = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
+    assert_equal(ulid.succ.to_i, ulid.to_i + 1)
+    assert_instance_of(ULID, ulid.succ)
+    assert_not_same(ulid.succ, ulid.succ)
+    assert_raises(ArgumentError) do
+      ulid.succ(1)
+    end
+
+    first = ULID.parse('01BX5ZZKBKACTAV9WEVGEMMVRY')
+    assert_equal(ULID.parse('01BX5ZZKBKACTAV9WEVGEMMVRZ'), first.succ)
+    assert_equal(ULID.parse('01BX5ZZKBKACTAV9WEVGEMMVS0'), first.succ.succ)
+    assert_equal(ULID.parse('01BX5ZZKBKACTAV9WEVGEMMVS1'), first.succ.succ.succ)
+  end
+
   def test_next
     ulid = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
     assert_equal(ulid.next.to_i, ulid.to_i + 1)
     assert_instance_of(ULID, ulid.next)
     assert_not_same(ulid.next, ulid.next)
+    assert_raises(ArgumentError) do
+      ulid.next(1)
+    end
 
     first = ULID.parse('01BX5ZZKBKACTAV9WEVGEMMVRY')
     assert_equal(ULID.parse('01BX5ZZKBKACTAV9WEVGEMMVRZ'), first.next)
@@ -338,6 +400,9 @@ class TestULIDInstance < Test::Unit::TestCase
     assert_equal(ulid.pred.to_i, ulid.to_i - 1)
     assert_instance_of(ULID, ulid.pred)
     assert_not_same(ulid.pred, ulid.pred)
+    assert_raises(ArgumentError) do
+      ulid.pred(1)
+    end
 
     first = ULID.parse('01BX5ZZKBKACTAV9WEVGEMMVR2')
     assert_equal(ULID.parse('01BX5ZZKBKACTAV9WEVGEMMVR1'), first.pred)
