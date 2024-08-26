@@ -449,19 +449,32 @@ class ULID
     @encoded.slice(TIMESTAMP_ENCODED_LENGTH, RANDOMNESS_ENCODED_LENGTH) || raise(UnexpectedError)
   end
 
-  # @return [ULID, nil] when called on ULID as `7ZZZZZZZZZZZZZZZZZZZZZZZZZ`, returns `nil` instead of ULID
+  # @param [Integer] other
+  # @return [ULID, nil] when returning URID might be greater than `7ZZZZZZZZZZZZZZZZZZZZZZZZZ`, returns `nil` instead of ULID
   def +(other)
+    raise(ArgumentError, 'ULID#+ takes only integers') unless Integer === other
+
     new_int = @integer + other
     case new_int
     when MAX_INTEGER
       MAX
     when 0
       MIN
-    when ->v { v > MAX_INTEGER || v < 0 }
-      nil
     else
-      ULID.from_integer(new_int)
+      if new_int > MAX_INTEGER || new_int < 0
+        nil
+      else
+        ULID.from_integer(new_int)
+      end
     end
+  end
+
+  # @param [Integer] other
+  # @return [ULID, nil] when returning URID might be less than `00000000000000000000000000`, returns `nil` instead of ULID
+  def -(other)
+    raise(ArgumentError, 'ULID#- takes only integers') unless Integer === other
+
+    self + -other
   end
 
   # @return [ULID, nil] when called on ULID as `7ZZZZZZZZZZZZZZZZZZZZZZZZZ`, returns `nil` instead of ULID
@@ -472,7 +485,7 @@ class ULID
 
   # @return [ULID, nil] when called on ULID as `00000000000000000000000000`, returns `nil` instead of ULID
   def pred
-    self + -1
+    self - 1
   end
 
   # @return [Integer]

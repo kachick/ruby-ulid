@@ -24,10 +24,12 @@ class TestBoundaryULID < Test::Unit::TestCase
     assert_nil(@max + 1)
     assert_equal(ULID.parse('01BX5ZZKBM0000000000000000'), @max_entropy + 1)
     assert_same(@max, ULID.parse('7ZZZZZZZZZZZZZZZZZZZZZZZZY') + 1)
+  end
 
-    assert_nil(@min + -1)
-    assert_equal(ULID.parse('01BX5ZZKBJZZZZZZZZZZZZZZZZ'), @min_entropy + -1)
-    assert_same(@min, ULID.parse('00000000000000000000000001') + -1)
+  def test_minus
+    assert_nil(@min - 1)
+    assert_equal(ULID.parse('01BX5ZZKBJZZZZZZZZZZZZZZZZ'), @min_entropy - 1)
+    assert_same(@min, ULID.parse('00000000000000000000000001') - 1)
   end
 
   def test_next
