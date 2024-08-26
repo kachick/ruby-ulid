@@ -321,6 +321,18 @@ class TestULIDInstance < Test::Unit::TestCase
     assert_false(ulid.octets.frozen?)
   end
 
+  def test_succ
+    ulid = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
+    assert_equal(ulid.succ.to_i, ulid.to_i + 1)
+    assert_instance_of(ULID, ulid.succ)
+    assert_not_same(ulid.succ, ulid.succ)
+
+    first = ULID.parse('01BX5ZZKBKACTAV9WEVGEMMVRY')
+    assert_equal(ULID.parse('01BX5ZZKBKACTAV9WEVGEMMVRZ'), first.succ)
+    assert_equal(ULID.parse('01BX5ZZKBKACTAV9WEVGEMMVS0'), first.succ.succ)
+    assert_equal(ULID.parse('01BX5ZZKBKACTAV9WEVGEMMVS1'), first.succ.succ.succ)
+  end
+
   def test_next
     ulid = ULID.parse('01ARZ3NDEKTSV4RRFFQ69G5FAV')
     assert_equal(ulid.next.to_i, ulid.to_i + 1)
