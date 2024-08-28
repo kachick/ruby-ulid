@@ -3,5 +3,5 @@
 # shareable_constant_value: literal
 
 class ULID
-  VERSION = '0.9.0.beta1'
+  VERSION = '0.9.0'
 end

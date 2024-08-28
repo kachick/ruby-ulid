@@ -43,7 +43,7 @@ Tested only in the last 2 Rubies. So you need Ruby 3.2 or higher.
 Add this line to your `Gemfile`.
 
 ```ruby
-gem('ruby-ulid', '~> 0.8.0')
+gem('ruby-ulid', '~> 0.9.0')
 ```
 
 And load it.
@@ -53,7 +53,7 @@ require 'ulid'
 ```
 
 NOTE: This README contains information about the development version.\
-If you would like to see released version's one. [Look at the ref](https://github.com/kachick/ruby-ulid/tree/v0.8.0).
+If you would like to see released version's one. [Look at the ref](https://github.com/kachick/ruby-ulid/tree/v0.9.0).
 
 In [Nix](https://nixos.org/), you can skip the installation steps for both ruby and ruby-ulid to try.
 
