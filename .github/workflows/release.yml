@@ -156,6 +156,10 @@ jobs:
           tree release-assets
       - name: Configure trusted publishing credentials
         uses: rubygems/configure-rubygems-credentials@bc6dd217f8a4f919d6835fcfefd470ef821f5c44 # v1.0.0
+        with:
+          # https://github.com/rubygems/configure-rubygems-credentials/blob/ca0ef5249c429db0cfc96ce44475ad2e6f4da260/README.md#L84-L93
+          # TODO: Update after we got reply in https://github.com/rubygems/configure-rubygems-credentials/issues/161
+          role-to-assume: 3
       - name: Wait other jobs
         uses: kachick/wait-other-jobs@v3.4.0
         timeout-minutes: 10
