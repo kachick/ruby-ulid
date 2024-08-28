@@ -54,7 +54,7 @@ jobs:
           gem install '${{ steps.build.outputs.built_file }}'
           gem unpack '${{ steps.build.outputs.built_file }}'
           tree '${{ steps.build.outputs.package_name }}'
-          checksum_file="${{ steps.build.outputs.package_name }}._checksums.txt"
+          checksum_file="${{ steps.build.outputs.package_name }}_checksums.txt"
           sha256sum '${{ steps.build.outputs.built_file }}' | tee --append "$checksum_file"
           echo "checksum_file=$checksum_file" | tee --append "$GITHUB_OUTPUT"
           if [[ ${GITHUB_REF#refs/tags/} =~ ^v[0-9]+\.[0-9]+\.[0-9]+.+ ]]; then
