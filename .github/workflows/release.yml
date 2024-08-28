@@ -60,7 +60,7 @@ jobs:
           gem unpack '${{ steps.build.outputs.built_file }}'
           tree '${{ steps.build.outputs.package_name }}'
           checksum_file="${{ steps.build.outputs.package_name }}._checksums.txt"
-          sha256sum '${{ steps.build.outputs.built_file }}' > "$checksum_file"
+          sha256sum '${{ steps.build.outputs.built_file }}' | tee --append "$checksum_file"
           echo "checksum_file=$checksum_file" | tee --append "$GITHUB_OUTPUT"
       - name: Upload the gem file as an artifact
         uses: actions/upload-artifact@834a144ee995460fba8ed112a2fc961b36a5ec5a # v4.3.6
