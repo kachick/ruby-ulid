@@ -9,9 +9,6 @@ on:
     paths:
       - '.github/workflows/release.yml'
       - 'lib/**'
-      - 'test/**'
-      - 'spec/**'
-      - '.rspec'
       - '**.gemspec'
       - 'Gemfile'
       - 'Rakefile'
@@ -20,9 +17,6 @@ on:
     paths:
       - '.github/workflows/release.yml'
       - 'lib/**'
-      - 'test/**'
-      - 'spec/**'
-      - '.rspec'
       - '**.gemspec'
       - 'Gemfile'
       - 'Rakefile'
