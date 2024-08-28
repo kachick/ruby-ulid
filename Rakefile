@@ -12,7 +12,7 @@ else
   RuboCop::RakeTask.new
 end
 
-multitask(default: %i[test signature_all rubocop dprint])
+multitask(default: %i[test signature_all rubocop validate_gem dprint])
 
 desc('Keep light weight!')
 task(test: :test_core)
@@ -108,6 +108,10 @@ end
 desc('Generate samples for snapshot tests')
 task(:generate_snapshots) do
   ruby('./scripts/generate_snapshots.rb')
+end
+
+task(:validate_gem) do
+  sh('gem build --strict --norc --backtrace ruby-ulid.gemspec')
 end
 
 desc('To prevent #69 anymore!')
