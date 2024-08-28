@@ -93,9 +93,9 @@ jobs:
       - name: Download release-assets
         env:
           GH_TOKEN: ${{ github.token }}
+        # Do not use tree and 'tee --append; for macos runner. Keep minimum
         run: |
           gh run download
-          tree release-assets
       - name: Make sure we can use the gem
         run: |
           gem install 'release-assets/${{ needs.build.outputs.gem_file }}'
