@@ -51,8 +51,8 @@ jobs:
         run: |
           built_file="$(bundle exec rake validate_gem | ruby -e 'puts STDIN.read.slice(/\bFile: (ruby-ulid-\S+?\.gem)$/, 1)')"
           package_name="$(basename --suffix '.gem' "$built_file")"
-          echo "built_file=$built_file" > "$GITHUB_OUTPUT"
-          echo "package_name=$package_name" > "$GITHUB_OUTPUT"
+          echo "built_file=$built_file" | tee --append "$GITHUB_OUTPUT"
+          echo "package_name=$package_name" | tee --append "$GITHUB_OUTPUT"
       - name: Inspect
         id: isnpect
         run: |
@@ -61,7 +61,7 @@ jobs:
           tree '${{ steps.build.outputs.package_name }}'
           checksum_file="${{ steps.build.outputs.package_name }}._checksums.txt"
           sha256sum '${{ steps.build.outputs.built_file }}' > "$checksum_file"
-          echo "checksum_file=$checksum_file" > "$GITHUB_OUTPUT"
+          echo "checksum_file=$checksum_file" | tee --append "$GITHUB_OUTPUT"
       - name: Upload the gem file as an artifact
         uses: actions/upload-artifact@834a144ee995460fba8ed112a2fc961b36a5ec5a # v4.3.6
         with:
