@@ -148,3 +148,7 @@ task :check_non_ruby do
   # nix fmt doesn't have check: https://github.com/NixOS/nix/issues/6918
   sh("git ls-files '*.nix' | xargs nixfmt --check")
 end
+
+task :tag do
+  sh(%q!ruby -r './lib/ulid/version' -e 'puts "v#{ULID::VERSION}"' | xargs --no-run-if-empty --max-lines=1 git tag!) # rubocop:disable Line/InterpolationCheck
+end

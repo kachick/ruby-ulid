@@ -196,6 +196,8 @@ Style/Dir:
 
 Style/DisableCopsWithinSourceCodeDirective:
   Enabled: true
+  Exclude:
+    - Rakefile
 
 Style/DocumentDynamicEvalDefinition:
   Enabled: false
