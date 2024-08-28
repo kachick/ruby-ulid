@@ -37,7 +37,7 @@ jobs:
       BUNDLE_WITHOUT: development
     outputs:
       gem_file: ${{ steps.build.outputs.built_file }}
-      checksum_file: ${{ steps.build.outputs.checksum_file }}
+      checksum_file: ${{ steps.isnpect.outputs.checksum_file }}
     steps:
       - uses: actions/checkout@v4
       - uses: ruby/setup-ruby@a6e6f86333f0a2523ece813039b8b4be04560854 # v1.190.0
