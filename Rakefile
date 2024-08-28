@@ -98,6 +98,7 @@ task(:benchmark_with_other_gems) do
 end
 
 task(:stackprof) do
+  # Cannot use remove_entry_secure for using glob
   sh('rm -rf ./tmp/stackprof-*')
   sh('bundle exec ruby ./scripts/prof.rb')
   sh('bundle exec stackprof tmp/stackprof-wall-*.dump --text --limit 5')
@@ -111,13 +112,13 @@ end
 
 desc('To prevent #69 anymore!')
 task(:view_packaging_files) do
-  sh('rm -rf ./pkg')
+  remove_entry_secure('./pkg')
   sh('rake build')
   cd('pkg') do
     sh('gem unpack *.gem')
     sh('tree -I *\.gem')
   end
-  sh('rm -rf ./pkg')
+  remove_entry_secure('./pkg')
 end
 
 task(:dprint) do
