@@ -65,6 +65,8 @@ jobs:
           echo "checksum_file=$checksum_file" | tee --append "$GITHUB_OUTPUT"
           if [[ ${GITHUB_REF#refs/tags/} =~ ^v[0-9]+\.[0-9]+\.[0-9]+.+ ]]; then
             echo 'prerelease=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'prerelease=false' >> "$GITHUB_OUTPUT"
           fi
       - name: Upload the gem file as an artifact
         uses: actions/upload-artifact@834a144ee995460fba8ed112a2fc961b36a5ec5a # v4.3.6
@@ -130,11 +132,12 @@ jobs:
               }
             ]
       - name: Publish as a prerelease version
-        if: needs.build.outputs.prerelease
+        # To be strict, prefer `!= false` than `== true`
+        if: ${{ needs.build.outputs.prerelease != 'false' }}
         run: |
           gh release create --verify-tag "$GITHUB_REF_NAME" --title "$GITHUB_REF_NAME" --prerelease release-assets/*
       - name: Publish
-        if: ! needs.build.outputs.prerelease
+        if: ${{ needs.build.outputs.prerelease == 'false' }}
         run: |
           gh release create --verify-tag "$GITHUB_REF_NAME" --title "$GITHUB_REF_NAME" release-assets/*
   rubygems:
