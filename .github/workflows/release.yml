@@ -100,7 +100,7 @@ jobs:
       - name: Download release-assets
         env:
           GH_TOKEN: ${{ github.token }}
-        # Do not use tree and 'tee --append; for macos runner. Keep minimum
+        # Do not use tree and 'tee --append; for macos and windows runner. Keep minimum
         run: |
           gh run download
       - name: Make sure we can use the gem
