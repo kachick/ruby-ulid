@@ -142,6 +142,9 @@ jobs:
     runs-on: 'ubuntu-24.04'
     permissions:
       id-token: write # IMPORTANT: this permission is mandatory for trusted publishing
+    # https://github.com/kachick/ruby-ulid/deployments/release
+    # https://github.com/kachick/ruby-ulid/settings/environments
+    environment: release
     steps:
       # Required to checkout for gh command
       - uses: actions/checkout@v4
