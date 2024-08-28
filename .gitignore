@@ -66,3 +66,7 @@ benchmark/compare_with_othergems/*/vendor/
 .DS_Store
 
 .tool-versions
+
+# Unpacked gem directory
+/ruby-ulid-*/
+/release-assets/

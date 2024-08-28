@@ -1,0 +1,175 @@
+# See GH-544 for detail
+name: 🚀
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+.*'
+    branches:
+      - main
+    paths:
+      - '.github/workflows/release.yml'
+      - 'lib/**'
+      - '**.gemspec'
+      - 'Gemfile'
+      - 'Rakefile'
+      - '.ruby-version'
+  pull_request:
+    paths:
+      - '.github/workflows/release.yml'
+      - 'lib/**'
+      - '**.gemspec'
+      - 'Gemfile'
+      - 'Rakefile'
+      - '.ruby-version'
+  workflow_dispatch:
+jobs:
+  build:
+    timeout-minutes: 15
+    runs-on: 'ubuntu-24.04'
+    env:
+      # https://github.com/kachick/ruby-ulid/blob/104834846baf5caa1e8536a11c43acdd56fc849c/CONTRIBUTING.md#adding-dependencies-for-this-gem
+      BUNDLE_WITHOUT: development
+    outputs:
+      gem_file: ${{ steps.build.outputs.built_file }}
+      checksum_file: ${{ steps.isnpect.outputs.checksum_file }}
+      prerelease: ${{ steps.isnpect.outputs.prerelease }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@a6e6f86333f0a2523ece813039b8b4be04560854 # v1.190.0
+        with:
+          # Enabling is the recommended way, but it cannot detect runner changes in early stage.
+          # So disable it is better for test job, do not mind in other jobs
+          bundler-cache: false # runs 'bundle install' and caches installed gems automatically
+      - run: bundle install
+      - name: Build
+        id: build
+        run: |
+          built_file="$(bundle exec rake validate_gem | ruby -e 'puts STDIN.read.slice(/\bFile: (ruby-ulid-\S+?\.gem)$/, 1)')"
+          package_name="$(basename --suffix '.gem' "$built_file")"
+          echo "built_file=$built_file" | tee --append "$GITHUB_OUTPUT"
+          echo "package_name=$package_name" | tee --append "$GITHUB_OUTPUT"
+      - name: Inspect
+        id: isnpect
+        run: |
+          gem install '${{ steps.build.outputs.built_file }}'
+          gem unpack '${{ steps.build.outputs.built_file }}'
+          tree '${{ steps.build.outputs.package_name }}'
+          checksum_file="${{ steps.build.outputs.package_name }}._checksums.txt"
+          sha256sum '${{ steps.build.outputs.built_file }}' | tee --append "$checksum_file"
+          echo "checksum_file=$checksum_file" | tee --append "$GITHUB_OUTPUT"
+          if [[ ${GITHUB_REF#refs/tags/} =~ ^v[0-9]+\.[0-9]+\.[0-9]+.+ ]]; then
+            echo 'prerelease=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'prerelease=false' >> "$GITHUB_OUTPUT"
+          fi
+      - name: Upload the gem file as an artifact
+        uses: actions/upload-artifact@834a144ee995460fba8ed112a2fc961b36a5ec5a # v4.3.6
+        with:
+          name: 'release-assets'
+          path: |
+            ${{ steps.build.outputs.built_file }}
+            ${{ steps.isnpect.outputs.checksum_file }}
+  check-installability:
+    needs: [build]
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      # Syntax https://docs.github.com/en/actions/using-jobs/using-a-matrix-for-your-jobs
+      matrix:
+        os:
+          - ubuntu-24.04
+          - macos-14 # aarch64
+        # - macos-13 # x86_64 - CPU arch does not affect for this gem (I think)
+        # - windows-2022 - Too slow. Please tell me if any Windows user is using this gem.
+        # For actual use-case, head is needless here
+        ruby: ['3.3', '3.2']
+    runs-on: ${{ matrix.os }}
+    steps:
+      # Required to checkout for gh command
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@a6e6f86333f0a2523ece813039b8b4be04560854 # v1.190.0
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: false
+      - name: Download release-assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        # Do not use tree and 'tee --append; for macos and windows runner. Keep minimum
+        run: |
+          gh run download
+      - name: Make sure we can use the gem
+        run: |
+          gem install 'release-assets/${{ needs.build.outputs.gem_file }}'
+          ruby -r 'ulid' -e 'pp [ULID.generate, ULID.sample(3), ULID.parse(%q_01F4A5Y1YAQCYAYCTC7GRMJ9AA_)]'
+  github:
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: [build, check-installability]
+    timeout-minutes: 15
+    runs-on: 'ubuntu-24.04'
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      # Required to checkout for gh command
+      - uses: actions/checkout@v4
+      - name: Download release-assets
+        run: |
+          gh run download
+          tree release-assets
+      - name: Wait other jobs
+        uses: kachick/wait-other-jobs@v3.4.0
+        timeout-minutes: 10
+        with:
+          skip-same-workflow: 'true'
+          skip-list: |
+            [
+              {
+                "workflowFile": "merge-bot-pr.yml"
+              }
+            ]
+      - name: Publish as a prerelease version
+        # To be strict, prefer `!= false` than `== true`
+        if: ${{ needs.build.outputs.prerelease != 'false' }}
+        run: |
+          gh release create --verify-tag "$GITHUB_REF_NAME" --title "$GITHUB_REF_NAME" --prerelease release-assets/*
+      - name: Publish
+        if: ${{ needs.build.outputs.prerelease == 'false' }}
+        run: |
+          gh release create --verify-tag "$GITHUB_REF_NAME" --title "$GITHUB_REF_NAME" release-assets/*
+  rubygems:
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: [build, check-installability, github]
+    timeout-minutes: 15
+    runs-on: 'ubuntu-24.04'
+    permissions:
+      id-token: write # IMPORTANT: this permission is mandatory for trusted publishing
+    steps:
+      # Required to checkout for gh command
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@a6e6f86333f0a2523ece813039b8b4be04560854 # v1.190.0
+        with:
+          bundler-cache: false
+      - name: Download release-assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh run download
+          tree release-assets
+      - name: Configure trusted publishing credentials
+        uses: rubygems/configure-rubygems-credentials@bc6dd217f8a4f919d6835fcfefd470ef821f5c44 # v1.0.0
+      - name: Wait other jobs
+        uses: kachick/wait-other-jobs@v3.4.0
+        timeout-minutes: 10
+        with:
+          skip-same-workflow: 'true'
+          skip-list: |
+            [
+              {
+                "workflowFile": "merge-bot-pr.yml"
+              }
+            ]
+      - name: Publish
+        run: |
+          gem push 'release-assets/${{ needs.build.outputs.gem_file }}'
+      - name: Wait for release to propagate
+        run: |
+          gem exec rubygems-await 'release-assets/${{ needs.build.outputs.gem_file }}'
