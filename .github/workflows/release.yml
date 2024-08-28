@@ -38,6 +38,7 @@ jobs:
     outputs:
       gem_file: ${{ steps.build.outputs.built_file }}
       checksum_file: ${{ steps.isnpect.outputs.checksum_file }}
+      prerelease: ${{ steps.isnpect.outputs.prerelease }}
     steps:
       - uses: actions/checkout@v4
       - uses: ruby/setup-ruby@a6e6f86333f0a2523ece813039b8b4be04560854 # v1.190.0
@@ -62,6 +63,9 @@ jobs:
           checksum_file="${{ steps.build.outputs.package_name }}._checksums.txt"
           sha256sum '${{ steps.build.outputs.built_file }}' | tee --append "$checksum_file"
           echo "checksum_file=$checksum_file" | tee --append "$GITHUB_OUTPUT"
+          if [[ ${GITHUB_REF#refs/tags/} =~ ^v[0-9]+\.[0-9]+\.[0-9]+.+ ]]; then
+            echo 'prerelease=true' >> "$GITHUB_OUTPUT"
+          fi
       - name: Upload the gem file as an artifact
         uses: actions/upload-artifact@834a144ee995460fba8ed112a2fc961b36a5ec5a # v4.3.6
         with:
@@ -125,7 +129,12 @@ jobs:
                 "workflowFile": "merge-bot-pr.yml"
               }
             ]
+      - name: Publish as a prerelease version
+        if: needs.build.outputs.prerelease
+        run: |
+          gh release create --verify-tag "$GITHUB_REF_NAME" --title "$GITHUB_REF_NAME" --prerelease release-assets/*
       - name: Publish
+        if: ! needs.build.outputs.prerelease
         run: |
           gh release create --verify-tag "$GITHUB_REF_NAME" --title "$GITHUB_REF_NAME" release-assets/*
   rubygems:
