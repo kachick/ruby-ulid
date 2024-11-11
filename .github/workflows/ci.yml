@@ -45,7 +45,7 @@ jobs:
       BUNDLE_WITHOUT: development
     steps:
       - uses: actions/checkout@v4
-      - uses: ruby/setup-ruby@7d3497fd78c07c0d84ebafa58d8dac60cd1f0763 # v1.199.0
+      - uses: ruby/setup-ruby@a2bbe5b1b236842c1cb7dd11e8e3b51e0a616acc # v1.202.0
         with:
           ruby-version: ${{ matrix.ruby }}
           # Enabling is the recommended way, but it cannot detect runner changes in early stage.
