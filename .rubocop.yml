@@ -50,6 +50,11 @@ Performance:
     - 'test/**/*.rb'
     - '**/*.md'
 
+ThreadSafety/NewThread:
+  Enabled: true
+  Exclude:
+    - 'test/**/*.rb'
+
 Security/MarshalLoad:
   Enabled: true
   Exclude:
