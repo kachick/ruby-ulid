@@ -150,5 +150,5 @@ task :check_non_ruby do
 end
 
 task :tag do
-  sh(%q!ruby -r './lib/ulid/version' -e 'puts "v#{ULID::VERSION}"' | xargs --no-run-if-empty --max-lines=1 git tag!) # rubocop:disable Line/InterpolationCheck
+  sh(%q!ruby -r './lib/ulid/version' -e 'puts "v#{ULID::VERSION}"' | xargs --no-run-if-empty --max-lines=1 git tag!) # rubocop:disable Lint/InterpolationCheck
 end
