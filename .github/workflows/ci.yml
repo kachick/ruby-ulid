@@ -38,7 +38,7 @@ jobs:
         # macos is covered in nix ci
         os: ['ubuntu-24.04']
         # Due to https://github.com/actions/runner/issues/849, we have to use quotes for 'n.0'
-        ruby: ['head', '3.3', '3.2']
+        ruby: ['head', '3.4', '3.3']
     runs-on: ${{ matrix.os }}
     env:
       # https://github.com/kachick/ruby-ulid/blob/104834846baf5caa1e8536a11c43acdd56fc849c/CONTRIBUTING.md#adding-dependencies-for-this-gem

@@ -136,10 +136,10 @@ $ bundle exec ruby benchmark/the_added_file.rb
 - Basically should be reduced. ref: [#91](kachick/ruby-ulid#91), [#236](kachick/ruby-ulid#236)
 - When having some objects, they should be frozen. ref: [#126](kachick/ruby-ulid#126)
 
-## Tasks to drop Ruby 3.2
+## Tasks to drop Ruby 3.3
 
 - grep `RUBY_VERSION` guards
-- grep `3.2` and `3.3`
+- grep `3.3` and `3.4`
 - Update gemspec and `TargetRubyVersion` in .rubocop.yml
 
 ## Use profiler

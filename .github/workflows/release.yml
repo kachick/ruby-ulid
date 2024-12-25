@@ -82,7 +82,7 @@ jobs:
         # - macos-13 # x86_64 - CPU arch does not affect for this gem (I think)
         # - windows-2022 - Too slow. Please tell me if any Windows user is using this gem.
         # For actual use-case, head is needless here
-        ruby: ['3.3', '3.2']
+        ruby: ['3.4', '3.3']
     runs-on: ${{ matrix.os }}
     steps:
       # Required to checkout for gh command
