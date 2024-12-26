@@ -35,7 +35,7 @@ jobs:
       prerelease: ${{ steps.isnpect.outputs.prerelease }}
     steps:
       - uses: actions/checkout@v4
-      - uses: ruby/setup-ruby@401c19e14f474b54450cd3905bb8b86e2c8509cf # v1.204.0
+      - uses: ruby/setup-ruby@bfefad842bb982ff05b233bcbc1571d97a87e69f # v1.206.0
         with:
           # Enabling is the recommended way, but it cannot detect runner changes in early stage.
           # So disable it is better for test job, do not mind in other jobs
@@ -82,12 +82,12 @@ jobs:
         # - macos-13 # x86_64 - CPU arch does not affect for this gem (I think)
         # - windows-2022 - Too slow. Please tell me if any Windows user is using this gem.
         # For actual use-case, head is needless here
-        ruby: ['3.3', '3.2']
+        ruby: ['3.4', '3.3']
     runs-on: ${{ matrix.os }}
     steps:
       # Required to checkout for gh command
       - uses: actions/checkout@v4
-      - uses: ruby/setup-ruby@401c19e14f474b54450cd3905bb8b86e2c8509cf # v1.204.0
+      - uses: ruby/setup-ruby@bfefad842bb982ff05b233bcbc1571d97a87e69f # v1.206.0
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: false
@@ -148,7 +148,7 @@ jobs:
     steps:
       # Required to checkout for gh command
       - uses: actions/checkout@v4
-      - uses: ruby/setup-ruby@401c19e14f474b54450cd3905bb8b86e2c8509cf # v1.204.0
+      - uses: ruby/setup-ruby@bfefad842bb982ff05b233bcbc1571d97a87e69f # v1.206.0
         with:
           bundler-cache: false
       - name: Download release-assets

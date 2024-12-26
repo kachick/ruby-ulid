@@ -38,14 +38,14 @@ jobs:
         # macos is covered in nix ci
         os: ['ubuntu-24.04']
         # Due to https://github.com/actions/runner/issues/849, we have to use quotes for 'n.0'
-        ruby: ['head', '3.3', '3.2']
+        ruby: ['head', '3.4', '3.3']
     runs-on: ${{ matrix.os }}
     env:
       # https://github.com/kachick/ruby-ulid/blob/104834846baf5caa1e8536a11c43acdd56fc849c/CONTRIBUTING.md#adding-dependencies-for-this-gem
       BUNDLE_WITHOUT: development
     steps:
       - uses: actions/checkout@v4
-      - uses: ruby/setup-ruby@401c19e14f474b54450cd3905bb8b86e2c8509cf # v1.204.0
+      - uses: ruby/setup-ruby@bfefad842bb982ff05b233bcbc1571d97a87e69f # v1.206.0
         with:
           ruby-version: ${{ matrix.ruby }}
           # Enabling is the recommended way, but it cannot detect runner changes in early stage.
