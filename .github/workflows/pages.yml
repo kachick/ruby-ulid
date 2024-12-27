@@ -33,5 +33,16 @@ jobs:
     runs-on: ubuntu-24.04
     name: Build and deploy YARD
     steps:
-      - uses: kachick/deploy-yard-to-pages@v1
-        id: deployment
+      - name: Checkout
+        uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@bfefad842bb982ff05b233bcbc1571d97a87e69f # v1.206.0
+        with:
+          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+      - run: bundle exec yard
+        shell: bash
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: doc
+      - id: deployment
+        uses: actions/deploy-pages@v4
