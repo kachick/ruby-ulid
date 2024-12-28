@@ -29,7 +29,7 @@
               # https://github.com/NixOS/nix/issues/730#issuecomment-162323824
               bashInteractive
 
-              ruby_3_3
+              ruby_3_4
               # Required to build psych via irb dependency
               # https://github.com/kachick/irb-power_assert/issues/116
               # https://github.com/ruby/irb/pull/648
@@ -50,7 +50,7 @@
             mkdir -p $out/bin
             cp -rf ./lib $out
           '';
-          runtimeDependencies = [ pkgs.ruby_3_3 ];
+          runtimeDependencies = [ pkgs.ruby_3_4 ];
         };
 
         # `nix run`
@@ -61,7 +61,7 @@
               with pkgs;
               lib.getExe (writeShellApplication {
                 name = "ruby-with-ulid";
-                runtimeInputs = [ ruby_3_3 ];
+                runtimeInputs = [ ruby_3_4 ];
                 text = ''
                   ruby -r"${packages.ruby-ulid}/lib/ulid" "$@"
                 '';
@@ -75,7 +75,7 @@
               lib.getExe (writeShellApplication {
                 name = "irb-with-ulid";
                 runtimeInputs = [
-                  ruby_3_3
+                  ruby_3_4
                   libyaml
                 ];
                 text = ''
