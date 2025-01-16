@@ -69,8 +69,6 @@ class ULID < Object
 
     def self.reasonable_entropy: -> Integer
 
-    def self.milliseconds_from_time: (Time time) -> milliseconds
-
     def self.safe_get_class_name: (untyped object) -> String
 
     def self.make_sharable_constants: (Module) -> void
