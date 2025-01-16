@@ -22,7 +22,7 @@ class TestSnapshots < Test::Unit::TestCase
       assert_equal(timestamp, ulid.timestamp)
       assert_equal(randomness, ulid.randomness)
       assert_equal(uuidish, ulid.to_uuidish)
-      assert_equal(uuidv4, ulid.to_uuidv4(force: true))
+      assert_equal(uuidv4, ulid.to_uuid_v4(force: true))
       assert_equal(to_time, ulid.to_time)
       assert_equal(octets, ulid.octets)
     else

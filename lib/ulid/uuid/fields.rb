@@ -19,13 +19,13 @@ class ULID
         end
       end
 
-      def self.forced_v4_from_octets(octets)
+      def self.forced_version_from_octets(octets, mask:)
         case octets.pack('C*').unpack('NnnnnN')
         in [Integer => time_low, Integer => time_mid, Integer => time_hi_and_version, Integer => clock_seq_hi_and_res, Integer => clk_seq_low, Integer => node]
           new(
             time_low:,
             time_mid:,
-            time_hi_and_version: (time_hi_and_version & 0x0fff) | 0x4000,
+            time_hi_and_version: (time_hi_and_version & 0x0fff) | mask,
             clock_seq_hi_and_res: (clock_seq_hi_and_res & 0x3fff) | 0x8000,
             clk_seq_low:,
             node:

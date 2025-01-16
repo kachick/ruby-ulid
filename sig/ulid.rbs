@@ -37,9 +37,11 @@ class ULID < Object
   module UUID
     BASE_PATTERN: Regexp
     V4_PATTERN: Regexp
+    V7_PATTERN: Regexp
 
     def self.parse_any_to_int: (String) -> Integer
     def self.parse_v4_to_int: (String) -> Integer
+    def self.parse_v7_to_int: (String) -> Integer
 
     class Fields
       attr_reader time_low: Integer
@@ -49,7 +51,7 @@ class ULID < Object
       attr_reader clk_seq_low: Integer
       attr_reader node: Integer
       def self.raw_from_octets: (octets) -> Fields
-      def self.forced_v4_from_octets: (octets) -> Fields
+      def self.forced_version_from_octets: (octets, mask: Integer) -> Fields
 
       def deconstruct: -> Array[Integer]
 
@@ -68,8 +70,6 @@ class ULID < Object
     def self.milliseconds_from_moment: (moment moment) -> milliseconds
 
     def self.reasonable_entropy: -> Integer
-
-    def self.milliseconds_from_time: (Time time) -> milliseconds
 
     def self.safe_get_class_name: (untyped object) -> String
 
@@ -287,20 +287,23 @@ class ULID < Object
   # #=> ULID(2605-08-20 10:28:29.979 UTC: 0J7S2PFT4V2B9T8NJ2CRA1EG00)
   # ```
   #
-  # See also [ULID.from_uuidv4]
+  # See also [ULID.from_uuid_v4]
   def self.from_uuidish: (String uuidish) -> ULID
 
   # Load a UUIDv4 string with checking version and variants.
   #
   # ```ruby
-  # ULID.from_uuidv4('0983d0a2-ff15-4d83-8f37-7dd945b5aa39')
+  # ULID.from_uuid_v4('0983d0a2-ff15-4d83-8f37-7dd945b5aa39')
   # #=> ULID(2301-07-10 00:28:28.821 UTC: 09GF8A5ZRN9P1RYDVXV52VBAHS)
-  # ULID.from_uuidv4('123e4567-e89b-12d3-a456-426614174000')
+  # ULID.from_uuid_v4('123e4567-e89b-12d3-a456-426614174000')
   # #=> ULID::ParserError
   # ```
   #
   # See also [ULID.from_uuidish]
-  def self.from_uuidv4: (String uuid) -> ULID
+  def self.from_uuid_v4: (String uuid) -> ULID
+
+  # See also [ULID.from_uuid_v4]
+  def self.from_uuid_v7: (String uuid) -> ULID
 
   # Load integer as ULID
   #
@@ -648,7 +651,7 @@ class ULID < Object
   # ULID.from_uuidish(ulid.to_uuidish) #=> ULID(2023-03-07 11:48:07.469 UTC: 01GTXYCWNDKRYH14DBZ77TRSD7)
   # ```
   #
-  # See also [ULID.from_uuidish], [ULID#to_uuidv4], [ulid/spec#64](https://github.com/ulid/spec/issues/64)
+  # See also [ULID.from_uuidish], [ULID#to_uuid_v4], [ulid/spec#64](https://github.com/ulid/spec/issues/64)
   def to_uuidish: -> String
 
   # Generate a UUIDv4-like string that sets the version and variants field.\
@@ -657,18 +660,21 @@ class ULID < Object
   #
   # ```ruby
   # uuid = '0983d0a2-ff15-4d83-8f37-7dd945b5aa39'
-  # ulid = ULID.from_uuidv4(uuid)
-  # ulid.to_uuidv4 #=> 0983d0a2-ff15-4d83-8f37-7dd945b5aa39
+  # ulid = ULID.from_uuid_v4(uuid)
+  # ulid.to_uuid_v4 #=> 0983d0a2-ff15-4d83-8f37-7dd945b5aa39
   # ```
   #
   # ```ruby
   # ulid = ULID.from_uuidish('0186bbe6-72ad-9e3d-1091-abf9cfac65a7')
-  # ulid.to_uuidv4 #=> ULID::IrreversibleUUIDError
-  # ulid.to_uuidv4(force: true) #=> '0186bbe6-72ad-4e3d-9091-abf9cfac65a7'
+  # ulid.to_uuid_v4 #=> ULID::IrreversibleUUIDError
+  # ulid.to_uuid_v4(force: true) #=> '0186bbe6-72ad-4e3d-9091-abf9cfac65a7'
   # ```
   #
-  # See also [ULID.from_uuidv4], [ULID#to_uuidish], [ulid/spec#64](https://github.com/ulid/spec/issues/64)
-  def to_uuidv4: (?force: boolish) -> String
+  # See also [ULID.from_uuid_v4], [ULID#to_uuidish], [ulid/spec#64](https://github.com/ulid/spec/issues/64)
+  def to_uuid_v4: (?force: boolish) -> String
+
+  # See also [ULID.from_uuid_v7], [ULID#to_uuidish]
+  def to_uuid_v7: (?force: boolish) -> String
 
   # Returns same ID with different Ruby object.
   def dup: -> ULID
