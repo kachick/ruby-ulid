@@ -271,4 +271,33 @@ class TestUUID < Test::Unit::TestCase
 
     assert_equal(uuids, ulids.map(&:to_uuid_v7))
   end
+
+  # Copied from https://github.com/ruby/securerandom/pull/19/files#diff-02b5465398080c82bddc01774e0d92850f3f39e53b5a79e0706ae12a4ccb4343R113-R124 for testing purpose
+  # These feature should be useful for the ID users, however having it is not a role of this gem.
+  def get_uuid7_time(uuid, extra_timestamp_bits: 0)
+    denominator     = (1 << extra_timestamp_bits) * 1000r
+    extra_chars     = extra_timestamp_bits / 4
+    last_char_bits  = extra_timestamp_bits % 4
+    extra_chars    += 1 if last_char_bits != 0
+    timestamp_re    = /\A(\h{8})-(\h{4})-7(\h{#{extra_chars}})/
+    timestamp_chars = uuid.match(timestamp_re).captures.join
+    timestamp       = timestamp_chars.to_i(16)
+    timestamp     >>= 4 - last_char_bits unless last_char_bits == 0
+    timestamp      /= denominator
+    Time.at(timestamp, in: '+00:00')
+  end
+
+  def test_decode_v7_timestamp_typical
+    v7 = '01946f9e-bf58-7be3-8fd4-4606606b05aa'
+    ulid = ULID.from_uuid_v7(v7)
+    assert_equal(get_uuid7_time(v7), ulid.to_time)
+  end
+
+  def test_decode_v7_timestamp_for_many
+    1000.times do
+      v7 = SecureRandom.uuid_v7
+      ulid = ULID.from_uuid_v7(v7)
+      assert_equal(get_uuid7_time(v7), ulid.to_time)
+    end
+  end
 end
