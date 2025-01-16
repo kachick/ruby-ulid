@@ -31,7 +31,8 @@ class TestULIDInstance < Test::Unit::TestCase
     dup
     clone
     to_uuidish
-    to_uuidv4
+    to_uuid_v4
+    to_uuid_v7
   ].freeze
 
   ULID_RETURNING_METHODS = %i[

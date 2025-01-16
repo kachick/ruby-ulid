@@ -47,7 +47,7 @@ examples = [ancient, recently, distant_future, limit_of_toml].each_with_object({
       octets: ulid.octets,
       inspect: ulid.inspect,
       uuidish: ulid.to_uuidish,
-      uuidv4: ulid.to_uuidv4(force: true)
+      uuidv4: ulid.to_uuid_v4(force: true)
     }
   end
 end

@@ -13,6 +13,7 @@ class ULID
     BASE_PATTERN = /\A[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}\z/i
     # Imported from https://stackoverflow.com/a/38191104/1212807, thank you!
     V4_PATTERN = /\A[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}\z/i
+    V7_PATTERN = /\A[0-9A-F]{8}-[0-9A-F]{4}-7[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}\z/i
 
     def self.parse_any_to_int(uuidish)
       encoded = String.try_convert(uuidish)
@@ -34,6 +35,18 @@ class ULID
       prefix_trimmed = encoded.delete_prefix('urn:uuid:')
       unless V4_PATTERN.match?(prefix_trimmed)
         raise(ParserError, "given `#{encoded}` does not match to `#{V4_PATTERN.inspect}`")
+      end
+
+      parse_any_to_int(encoded)
+    end
+
+    def self.parse_v7_to_int(uuid)
+      encoded = String.try_convert(uuid)
+      raise(ArgumentError, 'should pass a string for UUID parser') unless encoded
+
+      prefix_trimmed = encoded.delete_prefix('urn:uuid:')
+      unless V7_PATTERN.match?(prefix_trimmed)
+        raise(ParserError, "given `#{encoded}` does not match to `#{V7_PATTERN.inspect}`")
       end
 
       parse_any_to_int(encoded)

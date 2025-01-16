@@ -3,6 +3,9 @@
 [![Build Status](https://github.com/kachick/ruby-ulid/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/kachick/ruby-ulid/actions/workflows/ci.yml?query=branch%3Amain)
 [![Gem Version](https://badge.fury.io/rb/ruby-ulid.svg)](http://badge.fury.io/rb/ruby-ulid)
 
+This gem is in maintenance mode, I have no plan to add new features.\
+The reason is UUID v7 has been accepted in [IETF](https://www.rfc-editor.org/rfc/rfc9562.html) and [ruby's securerandom](https://github.com/ruby/securerandom/pull/19). See [UUID section](#uuid) for detail.
+
 ## Overview
 
 [ulid/spec](https://github.com/ulid/spec) defines some useful features.\
@@ -378,43 +381,48 @@ ULID.parse_variant_format('01G70Y0Y7G-ZLXWDIREXERGSDoD') #=> ULID(2022-07-03 02:
 
 #### UUID
 
-Both ULID and UUID are 128-bit IDs. But with different specs. Especially UUID has some versions probably UUIDv4.
+Both ULID and UUID are 128-bit IDs. But with different specs. Especially, UUID has some versions, for example, UUIDv4 and UUIDv7.
 
-All UUIDv4s can be converted to ULID, but this will not have the correct "timestamp".\
-Most ULIDs cannot be converted to UUIDv4 while maintaining reversibility, because UUIDv4 requires version and variants in the fields.
+All UUIDs can be converted to ULID, but only [new versions](https://datatracker.ietf.org/doc/rfc9562/) have a correct "timestamp".\
+Most ULIDs cannot be converted to UUID while maintaining reversibility, because UUID requires version and variants in the fields.
 
 See also [ulid/spec#64](https://github.com/ulid/spec/issues/64) for further detail.
 
-For now, this gem provides 4 methods for UUIDs.
+For now, this gem provides some methods for UUIDs.
 
 - Reversibility is preferred: `ULID.from_uuidish`, `ULID.to_uuidish`
-- Prefer UUIDv4 specification: `ULID.from_uuidv4`, `ULID.to_uuidv4`
+- Prefer variants specification: `ULID.from_uuid_v4`, `ULID.from_uuid_v7`, `ULID.to_uuid_v4`, `ULID.to_uuid_v7`
 
 ```ruby
-# All UUIDv4 IDs can be reversible even if converted to ULID
-uuid = SecureRandom.uuid
-ULID.from_uuidish(uuid) == ULID.from_uuidv4(uuid) #=> true
-ULID.from_uuidish(uuid).to_uuidish == ULID.from_uuidv4(uuid).to_uuidv4 #=> true
+# All UUIDv4 and UUIDv7 IDs can be reversible even if converted to ULID
+uuid_v4 = SecureRandom.uuid_v4
+ULID.from_uuidish(uuid_v4) == ULID.from_uuid_v4(uuid_v4) #=> true
+ULID.from_uuidish(uuid_v4).to_uuidish == ULID.from_uuid_v4(uuid_v4).to_uuid_v4 #=> true
 
-# But most ULIDs cannot be converted to UUIDv4 
+# v4 does not have timestamp, v7 has it.
+
+ULID.from_uuid_v4(SecureRandom.uuid_v4).to_time
+# 'f80b3f53-043a-4298-a674-cd83a7fd5d22' => 10612-05-19 16:58:53.882 UTC
+
+ULID.from_uuid_v7(SecureRandom.uuid_v7).to_time
+# '01946f9e-bf58-7be3-8fd4-4606606b05aa' => 2025-01-16 14:57:42.232 UTC
+# ULID is officially defined milliseconds precision for the spec. So omit the nanoseconds precisions even if the UUID v7 ID was generated with extra_timestamp_bits >= 1.
+
+# However most ULIDs cannot be converted to versioned UUID
 ulid = ULID.parse('01F4A5Y1YAQCYAYCTC7GRMJ9AA')
-ulid.to_uuidv4 #=> ULID::IrreversibleUUIDError
+ulid.to_uuid_v4 #=> ULID::IrreversibleUUIDError
 # So 2 ways to get substitute strings that might satisfy the use case
-ulid.to_uuidv4(force: true) #=> "0179145f-07ca-4b3c-af33-4c3c3149254a" this cannot be reverse to source ULID
-ulid == ULID.from_uuidv4(ulid.to_uuidv4(force: true)) #=> false
+ulid.to_uuid_v4(force: true) #=> "0179145f-07ca-4b3c-af33-4c3c3149254a" this cannot be reverse to source ULID
+ulid == ULID.from_uuid_v4(ulid.to_uuid_v4(force: true)) #=> false
 ulid.to_uuidish #=> "0179145f-07ca-bb3c-af33-4c3c3149254a" does not satisfy UUIDv4 spec
 ulid == ULID.from_uuidish(ulid.to_uuidish) #=> true
 
 # Seeing boundary IDs makes it easier to understand
 ULID.min.to_uuidish #=> "00000000-0000-0000-0000-000000000000"
-ULID.min.to_uuidv4(force: true) #=> "00000000-0000-4000-8000-000000000000"
+ULID.min.to_uuid_v4(force: true) #=> "00000000-0000-4000-8000-000000000000"
 ULID.max.to_uuidish #=> "ffffffff-ffff-ffff-ffff-ffffffffffff"
-ULID.max.to_uuidv4(force: true) #=> "ffffffff-ffff-4fff-bfff-ffffffffffff"
+ULID.max.to_uuid_v4(force: true) #=> "ffffffff-ffff-4fff-bfff-ffffffffffff"
 ```
-
-[UUIDv6, UUIDv7, UUIDv8](https://www.ietf.org/archive/id/draft-ietf-uuidrev-rfc4122bis-02.html) are other candidates for sortable and randomness ID.\
-Latest [ruby/securerandom merged the UUIDv7 generator](https://github.com/ruby/securerandom/pull/19).\
-See [tracker](https://bugs.ruby-lang.org/issues/19735) for further detail.
 
 ## Migration from other gems
 

@@ -59,7 +59,8 @@ class TestULIDClass < Test::Unit::TestCase
         valid_as_variant_format?
         parse_variant_format
         from_uuidish
-        from_uuidv4
+        from_uuid_v4
+        from_uuid_v7
       ].sort,
       exposed_methods.sort
     )

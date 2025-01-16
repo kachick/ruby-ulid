@@ -351,8 +351,15 @@ class ULID
   # @param [String, #to_str] uuid
   # @return [ULID]
   # @raise [ParserError] if the given format is not correct for UUIDv4 specs
-  def self.from_uuidv4(uuid)
+  def self.from_uuid_v4(uuid)
     from_integer(UUID.parse_v4_to_int(uuid))
+  end
+
+  # @param [String, #to_str] uuid
+  # @return [ULID]
+  # @raise [ParserError] if the given format is not correct for UUIDv4 specs
+  def self.from_uuid_v7(uuid)
+    from_integer(UUID.parse_v7_to_int(uuid))
   end
 
   attr_reader(:milliseconds, :entropy, :encoded)
@@ -510,8 +517,8 @@ class ULID
     self
   end
 
-  # Generate a UUID-like string that does not set the version and variants field.
-  # It means wrong in UUIDv4 spec, but reversible
+  # Generate a UUID-like string that does not touch the version and variants field.
+  # It means basically wrong in UUID specs, but reversible
   #
   # @return [String]
   def to_uuidish
@@ -526,14 +533,27 @@ class ULID
   # @see https://github.com/kachick/ruby-ulid/issues/76
   # @param [bool] force
   # @return [String]
-  def to_uuidv4(force: false)
-    v4 = UUID::Fields.forced_v4_from_octets(octets)
+  def to_uuid_v4(force: false)
+    v4 = UUID::Fields.forced_version_from_octets(octets, mask: 0x4000)
     unless force
       uuidish = UUID::Fields.raw_from_octets(octets)
       raise(IrreversibleUUIDError) unless uuidish == v4
     end
 
     v4.to_s.freeze
+  end
+
+  # @see [#to_uuid_v4] and https://datatracker.ietf.org/doc/rfc9562/
+  # @param [bool] force
+  # @return [String]
+  def to_uuid_v7(force: false)
+    v7 = UUID::Fields.forced_version_from_octets(octets, mask: 0x7000)
+    unless force
+      uuidish = UUID::Fields.raw_from_octets(octets)
+      raise(IrreversibleUUIDError) unless uuidish == v7
+    end
+
+    v7.to_s.freeze
   end
 
   # @return [ULID]
