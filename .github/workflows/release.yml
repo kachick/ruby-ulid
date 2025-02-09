@@ -96,7 +96,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         # Do not use tree and 'tee --append; for macos and windows runner. Keep minimum
         run: |
-          gh run download
+          gh run download '${{ github.run_id }}'
       - name: Make sure we can use the gem
         run: |
           gem install 'release-assets/${{ needs.build.outputs.gem_file }}'
@@ -113,7 +113,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Download release-assets
         run: |
-          gh run download
+          gh run download '${{ github.run_id }}'
           tree release-assets
       - name: Wait other jobs
         uses: kachick/wait-other-jobs@v3.6.0
@@ -155,7 +155,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh run download
+          gh run download '${{ github.run_id }}'
           tree release-assets
       - name: Configure trusted publishing credentials
         uses: rubygems/configure-rubygems-credentials@bc6dd217f8a4f919d6835fcfefd470ef821f5c44 # v1.0.0
