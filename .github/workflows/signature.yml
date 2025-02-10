@@ -32,7 +32,7 @@ jobs:
     runs-on: 'ubuntu-24.04'
     steps:
       - uses: actions/checkout@v4
-      - uses: ruby/setup-ruby@2654679fe7f7c29875c669398a8ec0791b8a64a1 # v1.215.0
+      - uses: ruby/setup-ruby@d781c1b4ed31764801bfae177617bb0446f5ef8d # v1.218.0
         with:
           bundler-cache: true # runs 'bundle install' and caches installed gems automatically
       - run: bundle exec rake rbs
@@ -41,7 +41,7 @@ jobs:
     runs-on: 'ubuntu-24.04'
     steps:
       - uses: actions/checkout@v4
-      - uses: ruby/setup-ruby@2654679fe7f7c29875c669398a8ec0791b8a64a1 # v1.215.0
+      - uses: ruby/setup-ruby@d781c1b4ed31764801bfae177617bb0446f5ef8d # v1.218.0
         with:
           bundler-cache: true # runs 'bundle install' and caches installed gems automatically
       - run: bundle exec rake signature:validate_yard
