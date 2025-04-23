@@ -31,6 +31,8 @@ updates:
           - '1.31.2'
           # https://github.com/rubocop/rubocop/issues/11549
           - '1.45.0'
+          # https://github.com/rubocop/rubocop/pull/14067#issuecomment-2820741234
+          - '1.75.3'
   - package-ecosystem: 'bundler'
     directory: '/benchmark/compare_with_othergems/kachick'
     schedule:
