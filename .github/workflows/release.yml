@@ -35,7 +35,7 @@ jobs:
       prerelease: ${{ steps.isnpect.outputs.prerelease }}
     steps:
       - uses: actions/checkout@v4
-      - uses: ruby/setup-ruby@dffc446db9ba5a0c4446edb5bca1c5c473a806c5 # v1.235.0
+      - uses: ruby/setup-ruby@eaecf785f6a34567a6d97f686bbb7bccc1ac1e5c # v1.237.0
         with:
           # Enabling is the recommended way, but it cannot detect runner changes in early stage.
           # So disable it is better for test job, do not mind in other jobs
@@ -87,7 +87,7 @@ jobs:
     steps:
       # Required to checkout for gh command
       - uses: actions/checkout@v4
-      - uses: ruby/setup-ruby@dffc446db9ba5a0c4446edb5bca1c5c473a806c5 # v1.235.0
+      - uses: ruby/setup-ruby@eaecf785f6a34567a6d97f686bbb7bccc1ac1e5c # v1.237.0
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: false
@@ -148,7 +148,7 @@ jobs:
     steps:
       # Required to checkout for gh command
       - uses: actions/checkout@v4
-      - uses: ruby/setup-ruby@dffc446db9ba5a0c4446edb5bca1c5c473a806c5 # v1.235.0
+      - uses: ruby/setup-ruby@eaecf785f6a34567a6d97f686bbb7bccc1ac1e5c # v1.237.0
         with:
           bundler-cache: false
       - name: Download release-assets
