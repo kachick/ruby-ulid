@@ -120,7 +120,7 @@ class TestULIDInstance < Test::Unit::TestCase
     microseconds = ulid.to_time.to_r * 1000 * 1000
     # Ensure writing correct time handling...
     different_time_even_in_milliseconds_precision = ULID.max(ulid.to_time).succ.to_time
-    assert_equal((ulid.to_time.to_r * 1000).to_i + 1, (different_time_even_in_milliseconds_precision.to_r * 1000))
+    assert_equal((ulid.to_time.to_r * 1000).to_i + 1, different_time_even_in_milliseconds_precision.to_r * 1000)
     assert_false(ulid === different_time_even_in_milliseconds_precision)
     assert_equal(ulid.to_time, Time.at(0, microseconds, :microsecond, in: ulid.to_time.zone))
     different_time_however_same_in_milliseconds_precision = Time.at(0, microseconds + 1, :microsecond, in: ulid.to_time.zone)
