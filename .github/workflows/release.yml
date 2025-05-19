@@ -116,7 +116,7 @@ jobs:
           gh run download '${{ github.run_id }}'
           tree release-assets
       - name: Wait other jobs
-        uses: kachick/wait-other-jobs@v3.8.0
+        uses: kachick/wait-other-jobs@v3.8.1
         timeout-minutes: 10
         with:
           skip-same-workflow: 'true'
@@ -164,7 +164,7 @@ jobs:
       # TODO: Update after we got reply in https://github.com/rubygems/configure-rubygems-credentials/issues/161
       # role-to-assume: 3
       - name: Wait other jobs
-        uses: kachick/wait-other-jobs@v3.8.0
+        uses: kachick/wait-other-jobs@v3.8.1
         timeout-minutes: 10
         with:
           skip-same-workflow: 'true'
