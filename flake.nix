@@ -21,10 +21,11 @@
         pkgs = nixpkgs.legacyPackages.${system};
       in
       rec {
-        formatter = pkgs.nixfmt-rfc-style;
+        formatter = pkgs.nixfmt-tree;
         devShells.default =
           with pkgs;
           mkShell {
+            env.NIX_PATH = "nixpkgs=${nixpkgs.outPath}";
             buildInputs = [
               # https://github.com/NixOS/nix/issues/730#issuecomment-162323824
               bashInteractive
@@ -37,7 +38,7 @@
 
               dprint
               tree
-              nil
+              nixd
               nixfmt-rfc-style
               typos
             ];
