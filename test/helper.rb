@@ -81,3 +81,37 @@ class Test::Unit::TestCase
     end
   end
 end
+
+# Workaround for https://bugs.ruby-lang.org/issues/21262
+# Introducing Ractor::Port makes Ractor#take unavailable since Ruby 3.5-dev.
+# We are currently only using Ractor#take in testing code, so we reluctantly added a monkey patch.
+if RUBY_VERSION >= '3.5'
+  class Ractor
+    def initialize
+      @yield_ractor = Ractor.new do
+        @takers = []
+        while (tag, msg = Ractor.receive)
+          case tag
+          when :register
+            @takers << msg
+          when :unregister
+            @takers.delete(msg)
+          when :yield
+            @takers.pop << msg
+          end
+        end
+      end
+    end
+
+    def self.yield(obj)
+      @yield_ractor << [:yield, obj] # rubocop:disable ThreadSafety/ClassInstanceVariable
+    end
+
+    def take
+      @yield_ractor << [:register, port = Ractor::Port.new]
+      port.receive
+    ensure
+      @yield_ractor << [:unregister, port]
+    end
+  end
+end

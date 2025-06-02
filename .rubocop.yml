@@ -203,6 +203,7 @@ Style/DisableCopsWithinSourceCodeDirective:
   Enabled: true
   Exclude:
     - Rakefile
+    - 'test/**/*'
 
 Style/DocumentDynamicEvalDefinition:
   Enabled: false
