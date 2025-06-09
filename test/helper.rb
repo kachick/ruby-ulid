@@ -81,12 +81,3 @@ class Test::Unit::TestCase
     end
   end
 end
-
-# Workaround for https://bugs.ruby-lang.org/issues/21262
-# Introducing Ractor::Port makes Ractor#take unavailable since Ruby 3.5-dev.
-# We are currently only using Ractor#take in testing code, so we reluctantly added a monkey patch.
-if RUBY_VERSION >= '3.5'
-  class Ractor
-    alias_method :take, :value
-  end
-end

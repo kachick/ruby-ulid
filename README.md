@@ -41,7 +41,7 @@ Instead, herein is proposed ULID:
 
 ### Install
 
-Tested only in the last 2 Rubies. So you need Ruby 3.3 or higher.
+Tested only in the last 2 stable versions of MRI([ruby/ruby](https://github.com/ruby/ruby)). So you need Ruby 3.3 or 3.4.
 
 Add this line to your `Gemfile`.
 
