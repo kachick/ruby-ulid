@@ -862,7 +862,7 @@ Naming/MemoizedInstanceVariableName:
 Naming/MethodParameterName:
   Enabled: false
 
-Naming/PredicateName:
+Naming/PredicatePrefix:
   Enabled: true
 
 Naming/RescuedExceptionsVariableName:
