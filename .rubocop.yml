@@ -556,7 +556,9 @@ Style/RedundantInterpolation:
   Enabled: true
 
 Style/RedundantParentheses:
-  Enabled: true
+  # I don't use this rule since version 1.79.2
+  # https://github.com/kachick/ruby-ulid/pull/776#issuecomment-3179957536
+  Enabled: false
 
 Style/RedundantPercentQ:
   Enabled: false
@@ -860,7 +862,7 @@ Naming/MemoizedInstanceVariableName:
 Naming/MethodParameterName:
   Enabled: false
 
-Naming/PredicateName:
+Naming/PredicatePrefix:
   Enabled: true
 
 Naming/RescuedExceptionsVariableName:
