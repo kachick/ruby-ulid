@@ -31,7 +31,7 @@ jobs:
     timeout-minutes: 15
     runs-on: 'ubuntu-24.04'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: ruby/setup-ruby@829114fc20da43a41d27359103ec7a63020954d4 # v1.255.0
         with:
           bundler-cache: true # runs 'bundle install' and caches installed gems automatically
@@ -40,7 +40,7 @@ jobs:
     timeout-minutes: 15
     runs-on: 'ubuntu-24.04'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: ruby/setup-ruby@829114fc20da43a41d27359103ec7a63020954d4 # v1.255.0
         with:
           bundler-cache: true # runs 'bundle install' and caches installed gems automatically
