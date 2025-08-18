@@ -34,7 +34,7 @@ jobs:
       checksum_file: ${{ steps.isnpect.outputs.checksum_file }}
       prerelease: ${{ steps.isnpect.outputs.prerelease }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: ruby/setup-ruby@829114fc20da43a41d27359103ec7a63020954d4 # v1.255.0
         with:
           # Enabling is the recommended way, but it cannot detect runner changes in early stage.
@@ -86,7 +86,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       # Required to checkout for gh command
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: ruby/setup-ruby@829114fc20da43a41d27359103ec7a63020954d4 # v1.255.0
         with:
           ruby-version: ${{ matrix.ruby }}
@@ -110,7 +110,7 @@ jobs:
       GH_TOKEN: ${{ github.token }}
     steps:
       # Required to checkout for gh command
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Download release-assets
         run: |
           gh run download '${{ github.run_id }}'
@@ -147,7 +147,7 @@ jobs:
     environment: release
     steps:
       # Required to checkout for gh command
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: ruby/setup-ruby@829114fc20da43a41d27359103ec7a63020954d4 # v1.255.0
         with:
           bundler-cache: false
