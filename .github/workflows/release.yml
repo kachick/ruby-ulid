@@ -78,9 +78,9 @@ jobs:
       matrix:
         os:
           - ubuntu-24.04
-          - macos-15 # aarch64
-        # - macos-13 # x86_64 - CPU arch does not affect for this gem (I think)
-        # - windows-2022 - Too slow. Please tell me if any Windows user is using this gem.
+          - macos-15
+        # - macos-15-intel # Slow
+        # - windows-2025 - Slow
         # For actual use-case, head is needless here
         ruby: ['3.4', '3.3']
     runs-on: ${{ matrix.os }}
