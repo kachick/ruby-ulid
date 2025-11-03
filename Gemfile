@@ -19,7 +19,7 @@ group(:development) do
   gem('stackprof')
   gem('yard', '~> 0.9.37', require: false)
   # Don't relax rubocop family versions with `~> the_version`, rubocop often introduce breaking changes in patch versions. See #722
-  gem('rubocop', '1.81.6', require: false)
+  gem('rubocop', '1.81.7', require: false)
   gem('rubocop-rake', '0.7.1', require: false)
   gem('rubocop-performance', '1.26.1', require: false)
   gem('rubocop-thread_safety', '0.7.3', require: false)
