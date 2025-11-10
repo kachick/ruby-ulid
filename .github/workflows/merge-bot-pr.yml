@@ -25,7 +25,7 @@ jobs:
           min-interval-seconds: '15'
           skip-same-workflow: 'true'
       - name: Approve and merge
-        if: ${{ steps.metadata.outputs.update-type != 'version-update:semver-major' || contains(steps.metadata.outputs.dependency-names, 'DeterminateSystems') }}
+        if: ${{ steps.metadata.outputs.update-type != 'version-update:semver-major' || contains(steps.metadata.outputs.dependency-names, 'cachix') }}
         run: gh pr review --approve "$PR_URL" && gh pr merge --auto --squash "$PR_URL"
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
