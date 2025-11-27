@@ -34,7 +34,7 @@ jobs:
     name: Build and deploy YARD
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - uses: ruby/setup-ruby@8aeb6ff8030dd539317f8e1769a044873b56ea71 # v1.268.0
         with:
           bundler-cache: true # runs 'bundle install' and caches installed gems automatically
