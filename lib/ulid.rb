@@ -40,7 +40,7 @@ class ULID
   SCANNING_PATTERN = /\b[0-7][#{CrockfordBase32::ENCODING_STRING}]{#{TIMESTAMP_ENCODED_LENGTH - 1}}[#{CrockfordBase32::ENCODING_STRING}]{#{RANDOMNESS_ENCODED_LENGTH}}\b/i
 
   # Similar as Time#inspect since Ruby 2.7, however it is NOT same.
-  # Time#inspect trancates needless digits. Keeping full milliseconds with "%3N" will fit for ULID.
+  # Time#inspect truncates needless digits. Keeping full milliseconds with "%3N" will fit for ULID.
   # @see https://bugs.ruby-lang.org/issues/15958
   # @see https://github.com/ruby/ruby/blob/744d17ff6c33b09334508e8110007ea2a82252f5/time.c#L4026-L4078
   TIME_FORMAT_IN_INSPECT = '%Y-%m-%d %H:%M:%S.%3N %Z'

@@ -1,0 +1,7 @@
+[files]
+extend-exclude = ["test/many_data/fixtures"]
+
+[default.extend-words]
+# Ruby ecosystem and test-unit gem use this wording
+# https://github.com/test-unit/test-unit/commit/275385d879144517369ff27469aa7e89f5eeb44f#diff-f850ce8a92b04fe750b3e85e13fa5b8ff5a5bca929e6a0eecb7a7a878208ad7aR103
+pendings = "pendings"
