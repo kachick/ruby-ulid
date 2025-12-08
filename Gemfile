@@ -17,7 +17,7 @@ group(:development) do
   gem('steep', '~> 1.8.3', require: false)
   gem('benchmark-ips', '~> 2.14.0', require: false)
   gem('stackprof')
-  gem('yard', '~> 0.9.37', require: false)
+  gem('yard', '~> 0.9.38', require: false)
   # Don't relax rubocop family versions with `~> the_version`, rubocop often introduce breaking changes in patch versions. See #722
   gem('rubocop', '1.81.7', require: false)
   gem('rubocop-rake', '0.7.1', require: false)
