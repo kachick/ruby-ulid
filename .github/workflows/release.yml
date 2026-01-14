@@ -82,7 +82,7 @@ jobs:
         # - macos-15-intel # Slow
         # - windows-2025 - Slow
         # For actual use-case, head is needless here
-        ruby: ['3.4', '3.3']
+        ruby: ['4.0']
     runs-on: ${{ matrix.os }}
     steps:
       # Required to checkout for gh command

@@ -4,7 +4,7 @@ plugins:
   - rubocop-thread_safety
 
 AllCops:
-  TargetRubyVersion: 3.3
+  TargetRubyVersion: 4.0
   DisplayCopNames: true
   Exclude:
     - '**/vendor/**/*'
