@@ -41,12 +41,12 @@ Instead, herein is proposed ULID:
 
 ### Install
 
-Tested only in the last 2 stable versions of MRI([ruby/ruby](https://github.com/ruby/ruby)). So you need Ruby 3.3 or 3.4.
+Tested only in the Ruby 4.
 
 Add this line to your `Gemfile`.
 
 ```ruby
-gem('ruby-ulid', '~> 0.9.0')
+gem('ruby-ulid', '~> 1.0.0')
 ```
 
 And load it.
