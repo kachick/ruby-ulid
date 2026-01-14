@@ -46,7 +46,7 @@ Tested only in the Ruby 4.
 Add this line to your `Gemfile`.
 
 ```ruby
-gem('ruby-ulid', '~> 0.9.0')
+gem('ruby-ulid', '~> 1.0.0')
 ```
 
 And load it.
