@@ -45,7 +45,7 @@ $ bundle exec rubocop --autocorrect
 $ ./bin/console
 # Starting up IRB with loading developing ULID library
 irb(main):001:0> ULID::VERSION
-=> "0.9.0"
+=> "1.0.0"
 ```
 
 ```ruby
