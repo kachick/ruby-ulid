@@ -16,7 +16,7 @@ class TestGeneratorsInRactor < Test::Unit::TestCase
           [*(Array.new(500) { ULID.generate }), *ULID.sample(500)]
         end
       end
-      ulids = ractors.flat_map(&:take)
+      ulids = ractors.flat_map(&:value)
       assert_equal(10000, ulids.size)
       assert_equal(ulids, ulids.uniq)
       assert_acceptable_randomized_string(ulids)
