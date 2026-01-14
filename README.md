@@ -3,8 +3,10 @@
 [![Build Status](https://github.com/kachick/ruby-ulid/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/kachick/ruby-ulid/actions/workflows/ci.yml?query=branch%3Amain)
 [![Gem Version](https://badge.fury.io/rb/ruby-ulid.svg)](http://badge.fury.io/rb/ruby-ulid)
 
-This gem is in maintenance mode, I have no plan to add new features.\
-The reason is UUID v7 has been accepted in [IETF](https://www.rfc-editor.org/rfc/rfc9562.html) and [ruby's securerandom](https://github.com/ruby/securerandom/pull/19). See [UUID section](#uuid) for detail.
+- _**This repository is archived**_
+- _**No longer maintained**_
+- If you are new to ULID, please consider using [UUID v7](https://www.rfc-editor.org/rfc/rfc9562.html#name-uuid-version-7).\
+  UUID v7 is an IETF standard and is available in Ruby's [SecureRandom](https://github.com/ruby/securerandom/pull/19). See [UUID](#uuid) section for more information.
 
 ## Overview
 
@@ -54,9 +56,6 @@ And load it.
 ```ruby
 require 'ulid'
 ```
-
-NOTE: This README contains information about the development version.\
-If you would like to see released version's one. [Look at the ref](https://github.com/kachick/ruby-ulid/tree/v1.0.0).
 
 In [Nix](https://nixos.org/), you can skip the installation steps for both ruby and ruby-ulid to try.
 

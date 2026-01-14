@@ -1,10 +1,4 @@
-# How to contribute
-
-- Reporting bugs
-- Suggesting features
-- Creating PRs
-
-Welcome all of the contributions!
+# How to develop
 
 ## Setup
 
@@ -39,7 +33,7 @@ $ bundle exec rubocop --autocorrect
 ...
 ```
 
-## Touch the development version with REPL
+## Use development version with REPL
 
 ```console
 $ ./bin/console
@@ -64,7 +58,7 @@ ls ULID
 # => nil
 ```
 
-## How to make ideal PRs (Not a mandatory rule, feel free to PR!)
+## Test
 
 If you try to add/change/fix features, please update and/or confirm core feature's tests are not broken.
 
@@ -101,15 +95,6 @@ Finished in 0.011706387 seconds.
 ```
 
 CI includes other heavy tests, signature check, lint, if you want to check them in own machine, below command is the one.
-
-But please don't hesitate to send PRs even if something fail in this command!
-
-```console
-$ bundle exec rake # mostly, lightweight
-$ bundle exec rake simulate_ci # all, heavy
-$ echo $?
-0
-```
 
 If you try to improve any performance issue, please add benchmarking and check the result of before and after.
 
