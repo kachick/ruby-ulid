@@ -28,7 +28,7 @@ class TestGeneratorsInRactor < Test::Unit::TestCase
       ulids = Ractor.new do
         monotonic_generator = ULID::MonotonicGenerator.new
         Array.new(1000) { monotonic_generator.generate }
-      end.take
+      end.value
       assert_equal(1000, ulids.size)
       assert_equal(ulids, ulids.sort.uniq)
       assert_acceptable_randomized_string(ulids)
@@ -47,7 +47,7 @@ class TestGeneratorsInRactor < Test::Unit::TestCase
           else
             'should not reach here'
           end
-        end.take
+        end.value
       )
     end
   end
